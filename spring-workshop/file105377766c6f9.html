@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="" xml:lang="">
   <head>
     <title>An Introduction to Machine Learning</title>
@@ -27,7 +26,7 @@ class: clear, title-slide, inverse, center, top, middle
 
 class: clear, inverse, center, middle
 
-background-image: url(https://imgs.xkcd.com/comics/machine_learning.png)
+background-image: url(https://imgs.xkcd.com/comics/tasks_2x.png)
 background-position: center
 background-size: contain
 
@@ -391,7 +390,7 @@ class: clear, inverse, center, middle
 - There are a number of types of variables:
   - Demographic/contextual variables, e.g. `subject` and `gender`
   - Self-report survey variables: `uv` (utility value), `percomp` (perceived competence), and `int` (interest)
-  - Gradebook variables: `percentage_earned` (based on the first 20 assignments)
+  - Gradebook variables: `percentage_earned` (and others)
   - Discussion variables: `sum_discussion_posts`, `sum_n_words`
   - Outcomes: `final_grade`, `passing_grade`, `time_spent` (in minutes)
 
@@ -523,10 +522,11 @@ class: clear, inverse, center, middle
 
 *Nearly identical to that for regression*
 
-1. Split data (into train, test, and tuning sets sets)
-1. Specify recipe, model, and workflow
-1. Estimate models and determine tuning parameters' values
-1. Evaluate metrics and predictions (Accuracy, `\(\kappa\)`, Sensitivity, Specificity, ROC (plot), AUC value)
+1. Split our data into train and test sets
+  - Split train set further into *k*-folds to use for determining tuning parameters (validation)
+1. Carry out feature engineering and specify our formula
+1. Estimate our model and determine tuning parameters
+1. Using final model from the training data set, predict the `\(\hat{y}\)` and compare to our known `\(y\)` for our test data and then calculate metrics (Accuracy, `\(\kappa\)`, Sensitivity, Specificity, ROC (plot), AUC value)
 
 ---
 class: clear, inverse, center, middle
@@ -541,7 +541,7 @@ class: clear, inverse, center, middle
 
 Generality classifier: https://faast.shinyapps.io/generality-shiny/
 
-Other extensions: Audio and video data and ??? (what else?)?
+Other extensions: Audio and video data and xxx?
 
 ---
 
