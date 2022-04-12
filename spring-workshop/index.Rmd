@@ -46,8 +46,9 @@ options(htmltools.dir.version = FALSE)
 
 1. Introductions (5 min.)
 1. Overview of foundational machine learning ideas (20 min.)
-1. Machine learning demo for a _regression_ problem (20 min.)
+1. Machine learning demo for a _regression_ problem (15 min.)
 1. Introduction to machine learning for a _classification_ problem (5 min.)
+1. Discussion of extensions (5 min.)
 1. Conclusion and resources to learn and do more and discussion/Q&A (10 min.)
 
 class: clear, inverse, center, middle
