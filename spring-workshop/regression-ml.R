@@ -2,9 +2,10 @@ set.seed(0505)
 
 library(tidymodels) # doesn't load forcats, stringr, readr from tidyverse
 library(readr)
+library(here)
 library(vip)
 
-d <- read_csv("data-to-model.csv")
+d <- read_csv(here("spring-workshop", "data-to-model.csv"))
 
 d <- select(d, -time_spent) # this is another continuous outcome
 
