@@ -16,7 +16,7 @@ set.seed(0505)
 library(tidymodels) # doesn't load forcats, stringr, readr from tidyverse
 library(readr)
 library(vip)
-
+gi
 d <- read_csv("data-to-model.csv")
 
 d <- select(d, -time_spent) # this is another continuous outcome; student ID not needed
