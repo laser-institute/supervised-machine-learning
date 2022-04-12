@@ -487,7 +487,7 @@ class: clear, inverse, center, middle
   - Demographic/contextual variables, e.g. `subject` and `gender`
   - Self-report survey variables: `uv` (utility value), `percomp` (perceived competence), and `int` (interest)
   - Gradebook variables: `percentage_earned` (based on the first 20 assignments)
-  - Discussion variables: `sum_discussion_posts`, `sum_n_words`
+  - Discussion variables: `sum_discussion_posts`, `sum_n_words` (for the first 3 discussions)
   - Outcomes: `final_grade`, `passing_grade`, `time_spent` (in minutes)
 
 ---
