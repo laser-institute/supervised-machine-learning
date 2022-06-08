@@ -19,85 +19,11 @@ bibliography: lit/references.bib
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# 1. PREPARE
-
-Our Unit 4 Case Study: Hashtag Common Core is inspired by the work of
-Jonathan Supovitz, Alan Daly, Miguel del Fresno and Christian Kolouch
-who examined the intense debate surrounding the Common Core State
-Standards education reform as it played out on Twitter. As noted on
-their expansive and interactive website for the [#COMMONCORE
-Project](https://www.hashtagcommoncore.com), the Common Core was a major
-education policy initiative of the early 21st century. A primary aim of
-the Common Core was to strengthen education systems across the United
-States through a set of specific and challenging education standards.
-Although these standards once enjoyed bipartisan support, we saw in our
-previous case study how these standards have become a political punching
-bag.
-
 ```{r}
-ccss_tweets <- read_csv("data/ccss-tweets-fresh.csv")
+library(tidyverse)
+
+d <- read_rds("ngsschat-data.rds")
+
+codes <- read_rds("ngsschat-qualitative-codes.csv")
+
 ```
-
-------------------------------------------------------------------------
-
-# 2. WRANGLE
-
-xx
-
-------------------------------------------------------------------------
-
-# 3. EXPLORE
-
-xx
-
-------------------------------------------------------------------------
-
-# 4. MODEL
-
-As highlighted in [Chapter 3 of Data Science in Education Using
-R](https://datascienceineducation.com/c03.html), the **Model** step of
-the data science process entails "using statistical models, from simple
-to complex, to understand trends and patterns in the data."
-
-------------------------------------------------------------------------
-
-# 5. COMMUNICATE
-
-In this case study, we focused on the literature guiding our analysis;
-wrangling our data into a network object; examining basic network
-centrality measures; and identifying groups and sentiment in tweets
-about the CCSS curriculum standards.
-
-In response to the following research questions driving this analysis,
-write a 2-3 sentences summarizing our findings:
-
-1.  Who are the main transmitters, transceivers, and transcenders in our
-    Common Core Twitter network?
-
-    -   
-
-2.  What subgroups, or factions, existed in our network?
-
-    -   
-
-3.  Which actors in our network tended to be more opposed to the Common
-    Core?
-
-    -   
-
-Finally, add 1-2 sentences in response to the following prompts:
-
-1.  One important thing I took away from this unit about network network
-    analysis:
-
-    -   
-
-2.  One thing about network analysis I want to learn more about:
-
-    -   
-
-### 🧶 Knit & Check ✅
-
-![](img/publish.png){width="70%"}
-
-### References
