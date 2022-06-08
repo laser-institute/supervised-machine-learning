@@ -846,3 +846,187 @@ class: clear, center
 ## .font130[.center[**Thank you!**]]
 <br/>
 .center[<img style="border-radius: 80%;" src="img/kellogg.jpeg" height="200px"/><br/>**Dr. Shaun Kellogg**<br/><mailto:sbkellog@ncsu.edu>]
+
+---
+
+
+---
+
+# Illustrating the bias-variance tradeoff
+
+```{r, echo = FALSE, fig.align="center", message = FALSE}
+library(ggplot2)
+
+set.seed(5)
+dat = data.frame(x = runif(1000, 0, 12))
+dat$x = sort(dat$x)
+dat$y = with(dat, sin(x * 1.3) * 15 + 3 * (x - 4)^2)
+sigma = with(dat, (exp(x - 5)/(1 + exp(x - 5)) - exp(x - 7)/(1 + exp(x - 7)) * 
+    2) + 1.4) * 6
+dat$yobs = dat$y + rnorm(nrow(dat), mean = 0, sd = sigma)
+
+ggplot(dat, aes(x = x, y = yobs)) +
+  geom_point(color = "darkgray") +
+  ylab("pred")
+
+ggsave("img/bias-variance-data-1.png")
+```
+
+---
+
+# Strong bias
+
+```{r, echo = FALSE, fig.align="center", message = FALSE}
+dat = data.frame(x = runif(1000, 0, 12))
+dat$x = sort(dat$x)
+dat$y = with(dat, sin(x * 1.3) * 15 + 3 * (x - 4)^2)
+sigma = with(dat, (exp(x - 5)/(1 + exp(x - 5)) - exp(x - 7)/(1 + exp(x - 7)) * 
+    2) + 1.4) * 6
+dat$yobs = dat$y + rnorm(nrow(dat), mean = 0, sd = sigma)
+
+ggplot(dat, aes(x = x, y = yobs)) +
+  geom_point(color = "darkgray") +
+  geom_smooth(method = "lm") +
+  ylab("pred")
+
+ggsave("img/bias-variance-data-3.png")
+```
+
+---
+
+# A much less-biased algorithm
+
+```{r, echo = FALSE, fig.align="center", message = FALSE}
+set.seed(5)
+dat = data.frame(x = runif(1000, 0, 12))
+dat$x = sort(dat$x)
+dat$y = with(dat, sin(x * 1.3) * 15 + 3 * (x - 4)^2)
+sigma = with(dat, (exp(x - 5)/(1 + exp(x - 5)) - exp(x - 7)/(1 + exp(x - 7)) * 
+    2) + 1.4) * 6
+dat$yobs = dat$y + rnorm(nrow(dat), mean = 0, sd = sigma)
+
+ggplot(dat, aes(x = x, y = yobs)) +
+  geom_point(color = "darkgray") +
+  geom_smooth(method = lm, formula = y ~ splines::bs(x, 10), se = FALSE) +
+  ylab("pred")
+
+ggsave("img/bias-variance-data-5.png")
+```
+
+---
+
+# Slightly different data (right pane)
+
+```{r, echo = FALSE, echo = FALSE, message = FALSE, include = FALSE}
+dat = data.frame(x = runif(1000, 0, 12))
+dat$x = sort(dat$x)
+dat$y = with(dat, sin(x * 2.3) * 25 + 3 * (x - 3)^2)
+sigma = with(dat, (exp(x - 5)/(1 + exp(x - 5)) - exp(x - 7)/(1 + exp(x - 7)) * 
+    2) + 1.4) * 6
+dat$yobs = dat$y + rnorm(nrow(dat), mean = 0, sd = sigma)
+
+ggplot(dat, aes(x = x, y = yobs)) +
+  geom_point(color = "darkgray") +
+  ylab("pred")
+
+ggsave("img/bias-variance-data-2.png")
+```
+
+.pull-left[
+<img src="img/bias-variance-data-1.png" width=300 height=400>
+]
+
+.pull-right[
+<img src="img/bias-variance-data-2.png" width=300 height=400>
+]
+
+---
+
+# Still strong bias, but low variance
+
+```{r, echo = FALSE, fig.align="center", message = FALSE, include = FALSE}
+dat = data.frame(x = runif(1000, 0, 12))
+dat$x = sort(dat$x)
+dat$y = with(dat, sin(x * 2.3) * 25 + 3 * (x - 3)^2)
+sigma = with(dat, (exp(x - 5)/(1 + exp(x - 5)) - exp(x - 7)/(1 + exp(x - 7)) * 
+    2) + 1.4) * 6
+dat$yobs = dat$y + rnorm(nrow(dat), mean = 0, sd = sigma)
+
+ggplot(dat, aes(x = x, y = yobs)) +
+  geom_point(color = "darkgray") +
+  geom_smooth(method = "lm") +
+  ylab("pred")
+
+ggsave("img/bias-variance-data-4.png")
+```
+
+.pull-left[
+<img src="img/bias-variance-data-3.png" width=300 height=400>
+]
+
+.pull-right[
+<img src="img/bias-variance-data-4.png" width=300 height=400>
+]
+
+---
+
+# Low bias, but very high variance
+
+```{r, echo = FALSE, fig.align="center", message = FALSE, include = FALSE}
+dat = data.frame(x = runif(1000, 0, 12))
+dat$x = sort(dat$x)
+dat$y = with(dat, sin(x * 2.3) * 25 + 3 * (x - 3)^2)
+sigma = with(dat, (exp(x - 5)/(1 + exp(x - 5)) - exp(x - 7)/(1 + exp(x - 7)) * 
+    2) + 1.4) * 6
+dat$yobs = dat$y + rnorm(nrow(dat), mean = 0, sd = sigma)
+
+ggplot(dat, aes(x = x, y = yobs)) +
+  geom_point(color = "darkgray") +
+  geom_smooth(method = lm, formula = y ~ splines::bs(x, 10), se = FALSE) +
+  ylab("pred")
+
+ggsave("img/bias-variance-data-6.png")
+```
+
+.pull-left[
+<img src="img/bias-variance-data-5.png" width=300 height=400>
+]
+
+.pull-right[
+<img src="img/bias-variance-data-6.png" width=300 height=400>
+]
+
+---
+
+# The bias-variance tradeoff
+
+.pull-left[
+
+#### Bias
+
+- *Definition*: Difference between our known codes/outcomes and our predicted codes/outcomes; difference between $y$ and $\hat{y}$
+
+- How (in)correct our models' (algorithms') predictions are
+
+- Models with high bias can fail to capture important relationships--they can be *under-fit* to our data
+
+- In short, how well our model reflects the patterns in the data
+
+]
+
+.pull-right[
+
+#### Variance
+
+- *Definition*: Using a different sample of data, the difference in $\hat{y}$ values
+
+- How sensitive our predictions are to the specific sample on which we trained the model 
+- Models with high variance can fail to predict different data well--they can be *over-fit* to our data
+
+- In short, how stable the predictions of our model are
+
+]
+
+<h4><center>Regardless of model, we often wish to balance between bias and variance</center></h4>
+
+---

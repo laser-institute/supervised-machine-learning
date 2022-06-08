@@ -1,0 +1,511 @@
+---
+title: "An Introduction to Machine Learning"
+subtitle: "A Brief Overview & Demo"
+author: "Joshua Rosenberg and Shaun Kellogg"
+institute: "The LASER Institute"
+date: "`r Sys.Date()`"
+output:
+    xaringan::moon_reader:
+      css:
+       - default
+       - css/laser.css
+       - css/laser-fonts.css
+      lib_dir: libs                        # creates directory for libraries
+      seal: false                          # false: custom title slide
+      nature:
+        highlightStyle: default         # highlighting syntax for code
+        highlightLines: true               # true: enables code line highlighting 
+        highlightLanguage: ["r"]           # languages to highlight
+        countIncrementalSlides: false      # false: disables counting of incremental slides
+        ratio: "16:9"                      # 4:3 for standard size,16:9
+        slideNumberFormat: |
+         <div class="progress-bar-container">
+          <div class="progress-bar" style="width: calc(%current% / %total% * 100%);">
+          </div>
+         </div>
+---
+
+class: clear, title-slide, inverse, center, top, middle
+
+# `r rmarkdown::metadata$title`
+## `r rmarkdown::metadata$subtitle`
+### `r rmarkdown::metadata$author`
+###  `r Sys.Date()`
+
+
+???
+- Today we'll be talking about a topic I both enjoy learning about and am still learning quite a bit about.  
+- I think it's a really exciting area for research in STEM Education and a major area of growth. 
+- I think there's also a lot of space to shape what this technique can look like and how we use it to understand and improve student learning.
+- For example, there's not really best practices around some of the really important topics like for what kinds kinds of research questions can we use machine learning and how do we make sure machine learning doesn't reduce what we care about to just numbers. 
+
+
+---
+
+.pull-left[
+## Part 1: Conceptual Overview
+### Intro to Machine Learning
+- Defining Machine Learning
+- Machine Learning Approaches
+- Supervised ML
+
+]
+
+.pull-right[
+
+## Part 2: R Code-Along
+#### The Tidy Models Package
+- A _regression_ problem 
+- Intro to _classification_ 
+- Discussion of extensions 
+]
+
+
+---
+
+# Goals
+
+### Over-arching goal:
+
+*Get started with applying machine learning methods in R*  
+
+### Specific aims are to learn about:
+
+- a small but important set of core ideas about machine learning
+- how these ideas are put into practice through the *tidymodels* R package
+
+???
+- I think these core ideas be powerful because they can help you to know what machine learning can be useful for what it might not be useful for they can also help you to dispel sort of hype about machine learning.
+- And there is a great deal of hype about machine learning at the present moment so just having some core ideas can help you to identify where people might be overhyping.
+
+
+---
+
+class: clear, inverse, center, middle
+
+# Part I: Overview of Machine Learning
+
+
+---
+
+# Machine Learning Defined
+
+- *Artificial Intelligence (AI)*
+: Simulating human intelligence through the use of computers
+- *Machine learning (ML)*: A subset of AI focused on how computers acquire new information/knowledge
+
+This definition leaves a lot of space for a range of approaches to ML
+
+.footnote[
+[1]  I feel super uncomfortable bringing AI into this, but perhaps it's useful just to be clear about terminology
+]
+
+---
+
+# Machine Learning in Practice
+
+
+.center[<img src="img/machine_learning.png" height="500px"/>]
+
+.footnote[
+
+source: [XKCD](https://github.com/laser-institute/network-analysis/blob/main/lab-2/lit/daly-ebb-flow.pdf)
+]
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+```
+
+???
+Notes
+
+---
+# Machine Learning Approaches
+
+.center[<img src="img/ml_flavors.jpeg" height="500px"/>]
+
+
+---
+# Classical Learning
+
+.pull-left[
+## Supervised ML
+
+- Requires coded data or data with a known outcome
+- Uses coded/outcome data to train an algorithm
+- Uses that algorithm to **predict the codes/outcomes for new data** (data not used during the training)
+
+]
+
+.pull-right[
+## Unsupervised ML
+- Does not require coded data; one way to think about unsupervised ML is that its purpose is to discover codes/labels
+- Is used to discover groups among observations/cases or to summarize across variables
+- Can be used in an _exploratory mode_ (see [Nelson, 2020](https://journals.sagepub.com/doi/full/10.1177/0049124118769114?casa_token=EV5XH31qbyAAAAAA%3AFg09JQ1XHOOzlxYT2SSJ06vZv0jG-s4Qfz8oDIQwh2jrZ-jrHNr7xZYL2FwnZtZiokhPalvV1RL2Bw)) 
+
+]
+
+
+???
+
+---
+
+# Supervise ML Continued
+
+.pull-left[
+## Forms
+
+
+- *classification* (predicting a dichotomous or categorical outcome) or a 
+- *regression* (predicting a continuous outcome)
+
+]
+
+.pull-right[
+## Algorithms
+  - [Linear regression (really!)](https://web.stanford.edu/~hastie/ElemStatLearn/)
+  - Logistic regression
+  - Decision tree
+  - Support Vector Machine
+
+]
+
+
+???
+
+
+
+
+---
+
+# What kind of coded data?
+
+> Want to detect spam? Get samples of spam messages. Want to forecast stocks? Find the price history. Want to find out user preferences? Parse their activities on Facebook (no, Mark, stop collecting it, enough!) (from [ML for Everyone](https://vas3k.com/blog/machine_learning/))
+
+In educational research:
+
+- Assessment data (e.g., [1](https://link.springer.com/article/10.1007/s10956-020-09895-9))
+- Data from log files ("trace data") (e.g., [1](https://www.tandfonline.com/doi/full/10.1080/10508406.2013.837391?casa_token=-8Fm2KCFJ30AAAAA%3Altbc8Y8ci_z-uLJx4se9tgvru9mzm3yqCTFi12ndJ5uM6RDl5YJGG6_4KpUgIK5BYa_Ildeh2qogoQ))
+- Open-ended written responses (e.g., [1](https://link.springer.com/article/10.1007/s10956-020-09889-7), [2](https://doi.org/10.1007/s11423-020-09761-w))
+- Achievement data (i.e., end-of-course grades) (e.g., [1](https://link.springer.com/article/10.1007/s10956-020-09888-8), [2](https://search.proquest.com/docview/2343734516?pq-origsite=gscholar&fromopenview=true))
+
+What else?
+- Drawings/diagrammatic models
+- Data collected for formative purposes (i.e., exit tickets)
+- ???
+
+---
+
+# Supervised Machine Learning Example
+
+**Using Twitter users profile descriptions to predict whether or not they were teachers**
+
+- Manually coded > 500 profiles for whether they were teachers or non-teachers
+- Trained a Support Vector Machine model (or algorithm) on _text features_ using 90% of the data
+- For the remaining 10% of the data, we predicted whether or not someone was a teacher with an accuracy of 85%; $\kappa$ = 0.612.
+- Then used the trained classifier to predict whether or not 1000s of users were or were not teachers (and used these classifications in a multi-level model)
+
+
+.footnote[
+[Rosenberg et al., *AERA Open* (2021)](https://journals.sagepub.com/doi/full/10.1177/23328584211024261)
+]
+
+
+
+
+---
+
+# How is Supervised ML different from regression?
+
+1. The _aim_ is different, the algorithms and methods of estimation are not (or, are differences in degree, rather than in kind).
+
+1. In a linear regression, our aim is to estimate parameters, such as $\beta_0$ (intercept) and $\beta_1$ (slope), and to make inferences about them that are not biased by our particular sample.
+
+1. In an ML approach, we can use the same linear regression model, but with a goal other than making unbiased inferences about the $\beta$ parameters:
+
+<h4><center>In supervised ML, our goal is to minimize the difference between a known $y$ and our predictions, $\hat{y}$</center></h3>
+
+---
+
+# So, how is this really different?
+
+This _predictive goal_ means that we can do things differently:
+
+- Multicollinearity is not an issue because we do not care to make inferences about parameters
+- Because interpreting specific parameters is less of an interest, we can use a great deal more predictors
+- We focus not on $R^2$ as a metric, but, instead, how accurately a _trained_ model can predict the values in _test_ data
+- We can make our models very complex (but may wish to "regularize" coefficients that are small so that their values are near-zero or are zero):
+  - Ridge models (can set parameters near to zero)
+  - Lasso models (can set parameters to zero)
+  - Elastic net models (can balance between ridge and lasso models)
+
+---
+
+# Okay, _really_ complex
+
+- Okay, _really_ complex:
+  - Neural networks
+  - Deep networks
+- And, some models can take a different form than familiar regressions:
+  - *k*-nearest neighbors
+  - Decision trees (and their extensions of bagged and random forests)
+- Last, the modeling process can look different:
+  - Ensemble models that combine or improve on ("boosting") the predictions of individual models
+
+
+---
+
+# What technique should I choose?
+
+Do you have coded data or data with a known outcome -- let's say about K-12 students -- and, do you want to:
+
+- _Predict_ how other students with similar data (but without a known outcome) perform?
+- _Scale_ coding that you have done for a sample of data to a larger sample?
+- _Provide timely or instantaneous feedback_, like in many learning analytics systems?
+
+<bold><h4><center>Supervised methods may be your best bet</center></h4></bold>
+
+---
+
+# What technique should I choose?
+
+Do you not yet have codes/outcomes -- and do you want to?
+
+- _Achieve a starting point_ for qualitative coding, perhaps in a ["computational grounded theory"](https://journals.sagepub.com/doi/full/10.1177/0049124117729703) mode?
+- _Discover groups or patterns in your data_ that may be of interest?
+- _Reduce the number of variables in your dataset_ to a smaller, but perhaps nearly as explanatory/predictive - set of variables?
+
+<bold><h4><center>Unsupervised methods may be helpful</center></h4></bold>
+
+
+
+---
+
+
+class: clear, inverse, center, middle
+
+# part_2(ml_demo, regression)
+
+---
+
+# Overview of ML regression
+
+- We are interested in predicting a _continuous_ outcome; accordingly, our predictions are _continuous_
+- Metrics for how well the model performed include:
+  - Root Mean Square Error (RMSE): can be interpreted as the _average_ difference between $y$ and $\hat{y}$
+  - Mean Absolute Error (MAE): can be interpreted as the _median_ difference between $y$ and $\hat{y}$
+  - $R^2$: Proportion of variance explained (used descriptively)
+
+---
+
+# Overview of regression modeling
+
+1. Split data (into train, test, and tuning sets sets)
+1. Specify recipe, model, and workflow
+1. Estimate models and determine tuning parameters' values
+1. Evaluate metrics and predictions
+
+---
+
+# Data from online science classes
+
+- This data comes from a study of ~700 secondary/high school-aged students in the United States
+- These were "one-off" classes that helped to fill gaps in students' schedules
+- The data were collected _over multiple semesters_ from _multiple classes_
+- There are a number of types of variables:
+  - Demographic/contextual variables, e.g. `subject` and `gender`
+  - Self-report survey variables: `uv` (utility value), `percomp` (perceived competence), and `int` (interest)
+  - Gradebook variables: `percentage_earned` (based on the first 20 assignments)
+  - Discussion variables: `sum_discussion_posts`, `sum_n_words` (for the first 3 discussions)
+  - Outcomes: `final_grade`, `passing_grade`, `time_spent` (in minutes)
+
+---
+
+# Let's look at these steps once more
+
+1. Split data (into train, test, and tuning sets sets)
+1. Specify recipe, model, and workflow
+1. Estimate models and determine tuning parameters' values
+1. Evaluate metrics and predictions
+
+We'll run these in `ml-regression-demo.Rmd` in [RStudio Cloud](https://rstudio.cloud/spaces/140883/project/3890610)!
+
+---
+
+# Demo (RStudio Cloud)
+
+```{r xaringan-panelset, echo=FALSE}
+xaringanExtra::use_panelset()
+```
+
+.panelset[
+.panel[.panel-name[1]
+
+**Split data (into train, test, and tuning sets sets)**
+
+```{r panel-chunk-1, fig.show='hide', eval = FALSE}
+train_test_split <- initial_split(d, prop = .70)
+
+data_train <- training(train_test_split)
+
+kfcv <- vfold_cv(data_train)
+```
+]
+
+.panel[.panel-name[2]
+
+**Specify recipe, model, and workflow**
+ 
+```{r panel-chunk-2, fig.show='hide', eval = FALSE}
+sci_rec <- recipe(final_grade ~ ., data = d) %>% 
+    ...
+
+rf_mod_many <-rand_forest(mtry = tune(),
+              min_n = tune()) %>%
+  set_engine("ranger", importance = "impurity") %>%
+  set_mode("regression")
+
+rf_wf_many <- workflow() %>%
+  add_model(rf_mod_many) %>% 
+  add_recipe(sci_rec)
+```
+]
+
+.panel[.panel-name[3]
+
+**Estimate models and determine tuning parameters' values**
+
+```{r panel-chunk-4, fig.show='hide', eval = FALSE}
+tree_res <- rf_wf_many %>% 
+  tune_grid(
+    resamples = kfcv,
+    grid = tree_grid,
+    metrics = metric_set(rmse, mae, rsq)
+  )
+
+# select best set of tuning parameters
+best_tree <- tree_res %>%
+  select_best()
+
+# finalize workflow with best set of tuning parameters
+final_wf <- rf_wf_many %>% 
+  finalize_workflow(best_tree)
+```
+]
+
+.panel[.panel-name[4]
+
+**Evaluate metrics and predictions**
+
+```{r panel-chunk-5, fig.show='hide', eval = FALSE}
+# fit split data (separately)
+final_fit <- final_wf %>% 
+  last_fit(train_test_split, metrics = metric_set(rmse, mae, rsq))
+
+# fit stats
+final_fit %>%
+  collect_metrics()
+```
+]
+]
+
+---
+
+# Demo
+
+Run these steps in `ml-regression-demo.Rmd` in [RStudio Cloud](https://rstudio.cloud/spaces/140883/project/3890610).
+
+Prompts for discussion: 
+
+- What do you take away from this analysis overall?
+- What changes could we make to improve the model?
+
+---
+
+class: clear, inverse, center, middle
+
+# Intro. to classification
+
+---
+
+# Overview of classification
+
+- We are interested in predicting a _dichotomous_ or _continuous_ outcome; our predictions are _probabilities_
+- These probabilities are often changed (through the use of a threshold - often 0.50) back into dichotomous or categorical labels
+- Metrics for how well the model performed include:
+  - *Accuracy*: For the known codes, what percentage of the predictions are correct
+  - *Cohen's $\kappa$*: Same as accuracy, while account for the base rate of (chance) agreement
+  - *Sensitivity (AKA recall)*: Among the true "positives", what percentage are classified as "positive"?
+  - *Specificity*: Among the true "negatives", what percentage are classified as "negative"?
+  - *ROC AUC*: For different levels of the threshold, what is the sensitivity and specificity?
+
+---
+
+# Overview of classification modeling
+
+*Nearly identical to that for regression*
+
+1. Split data (into train, test, and tuning sets sets)
+1. Specify recipe, model, and workflow
+1. Estimate models and determine tuning parameters' values
+1. Evaluate metrics and predictions (Accuracy, $\kappa$, Sensitivity, Specificity, ROC (plot), AUC value)
+
+---
+class: clear, inverse, center, middle
+
+# Discussion of Extensions
+
+---
+
+# Text analysis (NLP)
+
+```{r, echo = FALSE, out.width="70%"}
+knitr::include_graphics("img/dtm.png")
+```
+
+Generality classifier: https://faast.shinyapps.io/generality-shiny/
+
+Other extensions: Audio and video data and ??? (what else?)?
+
+---
+
+class: clear, inverse, center, middle
+
+# Conclusion  
+
+---
+
+# Learning more
+
+- [Case Study: Identifying At-Risk Students](https://sbkellogg.github.io/eci-586/unit-2/unit-2-ml-case-study-key.html)
+- [tidymodels](https://www.tidymodels.org/)
+- [Hands-on Machine Learning With R](https://bradleyboehmke.github.io/HOML/)
+- [Elements of Statistical Learning](https://web.stanford.edu/~hastie/ElemStatLearn/)
+- [Learning to Teach Machines to Learn](https://alison.rbind.io/post/2019-12-23-learning-to-teach-machines-to-learn/)
+- [Julia Silge's blog](https://juliasilge.com/blog/)
+
+---
+
+# Recommendations
+
+- Start with a problem you are facing
+- Use a simple algorithm that you can understand and troubleshoot
+- Be mindful of your R code; small issues (with names!) can cause difficulties
+- Share and receive feedback
+- Explore the variety of ways you can use machine learning; we are deciding as a field how machine learning will (or will not) make a difference in our work
+- It _will be really hard at first_; you can do this!
+
+---
+
+# Thanks!
+
+Joshua Rosenberg  
+jmrosenberg@utk.edu  
+@jrosenberg6432    
+
+Shaun Kellogg  
+sbkellog@ncsu.edu  
+@sbkellogg  
+
+Slides created via the R package [xaringan](https://github.com/yihui/xaringan)
+
+Available: 
