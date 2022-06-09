@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="" xml:lang="">
   <head>
-    <title>SNA Lab 4: Statistical Inference &amp; Network Models</title>
+    <title>Machine Learning Learning Lab 1</title>
     <meta charset="utf-8" />
-    <meta name="author" content="Dr. Shaun Kellogg" />
-    <meta name="date" content="2022-06-08" />
+    <meta name="author" content="Dr. Joshua Rosenberg" />
+    <meta name="date" content="2022-06-09" />
     <script src="libs/header-attrs-2.14/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
@@ -34,59 +34,318 @@ class: clear, title-slide, inverse, center, top, middle
 
 
 
-# SNA Lab 4: Statistical Inference &amp; Network Models
+# Machine Learning Learning Lab 1
 ----
-### **Dr. Shaun Kellogg**
-### June 08, 2022
+### **Dr. Joshua Rosenberg**
+### June 09, 2022
 
 ---
 # Agenda
 
 .pull-left[
 ## Part 1: Core Concepts
-### Data Management
-- xx
-- xx
-- xx
+- Prediction versus explanation
+- Train and test set
 ]
 
 .pull-right[
 
 ## Part 2: R Code-Along
-#### Exponential Random Graph Models
-- xx
-- xx
-- xx
+- Estimating a logistic regression model
+- Interpreting the model in terms of its predictive accuracy
 ]
 
+---
+
+# A brief review
+
+What are the differences between supervised and unsupervised machine learning?
+
+---
+
+# Supervised &amp; unsupervised
+
+## Supervised ML
+
+- Requires coded data or data with a known outcome
+- Uses coded/outcome data to train an algorithm
+- Uses that algorithm to **predict the codes/outcomes for new data** (data not used during the training)
+- Can take the form of a *classification* (predicting a dichotomous or categorical outcome) or a *regression* (predicting a continuous outcome)
+- Algorithms include:
+  - [Linear regression (really!)](https://web.stanford.edu/~hastie/ElemStatLearn/)
+  - Logistic regression
+  - Decision tree
+  - Support Vector Machine
+
+---
+
+# What kind of coded data?
+
+&gt; Want to detect spam? Get samples of spam messages. Want to forecast stocks? Find the price history. Want to find out user preferences? Parse their activities on Facebook (no, Mark, stop collecting it, enough!) (from [ML for Everyone](https://vas3k.com/blog/machine_learning/))
+
+In educational research:
+
+- Assessment data (e.g., [1](https://link.springer.com/article/10.1007/s10956-020-09895-9))
+- Data from log files ("trace data") (e.g., [1](https://www.tandfonline.com/doi/full/10.1080/10508406.2013.837391?casa_token=-8Fm2KCFJ30AAAAA%3Altbc8Y8ci_z-uLJx4se9tgvru9mzm3yqCTFi12ndJ5uM6RDl5YJGG6_4KpUgIK5BYa_Ildeh2qogoQ))
+- Open-ended written responses (e.g., [1](https://link.springer.com/article/10.1007/s10956-020-09889-7), [2](https://doi.org/10.1007/s11423-020-09761-w))
+- Achievement data (i.e., end-of-course grades) (e.g., [1](https://link.springer.com/article/10.1007/s10956-020-09888-8), [2](https://search.proquest.com/docview/2343734516?pq-origsite=gscholar&amp;fromopenview=true))
+
+What else?
+- Drawings/diagrammatic models
+- Data collected for formative purposes (i.e., exit tickets)
+- ???
+
+---
+
+# How is this different from regression?
+
+The _aim_ is different, the algorithms and methods of estimation are not (or, are differences in degree, rather than in kind).
+
+In a linear regression, our aim is to estimate parameters, such as `\(\beta_0\)` (intercept) and `\(\beta_1\)` (slope), and to make inferences about them that are not biased by our particular sample.
+
+In an ML approach, we can use the same linear regression model, but with a goal other than making unbiased inferences about the `\(\beta\)` parameters:
+
+&lt;h4&gt;&lt;center&gt;In supervised ML, our goal is to minimize the difference between a known `\(y\)` and our predictions, `\(\hat{y}\)`&lt;/center&gt;&lt;/h3&gt;
+
+---
+
+# A helpful frame 
+
+## Unsupervised ML
+
+- Does not require coded data; one way to think about unsupervised ML is that its purpose is to discover codes/labels
+- Is used to discover groups among observations/cases or to summarize across variables
+- Can be used in an _exploratory mode_ (see [Nelson, 2020](https://journals.sagepub.com/doi/full/10.1177/0049124118769114?casa_token=EV5XH31qbyAAAAAA%3AFg09JQ1XHOOzlxYT2SSJ06vZv0jG-s4Qfz8oDIQwh2jrZ-jrHNr7xZYL2FwnZtZiokhPalvV1RL2Bw)) 
+- **Warning**: The results of unsupervised ML _cannot_ directly be used to provide codes/outcomes for supervised ML techniques 
+- Can work with both continuous and dichotomous or categorical variables
+- Algorithms include:
+  - Cluster analysis
+  - [Principle Components Analysis (really!)](https://web.stanford.edu/~hastie/ElemStatLearn/)
+  - Latent Dirichlet Allocation (topic modeling)
+
+---
+
+# What technique should I choose?
+
+Do you have coded data or data with a known outcome -- let's say about K-12 students -- and, do you want to:
+
+- _Predict_ how other students with similar data (but without a known outcome) perform?
+- _Scale_ coding that you have done for a sample of data to a larger sample?
+- _Provide timely or instantaneous feedback_, like in many learning analytics systems?
+
+&lt;bold&gt;&lt;h4&gt;&lt;center&gt;Supervised methods may be your best bet&lt;/center&gt;&lt;/h4&gt;&lt;/bold&gt;
+
+---
+
+# What technique should I choose?
+
+Do you not yet have codes/outcomes -- and do you want to?
+
+- _Achieve a starting point_ for qualitative coding, perhaps in a ["computational grounded theory"](https://journals.sagepub.com/doi/full/10.1177/0049124117729703) mode?
+- _Discover groups or patterns in your data_ that may be of interest?
+- _Reduce the number of variables in your dataset_ to a smaller, but perhaps nearly as explanatory/predictive - set of variables?
+
+&lt;bold&gt;&lt;h4&gt;&lt;center&gt;Unsupervised methods may be helpful&lt;/center&gt;&lt;/h4&gt;&lt;/bold&gt;
+
+---
+
+# What if we want to *scale* a coding frame?
+
+In a recent study, I was interested in whether the conversation was meaningful or more superficial
+
+With colleagues, I coded a large number of tweets to the #NGSSchat community ([Rosenberg et al., 2020](https://scholar.google.com/scholar?hl=en&amp;as_sdt=0%2C43&amp;q=NGSSchat&amp;btnG=))
+
+We used a coding frame from [van Bommel et al. (2020)](https://www.sciencedirect.com/science/article/pii/S0742051X19300629):
+
+- Transactional: A transactional interaction refers to those in which participation or learning is acknowledged.
+- Substantive: Discussions of NGSS- and science education-related content.
+- Transformational: Reflections or exhibitions of an individual's change in knowledge or practice 
+
+---
+
+# Let's look at a few examples
+
+`id_string`: 46
+
+&lt;img src="img/ngsschat-example-tweets_1.png" width="40%" /&gt;
+
+We coded this as *substantive*
+
+---
+
+# Let's look at a few examples
+
+`id_string`: 30
+
+&lt;img src="img/ngsschat-example-tweets_2.png" width="40%" /&gt;
+
+We coded this as *transactional*
+
+---
+
+# Let's look at a few examples
+
+`id_string`: 45
+
+&lt;img src="img/ngsschat-example-tweets_3.png" width="40%" /&gt;
+
+We coded this as *substantive*
+
+---
+
+# Let's look at a few examples
+
+`id_string`: 2
+
+&lt;img src="img/ngsschat-example-tweets_4.png" width="40%" /&gt;
+
+We coded this as *transactional*
+
+---
+
+# Can we scale up?
+
+There are *hundreds of thousands* of tweets like this in threads; practically, there's no way we could code all of them.
+
+But, we did code several thousand threads
+
+Can we use these to scale up our coding?
+
+In other words, can the computer use the features of tweets in threads to assign them labels as *transactional* or *substantive* conversations?
+
+---
+# How do I select a model?
+
+One general principle is to **start with the simplest useful model** and to _build toward
+more complex models as helpful_.
+
+This principle applies in multiple ways:
+
+- To choose an algorithm, start with simpler models that you can efficiently use and understand
+- To carry out feature engineering, understand your predictors well by starting with a subset
+- To tune an algorithm, start with a relatively simple set of tuning parameters
+
+This isn't just for beginners or those of us in education; [most spam filters use Support Vector Machines (and used Naive Bayes until recently)](https://vas3k.com/blog/machine_learning/) due to their combination of effectiveness and efficiency "in production."
+
+---
+
+# Super complex?
+
+- Nothing too much, apart from computing power, time, and concerns of 
+- A "check" on your work is your predictions on _test_ set data
+  - *Train data*: Coded/outcome data that you use to train ("estimate") your model
+  - *Validation data&lt;sup&gt;1&lt;/sup&gt;*: Data you use to select a particular algorithm
+  - *Test ("hold-out") data*: Data that you do not use in any way to train your data
+
+- An important way to achieve good performance with test data is to balance between the inherent _bias_ in your algorithm and the _variance_ in the predictions of your algorithm; this is referred to as the **bias-variance** trade-off of _all_ models
+
+.footnote[
+[1] not always/often used, for reasons we'll discuss later
+
+]
+
+---
+
+# Overview of classification modeling
+
+*Nearly identical to that for regression*
+
+1. Split data (into train and test sets)
+1. Engineer features
+1. Specify recipe, model, and workflow
+1. Fit model
+1. Interpret predictive accuracy
+
+---
 
 .panelset[
+
 .panel[.panel-name[1]
 
-**Split data (into train, test, and tuning sets sets)**
+**Split data (into train and test)**
 
 
+```r
+train_test_split &lt;- initial_split(ddd, prop = .70)
+
+data_train &lt;- training(train_test_split)
+data_test &lt;- testing(train_test_split)
+```
 ]
 
 .panel[.panel-name[2]
 
-**Specify recipe, model, and workflow**
- 
+**Engineer feature**
 
+
+```r
+my_rec &lt;- recipe(code ~ ., data = ddd) %&gt;% 
+    add_role(id_string, new_role = "id") %&gt;% 
+    step_normalize(all_numeric_predictors()) %&gt;%
+    step_nzv(all_predictors())
+```
 ]
 
 .panel[.panel-name[3]
 
-**Estimate models and determine tuning parameters' values**
+**Specify recipe, model, and workflow**
+ 
 
+```r
+# specify model
+rf_mod_many &lt;-
+    logistic_reg() %&gt;% 
+    set_engine("glm") %&gt;%
+    set_mode("classification") %&gt;%  # note this
+    step_impute_knn(all_predictors(), all_outcomes())
 
+# specify workflow
+rf_wf_many &lt;-
+    workflow() %&gt;%
+    add_model(rf_mod_many) %&gt;% 
+    add_recipe(my_rec)
+```
 ]
 
 .panel[.panel-name[4]
 
-**Evaluate metrics and predictions**
+**Estimate models and determine tuning parameters' values**
 
 
+```r
+tree_res &lt;- fit(rf_wf_many, data = data_train)
+
+predict(tree_res, data_test)
+
+final_fit &lt;- last_fit(tree_res, train_test_split,
+               metrics = metric_set(roc_auc, accuracy, kap, 
+                                                    sensitivity, specificity, precision))
+```
+]
+
+.panel[.panel-name[5]
+
+**Evaluate predictive accuracy**
+
+
+```r
+# fit stats
+final_fit %&gt;%
+    collect_metrics()
+
+# variable importance plot
+final_fit %&gt;% 
+    pluck(".workflow", 1) %&gt;%   
+    extract_fit_parsnip() %&gt;% 
+    vip(num_features = 10)
+
+final_fit$.predictions[[1]] %&gt;% 
+    select(.pred_class, code) %&gt;% 
+    count(.pred_class, code)
+
+final_fit$.predictions[[1]] %&gt;% 
+    conf_mat(.pred_class, code)
+```
 ]
 ]
 
@@ -95,7 +354,7 @@ class: clear, center
 
 ## .font130[.center[**Thank you!**]]
 &lt;br/&gt;
-.center[&lt;img style="border-radius: 80%;" src="img/jr-cycling" height="200px"/&gt;&lt;br/&gt;**Dr. Joshua Rosrenberg**&lt;br/&gt;&lt;mailto:jmrosenberg@utk.edu&gt;]
+.center[&lt;img style="border-radius: 80%;" src="img/jr-cycling.jpeg" height="200px"/&gt;&lt;br/&gt;**Dr. Joshua Rosenberg**&lt;br/&gt;&lt;mailto:jmrosenberg@utk.edu&gt;]
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>

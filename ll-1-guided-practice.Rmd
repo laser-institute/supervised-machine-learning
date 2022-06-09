@@ -38,7 +38,7 @@ codes <- codes %>%
 dd <- d %>% 
     left_join(codes) %>% 
     filter(!is.na(code)) %>% 
-    filter(code != "OT" & code != "RT" & code != "TB")
+    filter(code != "OT" & code != "RT" & code != "TF")
 
 ddd <- dd %>% 
     select(favorite_count, retweet_count, followers_count, friends_count, statuses_count, display_text_width, 
@@ -56,8 +56,7 @@ ddd <- ddd %>%
               mean_friends_count = mean(friends_count),
               sum_display_text_width = sum(display_text_width),
               n = n()) %>% 
-    left_join(distinct(dd, id_string, code)) %>% 
-    select(-id_string)
+    left_join(distinct(dd, id_string, code))
 
 ddd %>% write_csv("ngsschat-data-joined.csv")
 ```
@@ -68,30 +67,25 @@ ddd %>% write_csv("ngsschat-data-joined.csv")
 train_test_split <- initial_split(ddd, prop = .70)
 
 data_train <- training(train_test_split)
-
-kfcv <- vfold_cv(data_train)
+data_test <- testing(train_test_split)
 ```
 
 ## step 2: pre-processing/feature engineering
 
 ```{r}
 my_rec <- recipe(code ~ ., data = ddd) %>% 
-    # add_role(screen_name, text, new_role = "text variables") %>% # this can be any string
-    # step_novel(all_nominal_predictors()) %>% 
+    add_role(id_string, new_role = "id") %>% 
     step_normalize(all_numeric_predictors()) %>%
-    # step_dummy(all_nominal_predictors()) %>% 
     step_nzv(all_predictors())
-    # step_impute_knn(all_predictors(), all_outcomes())
 ```
 
-## step 3: set up the model, workflow, and tuning grid
+## 3: set up the model, workflow, and tuning grid
 
 ```{r}
 # specify model
 rf_mod_many <-
-    rand_forest(mtry = tune(),
-                min_n = tune()) %>%
-    set_engine("ranger", importance = "impurity") %>%
+    logistic_reg() %>% 
+    set_engine("glm") %>%
     set_mode("classification") %>%  # note this
     step_impute_knn(all_predictors(), all_outcomes())
 
@@ -100,29 +94,20 @@ rf_wf_many <-
     workflow() %>%
     add_model(rf_mod_many) %>% 
     add_recipe(my_rec)
-
-# specify tuning grid
-finalize(mtry(), data_train)
-finalize(min_n(), data_train)
-
-tree_grid <- grid_max_entropy(mtry(range(1, 8)),
-                              min_n(range(2, 40)),
-                              size = 5)
 ```
 
-## 4: fit model with tune_grid
+## 4: fit model
 
 ```{r}
-tree_res <- rf_wf_many %>% 
-    tune_grid(
-        resamples = kfcv,
-        grid = tree_grid,
-        metrics = metric_set(roc_auc, accuracy, kap, sensitivity, specificity, precision)
-    )
+tree_res <- fit(rf_wf_many, data = data_train)
 
-# examine best set of tuning parameters; repeat?
-show_best(tree_res, n = 10)
+predict(tree_res, data_test)
+
+final_fit <- last_fit(tree_res, train_test_split,
+               metrics = metric_set(roc_auc, accuracy, kap, 
+                                                    sensitivity, specificity, precision))
 ```
+
 ### Try it out!
 
 ```{r}
@@ -136,22 +121,6 @@ show_best(tree_res, n = 10)
 ## 5: evaluate
 
 ```{r}
-# examine best set of tuning parameters; repeat?
-show_best(tree_res, n = 5)
-
-# select best set of tuning parameters
-best_tree <- tree_res %>%
-    select_best()
-
-# finalize workflow with best set of tuning parameters
-final_wf <- rf_wf_many %>% 
-    finalize_workflow(best_tree)
-
-# fit split data (separately)
-final_fit <- final_wf %>% 
-    last_fit(train_test_split, metrics = metric_set(roc_auc, accuracy, kap, 
-                                                    sensitivity, specificity, precision))
-
 # fit stats
 final_fit %>%
     collect_metrics()
@@ -159,16 +128,26 @@ final_fit %>%
 # variable importance plot
 final_fit %>% 
     pluck(".workflow", 1) %>%   
-    pull_workflow_fit() %>% 
+    extract_fit_parsnip() %>% 
     vip(num_features = 10)
 
-# test set predictions
-final_fit %>%
-    collect_predictions() 
+final_fit$.predictions[[1]] %>% 
+    select(.pred_class, code) %>% 
+    count(.pred_class, code)
 
-lr_auc <- final_fit %>% 
-    collect_predictions() %>% 
-    roc_curve(code, .pred_0)
+final_fit$.predictions[[1]] %>% 
+    conf_mat(.pred_class, code)
 
-autoplot(lr_auc)
+ff <- final_fit$.predictions[[1]]
+
+dddd <-ddd %>% 
+    mutate(.row = row_number()) %>% 
+    select(.row, id_string)
+
+ff %>% 
+    left_join(dddd) %>% 
+    mutate(id_string = as.integer(id_string)) %>% 
+    arrange(id_string)
 ```
+
+https://jmichaelrosenberg.shinyapps.io/ngsschat-shiny/?_ga=2.38519205.702775292.1654809427-1030483970.1645622648
