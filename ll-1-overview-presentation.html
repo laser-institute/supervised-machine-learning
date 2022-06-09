@@ -248,13 +248,13 @@ This isn't just for beginners or those of us in education; [most spam filters us
 
 # Overview of classification modeling
 
-*Nearly identical to that for regression*
-
-1. Split data (into train and test sets)
+1. Split data
 1. Engineer features
 1. Specify recipe, model, and workflow
 1. Fit model
-1. Interpret predictive accuracy
+1. Evaluate accuracy
+
+This is the basic process we'll follow for this and the next three learning labs
 
 ---
 
@@ -262,7 +262,7 @@ This isn't just for beginners or those of us in education; [most spam filters us
 
 .panel[.panel-name[1]
 
-**Split data (into train and test)**
+**Split data**
 
 
 ```r
@@ -275,12 +275,11 @@ data_test &lt;- testing(train_test_split)
 
 .panel[.panel-name[2]
 
-**Engineer feature**
+**Engineer features**
 
 
 ```r
 my_rec &lt;- recipe(code ~ ., data = ddd) %&gt;% 
-    add_role(id_string, new_role = "id") %&gt;% 
     step_normalize(all_numeric_predictors()) %&gt;%
     step_nzv(all_predictors())
 ```
@@ -309,7 +308,7 @@ rf_wf_many &lt;-
 
 .panel[.panel-name[4]
 
-**Estimate models and determine tuning parameters' values**
+**Fit model**
 
 
 ```r
@@ -325,7 +324,7 @@ final_fit &lt;- last_fit(tree_res, train_test_split,
 
 .panel[.panel-name[5]
 
-**Evaluate predictive accuracy**
+**Evaluate accuracy**
 
 
 ```r
@@ -333,21 +332,64 @@ final_fit &lt;- last_fit(tree_res, train_test_split,
 final_fit %&gt;%
     collect_metrics()
 
-# variable importance plot
-final_fit %&gt;% 
-    pluck(".workflow", 1) %&gt;%   
-    extract_fit_parsnip() %&gt;% 
-    vip(num_features = 10)
-
-final_fit$.predictions[[1]] %&gt;% 
-    select(.pred_class, code) %&gt;% 
-    count(.pred_class, code)
-
+# confusion matrix
 final_fit$.predictions[[1]] %&gt;% 
     conf_mat(.pred_class, code)
 ```
 ]
 ]
+
+---
+
+# Let's see how the model did
+
+`id_string`: 46
+
+&lt;img src="img/ngsschat-example-tweets_1.png" width="40%" /&gt;
+
+We coded this as *substantive*
+The model predicted: *substantive* **correct!**
+
+---
+
+# Let's see how the model did
+
+`id_string`: 30
+
+&lt;img src="img/ngsschat-example-tweets_2.png" width="40%" /&gt;
+
+We coded this as *transactional*
+The model predicted: *substantive* **correct!**
+
+---
+
+# Let's see how the model did
+
+`id_string`: 45
+
+&lt;img src="img/ngsschat-example-tweets_3.png" width="40%" /&gt;
+
+We coded this as *substantive*
+The model predicted: *transactional* **incorrect; why?**
+
+---
+
+# Let's see how the model did
+
+`id_string`: 2
+
+&lt;img src="img/ngsschat-example-tweets_4.png" width="40%" /&gt;
+
+We coded this as *transactional*
+The model predicted: *substantive* **incorrect; why?**
+
+---
+
+# In the remainder of this learning lab, you'll dive deeper into this model
+
+- **Guided walkthrough**: You'll run all of this code, focusing on interpreting the predictions
+- **Independent practice**: In the independent practice, you'll focus on interpreting the fit measures (agreement, Kappa, and others)
+- **Readings**: There are two readings, one closely related to the guided walkthrough, the other an example of using supervised machine learning like used here for assessment purposes
 
 ---
 class: clear, center

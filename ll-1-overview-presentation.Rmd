@@ -277,13 +277,13 @@ This isn't just for beginners or those of us in education; [most spam filters us
 
 # Overview of classification modeling
 
-*Nearly identical to that for regression*
-
-1. Split data (into train and test sets)
+1. Split data
 1. Engineer features
 1. Specify recipe, model, and workflow
 1. Fit model
-1. Interpret predictive accuracy
+1. Evaluate accuracy
+
+This is the basic process we'll follow for this and the next three learning labs
 
 ---
 
@@ -291,7 +291,7 @@ This isn't just for beginners or those of us in education; [most spam filters us
 
 .panel[.panel-name[1]
 
-**Split data (into train and test)**
+**Split data**
 
 ```{r panel-chunk-1, echo = TRUE, eval = FALSE}
 train_test_split <- initial_split(ddd, prop = .70)
@@ -307,7 +307,6 @@ data_test <- testing(train_test_split)
 
 ```{r panel-chunk-2, echo = TRUE, eval = FALSE}
 my_rec <- recipe(code ~ ., data = ddd) %>% 
-    add_role(id_string, new_role = "id") %>% 
     step_normalize(all_numeric_predictors()) %>%
     step_nzv(all_predictors())
 ```
@@ -335,7 +334,7 @@ rf_wf_many <-
 
 .panel[.panel-name[4]
 
-**Fit models**
+**Fit model**
 
 ```{r panel-chunk-4, echo = TRUE, eval = FALSE}
 tree_res <- fit(rf_wf_many, data = data_train)
@@ -350,7 +349,7 @@ final_fit <- last_fit(tree_res, train_test_split,
 
 .panel[.panel-name[5]
 
-**Evaluate predictive accuracy**
+**Evaluate accuracy**
 
 ```{r panel-chunk-5, echo = TRUE, eval = FALSE}
 # fit stats
