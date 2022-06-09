@@ -20,3 +20,19 @@ bibliography: lit/references.bib
 knitr::opts_chunk$set(echo = TRUE, error = TRUE)
 ```
 
+For this independent practice, you will dive into and interpret the fit measures in more depth.
+
+## Overview of classification measures
+
+- We are interested in predicting a _dichotomous_ or _continuous_ outcome; our predictions are _probabilities_
+- These probabilities are often changed (through the use of a threshold - often 0.50) back into dichotomous or categorical labels
+- Metrics for how well the model performed include:
+  - *Accuracy*: For the known codes, what percentage of the predictions are correct
+  - *Cohen's $\kappa$*: Same as accuracy, while account for the base rate of (chance) agreement
+  - *Sensitivity (AKA recall)*: Among the true "positives", what percentage are classified as "positive"?
+  - *Specificity*: Among the true "negatives", what percentage are classified as "negative"?
+  - *ROC AUC*: For different levels of the threshold, what is the sensitivity and specificity?
+
+```{r}
+
+```

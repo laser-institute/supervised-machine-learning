@@ -123,12 +123,21 @@ tree_res <- rf_wf_many %>%
 # examine best set of tuning parameters; repeat?
 show_best(tree_res, n = 10)
 ```
+### Try it out!
+
+```{r}
+
+```
+
+### What do you notice?
+
+- 
 
 ## 5: evaluate
 
 ```{r}
 # examine best set of tuning parameters; repeat?
-show_best(tree_res, n = 10)
+show_best(tree_res, n = 5)
 
 # select best set of tuning parameters
 best_tree <- tree_res %>%

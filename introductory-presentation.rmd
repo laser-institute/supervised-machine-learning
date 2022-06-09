@@ -260,33 +260,32 @@ You'll use three different data sets while doing so.
 
 # Machine Learning Learning Lab 1:
 
-- Motivation:
-- Data: 
-- Skills: 
+- Motivation: We want to train a computer to learn and reproduce coding we carried out
+- Data: #NGSSchat data on transactional and substantive conversations
+- Skills: Understanding how prediction differs from explanation; splitting data into a train and test set; 
 
 ---
 
 # Machine Learning Learning Lab 2
 
-- Motivation:
-- Data: 
-- Skills: 
+- Motivation: After training our computer, we realized we want to change our model
+- Data: Survey, trace, and discussion data from online classes
+- Skills: Feature engineering, resampling and cross-validation
 
 ---
 
 # Machine Learning Learning Lab 3
 
-- Motivation:
-- Data: 
-- Skills: 
-
+- Motivation: We want to see whether a more complex model performs better
+- Data: #NGSSchat data on transactional and substantive conversations
+- Skills: Changing models (algorithms), determining the best tuning parameters
 ---
 
 # Machine Learning Learning Lab 4
 
-- Motivation:
-- Data: 
-- Skills:
+- Motivation: We have complex trace data, but we don't have any codes (yet)
+- Data: ASSISTments data 
+- Skills: estimating latent profiles, computational grounded theory
 
 # Thanks!
 
