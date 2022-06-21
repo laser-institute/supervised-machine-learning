@@ -1,7 +1,6 @@
 ---
-title: 'Unit 1 Readings: What is SNA?'
-subtitle: "ECI 589 Social Network Analysis and Education"
-author: "Dr. Shaun Kellogg"
+title: 'Learning Lab 1 Essential Readings'
+author: "Dr. Joshua Rosenberg"
 date: "`r format(Sys.Date(),'%B %e, %Y')`"
 output:
   html_document:

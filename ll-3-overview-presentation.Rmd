@@ -1,0 +1,115 @@
+---
+title: "Machine Learning Learning Lab 2"
+subtitle: "Overview Presentation"
+author: "**Dr. Joshua Rosenberg**"
+institute: "LASER Institute"
+date: '`r format(Sys.time(), "%B %d, %Y")`'
+output:
+  xaringan::moon_reader:
+    css:
+     - default
+     - css/laser.css
+     - css/laser-fonts.css
+    lib_dir: libs                        # creates directory for libraries
+    seal: false                          # false: custom title slide
+    nature:
+      highlightStyle: default         # highlighting syntax for code
+      highlightLines: true               # true: enables code line highlighting 
+      highlightLanguage: ["r"]           # languages to highlight
+      countIncrementalSlides: false      # false: disables counting of incremental slides
+      ratio: "16:9"                      # 4:3 for standard size,16:9
+      slideNumberFormat: |
+       <div class="progress-bar-container">
+        <div class="progress-bar" style="width: calc(%current% / %total% * 100%);">
+        </div>
+       </div>
+---
+class: clear, title-slide, inverse, center, top, middle
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r, echo=FALSE}
+# then load all the relevant packages
+pacman::p_load(pacman, knitr, tidyverse, readxl)
+```
+
+```{r xaringan-panelset, echo=FALSE}
+xaringanExtra::use_panelset()
+```
+
+```{r xaringanExtra-clipboard, echo=FALSE}
+# these allow any code snippets to be copied to the clipboard so they 
+# can be pasted easily
+htmltools::tagList(
+  xaringanExtra::use_clipboard(
+    button_text = "<i class=\"fa fa-clipboard\"></i>",
+    success_text = "<i class=\"fa fa-check\" style=\"color: #90BE6D\"></i>",
+  ),
+  rmarkdown::html_dependency_font_awesome()
+)
+```
+```{r xaringan-extras, echo=FALSE}
+xaringanExtra::use_tile_view()
+
+```
+
+# `r rmarkdown::metadata$title`
+----
+### `r rmarkdown::metadata$author`
+### `r format(Sys.time(), "%B %d, %Y")`
+
+---
+
+# Agenda
+
+.pull-left[
+## Part 1: Core Concepts
+- Cross-validation (k-folds and v-folds)
+- feature engineering
+- bias-bariance trade-off
+]
+
+.pull-right[
+
+## Part 2: R Code-Along
+- MVS data
+- comparing fit measures over time
+]
+
+
+.panelset[
+.panel[.panel-name[1]
+
+---
+
+# How do I select a model?
+
+One general principle is to **start with the simplest useful model** and to _build toward
+more complex models as helpfuL_.
+
+This principle applies in multiple ways:
+
+- To choose an algorithm, start with simpler models that you can efficiently use and understand
+- To carry out feature engineering, understand your predictors well by starting with a subset
+- To tune an algorithm, start with a relatively simple set of tuning parameters
+
+This isn't just for beginners or those of us in education; [most spam filters use Support Vector Machines (and used Naive Bayes until recently)](https://vas3k.com/blog/machine_learning/) due to their combination of effectiveness and efficiency "in production."
+
+---
+
+# Overview of regression modeling
+
+1. Split data (into train, test, and tuning sets sets)
+1. Specify recipe, model, and workflow
+1. Estimate models and determine tuning parameters' values
+1. Evaluate metrics and predictions
+
+---
+
+class: clear, center
+
+## .font130[.center[**Thank you!**]]
+<br/>
+.center[<img style="border-radius: 80%;" src="img/jr-cycling" height="200px"/><br/>**Dr. Joshua Rosrenberg**<br/><mailto:jmrosenberg@utk.edu>]
