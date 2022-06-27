@@ -71,10 +71,16 @@ xaringanExtra::use_tile_view()
 
 .pull-right[
 
-## Part 2: R Code-Along
+## Part 2: R Code Examples
 - Estimating a logistic regression model
 - Interpreting the model in terms of its predictive accuracy
 ]
+
+---
+
+class: clear, inverse, center, middle
+
+# Core Concepts
 
 ---
 
@@ -272,6 +278,12 @@ This isn't just for beginners or those of us in education; [most spam filters us
 [1] not always/often used, for reasons we'll discuss later
 
 ]
+
+---
+
+class: clear, inverse, center, middle
+
+# Code Examples
 
 ---
 

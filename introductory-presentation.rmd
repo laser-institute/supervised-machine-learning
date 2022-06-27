@@ -258,7 +258,7 @@ You'll use three different data sets while doing so.
 
 ---
 
-# Machine Learning Learning Lab 1:
+# Machine Learning Learning Lab 1: Focusing on prediction
 
 - Motivation: We want to train a computer to learn and reproduce coding we carried out
 - Data: #NGSSchat data on transactional and substantive conversations
@@ -266,7 +266,7 @@ You'll use three different data sets while doing so.
 
 ---
 
-# Machine Learning Learning Lab 2
+# Machine Learning Learning Lab 2: Feature engineering
 
 - Motivation: After training our computer, we realized we want to change our model
 - Data: Survey, trace, and discussion data from online classes
@@ -274,14 +274,14 @@ You'll use three different data sets while doing so.
 
 ---
 
-# Machine Learning Learning Lab 3
+# Machine Learning Learning Lab 3: Fine-tuning the model
 
 - Motivation: We want to see whether a more complex model performs better
 - Data: #NGSSchat data on transactional and substantive conversations
 - Skills: Changing models (algorithms), determining the best tuning parameters
 ---
 
-# Machine Learning Learning Lab 4
+# Machine Learning Learning Lab 4: Finding groups (or codes) in data
 
 - Motivation: We have complex trace data, but we don't have any codes (yet)
 - Data: ASSISTments data 

@@ -20,37 +20,12 @@ bibliography: lit/references.bib
 knitr::opts_chunk$set(echo = TRUE, error = TRUE, eval = FALSE)
 ```
 
+In the independent practice, you'll explore a different kind of resampling, bootstrap
+
 ## Background and Setup
 
-For this independent practice, you will dive into and interpret the fit measures in more depth.
+xx
 
-Let's return to the `final_fit` object from the guided practice --- starting with the confusion matrix. You'll have to run the code in your guided practice document through that step.
+## xx
 
-```{r}
-final_fit$.predictions[[1]] %>% 
-    conf_mat(.pred_class, code)
-```
-
-This is one of the most fundamental ways we can interpret a classification model---but there are other means, too.
-
-Next, run the `collect_metrics()` function with your `final_fit` object to examine some overview statistics for the fit of the model.
-
-```{r}
-
-```
-
-Please interpret each of these statistics, using the guidelines provided below *in your own words*
-
-- *Accuracy*: For the known codes, what percentage of the predictions are correct
-- *Cohen's $\kappa$*: Same as accuracy, while account for the base rate of (chance) agreement
-- *Sensitivity (AKA recall)*: Among the true "positives", what percentage are classified as "positive"?
-- *Specificity*: Among the true "negatives", what percentage are classified as "negative"?
-- *ROC AUC*: For different levels of the threshold, what is the sensitivity and specificity?
-
-## Interpretations of fit metrics
-
-- *Accuracy*: 
-- *Cohen's $\kappa$*: 
-- *Sensitivity (AKA recall)*: 
-- *Specificity*: 
-- *ROC AUC*: 
+xx

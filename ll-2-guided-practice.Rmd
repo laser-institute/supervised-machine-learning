@@ -19,154 +19,107 @@ bibliography: lit/references.bib
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-In the overview presentation for this learning lab, we considered five steps in our supervised machine learning process. Those steps are mirrored here---with the addition of a preamble step whereby we load and process the data.
+Here, you'll run all of this code, focusing on manually and then automatically calculating fit measures across the different samples.
 
-## Step 0: Loading and setting up
 
-First, let's load the packages we'll use---the familiar {tidyverse} and several others focused on modeling. Like in earlier learning labs, click the green arrow to run the code chunk.
+# Let's take a look at the data
 
-```{r}
-library(tidyverse)
-library(here)
-library(tidymodels)
-library(vip)
-library(ranger)
+```{r, include = FALSE}
+d <- read_csv("data/data-to-model.csv")
+
+d <- select(d, -time_spent) # this is another outcome
+
+d <- mutate(d, passing_grade = ifelse(final_grade > 70, 1, 0),
+                  passing_grade = as.factor(passing_grade)) %>% 
+    select(-final_grade)
 ```
 
-Next, we'll load two data sources, one with the tweets, the other with our qualitative codes. 
-
-*Note*: We created a means of visualizing the threads to make coding them easier; that's here and it provides a means of seeing what the raw data is like: https://jmichaelrosenberg.shinyapps.io/ngsschat-shiny/
-
 ```{r}
-d <- read_rds(here("data", "ngsschat-data.rds"))
-
-codes <- read_csv(here("data", "ngsschat-qualitative-codes.csv"))
+d %>% 
+    glimpse()
 ```
 
-We'll do some processing of the data here. This could seem like a step to skip, but it's quite important as perhaps the most important part of any machine learning model is the data that goes into it. Here, read the comments after each line of code, and then run the code chunk to proceed. 
+---
 
-```{r}
-codes <- codes %>% 
-    select(id_string = ID, code = Code) # this changes the variables names in the codes data frame to be the esame as in the tweets
+# Let's walk through a few steps
 
-dd <- d %>% 
-    left_join(codes) %>% # join the two files together
-    filter(!is.na(code)) %>% 
-    filter(code != "OT" & code != "RT" & code != "TF") # here, because TF (transformational) codes are so rare, we exclude them, as well as OT (off-topic) and RT (retweet) tweets and those missing a code
+*Note how these steps are the same as in the classification example for learning lab 1*
 
-ddd <- dd %>% 
-    select(favorite_count, retweet_count, followers_count, friends_count, statuses_count, display_text_width, 
-           code, id_string) %>% # select the variables we'll use for our supervised machine learning model
-    filter(!is.na(favorite_count)) %>% 
-    group_by(id_string) %>% # group the tweets by thread and calculate summary variables
-    summarize(mean_favorite_count = mean(favorite_count), # this and the next are means; this could, though, be a sum; it represents the average number of favorites each tweet in the thread received
-              mean_retweet_count = mean(retweet_count), # how many retweets each tweet received
-              sum_display_text_width = sum(display_text_width), # this is a variable for the length of the tweet; sum seems more sensible than mean
-              n = n()) %>% # the number of tweets in the thread
-    left_join(distinct(dd, id_string, code)) %>%  # here, we join back the codes, as we lost them in the summary step
-    select(-id_string)
-```
+.panelset[
 
-**Your turn!**
+.panel[.panel-name[1]
 
-In the chunk below, examine the prepared data using a function or means of your choice. 
+**Split data**
 
-Note its dimensions --- especially how many rows it has. Add a few dashes after the chunk with your observations.
 
-```{r}
+```{r panel-chunk-1, echo = TRUE, eval = FALSE}
+train_test_split <- initial_split(d_class, prop = .70)
 
-```
-
-## Step 1. Split data
-
-Here, we split the data. Why do we choose an 80% split? This is to reserve a sufficient number of cases for testing our fitted model later. You can change this number if you wish.
-
-```{r}
-train_test_split <- initial_split(ddd, prop = .80)
 data_train <- training(train_test_split)
+
+kfcv <- vfold_cv(data_train) # this differentiates this from what we did before
+# before, we simple used data_train to fit our model
 ```
+]
 
-## Step 2: Engineer features
+.panel[.panel-name[2]
 
-We'll engage in some basic feature engineering. 
+**Engineer features**
 
-**Your turn!**
-
-Before running the code below, can you add a feature engineering step to the code above?
-
-Read more about feature engineering here and get ideas for adding a step: https://www.tmwr.org/recipes.html
-
-```{r}
-my_rec <- recipe(code ~ ., data = ddd) %>% 
+```{r panel-chunk-2, echo = TRUE, eval = FALSE}
+sci_rec <- recipe(passing_grade ~ ., data = d_class) %>% 
+    add_role(student_id, course_id, new_role = "ID variable") %>% # this can be any string
+    step_novel(all_nominal_predictors()) %>% 
     step_normalize(all_numeric_predictors()) %>%
-    step_nzv(all_predictors())
+    step_dummy(all_nominal_predictors()) %>% 
+    step_nzv(all_predictors()) %>% 
+    step_impute_knn(all_predictors(), all_outcomes())
 ```
+]
 
-## Step 3: Specify recipe, model, and workflow
+.panel[.panel-name[3]
 
-Here, we specify one of the simplest supervised machine learning models for _classification_, a logistic regression. We do this by:
-
-- using the `logistic_reg()` function to set the *model*
-- using `set_engine("glm")` to set the *engine*
-- finally, using `set_mode("classification"))` to set the "*mode* to classification; this could be changed to regression for a continuous/numeric outcome
-
-```{r}
+**Specify recipe, model, and workflow**
+ 
+```{r panel-chunk-3, echo = TRUE, eval = FALSE}
 # specify model
 rf_mod_many <-
-    logistic_reg() %>% 
-    set_engine("glm") %>%
-    set_mode("classification")
-```
+    rand_forest(mtry = tune(),
+                min_n = tune()) %>%
+    set_engine("ranger", importance = "impurity") %>%
+    set_mode("classification") # note this difference!
 
-Last, we'll put the pieces together - the model and recipe.
-
-```{r}
+# specify workflow
 rf_wf_many <-
     workflow() %>%
     add_model(rf_mod_many) %>% 
-    add_recipe(my_rec)
+    add_recipe(sci_rec)
 ```
+]
 
-## Step 4: Fit model
+.panel[.panel-name[4]
 
-Finally, we'll fit the model, using our training data to do so. 
+**Fit model**
 
-`last_fit` is the key function here - note that it uses the `train_test_split` data---not just the training data. Here, we fit the data _using the training data set_ and evaluate its accuracy using the _testing data set_ (which is not used to train the model).
+```{r panel-chunk-4, echo = TRUE, eval = FALSE}
+tree_res <- fit_resamples(rf_wf_many, data = data_train)
 
-```{r}
-fitted_model <- fit(rf_wf_many, data = data_train)
+predict(tree_res, data_test)
 
-final_fit <- last_fit(fitted_model, train_test_split,
-               metrics = metric_set(roc_auc, accuracy, kap, sensitivity, specificity, precision))
+final_fit <- last_fit(tree_res, train_test_split,
+               metrics = metric_set(roc_auc, accuracy, kap, 
+                                                    sensitivity, specificity, precision))
 ```
+]
 
-### Try it out!
+.panel[.panel-name[5]
 
-Type `final_fit` below; this is the final, fitted model---one that can be interpreted further in the next step!
+**Evaluate accuracy**
 
-```{r}
-
+```{r panel-chunk-5, echo = TRUE, eval = FALSE}
+# fit stats
+final_fit %>%
+    collect_metrics()
 ```
-
-## Step 5: Interpret accuracy
-
-### Try it out!
-
-Rrun the code below to calculate a _confusion matrix_:
-
-```{r}
-final_fit$.predictions[[1]] %>% 
-    conf_mat(.pred_class, code)
-```
-
-What do you notice from the above two? More generally, how did the model do? 
-
-- 
-
-Considering what you've read in the two required readings, is this suitable and appropriate for scaling up? Add several notes on this, to
-
--
-
-### 🧶 Knit & Check ✅
-
-Congratulations - you've completed the Machine Learning Learning Lab 1 Guided Practice! Consider moving on to the independent practice next.
+]
+]
