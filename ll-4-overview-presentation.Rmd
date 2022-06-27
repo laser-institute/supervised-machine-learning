@@ -1,0 +1,197 @@
+---
+title: "Machine Learning Learning Lab 3"
+subtitle: "Overview Presentation"
+author: "**Dr. Joshua Rosenberg**"
+institute: "LASER Institute"
+date: '`r format(Sys.time(), "%B %d, %Y")`'
+output:
+  xaringan::moon_reader:
+    css:
+     - default
+     - css/laser.css
+     - css/laser-fonts.css
+    lib_dir: libs                        # creates directory for libraries
+    seal: false                          # false: custom title slide
+    nature:
+      highlightStyle: default         # highlighting syntax for code
+      highlightLines: true               # true: enables code line highlighting 
+      highlightLanguage: ["r"]           # languages to highlight
+      countIncrementalSlides: false      # false: disables counting of incremental slides
+      ratio: "16:9"                      # 4:3 for standard size,16:9
+      slideNumberFormat: |
+       <div class="progress-bar-container">
+        <div class="progress-bar" style="width: calc(%current% / %total% * 100%);">
+        </div>
+       </div>
+---
+class: clear, title-slide, inverse, center, top, middle
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r, echo=FALSE}
+# then load all the relevant packages
+pacman::p_load(pacman, knitr, tidyverse, readxl)
+```
+
+```{r xaringan-panelset, echo=FALSE}
+xaringanExtra::use_panelset()
+```
+
+```{r xaringanExtra-clipboard, echo=FALSE}
+# these allow any code snippets to be copied to the clipboard so they 
+# can be pasted easily
+htmltools::tagList(
+  xaringanExtra::use_clipboard(
+    button_text = "<i class=\"fa fa-clipboard\"></i>",
+    success_text = "<i class=\"fa fa-check\" style=\"color: #90BE6D\"></i>",
+  ),
+  rmarkdown::html_dependency_font_awesome()
+)
+```
+```{r xaringan-extras, echo=FALSE}
+xaringanExtra::use_tile_view()
+
+```
+
+# `r rmarkdown::metadata$title`
+----
+### `r rmarkdown::metadata$author`
+### `r format(Sys.time(), "%B %d, %Y")`
+
+---
+
+# Background
+
+- focus: here, we wish to use uncoded data
+- focus: estimating codes
+- data: assistments
+
+---
+
+class: clear, inverse, center, middle
+
+# Core Concepts
+
+---
+
+# Unsupervised methods
+
+---
+
+# Range of data
+
+---
+
+# LPA
+
+https://data-edu.github.io/tidyLPA/index.html
+
+---
+
+# Computational grounded theory
+
+---
+
+# xx
+
+xx
+
+---
+
+class: clear, inverse, center, middle
+
+# Code Examples
+
+---
+
+.panelset[
+
+.panel[.panel-name[1]
+
+**Split data**
+
+```{r panel-chunk-1, echo = TRUE, eval = FALSE}
+library(tidyLPA)
+library(dplyr)
+
+pisaUSA15[1:100, ] %>%
+  select(broad_interest, enjoyment, self_efficacy) %>%
+  single_imputation() %>%
+  estimate_profiles(3)
+
+
+```
+]
+
+.panel[.panel-name[2]
+
+**Engineer features**
+
+```{r panel-chunk-2, echo = TRUE, eval = FALSE}
+
+```
+]
+
+.panel[.panel-name[3]
+
+**Specify recipe, model, and workflow**
+ 
+```{r panel-chunk-3, echo = TRUE, eval = FALSE}
+pisaUSA15[1:100, ] %>%
+    select(broad_interest, enjoyment, self_efficacy) %>%
+    single_imputation() %>%
+    estimate_profiles(1:3, 
+                      variances = c("equal", "varying"),
+                      covariances = c("zero", "varying")) %>%
+    compare_solutions(statistics = c("AIC", "BIC"))
+
+```
+]
+
+.panel[.panel-name[4]
+
+**Fit model**
+
+```{r panel-chunk-4, echo = TRUE, eval = FALSE}
+m3 <- pisaUSA15[1:100, ] %>%
+    select(broad_interest, enjoyment, self_efficacy) %>%
+    estimate_profiles(3)
+
+get_estimates(m3)
+```
+]
+
+.panel[.panel-name[5]
+
+**Evaluate accuracy**
+
+```{r panel-chunk-5, echo = TRUE, eval = FALSE}
+pisaUSA15[1:100, ] %>%
+    select(broad_interest, enjoyment, self_efficacy) %>%
+    scale() %>%
+    estimate_profiles(4) %>%
+    plot_profiles()
+
+get_data(m3)
+get_fit(m4)
+```
+]
+]
+
+---
+
+# In the remainder of this learning lab, you'll dive deeper into this model
+
+- **Guided walkthrough**: an LPA
+- **Independent practice**: your own data
+- **Readings**: paper: nelson, CGT
+
+---
+
+class: clear, center
+
+## .font130[.center[**Thank you!**]]
+<br/>
+.center[<img style="border-radius: 80%;" src="img/jr-cycling" height="200px"/><br/>**Dr. Joshua Rosrenberg**<br/><mailto:jmrosenberg@utk.edu>]

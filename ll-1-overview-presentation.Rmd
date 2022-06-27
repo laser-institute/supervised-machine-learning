@@ -61,6 +61,18 @@ xaringanExtra::use_tile_view()
 ### `r format(Sys.time(), "%B %d, %Y")`
 
 ---
+
+# Background
+
+- motivation: we are interested in using one year of coded data to train a computer to be able to code a second year's worth of data
+    - here, our aim is to scale an existing set of coded data 
+    - driving question: how is the aim of prediction different from explanation?
+    - core idea: train and test set of data
+
+We'll focus on a logistic regression model - no more, and no less
+
+---
+
 # Agenda
 
 .pull-left[

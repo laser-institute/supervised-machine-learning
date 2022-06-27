@@ -62,6 +62,15 @@ xaringanExtra::use_tile_view()
 
 ---
 
+# Background
+
+- motivation: our model does well, but we want to make it even better
+    - here, our aim is to fit a bunch of models using the training data and see how well they do on the test data, but, if we do this more than once, we may be over-fitting to the particular sample
+    - a way around this is resampling through k-fold cross-validation
+    - driving question: what's the best model I can create to predict students' chance of passing a course?
+
+---
+
 # Agenda
 
 .pull-left[
@@ -329,6 +338,12 @@ d <- mutate(d, passing_grade = ifelse(final_grade > 70, 1, 0),
 d %>% 
     glimpse()
 ```
+
+---
+
+class: clear, inverse, center, middle
+
+# Code Examples
 
 ---
 

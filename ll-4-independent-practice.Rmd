@@ -1,0 +1,31 @@
+---
+title: 'Unit 1 Case Study: Hashtag Common Core'
+subtitle: "ECI 589 Intro to SNA and Education"
+author: "Dr. Shaun Kellogg"
+date: "`r format(Sys.Date(),'%B %e, %Y')`"
+output:
+  html_document:
+    toc: yes
+    toc_depth: 4
+    toc_float: yes
+    code_folding: show
+    code_download: TRUE
+editor_options:
+  markdown:
+    wrap: 72
+bibliography: lit/references.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, error = TRUE, eval = FALSE)
+```
+
+In the independent practice, you'll explore a different kind of resampling, bootstrap
+
+## Background and Setup
+
+xx
+
+## xx
+
+xx

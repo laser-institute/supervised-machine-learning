@@ -1,0 +1,23 @@
+---
+title: 'Learning Lab 1 Guided Practice'
+author: "Dr. Joshua Kellogg"
+date: "`r format(Sys.Date(),'%B %e, %Y')`"
+output:
+  html_document:
+    toc: yes
+    toc_depth: 4
+    toc_float: yes
+    code_folding: show
+    code_download: TRUE
+editor_options:
+  markdown:
+    wrap: 72
+bibliography: lit/references.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Here, you'll run all of this code, focusing on manually and then automatically calculating fit measures across the different samples.
+
