@@ -1,5 +1,5 @@
 ---
-title: 'Learning Lab 2 Essential Readings'
+title: 'Learning Lab 3 Essential Readings'
 author: "Dr. Joshua Rosenberg"
 date: "`r format(Sys.Date(),'%B %e, %Y')`"
 output:

@@ -1,5 +1,5 @@
 ---
-title: 'Learning Lab 1 Guided Practice'
+title: 'Learning Lab 4 Guided Practice'
 author: "Dr. Joshua Kellogg"
 date: "`r format(Sys.Date(),'%B %e, %Y')`"
 output:
@@ -19,5 +19,5 @@ bibliography: lit/references.bib
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-Here, you'll run all of this code, focusing on manually and then automatically calculating fit measures across the different samples.
+Here, you'll run all of this code.
 
