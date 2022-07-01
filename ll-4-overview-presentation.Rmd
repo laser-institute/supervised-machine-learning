@@ -16,7 +16,7 @@ output:
       highlightStyle: default         # highlighting syntax for code
       highlightLines: true               # true: enables code line highlighting 
       highlightLanguage: ["r"]           # languages to highlight
-      countIncrementalSlides: false      # false: disables counting of incremental slides
+"      countIncrementalSlides: false      # false: disables counting of incremental slides
       ratio: "16:9"                      # 4:3 for standard size,16:9
       slideNumberFormat: |
        <div class="progress-bar-container">
@@ -40,18 +40,6 @@ xaringanExtra::use_panelset()
 ```
 
 ```{r xaringanExtra-clipboard, echo=FALSE}
-# these allow any code snippets to be copied to the clipboard so they 
-# can be pasted easily
-htmltools::tagList(
-  xaringanExtra::use_clipboard(
-    button_text = "<i class=\"fa fa-clipboard\"></i>",
-    success_text = "<i class=\"fa fa-check\" style=\"color: #90BE6D\"></i>",
-  ),
-  rmarkdown::html_dependency_font_awesome()
-)
-```
-```{r xaringan-extras, echo=FALSE}
-xaringanExtra::use_tile_view()
 
 ```
 
