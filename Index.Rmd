@@ -1,0 +1,18 @@
+---
+title: "Machine Learning Learning Labs"
+author: "LASER Institute"
+date: '2022-07-01'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Learning Lab #1
+
+- [Presentation](/ll-1-overview-presentation.html)
+- Guided Practice
+- Independent Practice
+- Readings
+
