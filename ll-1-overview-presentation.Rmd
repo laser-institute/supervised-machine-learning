@@ -311,6 +311,17 @@ This is the basic process we'll follow for this and the next three learning labs
 
 ---
 
+# Algorithm talk
+
+- Algorithms (or estimation procedures - or informally models) refer to the _structure_ and _process_ of estimating the _parameters_ of a model
+
+- This definition provides a wide range of options for what kinds of algorithms we use (from simple to very complex, as we discuss in a later learning lab)
+
+- For now, we focus on a familiar, easy to interpret algorithm, one that is still often used in sophisticated, rigorous analyses (e.g., [1](https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=7373578&casa_token=xqYfYUtB7Y8AAAAA:Hv9EY3EnDjdtCt1chhsO6cLP_QYcxRSdYQGNzZWTJfkdA2BlDUK5ZekrMqJjobJLj_mUDiQ&tag=1), [2](https://dl.acm.org/doi/abs/10.1145/3448139.3448154?casa_token=skmk5XGbDOUAAAAA:Z0Kl4nyjpOGFA6RuFTiiLWaC_KxH1vkQ72Kr0hetXcumRdvu8tPYlCX12AgHr9aS0Fp3L-Uu0p4), also [this](https://linkinghub.elsevier.com/retrieve/pii/S0895435618310813)), _logistic regression_
+    - This is a linear model with a binary ("yes" or "no") outcome
+
+---
+
 .panelset[
 
 .panel[.panel-name[1]
