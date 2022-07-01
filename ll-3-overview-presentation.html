@@ -127,11 +127,11 @@ This isn't just for beginners or those of us in education; [most spam filters us
 
 
 .pull-left[
-&lt;img src="img/bias-variance-data-1.png" width=300 height=400&gt;
+&lt;img src="img/bias-variance-data-1.png" width=400 height=400&gt;
 ]
 
 .pull-right[
-&lt;img src="img/bias-variance-data-2.png" width=300 height=400&gt;
+&lt;img src="img/bias-variance-data-2.png" width=400 height=400&gt;
 ]
 
 ---
@@ -141,11 +141,11 @@ This isn't just for beginners or those of us in education; [most spam filters us
 
 
 .pull-left[
-&lt;img src="img/bias-variance-data-3.png" width=300 height=400&gt;
+&lt;img src="img/bias-variance-data-3.png" width=400 height=400&gt;
 ]
 
 .pull-right[
-&lt;img src="img/bias-variance-data-4.png" width=300 height=400&gt;
+&lt;img src="img/bias-variance-data-4.png" width=400 height=400&gt;
 ]
 
 ---
@@ -155,11 +155,11 @@ This isn't just for beginners or those of us in education; [most spam filters us
 
 
 .pull-left[
-&lt;img src="img/bias-variance-data-5.png" width=300 height=400&gt;
+&lt;img src="img/bias-variance-data-5.png" width=400 height=400&gt;
 ]
 
 .pull-right[
-&lt;img src="img/bias-variance-data-6.png" width=300 height=400&gt;
+&lt;img src="img/bias-variance-data-6.png" width=400 height=400&gt;
 ]
 
 ---
@@ -202,7 +202,7 @@ This isn't just for beginners or those of us in education; [most spam filters us
     - They are often set as defaults
     - But you can often improve on these defaults
 
---- 
+---
 
 # Aside: Random forests and classification trees
 
@@ -227,7 +227,15 @@ As you can imagine, with many variables, these trees can become very complex
 # Random forests
 
 - Random forest is an extension of decision tree modeling, whereby a collection of decision trees are simultaneously estimated ("grown") and are evaluated based on out-of-sample predictive accuracy
-- Random forest is random in two main ways: first, each tree is only allowed to “see” and split on a limited number of predictors instead of all the predictors available; second, a random sub-sample of the data is used to grow each individual tree, such that no individual case is weighted too heavily in the final prediction.
+- Random forest estimates all the decision trees at once so each tree is independent of every other tree. 
+    - The random forest algorithm provides a regression approach that is distinct from other modeling approaches. 
+    - The final random forest model aggregates the findings across all the separate trees in the forest
+
+---
+
+![](https://miro.medium.com/max/1184/1*i0o8mjFfCn-uD79-F1Cqkw.png)&lt;!-- --&gt;
+
+[Koehrsen (2017)](https://williamkoehrsen.medium.com/random-forest-simple-explanation-377895a60d2d)
 
 ---
 
@@ -350,9 +358,10 @@ tree_res &lt;- rf_wf_many %&gt;%
 
 ]
 
+.panel[.panel-name[5]
+
 **Fit model (part 2)**
 
-.panel[.panel-name[5]
 
 ```r
 # examine best set of tuning parameters; repeat?
@@ -397,7 +406,7 @@ final_fit %&gt;%
 
 ---
 
-# In the remainder of this learning lab, you'll dive deeper into this model
+# We'll next dive deeper
 
 - **Guided walkthrough**: work through this code to tune a model
 - **Independent practice**: try tuning a neural network
