@@ -69,27 +69,26 @@ xaringanExtra::use_tile_view()
     - tuning
     - selection
 - Focus: selecting a model, setting tuning parameters, and picking the best performing model
-- We'll focus on random forest
+- We'll focus on random forest models as the context for this, though the points apply to any complex algorithm
 
 ---
 
 # Agenda
 
 .pull-left[
+
 ## Part 1: Core Concepts
 - tuning
 - model selection
-- last fit
+
 ]
 
 .pull-right[
 
 ## Part 2: R Code-Along
 - NGSS and transactional and substantive for one year (again)
+- Different ways of estimating tuning parameters
 ]
-
-.panelset[
-.panel[.panel-name[1]
 
 ---
 
@@ -299,8 +298,6 @@ ggsave("img/bias-variance-data-6.png")
 
 - In short, how stable the predictions of our model are
 
-]
-
 <h4><center>Regardless of model, we often wish to balance between bias and variance</center></h4>
 
 ---
@@ -465,7 +462,14 @@ tree_res <- rf_wf_many %>%
         grid = tree_grid,
         metrics = metric_set(rmse, mae, rsq)
     )
+```
 
+]
+
+**Fit model (part 2)**
+
+.panel[.panel-name[5]
+```{r panel-chunk-4b, echo = TRUE, eval = FALSE}
 # examine best set of tuning parameters; repeat?
 show_best(tree_res, n = 10)
 
@@ -483,7 +487,7 @@ final_fit <- final_wf %>%
 ```
 ]
 
-.panel[.panel-name[5]
+.panel[.panel-name[6]
 
 **Evaluate accuracy**
 
@@ -501,22 +505,6 @@ final_fit %>%
 # test set predictions
 final_fit %>%
     collect_predictions() 
-
-preds <- final_fit %>%
-    collect_predictions() %>% 
-    mutate(diff = final_grade - .pred)
-
-# plot of observed versus predicted final grades
-preds %>%
-    ggplot(aes(x = final_grade, y = .pred, color = diff)) +
-    geom_abline(slope = 1, intercept = 0) +
-    xlim(0, 100) +
-    ylim(0, 100) +
-    xlab("Observed") +
-    ylab("Predicted") +
-    labs(caption = "The black line represents predictions that match observed values.") +
-    scale_color_gradient2("Deviance", high = "darkgreen", mid = "lightgray", low = "red") +
-    geom_point()
 ```
 ]
 ]
@@ -525,14 +513,15 @@ preds %>%
 
 # In the remainder of this learning lab, you'll dive deeper into this model
 
-- **Guided walkthrough**: try tuning a different model
+- **Guided walkthrough**: work through this code to tune a model
 - **Independent practice**: try tuning a neural network
-- **Readings**: something on tuning anadvanced model - deep learning
+- **Readings**: tuning an advanced model - deep learning
 
 ---
 
 class: clear, center
 
 ## .font130[.center[**Thank you!**]]
+
 <br/>
-.center[<img style="border-radius: 80%;" src="img/jr-cycling" height="200px"/><br/>**Dr. Joshua Rosrenberg**<br/><mailto:jmrosenberg@utk.edu>]
+.center[<img style="border-radius: 80%;" src="img/jr-cycling.jpeg" height="200px"/><br/>**Dr. Joshua Rosenberg**<br/><mailto:jmrosenberg@utk.edu>]

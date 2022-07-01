@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Machine Learning Learning Lab 2</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Dr. Joshua Rosenberg" />
+    <meta name="date" content="2022-07-01" />
+    <script src="libs/header-attrs-2.14/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
+    <script src="libs/panelset-0.2.6/panelset.js"></script>
+    <script src="libs/clipboard-2.0.6/clipboard.min.js"></script>
+    <link href="libs/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.css" rel="stylesheet" />
+    <script src="libs/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.js"></script>
+    <script>window.xaringanExtraClipboard(null, {"button":"<i class=\"fa fa-clipboard\"><\/i>","success":"<i class=\"fa fa-check\" style=\"color: #90BE6D\"><\/i>","error":"Press Ctrl+C to Copy"})</script>
+    <link href="libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+    <link href="libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+    <link href="libs/tile-view-0.2.6/tile-view.css" rel="stylesheet" />
+    <script src="libs/tile-view-0.2.6/tile-view.js"></script>
+    <link rel="stylesheet" href="css/laser.css" type="text/css" />
+    <link rel="stylesheet" href="css/laser-fonts.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+class: clear, title-slide, inverse, center, top, middle
+
+
+
+
+
+
+
+
+
+
+# Machine Learning Learning Lab 2
+----
+### **Dr. Joshua Rosenberg**
+### July 01, 2022
+
+---
+
+# Background
+
+- motivation: our model does well, but we want to make it even better
+    - here, our aim is to fit a bunch of models using the training data and see how well they do on the test data, but, if we do this more than once, we may be over-fitting to the particular sample
+    - a way around this is resampling through k-fold cross-validation
+    - driving question: what's the best model I can create to predict students' chance of passing a course?
+
+---
+
+# Agenda
+
+.pull-left[
+## Part 1: Core Concepts
+- Feature engineering
+- Cross-validation
+]
+
+.pull-right[
+
+## Part 2: R Code Examples
+- MVS data
+- comparing fit measures over time
+]
+
+
+.panelset[
+.panel[.panel-name[1]
+
+---
+
+class: clear, inverse, center, middle
+
+# Core Concepts
+
+---
+
+# Feature engineering
+
+- In the last learning lab, we did a nice job of training a model that was _pretty good_
+- But, can we do better?
+- This question motivates this learning lab, specifically:
+    - Answering it
+    - And, developing a _means_ to answer it in a way that does not introduce bias into our analysis
+- Feature engineering is a key way we can improve our model
+- Feature engineering refers to the part of machine learning wherein we decide which variables to include in which forms
+
+---
+
+# Why feature engineering matters
+
+- Let's consider a very simple data set, one with _time series_ (or longitudinal) data for a single student
+
+
+
+
+```
+## # A tibble: 10 × 3
+##    student_id time_point var_a
+##    &lt;chr&gt;           &lt;int&gt; &lt;dbl&gt;
+##  1 janyia              1  0.01
+##  2 janyia              2  0.32
+##  3 janyia              3  0.32
+##  4 janyia              4  0.34
+##  5 janyia              5  0.04
+##  6 janyia              6  0.54
+##  7 janyia              7  0.56
+##  8 janyia              8  0.75
+##  9 janyia              9  0.63
+## 10 janyia             10  0.78
+```
+
+- **How can we include a variable, `var_a`, in a machine learning model?**
+
+---
+
+# How can we include a single variable?
+
+Let's take a look at the variable
+
+![](ll-2-overview-presentation_files/figure-html/unnamed-chunk-4-1.png)&lt;!-- --&gt;
+
+- Well, what if we just add the values for these variables directly
+- But, that ignores that they are at different time points
+    - We could include the time point variable, but that is (about) the same for every student
+
+*What are some other ideas?*
+
+--- 
+
+# A few options
+
+- Raw data points
+- Their mean
+- Their maximum
+- Their variability (standard deviation)
+- Their linear slope
+- Their quadratic slope
+
+---
+
+# What else should we consider?
+
+## For other types of variables
+
+- Categorical variables
+    - Combining categories
+- Numeric variables
+    - Normalizng ("standardizing")
+
+## For all variables
+
+- Removing those with "near-zero variance"
+- Removing ID variables and others that _should not be_ informatives
+- Imputing missing values
+- _Many_ other options
+
+---
+
+# How to do this?
+
+- We can do all of these things manually
+- But, there are also helpful functions to do this
+- Examples
+    - `step_dummy()`
+    - `step_normalize()`
+    - `step_nzv()`
+    - `step_impute_knn()`
+
+- We'll work on this more in the code examples
+
+---
+
+# The importance of training data
+
+- Training data is what we use to "learn" from data
+- A "check" on your work is your predictions on _test_ set data
+  - *Train data*: Coded/outcome data that you use to train ("estimate") your model
+  - *Validation data&lt;sup&gt;1&lt;/sup&gt;*: Data you use to select a particular algorithm
+  - *Test ("hold-out") data*: Data that you do not use in any way to train your data
+
+---
+
+# A conundrum
+
+- A challenges arises when we wish to use our training data _more than once_
+- If we repeatedly training an algorithm on the same data and then make changes to some part of the model that we evaluate on the test data, we may be tailoring our model to specific features of the testing data
+- As a result, our performance on _new_ test data may be poorer than it seems
+- This is a _very common and pervasive problem_ in machine learning applicatins
+- How do we resolve this conundrum?
+
+---
+
+# Resampling
+
+- Resampling involves blurring the boundaries between training and testing data
+- Specifically, it involves combining these two portions of our data into one, iteratively considering:
+    - Some of the data to be for "training"
+    - Some for "testing"
+- Then, fit measures are averaged over these different samples
+- The problem this solves is that of learning the specifics of the testing data, since the testing data is varied
+
+---
+
+# *k*-folds cross validation
+
+- One of the simplest forms of resampling is *k*-folds cross validation
+    - Here, some of the data is considered to be a part of the *training* set 
+    - The remaining data is a part of the *testing* set
+- This process is repeated for different sets of the data
+- How many sets (samples taken through resampling)?
+- This is determined by _k_, number of times the data is resampled
+
+---
+
+# Let's consider an example
+
+Say we have a data set, `d`, with 100 observations (rows or data points)
+
+Let's say we determine that _k_ is set to 10
+
+
+
+
+```
+## # A tibble: 100 × 3
+##       id  var_a  var_b
+##    &lt;int&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+##  1     1 0.292  0.447 
+##  2     2 0.256  0.374 
+##  3     3 0.772  0.590 
+##  4     4 0.871  0.782 
+##  5     5 0.0710 0.211 
+##  6     6 0.263  0.407 
+##  7     7 0.182  0.0193
+##  8     8 0.834  0.789 
+##  9     9 0.112  0.537 
+## 10    10 0.428  0.0102
+## # … with 90 more rows
+```
+
+**Using _k_ = 10, how can we split this data into ten distinct training and testing sets?**
+
+---
+
+# Considering *k*-folds
+
+## First resampling
+
+
+```
+## [1] 90
+```
+
+```
+## [1] 10
+```
+
+---
+
+## Second resampling
+
+
+```
+## [1] 90
+```
+
+```
+## [1] 10
+```
+
+---
+
+## Third resampling
+
+
+```
+## [1] 90
+```
+
+```
+## [1] 10
+```
+
+... through the tenth resampling, after which the fit measures are simply _averaged)
+
+That's it! Thankfully, we have automated tools to do this that we'll work on in the code examples
+
+---
+
+# But how do you determine what _k_ should be?
+
+- A _historically common value_ for _k_ has been 10
+- But, as computers have grown in processing power, setting _k_ equal to the number of rows in the data has become more common
+
+---
+
+class: clear, inverse, center, middle
+
+# Code Examples
+
+---
+
+# Data from online science classes
+
+- This data comes from a study of ~700 secondary/high school-aged students in the United States
+- These were "one-off" classes that helped to fill gaps in students' schedules
+- The data were collected _over multiple semesters_ from _multiple classes_
+- There are a number of types of variables:
+  - Demographic/contextual variables, e.g. `subject` and `gender`
+  - Self-report survey variables: `uv` (utility value), `percomp` (perceived competence), and `int` (interest)
+  - Gradebook variables: `percentage_earned` (based on the first 20 assignments)
+  - Discussion variables: `sum_discussion_posts`, `sum_n_words` (for the first 3 discussions)
+  - Outcomes: `final_grade`, `passing_grade`, `time_spent` (in minutes)
+
+---
+
+# Let's take a look at the data
+
+
+
+
+```
+## Rows: 546
+## Columns: 15
+## $ student_id           &lt;dbl&gt; 60186, 66693, 66811, 70532, 77010, 85249, 85411, …
+## $ course_id            &lt;chr&gt; "AnPhA-S116-01", "AnPhA-S116-01", "AnPhA-S116-01"…
+## $ gender               &lt;chr&gt; "M", "M", "F", "F", "F", "F", "F", "F", "F", "F",…
+## $ enrollment_reason    &lt;chr&gt; "Course Unavailable at Local School", "Course Una…
+## $ enrollment_status    &lt;chr&gt; "Approved/Enrolled", "Approved/Enrolled", "Approv…
+## $ subject              &lt;chr&gt; "AnPhA", "AnPhA", "AnPhA", "AnPhA", "AnPhA", "AnP…
+## $ semester             &lt;chr&gt; "S116", "S116", "S116", "S116", "S116", "S116", "…
+## $ section              &lt;chr&gt; "01", "01", "01", "01", "01", "01", "01", "01", "…
+## $ int                  &lt;dbl&gt; 4.2, 5.0, 4.0, 4.6, NA, 4.0, 4.4, 5.0, 5.0, 4.2, …
+## $ uv                   &lt;dbl&gt; 4.333333, 5.000000, 4.000000, 4.666667, 3.666667,…
+## $ percomp              &lt;dbl&gt; 4.5, 5.0, NA, 4.0, 3.5, 4.5, 3.5, 3.5, 4.0, 3.5, …
+## $ percentage_earned    &lt;dbl&gt; 0.9602941, 0.9764706, 0.9452353, 0.9485294, 0.737…
+## $ sum_discussion_posts &lt;dbl&gt; 9, 6, 9, 11, 9, 9, 12, 8, 7, 9, 9, 9, NA, 12, 9, …
+## $ sum_n_words          &lt;dbl&gt; 939, 311, 474, 578, 496, 284, 452, 382, 138, 239,…
+## $ passing_grade        &lt;fct&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1…
+```
+
+---
+
+class: clear, inverse, center, middle
+
+# Code Examples
+
+---
+
+# Let's walk through a few steps
+
+*Note how these steps are the same as in the classification example for learning lab 1*
+
+.panelset[
+
+.panel[.panel-name[1]
+
+**Split data**
+
+
+
+```r
+train_test_split &lt;- initial_split(d_class, prop = .70)
+
+data_train &lt;- training(train_test_split)
+
+kfcv &lt;- vfold_cv(data_train) # this differentiates this from what we did before
+# before, we simple used data_train to fit our model
+```
+]
+
+.panel[.panel-name[2]
+
+**Engineer features**
+
+
+```r
+sci_rec &lt;- recipe(passing_grade ~ ., data = d_class) %&gt;% 
+    add_role(student_id, course_id, new_role = "ID variable") %&gt;% # this can be any string
+    step_novel(all_nominal_predictors()) %&gt;% 
+    step_normalize(all_numeric_predictors()) %&gt;%
+    step_dummy(all_nominal_predictors()) %&gt;% 
+    step_nzv(all_predictors()) %&gt;% 
+    step_impute_knn(all_predictors(), all_outcomes())
+```
+]
+
+.panel[.panel-name[3]
+
+**Specify recipe, model, and workflow**
+ 
+
+```r
+# specify model
+rf_mod_many &lt;-
+    rand_forest(mtry = tune(),
+                min_n = tune()) %&gt;%
+    set_engine("ranger", importance = "impurity") %&gt;%
+    set_mode("classification") # note this difference!
+
+# specify workflow
+rf_wf_many &lt;-
+    workflow() %&gt;%
+    add_model(rf_mod_many) %&gt;% 
+    add_recipe(sci_rec)
+```
+]
+
+.panel[.panel-name[4]
+
+**Fit model**
+
+
+```r
+tree_res &lt;- fit_resamples(rf_wf_many, data = data_train)
+
+predict(tree_res, data_test)
+
+final_fit &lt;- last_fit(tree_res, train_test_split,
+               metrics = metric_set(roc_auc, accuracy, kap, 
+                                                    sensitivity, specificity, precision))
+```
+]
+
+.panel[.panel-name[5]
+
+**Evaluate accuracy**
+
+
+```r
+# fit stats
+final_fit %&gt;%
+    collect_metrics()
+```
+]
+]
+
+---
+
+# In the remainder of this learning lab, you'll dive deeper into resampling
+
+- **Guided walkthrough**: You'll run all of this code, focusing on manually and then automatically calculating fit measures across the different samples
+- **Independent practice**: In the independent practice, you'll explore a different kind of resampling, bootstrap
+- **Readings**: Several readings on using log-trace data like that used in this lab
+
+---
+
+# Reach
+
+In the reach, try to 
+
+---
+
+class: clear, center
+
+## .font130[.center[**Thank you!**]]
+
+&lt;br/&gt;
+.center[&lt;img style="border-radius: 80%;" src="img/jr-cycling.jpeg" height="200px"/&gt;&lt;br/&gt;**Dr. Joshua Rosenberg**&lt;br/&gt;&lt;mailto:jmrosenberg@utk.edu&gt;]
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "default",
+"highlightLines": true,
+"highlightLanguage": "r",
+"countIncrementalSlides": false,
+"ratio": "16:9",
+"slideNumberFormat": "<div class=\"progress-bar-container\">\n <div class=\"progress-bar\" style=\"width: calc(%current% / %total% * 100%);\">\n </div>\n</div>"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

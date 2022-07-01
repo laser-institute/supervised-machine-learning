@@ -345,11 +345,11 @@ class: clear, inverse, center, middle
 
 # Code Examples
 
+*Note how these steps are the same as in the classification example for learning lab 1*
+
 ---
 
 # Let's walk through a few steps
-
-*Note how these steps are the same as in the classification example for learning lab 1*
 
 .panelset[
 
@@ -436,18 +436,13 @@ final_fit %>%
 
 - **Guided walkthrough**: You'll run all of this code, focusing on manually and then automatically calculating fit measures across the different samples
 - **Independent practice**: In the independent practice, you'll explore a different kind of resampling, bootstrap
-- **Readings**: Several readings on using log-trace data like that used in this lab.
-
----
-
-# Reach
-
-In the reach, try to 
+- **Readings**: Several readings on using log-trace data like that used in this lab
 
 ---
 
 class: clear, center
 
 ## .font130[.center[**Thank you!**]]
+
 <br/>
-.center[<img style="border-radius: 80%;" src="img/jr-cycling" height="200px"/><br/>**Dr. Joshua Rosrenberg**<br/><mailto:jmrosenberg@utk.edu>]
+.center[<img style="border-radius: 80%;" src="img/jr-cycling.jpeg" height="200px"/><br/>**Dr. Joshua Rosenberg**<br/><mailto:jmrosenberg@utk.edu>]

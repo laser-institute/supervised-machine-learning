@@ -4,7 +4,7 @@
     <title>Machine Learning Learning Lab 1</title>
     <meta charset="utf-8" />
     <meta name="author" content="Dr. Joshua Rosenberg" />
-    <meta name="date" content="2022-06-09" />
+    <meta name="date" content="2022-07-01" />
     <script src="libs/header-attrs-2.14/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
@@ -37,9 +37,21 @@ class: clear, title-slide, inverse, center, top, middle
 # Machine Learning Learning Lab 1
 ----
 ### **Dr. Joshua Rosenberg**
-### June 09, 2022
+### July 01, 2022
 
 ---
+
+# Background
+
+- motivation: we are interested in using one year of coded data to train a computer to be able to code a second year's worth of data
+    - here, our aim is to scale an existing set of coded data 
+    - driving question: how is the aim of prediction different from explanation?
+    - core idea: train and test set of data
+
+We'll focus on a logistic regression model - no more, and no less
+
+---
+
 # Agenda
 
 .pull-left[
@@ -50,10 +62,16 @@ class: clear, title-slide, inverse, center, top, middle
 
 .pull-right[
 
-## Part 2: R Code-Along
+## Part 2: R Code Examples
 - Estimating a logistic regression model
 - Interpreting the model in terms of its predictive accuracy
 ]
+
+---
+
+class: clear, inverse, center, middle
+
+# Core Concepts
 
 ---
 
@@ -246,6 +264,12 @@ This isn't just for beginners or those of us in education; [most spam filters us
 
 ---
 
+class: clear, inverse, center, middle
+
+# Code Examples
+
+---
+
 # Overview of classification modeling
 
 1. Split data
@@ -255,6 +279,17 @@ This isn't just for beginners or those of us in education; [most spam filters us
 1. Evaluate accuracy
 
 This is the basic process we'll follow for this and the next three learning labs
+
+---
+
+# Algorithm talk
+
+- Algorithms (or estimation procedures - or informally models) refer to the _structure_ and _process_ of estimating the _parameters_ of a model
+
+- This definition provides a wide range of options for what kinds of algorithms we use (from simple to very complex, as we discuss in a later learning lab)
+
+- For now, we focus on a familiar, easy to interpret algorithm, one that is still often used in sophisticated, rigorous analyses (e.g., [1](https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=7373578&amp;casa_token=xqYfYUtB7Y8AAAAA:Hv9EY3EnDjdtCt1chhsO6cLP_QYcxRSdYQGNzZWTJfkdA2BlDUK5ZekrMqJjobJLj_mUDiQ&amp;tag=1), [2](https://dl.acm.org/doi/abs/10.1145/3448139.3448154?casa_token=skmk5XGbDOUAAAAA:Z0Kl4nyjpOGFA6RuFTiiLWaC_KxH1vkQ72Kr0hetXcumRdvu8tPYlCX12AgHr9aS0Fp3L-Uu0p4), also [this](https://linkinghub.elsevier.com/retrieve/pii/S0895435618310813)), _logistic regression_
+    - This is a linear model with a binary ("yes" or "no") outcome
 
 ---
 
