@@ -305,15 +305,60 @@ ggsave("img/bias-variance-data-6.png")
 
 ---
 
-# Tuning grids
+# Tuning
 
-WORK HERE
+- Many parts of models - their _parameters_ are estimated from the data
+- Other parts cannot be estimated from the data and must be used:
+    - They are often set as defaults
+    - But you can often improve on these defaults
+
+--- 
+
+# Aside: Random forests and classification trees
+
+- *Random forests* are extensions of classification trees
+- _Classification trees_ are a type of algorithm that - at their core - use conditional logic ("if-then" statements) in a _nested_ manner
+    - For instance, here's a _very, very_ simple tree (from [APM](https://link.springer.com/book/10.1007/978-1-4614-6849-3)):
+
+```{code}
+if Predictor B >= 0.197 then
+| if Predictor A >= 0.13 then Class = 1
+| else Class = 2
+else Class = 2
+```
+
+- Measures are used to determine the splits in such a way that classifies observations into small, homogeneous groups (using measures such as the Gini index and entropy measure)
+
+---
+
+# A more complex tree
+
+```{code}
+if Predictor B >= 0.197 then
+| if Predictor A >= 0.13 then
+    | if Predictor C < -1.04 then Class = 1
+    | else Class = 2
+else Class = 3
+```
+
+As you can imagine, with many variables, these trees can become very complex
 
 ---
 
 # Random forests
 
-WORK HERE
+- Random forest is an extension of decision tree modeling, whereby a collection of decision trees are simultaneously estimated ("grown") and are evaluated based on out-of-sample predictive accuracy
+- Random forest is random in two main ways: first, each tree is only allowed to “see” and split on a limited number of predictors instead of all the predictors available; second, a random sub-sample of the data is used to grow each individual tree, such that no individual case is weighted too heavily in the final prediction.
+
+---
+
+# Tuning parameters for random forests
+
+- There are several important tuning parameters for these models:
+    - the number of predictor columns that are randomly sampled for each split in the tree (`mtry` in the code we'll run later)
+    - the number of data points required to execute a split (`min_n`)
+    - the minimum number of observations in each node (`size`)
+- These tuning parameters, broadly, balance predictive performance with the training data with how well the model will perform on new data 
 
 ---
 
