@@ -1,6 +1,6 @@
 ---
 title: 'Learning Lab 3 Guided Practice'
-author: "Dr. Joshua Kellogg"
+author: ""
 date: "`r format(Sys.Date(),'%B %e, %Y')`"
 output:
   html_document:

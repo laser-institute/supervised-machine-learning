@@ -1,6 +1,6 @@
 ---
 title: 'Learning Lab 2 Guided Practice'
-author: "Dr. Joshua Kellogg"
+author: ""
 date: "`r format(Sys.Date(),'%B %e, %Y')`"
 output:
   html_document:
@@ -19,11 +19,26 @@ bibliography: lit/references.bib
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-In the overview presentation for this learning lab, we considered five steps in our supervised machine learning process. Those steps are mirrored here---with the addition of a preamble step whereby we load and process the data.
+This case study is similar to the first, but it differs in two key ways:
+
+1. We use a very different data set, on from _online science classes_ that involves a variety of variables types
+2. We focus on _feature engineering_, a key step in which we prepare variables for inclusion in our machine learning models
+
+Studying online classes has been a longstanding focus of the learning analytics community. Consider this paper by Li et al. (2020) published in *The Internet and Higher Education* available here: https://github.com/laser-institute/essential-readings/blob/main/machine-learning/ml-lab-2/li-et-al-2020-ihe.pdf
+
+In this study, digital _log-trace data_, data generated through users' interactions with digital technologies, was used to study elements of the theoretical frame of _self-regulated learning_ and how it related to students' achievement. We use similar data in this study, treating students' interactions with the online course learning management system - and other variables, including self-report measures, to predict learners' achievement. This case study is related to this one [here](https://datascienceineducation.com/c14.html) in the _Data Science in Education Using R_ book.
 
 ## Step 0: Loading and setting up
 
-First, let's load the packages we'll use---the familiar {tidyverse} and several others focused on modeling. Like in earlier learning labs, click the green arrow to run the code chunk.
+Like in the first learning lab, we'll load several packages, first.
+
+```{r, load packages}
+library(tidyverse)
+library(here)
+library(tidymodels)
+library(vip)
+library(ranger)
+```
 
 # Let's take a look at the data
 
@@ -42,56 +57,61 @@ d %>%
     glimpse()
 ```
 
----
+## Step 1. Split data
 
-# Let's walk through a few steps
+Next, we'll split the data, just like before. We use an 80% split again; how will you "spend" your data? You can change this number if you wish, but cnsider how much data you have to "spend" for both training and testing.
 
-*Note how these steps are the same as in the classification example for learning lab 1*
-
-.panelset[
-
-.panel[.panel-name[1]
-
-**Split data**
-
-
-```{r panel-chunk-1, echo = TRUE, eval = FALSE}
-train_test_split <- initial_split(d_class, prop = .70)
+```{r}
+train_test_split <- initial_split(d_class, prop = .80)
 
 data_train <- training(train_test_split)
+```
 
+Here's a key difference! Pay careful attention to this next line of code
+
+```{r}
 kfcv <- vfold_cv(data_train) # this differentiates this from what we did before
 # before, we simple used data_train to fit our model
 ```
-]
 
-.panel[.panel-name[2]
+## Step 2: Engineer features
 
-**Engineer features**
+We'll engage in feature engineering, like before, but, here, we add considerably more steps.
 
+#### [Your Turn]{style="color: green;"} ⤵ {style="font-style: normal; font-variant-caps: normal; letter-spacing: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-tap-highlight-color: rgba(26, 26, 26, 0.3); -webkit-text-size-adjust: auto; -webkit-text-stroke-width: 0px; text-decoration: none; caret-color: rgb(0, 0, 0); color: rgb(0, 0, 0);"}
+
+Read about (here: https://www.tmwr.org/recipes.html) and add the following four steps to the code chunk below.
+
+- add_role(student_id, course_id, new_role = "ID variable")  
+- step_novel(all_nominal_predictors())  
+- step_dummy(all_nominal_predictors())  
+- step_impute_knn(all_predictors(), all_outcomes())  
+    
 ```{r panel-chunk-2, echo = TRUE, eval = FALSE}
 sci_rec <- recipe(passing_grade ~ ., data = d_class) %>% 
-    add_role(student_id, course_id, new_role = "ID variable") %>% # this can be any string
-    step_novel(all_nominal_predictors()) %>% 
     step_normalize(all_numeric_predictors()) %>%
-    step_dummy(all_nominal_predictors()) %>% 
-    step_nzv(all_predictors()) %>% 
-    step_impute_knn(all_predictors(), all_outcomes())
+    step_nzv(all_predictors())
 ```
-]
 
-.panel[.panel-name[3]
+## Step 3: Specify recipe, model, and workflow
 
-**Specify recipe, model, and workflow**
+Here, we specify the same logistic regression as above:
+
+- using the `logistic_reg()` function to set the *model*
+- using `set_engine("glm")` to set the *engine*
+- finally, using `set_mode("classification"))` to set the "*mode* to classification; this could be changed to regression for a continuous/numeric outcome
  
 ```{r panel-chunk-3, echo = TRUE, eval = FALSE}
 # specify model
 rf_mod_many <-
-    rand_forest(mtry = tune(),
-                min_n = tune()) %>%
+    rand_forest() %>%
     set_engine("ranger", importance = "impurity") %>%
-    set_mode("classification") # note this difference!
+    set_mode("classification")
+```
 
+Last, we'll put the pieces together - the model and recipe.
+
+```{r}
 # specify workflow
 rf_wf_many <-
     workflow() %>%
@@ -100,29 +120,49 @@ rf_wf_many <-
 ```
 ]
 
-.panel[.panel-name[4]
+## Step 4: Fit model
 
-**Fit model**
+Note that here we use the `kfcv` data. We'll run that in the next chunk.
 
 ```{r panel-chunk-4, echo = TRUE, eval = FALSE}
-tree_res <- fit_resamples(rf_wf_many, data = data_train)
+tree_res <- fit_resamples(rf_wf_many, data = kfcv)
+```
 
-predict(tree_res, data_test)
+How does this output differ from that from fitting the data on a single (training) set, as in the first learning lab? Add one or more ideas here:
 
+- 
+
+Finally, we'll use the `last_fit` function to fit the model using the entire data set.
+
+```{r}
 final_fit <- last_fit(tree_res, train_test_split,
                metrics = metric_set(roc_auc, accuracy, kap, 
                                                     sensitivity, specificity, precision))
 ```
-]
 
-.panel[.panel-name[5]
-
-**Evaluate accuracy**
+## Step 5: Interpret accuracy
 
 ```{r panel-chunk-5, echo = TRUE, eval = FALSE}
 # fit stats
 final_fit %>%
     collect_metrics()
 ```
-]
-]
+
+Run the code below to calculate a _confusion matrix_:
+
+```{r}
+final_fit$.predictions[[1]] %>% 
+    conf_mat(.pred_class, code)
+```
+
+What do you notice from the above two? More generally, how did the model do? 
+
+- 
+
+Considering what you've read in the two required readings, is this suitable and appropriate for scaling up? Add several notes on this, to
+
+-
+
+### 🧶 Knit & Check ✅
+
+Congratulations - you've completed the Machine Learning Learning Lab 1 Guided Practice! Consider moving on to the independent practice next.
