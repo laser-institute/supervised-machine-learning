@@ -19,8 +19,11 @@ bibliography: lit/references.bib
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-Here, you'll run all of this code, focusing on manually and then automatically calculating fit measures across the different samples.
+In the overview presentation for this learning lab, we considered five steps in our supervised machine learning process. Those steps are mirrored here---with the addition of a preamble step whereby we load and process the data.
 
+## Step 0: Loading and setting up
+
+First, let's load the packages we'll use---the familiar {tidyverse} and several others focused on modeling. Like in earlier learning labs, click the green arrow to run the code chunk.
 
 # Let's take a look at the data
 
