@@ -256,6 +256,13 @@ You'll have the chance to learn about both _supervised_ and _unsupervised_ machi
 
 You'll use three different data sets while doing so. 
 
+We'll work to answer these four questions:
+
+- Can we predict something we would have coded by hand?
+- How much do new predictors improve the prediction quality?
+- How much of a difference does a more complex model make?
+- What if we do not have training data?
+
 ---
 
 # Machine Learning Learning Lab 1: Focusing on prediction

@@ -19,7 +19,9 @@ bibliography: lit/references.bib
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-In the overview presentation for this learning lab, we considered five steps in our supervised machine learning process. Those steps are mirrored here---with the addition of a preamble step whereby we load and process the data.
+Maestrales et al. (2021) present a great example of how coded data and a coding frame can be "scaled up", here for assessment-related purposes. Read through this paper, noting how the authors tuned the performance of their supervised machine learning classification models.
+
+Our driving question is: How much of a difference does a more complex model make?
 
 ## Step 0: Loading and setting up
 

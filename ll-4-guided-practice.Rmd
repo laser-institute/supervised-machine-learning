@@ -21,6 +21,8 @@ knitr::opts_chunk$set(echo = TRUE)
 
 In the overview presentation for this learning lab, we considered five steps in our supervised machine learning process. Those steps are mirrored here---with the addition of a preamble step whereby we load and process the data.
 
+Our driving question is: What if we do not have training data?
+
 ## Step 0: Loading and setting up
 
 First, let's load the packages we'll use---the familiar {tidyverse} and several others focused on modeling. Like in earlier learning labs, click the green arrow to run the code chunk.

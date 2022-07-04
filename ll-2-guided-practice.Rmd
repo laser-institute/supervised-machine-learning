@@ -28,6 +28,8 @@ Studying online classes has been a longstanding focus of the learning analytics 
 
 In this study, digital _log-trace data_, data generated through users' interactions with digital technologies, was used to study elements of the theoretical frame of _self-regulated learning_ and how it related to students' achievement. We use similar data in this study, treating students' interactions with the online course learning management system - and other variables, including self-report measures, to predict learners' achievement. This case study is related to this one [here](https://datascienceineducation.com/c14.html) in the _Data Science in Education Using R_ book.
 
+Our driving question is: How much do new predictors improve the prediction quality?
+
 ## Step 0: Loading and setting up
 
 Like in the first learning lab, we'll load several packages, first.
