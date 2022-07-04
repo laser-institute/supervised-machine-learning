@@ -26,8 +26,7 @@ This case study is similar to the first, but it differs in two key ways:
 
 Studying online classes has been a longstanding focus of the learning analytics community. Consider this paper by Li et al. (2020) published in *The Internet and Higher Education* available here: https://github.com/laser-institute/essential-readings/blob/main/machine-learning/ml-lab-2/li-et-al-2020-ihe.pdf
 
-In this study, digital _log-trace data_, data generated through users' interactions with digital technologies, was used to study elements of the theoretical frame of _self-regulated learning_ and how it related to students' achievement. We use similar data in this study, treating students' interactions with the online course learning management system - and other variables, including self-report measures, to predict learners' achievement. This case study is related to this one [here](https://datascienceineducation.com/c14.html) in the _Data Science in Education Using R_ book.
-
+In this study, digital _log-trace data_, data generated through users' interactions with digital technologies, was used to study elements of the theoretical frame of _self-regulated learning_ and how it related to students' achievement.
 Our driving question is: How much do new predictors improve the prediction quality?
 
 ## Step 0: Loading and setting up
@@ -58,6 +57,10 @@ d <- mutate(d, passing_grade = ifelse(final_grade > 70, 1, 0),
 d %>% 
     glimpse()
 ```
+
+Before proceeding, we'll mention that we'll use similar data in this study, treating students' interactions with the online course learning management system - and other variables, including self-report measures, to predict learners' achievement. This case study is related to this one [here](https://datascienceineducation.com/c14.html) in the _Data Science in Education Using R_ book.
+
+In that case study, the predictive accuracy was so-so. We think we can do better -- the aim of this learning lab. 
 
 ## Step 1. Split data
 
