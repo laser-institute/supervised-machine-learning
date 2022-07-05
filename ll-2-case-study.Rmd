@@ -165,14 +165,6 @@ final_fit$.predictions[[1]] %>%
     conf_mat(.pred_class, code)
 ```
 
-What do you notice from the above two? More generally, how did the model do? 
-
-- 
-
-Considering what you've read in the two required readings, is this suitable and appropriate for scaling up? Add several notes on this, to
-
--
-
 ### 🧶 Knit & Check ✅
 
 Congratulations - you've completed the Machine Learning Learning Lab 1 Guided Practice! Consider moving on to the independent practice next.

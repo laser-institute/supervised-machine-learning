@@ -62,16 +62,29 @@ We _could_ estimate a single solution, as in the following (run this code).
 ```{r}
 d %>%
     estimate_profiles(3) %>% 
-    plot_profiles()x
+    plot_profiles()
 ```
+Wait a minute - something's not right. Let's center and standardize all of the variables, first, to make this graph more interpretable.
 
-Wait a minute - something's not right. Let's center and standardize the `NumActions` variable.
+This is a bit of a new technique, but we'll create a new function that we'll use to do this. There _is_ a built-in function in R, `scale()`, but it often causes problems because it returns a data frame (technically a matrix) with a single column, rather than simply a single column. In short, it doesn't work well in many cases, so we'll write our own version of it.
 
 ```{r}
-d <- d %>% 
-    mutate(num_actions = num_actions- mean(num_actions),
-           num_actions = num_actions/sd(num_actions))
+scale_data <- function(x) {
+    x = x - mean(x, na.rm = TRUE)
+    x = x / sd(x, na.rm = TRUE)
+    x
+}
+```
 
+Then, we'll use the function as follows with the `mutate_all()` function, creating a scaled version of all of our variables and saving the results back to our data frame.
+
+```{r}
+d <- d %>%
+    mutate_all(funs(scaled = scale_data)) %>% # using our function to scale all of the varialbves
+    select(contains("_scaled")) # selecting only the scaled version
+```
+
+```{r}
 d %>%
     estimate_profiles(3) %>% 
     plot_profiles()
@@ -81,22 +94,33 @@ Done, right? Not quite. Notice that above, we specified that the number of profi
 
 ```{r}
 d %>%
-    select(-num_actions) %>% 
     estimate_profiles(1:10) %>% 
     compare_solutions()
 ```
 
-This suggests that an 4 profile solution fits best. Let's interrogate that fourth solution next.
+Often, we wish to look for a _change in the rate_ of the decrease of fit indices, with the BIC fit index being arguably the most important. Above, we can see that the rate of change appears to level off after around 4 "Classes" - or, profiles. Let's consider that solution as one that fits best (even though the utput suggests that the "best" model is one with 10 classes, as that may be over-fitting the data.
+
+Let's interrogate that fourth solution next.
 
 ```{r}
 our_solution <- d %>%
     estimate_profiles(4)
+
+plot_profiles(our_solution, add_line = TRUE) +
+    theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1)) # this rotates the x-axis labels to make them easier to read
 ```
 
-```{r, eval = FALSE}
-get_estimates(our_solution)
-get_data(our_solution)
-get_fit(our_solution)
-```
+Typically, we'd name these solutions. Let's get started with one, the second:
 
-We still aren't done. 
+- Profile 1: 
+- Profile 2: Bored and off-task
+- Profile 3:
+- Profile 4:
+
+You may wish to review the paper to interpret the other variables: https://educationaldatamining.org/EDM2014/uploads/procs2014/short%20papers/276_EDM-2014-Short.pdf
+
+We still aren't done! Recall from the presentation how we discussed computational grounded theory. In this approach, an exploratory approach such as Latent Profile Analysis is carried out not as the end point, but as a first step in understanding the data. The second step involves examining the data with the output from the first step as a guide. In this step, you as the human can interrogate and make sense of the output of the first step.
+
+### 🧶 Knit & Check ✅
+
+Congratulations - you've completed the Machine Learning Learning Lab 1 Guided Practice! Consider moving on to the independent practice next.
