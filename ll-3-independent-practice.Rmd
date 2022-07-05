@@ -1,7 +1,6 @@
 ---
-title: 'Models & Inference SNA Badge'
-subtitle: "LASER Institute SNA Independent Practice"
-author: "Dr. Shaun Kellogg"
+title: 'Machine Learning - Learning Lab 4 Badge'
+author: ""
 date: "`r format(Sys.Date(),'%B %e, %Y')`"
 output: html_document
 ---
