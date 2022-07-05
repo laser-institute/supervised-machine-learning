@@ -408,7 +408,7 @@ final_fit$.predictions[[1]] %>%
 knitr::include_graphics("img/ngsschat-example-tweets_1.png")
 ```
 
-We coded this as *substantive*
+We coded this as *substantive*  
 The model predicted: *substantive* **correct!**
 
 ---
@@ -421,8 +421,8 @@ The model predicted: *substantive* **correct!**
 knitr::include_graphics("img/ngsschat-example-tweets_2.png")
 ```
 
-We coded this as *transactional*
-The model predicted: *substantive* **correct!**
+We coded this as *transactional*  
+The model predicted: *transactional* **correct!**
 
 ---
 
@@ -434,7 +434,7 @@ The model predicted: *substantive* **correct!**
 knitr::include_graphics("img/ngsschat-example-tweets_3.png")
 ```
 
-We coded this as *substantive*
+We coded this as *substantive*  
 The model predicted: *transactional* **incorrect; why?**
 
 ---
@@ -447,7 +447,7 @@ The model predicted: *transactional* **incorrect; why?**
 knitr::include_graphics("img/ngsschat-example-tweets_4.png")
 ```
 
-We coded this as *transactional*
+We coded this as *transactional*  
 The model predicted: *substantive* **incorrect; why?**
 
 ---

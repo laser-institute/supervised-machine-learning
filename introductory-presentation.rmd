@@ -269,7 +269,7 @@ We'll work to answer these four questions:
 
 - Motivation: We want to train a computer to learn and reproduce coding we carried out
 - Data: #NGSSchat data on transactional and substantive conversations
-- Skills: Understanding how prediction differs from explanation; splitting data into a train and test set; 
+- Skills: Understanding how prediction differs from explanation; splitting data into a train and test set
 
 ---
 
@@ -286,6 +286,7 @@ We'll work to answer these four questions:
 - Motivation: We want to see whether a more complex model performs better
 - Data: #NGSSchat data on transactional and substantive conversations
 - Skills: Changing models (algorithms), determining the best tuning parameters
+
 ---
 
 # Machine Learning Learning Lab 4: Finding groups (or codes) in data
@@ -294,13 +295,15 @@ We'll work to answer these four questions:
 - Data: ASSISTments data 
 - Skills: estimating latent profiles, computational grounded theory
 
+---
+
 # Thanks!
 
 class: clear, center
 
 ## .font130[.center[**Thank you!**]]
 <br/>
-.center[<img style="border-radius: 80%;" src="img/jr-cycling" height="200px"/><br/>**Dr. Joshua Rosenberg**<br/><mailto:jmrosenberg@utk.edu>]
+.center[<img style="border-radius: 80%;" src="img/jr-cycling.jpeg" height="200px"/><br/>**Dr. Joshua Rosenberg**<br/><mailto:jmrosenberg@utk.edu>]
 
 Joshua Rosenberg  
 jmrosenberg@utk.edu  

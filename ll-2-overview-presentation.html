@@ -4,7 +4,7 @@
     <title>Machine Learning Learning Lab 2</title>
     <meta charset="utf-8" />
     <meta name="author" content="Dr. Joshua Rosenberg" />
-    <meta name="date" content="2022-07-01" />
+    <meta name="date" content="2022-07-05" />
     <script src="libs/header-attrs-2.14/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
@@ -37,13 +37,13 @@ class: clear, title-slide, inverse, center, top, middle
 # Machine Learning Learning Lab 2
 ----
 ### **Dr. Joshua Rosenberg**
-### July 01, 2022
+### July 05, 2022
 
 ---
 
 # Background
 
-- motivation: our model does well, but we want to make it even better
+- Our model does well, but we want to make it even better
     - here, our aim is to fit a bunch of models using the training data and see how well they do on the test data, but, if we do this more than once, we may be over-fitting to the particular sample
     - a way around this is resampling through k-fold cross-validation
     - driving question: what's the best model I can create to predict students' chance of passing a course?
@@ -228,16 +228,16 @@ Let's say we determine that _k_ is set to 10
 ## # A tibble: 100 × 3
 ##       id  var_a  var_b
 ##    &lt;int&gt;  &lt;dbl&gt;  &lt;dbl&gt;
-##  1     1 0.292  0.447 
-##  2     2 0.256  0.374 
-##  3     3 0.772  0.590 
-##  4     4 0.871  0.782 
-##  5     5 0.0710 0.211 
-##  6     6 0.263  0.407 
-##  7     7 0.182  0.0193
-##  8     8 0.834  0.789 
-##  9     9 0.112  0.537 
-## 10    10 0.428  0.0102
+##  1     1 0.0793 0.223 
+##  2     2 0.547  0.847 
+##  3     3 0.730  0.0361
+##  4     4 0.494  0.238 
+##  5     5 0.0872 0.124 
+##  6     6 0.275  0.191 
+##  7     7 0.336  0.222 
+##  8     8 0.668  0.498 
+##  9     9 0.636  0.678 
+## 10    10 0.0804 0.267 
 ## # … with 90 more rows
 ```
 
@@ -348,11 +348,11 @@ class: clear, inverse, center, middle
 
 # Code Examples
 
+*Note how these steps are the same as in the classification example for learning lab 1*
+
 ---
 
 # Let's walk through a few steps
-
-*Note how these steps are the same as in the classification example for learning lab 1*
 
 .panelset[
 
@@ -445,12 +445,6 @@ final_fit %&gt;%
 - **Guided walkthrough**: You'll run all of this code, focusing on manually and then automatically calculating fit measures across the different samples
 - **Independent practice**: In the independent practice, you'll explore a different kind of resampling, bootstrap
 - **Readings**: Several readings on using log-trace data like that used in this lab
-
----
-
-# Reach
-
-In the reach, try to 
 
 ---
 

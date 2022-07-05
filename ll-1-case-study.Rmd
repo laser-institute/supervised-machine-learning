@@ -21,19 +21,43 @@ knitr::opts_chunk$set(echo = TRUE)
 
 First, please add your name above!
 
-In the overview presentation for this learning lab, we considered five steps in our supervised machine learning process. Those steps are mirrored here in this case study---with the addition of a preamble step whereby we load and process the data. 
+In the overview presentation for this learning lab, we considered five
+steps in our supervised machine learning process. Those steps are
+mirrored here in this case study---with the addition of a preamble step
+whereby we load and process the data.
 
-Our driving question is: Can we predict something we would have coded by hand?
+Our driving question is: Can we predict something we would have coded by
+hand?
 
-We use the #NGSSchat data set as the context in which we answer this question. See the network analysis of #NGSSChat (Rosenberg et al., 2020) that used the coding frame from van Bommel et al. (2020) for the transactional or substantive nature of social media-based conversations. Notably, Rosenberg et. al. coded _a lot_ of data by hand, and it would be quite convenient if the coding could be automated through supervised machine learning methods. Though this case study is tied to the #NGSSchat data, you can consider how qualitative coding you or colleagues have done could be automated in a similar manner. In short, again, can we predict something we would, heretofore, have coded by hand?
+We use the #NGSSchat data set as the context in which we answer this
+question. See the network analysis of #NGSSChat (Rosenberg et al., 2020)
+that used the coding frame from van Bommel et al. (2020) for the
+transactional or substantive nature of social media-based conversations.
+Notably, Rosenberg et. al. coded *a lot* of data by hand, and it would
+be quite convenient if the coding could be automated through supervised
+machine learning methods. Though this case study is tied to the
+#NGSSchat data, you can consider how qualitative coding you or
+colleagues have done could be automated in a similar manner. In short,
+again, can we predict something we would, heretofore, have coded by
+hand?
 
-Such an approach is common in education. Maestrales et al. (2021) present a great example of how coded data and a coding frame can be "scaled up", here for assessment-related purposes. Consider reading through this paper, noting how the authors tuned the performance of their supervised machine learning classification models. They used the Constructed Response Classifier (https://beyondmultiplechoice.org/) to do so; this tool has been widely-used in undergraduate, disciplinary-based research settings.
+Such an approach is common in education. Maestrales et al. (2021)
+present a great example of how coded data and a coding frame can be
+"scaled up", here for assessment-related purposes. Consider reading
+through this paper, noting how the authors tuned the performance of
+their supervised machine learning classification models. They used the
+Constructed Response Classifier (<https://beyondmultiplechoice.org/>) to
+do so; this tool has been widely-used in undergraduate,
+disciplinary-based research settings.
 
-Conceptually, we focus on prediction and how it differs from the goals of description or explanation.
+Conceptually, we focus on prediction and how it differs from the goals
+of description or explanation.
 
 ## Step 0: Loading and setting up
 
-First, let's load the packages we'll use---the familiar {tidyverse} and several others focused on modeling. Like in earlier learning labs, click the green arrow to run the code chunk.
+First, let's load the packages we'll use---the familiar {tidyverse} and
+several others focused on modeling. Like in earlier learning labs, click
+the green arrow to run the code chunk.
 
 ```{r}
 library(tidyverse)
@@ -43,9 +67,12 @@ library(vip)
 library(ranger)
 ```
 
-Next, we'll load two data sources, one with the tweets, the other with our qualitative codes. 
+Next, we'll load two data sources, one with the tweets, the other with
+our qualitative codes.
 
-*Note*: We created a means of visualizing the threads to make coding them easier; that's here and it provides a means of seeing what the raw data is like: https://jmichaelrosenberg.shinyapps.io/ngsschat-shiny/
+*Note*: We created a means of visualizing the threads to make coding
+them easier; that's here and it provides a means of seeing what the raw
+data is like: <https://jmichaelrosenberg.shinyapps.io/ngsschat-shiny/>
 
 ```{r}
 d <- read_rds(here("data", "ngsschat-data.rds"))
@@ -53,9 +80,12 @@ d <- read_rds(here("data", "ngsschat-data.rds"))
 codes <- read_csv(here("data", "ngsschat-qualitative-codes.csv"))
 ```
 
-We'll do some processing of the data here. This could seem like a step to skip, but it's quite important as perhaps the most important part of any machine learning model is the data that goes into it. 
+We'll do some processing of the data here. This could seem like a step
+to skip, but it's quite important as perhaps the most important part of
+any machine learning model is the data that goes into it.
 
-Here, read the comments after each line of code, and then run the code chunk to proceed. 
+Here, read the comments after each line of code, and then run the code
+chunk to proceed.
 
 ```{r}
 codes <- codes %>% 
@@ -81,9 +111,11 @@ ddd <- dd %>%
 
 #### [Your Turn]{style="color: green;"} ⤵ {style="font-style: normal; font-variant-caps: normal; letter-spacing: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-tap-highlight-color: rgba(26, 26, 26, 0.3); -webkit-text-size-adjust: auto; -webkit-text-stroke-width: 0px; text-decoration: none; caret-color: rgb(0, 0, 0); color: rgb(0, 0, 0);"}
 
-In the chunk below, examine the prepared data using a function or means of your choice. 
+In the chunk below, examine the prepared data using a function or means
+of your choice.
 
-Note its dimensions --- especially how many rows it has. Add a few dashes after the chunk with your observations.
+Note its dimensions --- especially how many rows it has. Add a few
+dashes after the chunk with your observations.
 
 ```{r}
 
@@ -91,7 +123,9 @@ Note its dimensions --- especially how many rows it has. Add a few dashes after 
 
 ## Step 1. Split data
 
-Here, we split the data. Why do we choose an 80% split? This is to reserve a sufficient number of cases for testing our fitted model later. You can change this number if you wish.
+Here, we split the data. Why do we choose an 80% split? This is to
+reserve a sufficient number of cases for testing our fitted model later.
+You can change this number if you wish.
 
 ```{r}
 train_test_split <- initial_split(ddd, prop = .80)
@@ -100,13 +134,15 @@ data_train <- training(train_test_split)
 
 ## Step 2: Engineer features
 
-We'll engage in some basic feature engineering. 
+We'll engage in some basic feature engineering.
 
 #### [Your Turn]{style="color: green;"} ⤵ {style="font-style: normal; font-variant-caps: normal; letter-spacing: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-tap-highlight-color: rgba(26, 26, 26, 0.3); -webkit-text-size-adjust: auto; -webkit-text-stroke-width: 0px; text-decoration: none; caret-color: rgb(0, 0, 0); color: rgb(0, 0, 0);"}
 
-Before running the code below, can you add a feature engineering step to the code above?
+Before running the code below, can you add a feature engineering step to
+the code above?
 
-Read more about feature engineering here and get ideas for adding a step: https://www.tmwr.org/recipes.html
+Read more about feature engineering here and get ideas for adding a
+step: <https://www.tmwr.org/recipes.html>
 
 ```{r}
 my_rec <- recipe(code ~ ., data = ddd) %>% 
@@ -116,11 +152,14 @@ my_rec <- recipe(code ~ ., data = ddd) %>%
 
 ## Step 3: Specify recipe, model, and workflow
 
-Here, we specify one of the simplest supervised machine learning models for _classification_, a logistic regression. We do this by:
+Here, we specify one of the simplest supervised machine learning models
+for *classification*, a logistic regression. We do this by:
 
-- using the `logistic_reg()` function to set the *model*
-- using `set_engine("glm")` to set the *engine*
-- finally, using `set_mode("classification"))` to set the "*mode* to classification; this could be changed to regression for a continuous/numeric outcome
+-   using the `logistic_reg()` function to set the *model*
+-   using `set_engine("glm")` to set the *engine*
+-   finally, using `set_mode("classification"))` to set the "*mode* to
+    classification; this could be changed to regression for a
+    continuous/numeric outcome
 
 ```{r}
 # specify model
@@ -141,9 +180,12 @@ rf_wf_many <-
 
 ## Step 4: Fit model
 
-Finally, we'll fit the model, using our training data to do so. 
+Finally, we'll fit the model, using our training data to do so.
 
-`last_fit` is the key function here - note that it uses the `train_test_split` data---not just the training data. Here, we fit the data _using the training data set_ and evaluate its accuracy using the _testing data set_ (which is not used to train the model).
+`last_fit` is the key function here - note that it uses the
+`train_test_split` data---not just the training data. Here, we fit the
+data *using the training data set* and evaluate its accuracy using the
+*testing data set* (which is not used to train the model).
 
 ```{r}
 fitted_model <- fit(rf_wf_many, data = data_train)
@@ -154,7 +196,8 @@ final_fit <- last_fit(fitted_model, train_test_split,
 
 #### [Your Turn]{style="color: green;"} ⤵ {style="font-style: normal; font-variant-caps: normal; letter-spacing: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-tap-highlight-color: rgba(26, 26, 26, 0.3); -webkit-text-size-adjust: auto; -webkit-text-stroke-width: 0px; text-decoration: none; caret-color: rgb(0, 0, 0); color: rgb(0, 0, 0);"}
 
-Type `final_fit` below; this is the final, fitted model---one that can be interpreted further in the next step!
+Type `final_fit` below; this is the final, fitted model---one that can
+be interpreted further in the next step!
 
 ```{r}
 
@@ -164,13 +207,14 @@ Type `final_fit` below; this is the final, fitted model---one that can be interp
 
 #### [Your Turn]{style="color: green;"} ⤵ {style="font-style: normal; font-variant-caps: normal; letter-spacing: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-tap-highlight-color: rgba(26, 26, 26, 0.3); -webkit-text-size-adjust: auto; -webkit-text-stroke-width: 0px; text-decoration: none; caret-color: rgb(0, 0, 0); color: rgb(0, 0, 0);"}
 
-Run the code below to calculate a _confusion matrix_:
+Run the code below to calculate a *confusion matrix*:
 
 ```{r}
 final_fit$.predictions[[1]] %>% 
     conf_mat(.pred_class, code)
 ```
 
-### 🧶 Knit & Check ✅
+## 🧶 Knit & Check ✅
 
-Congratulations - you've completed the Machine Learning Learning Lab 1 Guided Practice! Consider moving on to the independent practice next.
+Congratulations - you've completed the Machine Learning Learning Lab 1
+Guided Practice! Consider moving on to the independent practice next.

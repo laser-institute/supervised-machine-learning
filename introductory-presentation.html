@@ -4,7 +4,7 @@
     <title>An Introduction to Machine Learning</title>
     <meta charset="utf-8" />
     <meta name="author" content="Joshua Rosenberg" />
-    <meta name="date" content="2022-06-08" />
+    <meta name="date" content="2022-07-05" />
     <script src="libs/header-attrs-2.14/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
@@ -34,10 +34,11 @@ class: clear, title-slide, inverse, center, top, middle
 
 
 
+
 # An Introduction to Machine Learning
 ----
 ### Joshua Rosenberg
-### June 08, 2022
+### July 05, 2022
 
 ---
 
@@ -228,105 +229,50 @@ Do you not yet have codes/outcomes -- and do you want to?
 
 ---
 
-# But, how do I select a model?
+# What will I learn in this topic area?
 
-One general principle is to **start with the simplest useful model** and to _build toward
-more complex models as helpfuL_.
+You'll have the chance to learn about both _supervised_ and _unsupervised_ machine learning methods.
 
-This principle applies in multiple ways:
+You'll use three different data sets while doing so. 
 
-- To choose an algorithm, start with simpler models that you can efficiently use and understand
-- To carry out feature engineering, understand your predictors well by starting with a subset
-- To tune an algorithm, start with a relatively simple set of tuning parameters
+We'll work to answer these four questions:
 
-This isn't just for beginners or those of us in education; [most spam filters use Support Vector Machines (and used Naive Bayes until recently)](https://vas3k.com/blog/machine_learning/) due to their combination of effectiveness and efficiency "in production."
-
----
-
-# Super complex?
-
-- Nothing too much, apart from computing power, time, and concerns of 
-- A "check" on your work is your predictions on _test_ set data
-  - *Train data*: Coded/outcome data that you use to train ("estimate") your model
-  - *Validation data&lt;sup&gt;1&lt;/sup&gt;*: Data you use to select a particular algorithm
-  - *Test ("hold-out") data*: Data that you do not use in any way to train your data
-
-- An important way to achieve good performance with test data is to balance between the inherent _bias_ in your algorithm and the _variance_ in the predictions of your algorithm; this is referred to as the **bias-variance** trade-off of _all_ models
-
-.footnote[
-[1] not always/often used, for reasons we'll discuss later
-
-]
-
-class: clear, inverse, center, middle
-
-# Machine learning demo: Regression
+- Can we predict something we would have coded by hand?
+- How much do new predictors improve the prediction quality?
+- How much of a difference does a more complex model make?
+- What if we do not have training data?
 
 ---
 
-# Overview of ML regression
+# Machine Learning Learning Lab 1: Focusing on prediction
 
-- We are interested in predicting a _continuous_ outcome; accordingly, our predictions are _continuous_
-- Metrics for how well the model performed include:
-  - Root Mean Square Error (RMSE): can be interpreted as the _average_ difference between `\(y\)` and `\(\hat{y}\)`
-  - Mean Absolute Error (MAE): can be interpreted as the _median_ difference between `\(y\)` and `\(\hat{y}\)`
-  - `\(R^2\)`: Proportion of variance explained (used descriptively)
+- Motivation: We want to train a computer to learn and reproduce coding we carried out
+- Data: #NGSSchat data on transactional and substantive conversations
+- Skills: Understanding how prediction differs from explanation; splitting data into a train and test set
 
 ---
 
-# Overview of regression modeling
+# Machine Learning Learning Lab 2: Feature engineering
 
-1. Split data (into train, test, and tuning sets sets)
-1. Specify recipe, model, and workflow
-1. Estimate models and determine tuning parameters' values
-1. Evaluate metrics and predictions
-
----
-
-# Data from online science classes
-
-- This data comes from a study of ~700 secondary/high school-aged students in the United States
-- These were "one-off" classes that helped to fill gaps in students' schedules
-- The data were collected _over multiple semesters_ from _multiple classes_
-- There are a number of types of variables:
-  - Demographic/contextual variables, e.g. `subject` and `gender`
-  - Self-report survey variables: `uv` (utility value), `percomp` (perceived competence), and `int` (interest)
-  - Gradebook variables: `percentage_earned` (based on the first 20 assignments)
-  - Discussion variables: `sum_discussion_posts`, `sum_n_words` (for the first 3 discussions)
-  - Outcomes: `final_grade`, `passing_grade`, `time_spent` (in minutes)
+- Motivation: After training our computer, we realized we want to change our model
+- Data: Survey, trace, and discussion data from online classes
+- Skills: Feature engineering, resampling and cross-validation
 
 ---
 
-# Let's look at these steps once more
+# Machine Learning Learning Lab 3: Fine-tuning the model
 
-1. Split data (into train, test, and tuning sets sets)
-1. Specify recipe, model, and workflow
-1. Estimate models and determine tuning parameters' values
-1. Evaluate metrics and predictions
-
----
-
-# Overview of classification
-
-- We are interested in predicting a _dichotomous_ or _continuous_ outcome; our predictions are _probabilities_
-- These probabilities are often changed (through the use of a threshold - often 0.50) back into dichotomous or categorical labels
-- Metrics for how well the model performed include:
-  - *Accuracy*: For the known codes, what percentage of the predictions are correct
-  - *Cohen's `\(\kappa\)`*: Same as accuracy, while account for the base rate of (chance) agreement
-  - *Sensitivity (AKA recall)*: Among the true "positives", what percentage are classified as "positive"?
-  - *Specificity*: Among the true "negatives", what percentage are classified as "negative"?
-  - *ROC AUC*: For different levels of the threshold, what is the sensitivity and specificity?
+- Motivation: We want to see whether a more complex model performs better
+- Data: #NGSSchat data on transactional and substantive conversations
+- Skills: Changing models (algorithms), determining the best tuning parameters
 
 ---
 
-# Overview of classification modeling
+# Machine Learning Learning Lab 4: Finding groups (or codes) in data
 
-*Nearly identical to that for regression*
-
-1. Split data (into train, test, and tuning sets sets)
-1. Specify recipe, model, and workflow
-1. Estimate models and determine tuning parameters' values
-1. Evaluate metrics and predictions (Accuracy, `\(\kappa\)`, Sensitivity, Specificity, ROC (plot), AUC value)
+- Motivation: We have complex trace data, but we don't have any codes (yet)
+- Data: ASSISTments data 
+- Skills: estimating latent profiles, computational grounded theory
 
 ---
 
@@ -336,7 +282,7 @@ class: clear, center
 
 ## .font130[.center[**Thank you!**]]
 &lt;br/&gt;
-.center[&lt;img style="border-radius: 80%;" src="img/jr-cycling" height="200px"/&gt;&lt;br/&gt;**Dr. Joshua Rosenberg**&lt;br/&gt;&lt;mailto:jmrosenberg@utk.edu&gt;]
+.center[&lt;img style="border-radius: 80%;" src="img/jr-cycling.jpeg" height="200px"/&gt;&lt;br/&gt;**Dr. Joshua Rosenberg**&lt;br/&gt;&lt;mailto:jmrosenberg@utk.edu&gt;]
 
 Joshua Rosenberg  
 jmrosenberg@utk.edu  

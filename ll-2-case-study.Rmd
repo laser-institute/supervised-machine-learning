@@ -21,18 +21,39 @@ knitr::opts_chunk$set(echo = TRUE)
 
 This case study is similar to the first, but it differs in two key ways:
 
-1. We use a very different data set, on from _online science classes_ that involves a variety of variables types
-2. We focus on _feature engineering_, a key step in which we prepare variables for inclusion in our machine learning models
+1.  We use a very different data set, on from *online science classes*
+    that involves a variety of variables types
+2.  We focus on *feature engineering*, a key step in which we prepare
+    variables for inclusion in our machine learning models
 
-Feature engineering is a rich topic in machine learning research, including research in the learning analytics and educational data mining communities.
+Feature engineering is a rich topic in machine learning research,
+including research in the learning analytics and educational data mining
+communities.
 
-Consider reseearch on online learning and the work of Li et al. (2020) and Rodriguez et al. (2021). In these two studies, digital _log-trace data_, data generated through users' interactions with digital technologies, was used to study elements of the theoretical frame of _self-regulated learning_ and how it related to students' achievement. Notably, the authors took serveral steps to prepare the data so that it could be validly interpreted as measures of students' self-regulated learning. In short, we need to process the data from contexts such as online classes to use them in analyses. 
+Consider research on online learning and the work of Li et al. (2020)
+and Rodriguez et al. (2021). In these two studies, digital *log-trace
+data*, data generated through users' interactions with digital
+technologies, was used to study elements of the theoretical frame of
+*self-regulated learning* and how it related to students' achievement.
+Notably, the authors took several steps to prepare the data so that it
+could be validly interpreted as measures of students' self-regulated
+learning. In short, we need to process the data from contexts such as
+online classes to use them in analyses.
 
-The same is true here in the context of machine learning. In a different context, the work of Gobert et al. (2013) is a great example of using data from educational simulations. Salmeron-Majadas provides an example of feature engineering using mouse-click data. Last, we note that there are methods that intended to automated the process of feature engineering (Bosch et al., 2021), though such processes are not necessarily interpretable and they ususually require some degree of tailoring to your particular context.
+The same is true here in the context of machine learning. In a different
+context, the work of Gobert et al. (2013) is a great example of using
+data from educational simulations. Salmeron-Majadas provides an example
+of feature engineering using mouse-click data. Last, we note that there
+are methods that intended to automated the process of feature
+engineering (Bosch et al., 2021), though such processes are not
+necessarily interpretable and they usually require some degree of
+tailoring to your particular context.
 
-Our driving question for this case study is: How much do new predictors improve the prediction quality?
+Our driving question for this case study is: How much do new predictors
+improve the prediction quality?
 
-We use a data set of many online classes to answer this question. To answer it, we will engage in several feature engineering steps.
+We use a data set of many online classes to answer this question. To
+answer it, we will engage in several feature engineering steps.
 
 ## Step 0: Loading and setting up
 
@@ -63,13 +84,22 @@ d %>%
     glimpse()
 ```
 
-Before proceeding, we'll mention that we'll use similar data in this study, treating students' interactions with the online course learning management system - and other variables, including self-report measures, to predict learners' achievement. This case study is related to this one [here](https://datascienceineducation.com/c14.html) in the _Data Science in Education Using R_ book.
+Before proceeding, we'll mention that we'll use similar data in this
+study, treating students' interactions with the online course learning
+management system - and other variables, including self-report measures,
+to predict learners' achievement. This case study is related to this one
+[here](https://datascienceineducation.com/c14.html) in the *Data Science
+in Education Using R* book.
 
-In that case study, the predictive accuracy was so-so. We think we can do better -- the aim of this learning lab. 
+In that case study, the predictive accuracy was so-so. We think we can
+do better -- the aim of this learning lab.
 
 ## Step 1. Split data
 
-Next, we'll split the data, just like before. We use an 80% split again; how will you "spend" your data? You can change this number if you wish, but cnsider how much data you have to "spend" for both training and testing.
+Next, we'll split the data, just like before. We use an 80% split again;
+how will you "spend" your data? You can change this number if you wish,
+but cnsider how much data you have to "spend" for both training and
+testing.
 
 ```{r}
 train_test_split <- initial_split(d_class, prop = .80)
@@ -86,17 +116,19 @@ kfcv <- vfold_cv(data_train) # this differentiates this from what we did before
 
 ## Step 2: Engineer features
 
-We'll engage in feature engineering, like before, but, here, we add considerably more steps.
+We'll engage in feature engineering, like before, but, here, we add
+considerably more steps.
 
 #### [Your Turn]{style="color: green;"} ⤵ {style="font-style: normal; font-variant-caps: normal; letter-spacing: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-tap-highlight-color: rgba(26, 26, 26, 0.3); -webkit-text-size-adjust: auto; -webkit-text-stroke-width: 0px; text-decoration: none; caret-color: rgb(0, 0, 0); color: rgb(0, 0, 0);"}
 
-Read about (here: https://www.tmwr.org/recipes.html) and add the following four steps to the code chunk below.
+Read about (here: <https://www.tmwr.org/recipes.html>) and add the
+following four steps to the code chunk below.
 
-- add_role(student_id, course_id, new_role = "ID variable")  
-- step_novel(all_nominal_predictors())  
-- step_dummy(all_nominal_predictors())  
-- step_impute_knn(all_predictors(), all_outcomes())  
-    
+-   add_role(student_id, course_id, new_role = "ID variable")\
+-   step_novel(all_nominal_predictors())\
+-   step_dummy(all_nominal_predictors())\
+-   step_impute_knn(all_predictors(), all_outcomes())
+
 ```{r panel-chunk-2, echo = TRUE, eval = FALSE}
 sci_rec <- recipe(passing_grade ~ ., data = d_class) %>% 
     step_normalize(all_numeric_predictors()) %>%
@@ -107,10 +139,12 @@ sci_rec <- recipe(passing_grade ~ ., data = d_class) %>%
 
 Here, we specify the same logistic regression as above:
 
-- using the `logistic_reg()` function to set the *model*
-- using `set_engine("glm")` to set the *engine*
-- finally, using `set_mode("classification"))` to set the "*mode* to classification; this could be changed to regression for a continuous/numeric outcome
- 
+-   using the `logistic_reg()` function to set the *model*
+-   using `set_engine("glm")` to set the *engine*
+-   finally, using `set_mode("classification"))` to set the "*mode* to
+    classification; this could be changed to regression for a
+    continuous/numeric outcome
+
 ```{r panel-chunk-3, echo = TRUE, eval = FALSE}
 # specify model
 rf_mod_many <-
@@ -128,7 +162,6 @@ rf_wf_many <-
     add_model(rf_mod_many) %>% 
     add_recipe(sci_rec)
 ```
-]
 
 ## Step 4: Fit model
 
@@ -138,11 +171,14 @@ Note that here we use the `kfcv` data. We'll run that in the next chunk.
 tree_res <- fit_resamples(rf_wf_many, data = kfcv)
 ```
 
-How does this output differ from that from fitting the data on a single (training) set, as in the first learning lab? Add one or more ideas here:
+How does this output differ from that from fitting the data on a single
+(training) set, as in the first learning lab? Add one or more ideas
+here:
 
-- 
+-   
 
-Finally, we'll use the `last_fit` function to fit the model using the entire data set.
+Finally, we'll use the `last_fit` function to fit the model using the
+entire data set.
 
 ```{r}
 final_fit <- last_fit(tree_res, train_test_split,
@@ -158,7 +194,7 @@ final_fit %>%
     collect_metrics()
 ```
 
-Run the code below to calculate a _confusion matrix_:
+Run the code below to calculate a *confusion matrix*:
 
 ```{r}
 final_fit$.predictions[[1]] %>% 
@@ -167,4 +203,5 @@ final_fit$.predictions[[1]] %>%
 
 ### 🧶 Knit & Check ✅
 
-Congratulations - you've completed the Machine Learning Learning Lab 1 Guided Practice! Consider moving on to the independent practice next.
+Congratulations - you've completed the Machine Learning Learning Lab 1
+Guided Practice! Consider moving on to the independent practice next.

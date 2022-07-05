@@ -13,15 +13,13 @@ knitr::opts_chunk$set(echo = TRUE)
 
 The final activity for each learning lab provides space to work with data and to reflect on how the concepts and techniques introduced in each lab might apply to your own research.
 
-To earn a badge for each lab, you are required to respond to a set of prompts for two parts: 
+To earn a badge for each lab, you are required to respond to a set of prompts for two parts:
 
 -   In Part I, you will reflect on your understanding of key concepts and begin to think about potential next steps for your own study.
 
 -   In Part II, you will create a simple data product in R that demonstrates your ability to apply a data analysis technique introduced in this learning lab.
 
-### Part I: Reflect and Plan
-
-## Background and Setup
+## Part I: Reflect and Plan
 
 Let's return to the `final_fit` object from the guided practice --- starting with the confusion matrix. You'll have to run the code in your guided practice document through that step.
 
@@ -32,32 +30,35 @@ final_fit$.predictions[[1]] %>%
 
 This is one of the most fundamental ways we can interpret a classification model---but there are other means, too.
 
-
 Next, run the `collect_metrics()` function with your `final_fit` object to examine some overview statistics for the fit of the model.
 
 ```{r}
 
 ```
 
-Please interpret each of these statistics, using the guidelines provided below *in your own words*
+Please interpret each of these statistics, using the guidelines provided below *in your own words*.
 
-- *Accuracy*: For the known codes, what percentage of the predictions are correct
-- *Cohen's $\kappa$*: Same as accuracy, while account for the base rate of (chance) agreement
-- *Sensitivity (AKA recall)*: Among the true "positives", what percentage are classified as "positive"?
-- *Specificity*: Among the true "negatives", what percentage are classified as "negative"?
-- *ROC AUC*: For different levels of the threshold, what is the sensitivity and specificity?
+-   *Accuracy*: For the known codes, what percentage of the predictions are correct
+-   *Cohen's* $\kappa$: Same as accuracy, while account for the base rate of (chance) agreement
+-   *Sensitivity (AKA recall)*: Among the true "positives", what percentage are classified as "positive"?
+-   *Specificity*: Among the true "negatives", what percentage are classified as "negative"?
+-   *ROC AUC*: For different levels of the threshold, what is the sensitivity and specificity?
 
-## Interpretations of fit metrics
+More information on these can be found [here](https://bradleyboehmke.github.io/HOML/process.html#model-eval)
 
-- *Accuracy*: 
-- *Cohen's $\kappa$*: 
-- *Sensitivity (AKA recall)*: 
-- *Specificity*: 
-- *ROC AUC*: 
+Now, with these in mind, interpret the findings from our guided practice case study below.
 
-### Part II: Data Product
+**Interpretations of fit metrics**
 
-In our ML Learning Lab 1 Case Study, we began to explore the power of prediction. Running machine learning models takes considerable time and effort, and doing so is the goal of this entire _module_. For this learning lab, identify a data source that you have that has coded data. For now, we do not want you to run an entire machine learning analysis, but instead to load the data and view the data.
+-   *Accuracy*: The percentage of predictions that are correct is 80.5%
+-   *Cohen's* $\kappa$: 
+-   *Sensitivity (AKA recall)*:
+-   *Specificity*:
+-   *ROC AUC*:
+
+## Part II: Data Product
+
+In our ML Learning Lab 1 Case Study, we began to explore the power of prediction. Running machine learning models takes considerable time and effort, and doing so is the goal of this entire *module*. For this learning lab, identify a data source that you have that has coded data. For now, we do not want you to run an entire machine learning analysis, but instead to load the data and view the data.
 
 We recommend creating a new R script in your `lab-1` folder to complete this task. When your code is ready to share, use the code chunk below to share the final code for your model and answer the questions that follow. You'll answer some questions next.
 
@@ -68,7 +69,8 @@ We recommend creating a new R script in your `lab-1` folder to complete this tas
 ```
 
 1.  What makes this data suitable for supervised machine learning?
-    -   
+
+    - 
 
 2.  What is your dependent variable?
 
@@ -77,12 +79,12 @@ We recommend creating a new R script in your `lab-1` folder to complete this tas
 3.  What are your independent variables/predictors?
 
     -   
-    
-4. What are some steps you'll need to take to prepare your data for analysis?
 
-    - 
+4.  What are some steps you'll need to take to prepare your data for analysis?
 
-### Knit & Submit
+    -   
+
+## Knit & Submit
 
 Congratulations, you've completed your Machine Learning - Learning Lab 1 badge! Complete the following steps to submit your work for review by:
 
