@@ -121,6 +121,12 @@ You may wish to review the paper to interpret the other variables: https://educa
 
 We still aren't done! Recall from the presentation how we discussed computational grounded theory. In this approach, an exploratory approach such as Latent Profile Analysis is carried out not as the end point, but as a first step in understanding the data. The second step involves examining the data with the output from the first step as a guide. In this step, you as the human can interrogate and make sense of the output of the first step.
 
+```{r}
+get_data(our_solution)
+```
+
+What we do we notice about the solutions? What might the model have missed? We'll explore these questions further in the independent practice.
+
 ### 🧶 Knit & Check ✅
 
 Congratulations - you've completed the Machine Learning Learning Lab 1 Guided Practice! Consider moving on to the independent practice next.
