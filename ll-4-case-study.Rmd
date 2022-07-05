@@ -19,92 +19,84 @@ bibliography: lit/references.bib
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-In the overview presentation for this learning lab, we considered five steps in our supervised machine learning process. Those steps are mirrored here---with the addition of a preamble step whereby we load and process the data.
+While the past three case studies have focused on cases for which we have coded data (in case studies 1 and 3, from the #NGSSchat data; in case study 2, from having students' end of course grades), sometimes, we do not have smething that we can consider to be coded data---or a dependent variable. Machine learning does offer us way forward in such cases, but not through the supervised machine learning methods we've been using until this point. Instead, we can use _unsupervised_ methods.
 
-Our driving question is: What if we do not have training data?
+Our driving question is: What if we do not have training data? 
+
+The goal is to estimate those groups, here through the process of Latent Profile Analysis. We follow the example of Commeford et al. (2022), who estimated profiles of college-levels instructors' teaching practices, specifically their teaching practices relating to active learning. They did so using Latent Profile Analysis -- and [the tidyLPA package in R](https://data-edu.github.io/tidyLPA/index.html) that we'll be using.
+
+One other resource that may be helpful is the chapter by Pastor et al. (2007) on Latent Profile Analysis, or, as it is often abbreviated, LPA.
+
 
 ## Step 0: Loading and setting up
 
-First, let's load the packages we'll use---the familiar {tidyverse} and several others focused on modeling. Like in earlier learning labs, click the green arrow to run the code chunk.
+First, let's load the packages we'll use---the familiar {tidyverse} and the {tidyLPA package}.
 
-class: clear, inverse, center, middle
-
-# Code Examples
-
----
-
-# Estimating 3 groups
-
-We can see all three steps in this code chunk
-
-```{r, eval = FALSE, echo = TRUE}
+```{r}
+library(tidyverse)
 library(tidyLPA)
-library(dplyr)
-
-pisaUSA15[1:100, ] %>%
-  select(broad_interest, enjoyment, self_efficacy) %>% # select three variables
-  estimate_profiles(3) %>%  # estimate 3 profiles
-  plot_profiles()
 ```
 
----
+Next, let's load the data.
 
-# Estimating 3 groups
-
-```{r plot-3, echo = FALSE, message = FALSE, warning = FALSE}
-library(tidyLPA)
-library(dplyr)
-
-pisaUSA15[1:100, ] %>%
-  select(broad_interest, enjoyment, self_efficacy) %>% # select three variables
-  estimate_profiles(3) %>% # estimate 3 profiles
-  plot_profiles() # interpret
+```{r}
+d <- read_csv("data/dat_csv_combine_final_full.csv")
 ```
 
----
+We'll next select the variables we'll use for this analysis.
 
-# Interpreting
+```{r}
+d <- d %>% 
+    select(AveCarelessness, AveKnow, AveCorrect = AveCorrect.x, AveResBored, 
+           AveResEngcon, AveResConf, AveResFrust, AveResOfftask, 
+           AveResGaming, NumActions) %>%
+    janitor::clean_names()
 
-- How might we interpret these profiles?
-- Let's look at the raw data (see `get_data()`)
-- How might we validate them?
-
----
-
-# Comparing profiles
- 
-```{r, echo = TRUE, eval = FALSE}
-pisaUSA15[1:100, ] %>%
-    select(broad_interest, enjoyment, self_efficacy) %>%
-    single_imputation() %>%
-    estimate_profiles(1:3, 
-                      variances = c("equal", "varying"),
-                      covariances = c("zero", "varying")) %>%
-    compare_solutions(statistics = c("AIC", "BIC"))
-
+d
 ```
 
----
+## Step 1: Explore a range of solutions
 
-# Comparing profiles
+We _could_ estimate a single solution, as in the following (run this code).
 
-```{r, echo = FALSE, eval = TRUE}
-pisaUSA15[1:100, ] %>%
-    select(broad_interest, enjoyment, self_efficacy) %>%
-    single_imputation() %>%
-    estimate_profiles(1:3, 
-                      variances = c("equal", "varying"),
-                      covariances = c("zero", "varying")) %>%
-    compare_solutions(statistics = c("AIC", "BIC"))
-
+```{r}
+d %>%
+    estimate_profiles(3) %>% 
+    plot_profiles()x
 ```
 
----
+Wait a minute - something's not right. Let's center and standardize the `NumActions` variable.
 
-# Other functions for working with LPA output
+```{r}
+d <- d %>% 
+    mutate(num_actions = num_actions- mean(num_actions),
+           num_actions = num_actions/sd(num_actions))
+
+d %>%
+    estimate_profiles(3) %>% 
+    plot_profiles()
+```
+
+Done, right? Not quite. Notice that above, we specified that the number of profiles was 3. How do we know that 3 is best? This is a key decision that we as the individual or group analyzing the data must make. Fortunately, there are tools to help us. Let's try the `compare_solutions()` function, which does just that. The `estimate_profiles()` function can, helpfully, estiamte more than one set of profiles at once --- here, those with 1 through 10 profiles.
+
+```{r}
+d %>%
+    select(-num_actions) %>% 
+    estimate_profiles(1:10) %>% 
+    compare_solutions()
+```
+
+This suggests that an 4 profile solution fits best. Let's interrogate that fourth solution next.
+
+```{r}
+our_solution <- d %>%
+    estimate_profiles(4)
+```
 
 ```{r, eval = FALSE}
-get_estimates(m3)
-get_data(m3)
-get_fit(m4)
+get_estimates(our_solution)
+get_data(our_solution)
+get_fit(our_solution)
 ```
+
+We still aren't done. 

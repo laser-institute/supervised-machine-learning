@@ -19,9 +19,15 @@ bibliography: lit/references.bib
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-Maestrales et al. (2021) present a great example of how coded data and a coding frame can be "scaled up", here for assessment-related purposes. Read through this paper, noting how the authors tuned the performance of their supervised machine learning classification models.
+Even after feature engineering, machine learning approaches can often (but not always) be improved by choosing a more sophisticated model type. Note how we used a regression model in the first two case studies; here, we explore a considerably more sophisticated model, a random forest. 
+
+Choosing a more sophisticated model adds some complexity to the modeling. Notably, more complex models have _tuning parameters_ - parts of the model that are not estimated from the data. In addition to using feature engineering in a way akin to how we did in the last case study, Bertolini et al. (2021) use tuning parameters to improve the performance of their predictive model. 
 
 Our driving question is: How much of a difference does a more complex model make?
+
+While answering this question, we focus not only on estimating, but also on tuning a complex model. 
+
+The data we use is from the #NGSSchat community on Twitter, as in doing so we can compare the performance of this tuned, complex model to the initial model we used in the first case study.
 
 ## Step 0: Loading and setting up
 
@@ -45,18 +51,9 @@ d <- read_rds(here("data", "ngsschat-data.rds"))
 codes <- read_csv(here("data", "ngsschat-qualitative-codes.csv"))
 ```
 
-We'll do some processing of the data here. This could seem like a step to skip, but it's quite important as perhaps the most important part of any machine learning model is the data that goes into it. Here, read the comments after each line of code, and then run the code chunk to proceed. 
+## Step 1. Split data
 
-Here, you'll run all of this code, focusing on manually and then automatically calculating fit measures across the different samples.
-
-
-.panelset[
-
-.panel[.panel-name[1]
-
-**Split data**
-
-```{r panel-chunk-1, echo = TRUE, eval = FALSE}
+```{r}
 library(tidymodels) # doesn't load forcats, stringr, readr from tidyverse
 library(readr)
 library(here)
@@ -73,11 +70,8 @@ data_train <- training(train_test_split)
 kfcv <- vfold_cv(data_train)
 
 ```
-]
 
-.panel[.panel-name[2]
-
-**Engineer features**
+## Step 2: Engineer features
 
 ```{r panel-chunk-2, echo = TRUE, eval = FALSE}
 # pre-processing/feature engineering
@@ -95,11 +89,8 @@ sci_rec <- recipe(final_grade ~ ., data = d) %>%
     step_nzv(all_predictors()) %>% 
     step_impute_knn(all_predictors(), all_outcomes())
 ```
-]
 
-.panel[.panel-name[3]
-
-**Specify recipe, model, and workflow**
+## Step 3: Specify recipe, model, and workflow
  
 ```{r panel-chunk-3, echo = TRUE, eval = FALSE}
 # specify model
@@ -116,11 +107,8 @@ rf_wf_many <-
     add_recipe(sci_rec)
 
 ```
-]
  
-.panel[.panel-name[4]
-
-**Fit model**
+## Step 4: Fit model
 
 ```{r panel-chunk-4, echo = TRUE, eval = FALSE}
 # specify tuning grid
@@ -138,15 +126,7 @@ tree_res <- rf_wf_many %>%
         grid = tree_grid,
         metrics = metric_set(rmse, mae, rsq)
     )
-```
 
-]
-
-.panel[.panel-name[5]
-
-**Fit model (part 2)**
-
-```{r panel-chunk-4b, echo = TRUE, eval = FALSE}
 # examine best set of tuning parameters; repeat?
 show_best(tree_res, n = 10)
 
@@ -162,11 +142,8 @@ final_wf <- rf_wf_many %>%
 final_fit <- final_wf %>% 
     last_fit(train_test_split, metrics = metric_set(rmse, mae, rsq))
 ```
-]
 
-.panel[.panel-name[6]
-
-**Evaluate accuracy**
+## Step 5: Interpret accuracy
 
 ```{r panel-chunk-5, echo = TRUE, eval = FALSE}
 # variable importance plot
@@ -183,5 +160,15 @@ final_fit %>%
 final_fit %>%
     collect_predictions() 
 ```
-]
-]
+
+What do you notice from the above two? More generally, how did the model do? 
+
+- 
+
+Considering what you've read in the two required readings, is this suitable and appropriate for scaling up? Add several notes on this, to
+
+-
+
+### 🧶 Knit & Check ✅
+
+Congratulations - you've completed the Machine Learning Learning Lab 1 Guided Practice! Consider moving on to the independent practice next.

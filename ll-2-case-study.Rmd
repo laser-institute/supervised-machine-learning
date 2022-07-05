@@ -24,10 +24,15 @@ This case study is similar to the first, but it differs in two key ways:
 1. We use a very different data set, on from _online science classes_ that involves a variety of variables types
 2. We focus on _feature engineering_, a key step in which we prepare variables for inclusion in our machine learning models
 
-Studying online classes has been a longstanding focus of the learning analytics community. Consider this paper by Li et al. (2020) published in *The Internet and Higher Education* available here: https://github.com/laser-institute/essential-readings/blob/main/machine-learning/ml-lab-2/li-et-al-2020-ihe.pdf
+Feature engineering is a rich topic in machine learning research, including research in the learning analytics and educational data mining communities.
 
-In this study, digital _log-trace data_, data generated through users' interactions with digital technologies, was used to study elements of the theoretical frame of _self-regulated learning_ and how it related to students' achievement.
-Our driving question is: How much do new predictors improve the prediction quality?
+Consider reseearch on online learning and the work of Li et al. (2020) and Rodriguez et al. (2021). In these two studies, digital _log-trace data_, data generated through users' interactions with digital technologies, was used to study elements of the theoretical frame of _self-regulated learning_ and how it related to students' achievement. Notably, the authors took serveral steps to prepare the data so that it could be validly interpreted as measures of students' self-regulated learning. In short, we need to process the data from contexts such as online classes to use them in analyses. 
+
+The same is true here in the context of machine learning. In a different context, the work of Gobert et al. (2013) is a great example of using data from educational simulations. Salmeron-Majadas provides an example of feature engineering using mouse-click data. Last, we note that there are methods that intended to automated the process of feature engineering (Bosch et al., 2021), though such processes are not necessarily interpretable and they ususually require some degree of tailoring to your particular context.
+
+Our driving question for this case study is: How much do new predictors improve the prediction quality?
+
+We use a data set of many online classes to answer this question. To answer it, we will engage in several feature engineering steps.
 
 ## Step 0: Loading and setting up
 

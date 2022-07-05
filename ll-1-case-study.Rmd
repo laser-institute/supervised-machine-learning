@@ -19,9 +19,17 @@ bibliography: lit/references.bib
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-In the overview presentation for this learning lab, we considered five steps in our supervised machine learning process. Those steps are mirrored here in this case study---with the addition of a preamble step whereby we load and process the data.
+First, please add your name above!
+
+In the overview presentation for this learning lab, we considered five steps in our supervised machine learning process. Those steps are mirrored here in this case study---with the addition of a preamble step whereby we load and process the data. 
 
 Our driving question is: Can we predict something we would have coded by hand?
+
+We use the #NGSSchat data set as the context in which we answer this question. See the network analysis of #NGSSChat (Rosenberg et al., 2020) that used the coding frame from van Bommel et al. (2020) for the transactional or substantive nature of social media-based conversations. Notably, Rosenberg et. al. coded _a lot_ of data by hand, and it would be quite convenient if the coding could be automated through supervised machine learning methods. Though this case study is tied to the #NGSSchat data, you can consider how qualitative coding you or colleagues have done could be automated in a similar manner. In short, again, can we predict something we would, heretofore, have coded by hand?
+
+Such an approach is common in education. Maestrales et al. (2021) present a great example of how coded data and a coding frame can be "scaled up", here for assessment-related purposes. Consider reading through this paper, noting how the authors tuned the performance of their supervised machine learning classification models. They used the Constructed Response Classifier (https://beyondmultiplechoice.org/) to do so; this tool has been widely-used in undergraduate, disciplinary-based research settings.
+
+Conceptually, we focus on prediction and how it differs from the goals of description or explanation.
 
 ## Step 0: Loading and setting up
 
