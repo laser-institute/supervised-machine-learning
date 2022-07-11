@@ -537,13 +537,8 @@ final_fit <- last_fit(fitted_model, train_test_split)
 **Evaluate accuracy**
 
 ```{r panel-chunk-5, echo = TRUE, eval = FALSE}
-# fit stats
 final_fit %>%
     collect_metrics()
-
-# confusion matrix
-final_fit$.predictions[[1]] %>% 
-    conf_mat(.pred_class, code)
 ```
 ]
 ]
@@ -650,8 +645,7 @@ We used a coding frame from [van Bommel et al. (2020)](https://www.sciencedirect
 # Interpreting accuracy
 
 ```{r}
-final_fit %>% 
-    collect_metrics()
+
 ```
 
 ---
@@ -660,6 +654,7 @@ final_fit %>%
 
 - **Guided walkthrough**: You'll run all of this code, focusing on interpreting the predictions  
 - **Independent practice**: In the independent practice, you'll focus on interpreting the fit measures (agreement, Kappa, and others)  
+
 ---
 class: clear, center
 
