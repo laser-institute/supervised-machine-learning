@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="" xml:lang="">
   <head>
-    <title>Machine Learning Learning Lab 1</title>
+    <title>Machine Learning Learning Lab 1 Overview: Prediction</title>
     <meta charset="utf-8" />
     <meta name="author" content="Dr. Joshua Rosenberg" />
-    <meta name="date" content="2022-07-05" />
+    <meta name="date" content="2022-07-11" />
     <script src="libs/header-attrs-2.14/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
@@ -34,21 +34,19 @@ class: clear, title-slide, inverse, center, top, middle
 
 
 
-# Machine Learning Learning Lab 1
+# Machine Learning Learning Lab 1 Overview: Prediction
 ----
 ### **Dr. Joshua Rosenberg**
-### July 05, 2022
+### July 11, 2022
 
 ---
 
 # Background
 
-- W are interested in using one year of coded data to train a computer to be able to code a second year's worth of data
-    - here, our aim is to scale an existing set of coded data 
-    - driving question: how is the aim of prediction different from explanation?
-    - core idea: train and test set of data
-
-We'll focus on a logistic regression model - no more, and no less
+- We have some data, but we want to use a computer to **automate** or scale up the relationships between predictor (independent) and outcome (dependent) variables. Supervised machine learning is suited to this aim.  
+- We use *data from a large, social media-based community focused on supporting the implementation of the Next Generation Science Standards, #NGSSchat on Twitter*.   
+- Using 1000s of qualitative codes from two years of the chat, we explore how well a computer can scale up this coding.
+Conceptually, we focus on understanding how prediction differs from explanation and why it is essential to split our data for supervised machine learning into "training" and "testing" sets.  
 
 ---
 
@@ -56,6 +54,7 @@ We'll focus on a logistic regression model - no more, and no less
 
 .pull-left[
 ## Part 1: Core Concepts
+### Prediction
 - Prediction versus explanation
 - Train and test set
 ]
@@ -63,6 +62,7 @@ We'll focus on a logistic regression model - no more, and no less
 .pull-right[
 
 ## Part 2: R Code Examples
+### #NGSSchat data
 - Estimating a logistic regression model
 - Interpreting the model in terms of its predictive accuracy
 ]
@@ -78,6 +78,24 @@ class: clear, inverse, center, middle
 # A brief review
 
 What are the differences between supervised and unsupervised machine learning?
+
+.pull-left[
+
+## Supervised ML
+
+- Requires a known outcome (a _y_ variable)
+- Useful for _automating_ or _scaling up_ data with a known outcome
+
+]
+
+.pull-right[
+
+## Unsupervised ML 
+
+- Useful for _identifying groups or patterns in data_
+- Can be used in concert with qualitative methods
+
+]
 
 ---
 
@@ -107,11 +125,7 @@ In educational research:
 - Data from log files ("trace data") (e.g., [1](https://www.tandfonline.com/doi/full/10.1080/10508406.2013.837391?casa_token=-8Fm2KCFJ30AAAAA%3Altbc8Y8ci_z-uLJx4se9tgvru9mzm3yqCTFi12ndJ5uM6RDl5YJGG6_4KpUgIK5BYa_Ildeh2qogoQ))
 - Open-ended written responses (e.g., [1](https://link.springer.com/article/10.1007/s10956-020-09889-7), [2](https://doi.org/10.1007/s11423-020-09761-w))
 - Achievement data (i.e., end-of-course grades) (e.g., [1](https://link.springer.com/article/10.1007/s10956-020-09888-8), [2](https://search.proquest.com/docview/2343734516?pq-origsite=gscholar&amp;fromopenview=true))
-
-What else?
-- Drawings/diagrammatic models
-- Data collected for formative purposes (i.e., exit tickets)
-- ???
+- What else?
 
 ---
 
@@ -123,7 +137,7 @@ In a linear regression, our aim is to estimate parameters, such as `\(\beta_0\)`
 
 In an ML approach, we can use the same linear regression model, but with a goal other than making unbiased inferences about the `\(\beta\)` parameters:
 
-&lt;h4&gt;&lt;center&gt;In supervised ML, our goal is to minimize the difference between a known `\(y\)` and our predictions, `\(\hat{y}\)`&lt;/center&gt;&lt;/h3&gt;
+**In supervised ML, our goal is to minimize the difference between a known `\(y\)` and our predictions, `\(\hat{y}\)`**
 
 ---
 
@@ -135,11 +149,9 @@ In an ML approach, we can use the same linear regression model, but with a goal 
 - Is used to discover groups among observations/cases or to summarize across variables
 - Can be used in an _exploratory mode_ (see [Nelson, 2020](https://journals.sagepub.com/doi/full/10.1177/0049124118769114?casa_token=EV5XH31qbyAAAAAA%3AFg09JQ1XHOOzlxYT2SSJ06vZv0jG-s4Qfz8oDIQwh2jrZ-jrHNr7xZYL2FwnZtZiokhPalvV1RL2Bw)) 
 - **Warning**: The results of unsupervised ML _cannot_ directly be used to provide codes/outcomes for supervised ML techniques 
-- Can work with both continuous and dichotomous or categorical variables
 - Algorithms include:
-  - Cluster analysis
+  - Cluster analysis and Latent Profile analysis
   - [Principle Components Analysis (really!)](https://web.stanford.edu/~hastie/ElemStatLearn/)
-  - Latent Dirichlet Allocation (topic modeling)
 
 ---
 
@@ -171,53 +183,153 @@ Do you not yet have codes/outcomes -- and do you want to?
 
 In a recent study, I was interested in whether the conversation was meaningful or more superficial
 
-With colleagues, I coded a large number of tweets to the #NGSSchat community ([Rosenberg et al., 2020](https://scholar.google.com/scholar?hl=en&amp;as_sdt=0%2C43&amp;q=NGSSchat&amp;btnG=))
+With colleagues, I coded a large number of tweets to the #NGSSchat community ([Rosenberg et al., 2020](https://onlinelibrary.wiley.com/doi/pdf/10.1002/tea.21660))
 
-We used a coding frame from [van Bommel et al. (2020)](https://www.sciencedirect.com/science/article/pii/S0742051X19300629):
+We spent a _lot of time_ coding these tweets (using a coding frame from [van Bommel et al. (2020)](https://www.sciencedirect.com/science/article/pii/S0742051X19300629))
 
-- Transactional: A transactional interaction refers to those in which participation or learning is acknowledged.
-- Substantive: Discussions of NGSS- and science education-related content.
-- Transformational: Reflections or exhibitions of an individual's change in knowledge or practice 
+Threads: https://jmichaelrosenberg.shinyapps.io/ngsschat-shiny
+
+---
+
+# What if we want to *scale* a coding frame?
+
+&lt;img src="img/ngsschat-article.png" width="50%" style="display: block; margin: auto;" /&gt;
 
 ---
 
 # Let's look at a few examples
+
+.pull-left[
 
 `id_string`: 46
 
-&lt;img src="img/ngsschat-example-tweets_1.png" width="40%" /&gt;
+&lt;img src="img/ngsschat-example-tweets_1.png" width="70%" /&gt;
 
-We coded this as *substantive*
+]
+
+.pull-right[
+
+**How would you code this?**
+
+We used a coding frame from [van Bommel et al. (2020)](https://www.sciencedirect.com/science/article/pii/S0742051X19300629):
+
+- *Transactional*: A transactional interaction refers to those in which participation or learning is acknowledged.
+- *Substantive*: Discussions of NGSS- and science education-related content.
+
+]
 
 ---
 
 # Let's look at a few examples
+
+.pull-left[
+
+`id_string`: 46
+
+&lt;img src="img/ngsschat-example-tweets_1.png" width="70%" /&gt;
+
+]
+
+.pull-right[
+
+**We coded this as *transactional***
+
+We used a coding frame from [van Bommel et al. (2020)](https://www.sciencedirect.com/science/article/pii/S0742051X19300629):
+
+- *Transactional*: A transactional interaction refers to those in which participation or learning is acknowledged.
+- *Substantive*: Discussions of NGSS- and science education-related content.
+
+]
+
+---
+
+
+# Let's look at a few examples
+
+.pull-left[
 
 `id_string`: 30
 
-&lt;img src="img/ngsschat-example-tweets_2.png" width="40%" /&gt;
+&lt;img src="img/ngsschat-example-tweets_2.png" width="70%" /&gt;
 
-We coded this as *transactional*
+]
+
+.pull-right[
+
+**How would you code this?**
+
+We used a coding frame from [van Bommel et al. (2020)](https://www.sciencedirect.com/science/article/pii/S0742051X19300629):
+
+- *Transactional*: A transactional interaction refers to those in which participation or learning is acknowledged.
+- *Substantive*: Discussions of NGSS- and science education-related content.
+
+]
 
 ---
 
 # Let's look at a few examples
 
+.pull-left[
+`id_string`: 30
+
+&lt;img src="img/ngsschat-example-tweets_2.png" width="70%" /&gt;
+
+]
+
+.pull-right[
+
+**We coded this as *transactional***
+
+We used a coding frame from [van Bommel et al. (2020)](https://www.sciencedirect.com/science/article/pii/S0742051X19300629):
+
+- *Transactional*: A transactional interaction refers to those in which participation or learning is acknowledged.
+- *Substantive*: Discussions of NGSS- and science education-related content.
+
+]
+
+---
+
+# Let's look at a few examples
+
+.pull-left[
 `id_string`: 45
 
-&lt;img src="img/ngsschat-example-tweets_3.png" width="40%" /&gt;
+&lt;img src="img/ngsschat-example-tweets_3.png" width="70%" /&gt;
 
-We coded this as *substantive*
+]
+
+.pull-right[
+
+**We coded this as *substantive***
+
+We used a coding frame from [van Bommel et al. (2020)](https://www.sciencedirect.com/science/article/pii/S0742051X19300629):
+
+- *Transactional*: A transactional interaction refers to those in which participation or learning is acknowledged.
+- *Substantive*: Discussions of NGSS- and science education-related content.
+
+]
 
 ---
 
 # Let's look at a few examples
 
+.pull-left[
 `id_string`: 2
 
-&lt;img src="img/ngsschat-example-tweets_4.png" width="40%" /&gt;
+&lt;img src="img/ngsschat-example-tweets_4.png" width="70%" /&gt;
 
-We coded this as *transactional*
+]
+
+.pull-right[
+
+**We coded this as *transactional***
+
+We used a coding frame from [van Bommel et al. (2020)](https://www.sciencedirect.com/science/article/pii/S0742051X19300629):
+
+- *Transactional*: A transactional interaction refers to those in which participation or learning is acknowledged.
+- *Substantive*: Discussions of NGSS- and science education-related content.
+
+]
 
 ---
 
@@ -225,13 +337,20 @@ We coded this as *transactional*
 
 There are *hundreds of thousands* of tweets like this in threads; practically, there's no way we could code all of them.
 
+--
+
 But, we did code several thousand threads
 
+--
+
 Can we use these to scale up our coding?
+
+--
 
 In other words, can the computer use the features of tweets in threads to assign them labels as *transactional* or *substantive* conversations?
 
 ---
+
 # How do I select a model?
 
 One general principle is to **start with the simplest useful model** and to _build toward
@@ -249,7 +368,7 @@ This isn't just for beginners or those of us in education; [most spam filters us
 
 # Super complex?
 
-- Nothing too much, apart from computing power, time, and concerns of 
+- Nothing too much, apart from computing power and time
 - A "check" on your work is your predictions on _test_ set data
   - *Train data*: Coded/outcome data that you use to train ("estimate") your model
   - *Validation data&lt;sup&gt;1&lt;/sup&gt;*: Data you use to select a particular algorithm
@@ -272,13 +391,34 @@ class: clear, inverse, center, middle
 
 # Overview of classification modeling
 
-1. Split data
-1. Engineer features
-1. Specify recipe, model, and workflow
-1. Fit model
-1. Evaluate accuracy
+These align with the LASER Framework (used across topic areas):
 
-This is the basic process we'll follow for this and the next three learning labs
+1.  **Prepare**: Prior to analysis, we'll take a look at the context
+    from which our data came, formulate some questions, and load R packages.
+
+2.  **Wrangle**: In the wrangling section, we will
+    learn some basic techniques for manipulating, cleaning,
+    transforming, and merging data.
+
+3.  **Explore**: The processes of wrangling and exploring data often go hand in hand.
+
+4.  **Model**: In this step, we carry out the analysis - here, supervised machine learning.
+
+5.  **Communicate**: Interpreting and communicating the results of our findings is the last step
+    
+---
+
+# Overview of classification modeling
+
+1. **Split data** (Prepare)  
+1. **Engineer features and write down the recipe** (Wrangle and Explore)  
+1. **Specify the model and workflow** (Model)  
+1. **Fit model** (Model)
+1. **Evaluate accuracy** (Communicate)  
+
+This is the basic process we'll follow for this and the next three learning labs focused on supervised ML
+
+We'll dive into each of these subsequently
 
 ---
 
@@ -288,10 +428,12 @@ This is the basic process we'll follow for this and the next three learning labs
 
 - This definition provides a wide range of options for what kinds of algorithms we use (from simple to very complex, as we discuss in a later learning lab)
 
-- For now, we focus on a familiar, easy to interpret algorithm, one that is still often used in sophisticated, rigorous analyses (e.g., [1](https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=7373578&amp;casa_token=xqYfYUtB7Y8AAAAA:Hv9EY3EnDjdtCt1chhsO6cLP_QYcxRSdYQGNzZWTJfkdA2BlDUK5ZekrMqJjobJLj_mUDiQ&amp;tag=1), [2](https://dl.acm.org/doi/abs/10.1145/3448139.3448154?casa_token=skmk5XGbDOUAAAAA:Z0Kl4nyjpOGFA6RuFTiiLWaC_KxH1vkQ72Kr0hetXcumRdvu8tPYlCX12AgHr9aS0Fp3L-Uu0p4), also [this](https://linkinghub.elsevier.com/retrieve/pii/S0895435618310813)), _logistic regression_
-    - This is a linear model with a binary ("yes" or "no") outcome
+- For now, we focus on a familiar, easy to interpret algorithm, one that is still often used in sophisticated, rigorous analyses (e.g., [1](https://dl.acm.org/doi/abs/10.1145/3448139.3448154?casa_token=skmk5XGbDOUAAAAA:Z0Kl4nyjpOGFA6RuFTiiLWaC_KxH1vkQ72Kr0hetXcumRdvu8tPYlCX12AgHr9aS0Fp3L-Uu0p4), also [this](https://linkinghub.elsevier.com/retrieve/pii/S0895435618310813)), _logistic regression_
+    - This is a linear model with a binary (*"yes"* or *"no"*) outcome
 
 ---
+
+# Classification modeling
 
 .panelset[
 
@@ -378,53 +520,103 @@ final_fit$.predictions[[1]] %&gt;%
 
 # Let's see how the model did
 
+.pull-left[
 `id_string`: 46
 
-&lt;img src="img/ngsschat-example-tweets_1.png" width="40%" /&gt;
+&lt;img src="img/ngsschat-example-tweets_1.png" width="70%" /&gt;
 
 We coded this as *substantive*  
 The model predicted: *substantive* **correct!**
+]
+
+.pull-right[
+
+We used a coding frame from [van Bommel et al. (2020)](https://www.sciencedirect.com/science/article/pii/S0742051X19300629):
+
+- *Transactional*: A transactional interaction refers to those in which participation or learning is acknowledged.
+- *Substantive*: Discussions of NGSS- and science education-related content.
+
+]
 
 ---
 
 # Let's see how the model did
 
+.pull-left[
 `id_string`: 30
 
-&lt;img src="img/ngsschat-example-tweets_2.png" width="40%" /&gt;
+&lt;img src="img/ngsschat-example-tweets_2.png" width="70%" /&gt;
 
 We coded this as *transactional*  
 The model predicted: *transactional* **correct!**
+]
+
+.pull-right[
+
+We used a coding frame from [van Bommel et al. (2020)](https://www.sciencedirect.com/science/article/pii/S0742051X19300629):
+
+- *Transactional*: A transactional interaction refers to those in which participation or learning is acknowledged.
+- *Substantive*: Discussions of NGSS- and science education-related content.
+
+]
 
 ---
 
 # Let's see how the model did
 
+.pull-left[
 `id_string`: 45
 
-&lt;img src="img/ngsschat-example-tweets_3.png" width="40%" /&gt;
+&lt;img src="img/ngsschat-example-tweets_3.png" width="70%" /&gt;
 
 We coded this as *substantive*  
 The model predicted: *transactional* **incorrect; why?**
+]
+
+.pull-right[
+
+We used a coding frame from [van Bommel et al. (2020)](https://www.sciencedirect.com/science/article/pii/S0742051X19300629):
+
+- *Transactional*: A transactional interaction refers to those in which participation or learning is acknowledged.
+- *Substantive*: Discussions of NGSS- and science education-related content.
+
+]
 
 ---
 
+.pull-left[
 # Let's see how the model did
 
 `id_string`: 2
 
-&lt;img src="img/ngsschat-example-tweets_4.png" width="40%" /&gt;
+&lt;img src="img/ngsschat-example-tweets_4.png" width="70%" /&gt;
 
 We coded this as *transactional*  
 The model predicted: *substantive* **incorrect; why?**
+]
+
+.pull-right[
+
+We used a coding frame from [van Bommel et al. (2020)](https://www.sciencedirect.com/science/article/pii/S0742051X19300629):
+
+- *Transactional*: A transactional interaction refers to those in which participation or learning is acknowledged.
+- *Substantive*: Discussions of NGSS- and science education-related content.
+
+]
+
+---
+
+# Interpreting accuracy
+
+
 
 ---
 
 # In the remainder of this learning lab, you'll dive deeper into this model
 
-- **Guided walkthrough**: You'll run all of this code, focusing on interpreting the predictions
-- **Independent practice**: In the independent practice, you'll focus on interpreting the fit measures (agreement, Kappa, and others)
-- **Readings**: There are two readings, one closely related to the guided walkthrough, the other an example of using supervised machine learning like used here for assessment purposes
+- **Guided walkthrough**: You'll run all of this code, focusing on interpreting the predictions  
+- **Independent practice**: In the independent practice, you'll focus on interpreting the fit measures (agreement, Kappa, and others)  
+- **Readings**: There are two readings, one closely related to the guided walkthrough, the other an example of using supervised machine learning like used here for assessment purposes  
 
 ---
 class: clear, center

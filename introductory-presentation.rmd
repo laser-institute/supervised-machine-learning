@@ -96,6 +96,8 @@ background-size: contain
 knitr::include_graphics("img/gpt-3.png")
 ```
 
+https://beta.openai.com/playground
+
 ---
 
 # How I came to ML
