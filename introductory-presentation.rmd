@@ -1,6 +1,6 @@
 ---
-title: "An Introduction to Machine Learning"
-subtitle: "A Brief Overview & Demo"
+title: "Machine Learning (ML) Module: Intro. Presentation" 
+subtitle: "https://laser-institute.github.io/machine-learning/introductory-presentation.html#1"
 author: "Joshua Rosenberg"
 institute: "The LASER Institute"
 date: "`r Sys.Date()`"
@@ -53,13 +53,19 @@ htmltools::tagList(
 
 ```{r xaringan-extras, echo=FALSE}
 xaringanExtra::use_tile_view()
-
 ```
 
 # `r rmarkdown::metadata$title`
 ----
 ### `r rmarkdown::metadata$author`
+### `r rmarkdown::metadata$subtitle`
 ### `r format(Sys.time(), "%B %d, %Y")`
+
+---
+
+class: clear, inverse, center, middle
+
+# Front Matter
 
 ---
 
@@ -71,29 +77,35 @@ background-size: contain
 
 ---
 
-class: clear, inverse, center, middle
-
-# Agenda
-
----
-
-# Agenda
-
-1. Introductions (5 min.)
-1. Overview of machine learning (20 min.)
-
----
-
-# Goals for this topic area
+# Goals for this module
 
 ### Over-arching goal:
 
-*Get started with applying machine learning methods in R*  
+- **Get started with applying machine learning methods in R** 
 
 ### Specific aims are to learn about:
 
-- a small but important set of core ideas about machine learning
-- how these ideas are instantiated through the *tidymodels* R package
+- A small but important set of ideas about machine learning
+- How these ideas are instantiated through the *tidymodels* R package
+
+---
+
+# One example of ML . . .
+
+```{r, echo = FALSE, out.width="62%", fig.align='center'}
+knitr::include_graphics("img/gpt-3.png")
+```
+
+---
+
+# How I came to ML
+
+**A magical moment**
+- Learned about supervised machine learning from a colleague
+- Used these methods to discover patterns in students' embedded assessments, Rosenberg et al. (2021), *Journal of Science Education and Technology*, https://link.springer.com/article/10.1007/s10956-020-09862-4
+
+**Using Twitter users profile descriptions to predict whether or not they were teachers**
+- Manually coded > 500 profiles for whether they were teachers or non-teachers and then trained a ML model to predict 1000s of teachers' roless as teachers or non-teachers (with an accuracy of 85%), [Rosenberg et al., *AERA Open* (2021)](https://journals.sagepub.com/doi/full/10.1177/23328584211024261)
 
 ---
 
@@ -105,35 +117,11 @@ class: clear, inverse, center, middle
 
 # Defining ML
 
-- *Artificial Intelligence (AI)*
-.footnote[
-[1]  I feel super uncomfortable bringing AI into this, but perhaps it's useful just to be clear about terminology
-]
+- *Artificial Intelligence (AI)* (i.e., [GPT-3](https://openai.com/api/))
 : Simulating human intelligence through the use of computers
 - *Machine learning (ML)*: A subset of AI focused on how computers acquire new information/knowledge
 
 This definition leaves a lot of space for a range of approaches to ML
-
----
-
-# One example from Josh's work
-
-**Using Twitter users profile descriptions to predict whether or not they were teachers**
-
-- Manually coded > 500 profiles for whether they were teachers or non-teachers
-- Trained a Support Vector Machine model (or algorithm) on _text features_ using 90% of the data
-- For the remaining 10% of the data, we predicted whether or not someone was a teacher with an accuracy of 85%; $\kappa$ = 0.612.
-- Then used the trained classifier to predict whether or not 1000s of users were or were not teachers (and used these classifications in a multi-level model)
-
-Rosenberg et al., *AERA Open* (2021)
-
-https://journals.sagepub.com/doi/full/10.1177/23328584211024261
-
----
-
-background-image: url("https://i.vas3k.ru/7vx.jpg")
-background-position: center
-background-size: contain
 
 ---
 
@@ -163,11 +151,6 @@ In educational research:
 - Data from log files ("trace data") (e.g., [1](https://www.tandfonline.com/doi/full/10.1080/10508406.2013.837391?casa_token=-8Fm2KCFJ30AAAAA%3Altbc8Y8ci_z-uLJx4se9tgvru9mzm3yqCTFi12ndJ5uM6RDl5YJGG6_4KpUgIK5BYa_Ildeh2qogoQ))
 - Open-ended written responses (e.g., [1](https://link.springer.com/article/10.1007/s10956-020-09889-7), [2](https://doi.org/10.1007/s11423-020-09761-w))
 - Achievement data (i.e., end-of-course grades) (e.g., [1](https://link.springer.com/article/10.1007/s10956-020-09888-8), [2](https://search.proquest.com/docview/2343734516?pq-origsite=gscholar&fromopenview=true))
-
-What else?
-- Drawings/diagrammatic models
-- Data collected for formative purposes (i.e., exit tickets)
-- ???
 
 ---
 
@@ -199,9 +182,8 @@ This _predictive goal_ means that we can do things differently:
 
 # Okay, _really_ complex
 
-- Okay, _really_ complex:
-  - Neural networks
-  - Deep networks
+- Neutral/deep networks
+  - i.e., GPT-3 (175 B parameters), GPT-4 (>1 T parameters)
 - And, some models can take a different form than familiar regressions:
   - *k*-nearest neighbors
   - Decision trees (and their extensions of bagged and random forests)
@@ -210,7 +192,7 @@ This _predictive goal_ means that we can do things differently:
 
 ---
 
-# A helpful frame 
+# Supervised & unsupervised
 
 ## Unsupervised ML
 
@@ -220,9 +202,8 @@ This _predictive goal_ means that we can do things differently:
 - **Warning**: The results of unsupervised ML _cannot_ directly be used to provide codes/outcomes for supervised ML techniques 
 - Can work with both continuous and dichotomous or categorical variables
 - Algorithms include:
-  - Cluster analysis
+  - Cluster analysis and Latent Profile Analysis
   - [Principle Components Analysis (really!)](https://web.stanford.edu/~hastie/ElemStatLearn/)
-  - Latent Dirichlet Allocation (topic modeling)
 
 ---
 
@@ -234,7 +215,7 @@ Do you have coded data or data with a known outcome -- let's say about K-12 stud
 - _Scale_ coding that you have done for a sample of data to a larger sample?
 - _Provide timely or instantaneous feedback_, like in many learning analytics systems?
 
-<bold><h4><center>Supervised methods may be your best bet</center></h4></bold>
+**Supervised methods may be your best bet**
 
 ---
 
@@ -246,16 +227,55 @@ Do you not yet have codes/outcomes -- and do you want to?
 - _Discover groups or patterns in your data_ that may be of interest?
 - _Reduce the number of variables in your dataset_ to a smaller, but perhaps nearly as explanatory/predictive - set of variables?
 
-<bold><h4><center>Unsupervised methods may be helpful</center></h4></bold>
+**Unsupervised methods may be helpful**
 
 ---
+
+# Examples of machine learning in STEM Ed Research
 
 
 .panelset[
 
-.panel[.panel-name[1]
+.panel[.panel-name[Example 1]
 
-# What will I learn in this topic area?
+**Using digital log-trace data and supervised ML**
+
+Gobert, J. D., Sao Pedro, M., Raziuddin, J., & Baker, R. S. (2013). From log files to assessment metrics: Measuring students' science inquiry skills using educational data mining. *Journal of the Learning Sciences, 22*(4), 521-563.
+
+- Utilized *replay tagging* to code sequences of students' activity within digital *log-trace* data
+- Then trained a supervised ML algorithm to **automate** the prediction the presence or absence of students' engagement in inquiry
+]
+
+.panel[.panel-name[Example 2]
+
+**Combining best practices in assessment with supervised ML**
+
+Maestrales, S., Zhai, X., Touitou, I., Baker, Q., Schneider, B., & Krajcik, J. (2021). Using machine learning to score multi-dimensional assessments of chemistry and physics. Journal of Science Education and Technology, 30(2), 239-254.
+
+- Carrying out a careful process of qualitative coding (and the establishment of validity and interrater reliability) of students' written constructed responses
+- Training a supervised ML algorithm in advance of being able to **scale up** their coding to a larger number of responses
+]
+
+.panel[.panel-name[Example 3]
+
+**Combining qualitative methods with unsupervised ML**
+
+Sherin, B. (2013). A computational study of commonsense science: An exploration in the automated analysis of clinical interview data. *Journal of the Learning Sciences, 22*(4), 600-638.
+
+- Used unsupervised machine learning methods to identify topics within students' interviews **from patterns in the data alone**
+- Interpreted those topics in light of rigorous qualitative coding with the aim of boosting the validity of the use of both the machine learning and qualitative appraoches
+]
+]
+
+---
+
+# Learning Labs Overviews
+
+.panelset[
+
+.panel[.panel-name[Overview]
+
+**What will I learn in this topic area?**
 
 We'll work to answer these four questions:
 
@@ -266,44 +286,45 @@ We'll work to answer these four questions:
 
 ]
 
-.panel[.panel-name[2]
+.panel[.panel-name[LL 1]
 
 **Machine Learning Learning Lab 1: Focusing on prediction**
 
-Once we have trained a computer in the context of using supervised machine learning methods, we may realize we can improve it by adding new variables or changing how the variables we are using were prepared. In this learning lab, we consider **feature engineering** *a variety of types of data from many online science courses* to predict students' success after only a few weeks of the course. In order to engineer and include features in our model and see how different the models' predictive performance is (without introducing bias by "over-fitting" our model to the data), we use cross-validation.
-
+We have some data, but we want to use a computer to **automate** or scale up the relationships between predictor (independent) and outcome (dependent) variables. Supervised machine learning is suited to this aim. In particular, in this learning lab, we explore how we can train a computer to learn and reproduce qualitative coding we carried out---though the principles extend to other types of variables.
 
 ]
 
-.panel[.panel-name[3]
+.panel[.panel-name[LL 2]
 
 **Machine Learning Learning Lab 2: Feature engineering**
 
-Once we have trained a computer in the context of using supervised machine learning methods, we may realize we can improve it by adding new variables or changing how the variables we are using were prepared. In this learning lab, we consider **feature engineering** *a variety of types of data from many online science courses* to predict students' success after only a few weeks of the course. In order to engineer and include features in our model and see how different the models' predictive performance is (without introducing bias by "over-fitting" our model to the data), we use cross-validation.
+Once we have trained a computer in the context of using supervised machine learning methods, we may realize we can improve it by adding new variables or changing how the variables we are using were prepared. In this learning lab, we consider **feature engineering** with a variety of types of data from many online science courses to predict students' success after only a few weeks of the course
 
 ]
 
-.panel[.panel-name[4]
+.panel[.panel-name[LL 3]
 
 **Machine Learning Learning Lab 3: Fine-tuning the model**
 
-Even with optimal feature engineering, we may be able to specify an even more predictive model by selecting and *tuning* a more sophisticated algorithm. While in the first two learning labs we used logistic regression as the "engine" (or algorithm), in this learning lab, we use a random forest as the engine for our model. This more sophisticated type of model requires us to specify **tuning parameters**, specifications that determine how the model works. In this learning lab, we again use the _#NGSSchat_ data set with the aim of seeing how much better we can predict the nature of the conversations taking place there with model tuning (and some of the feature engineering steps we took in the previous learning lab). We discuss the bias-variance trade-off as it relates to choosing between a more simple or complex model.
+Even with optimal feature engineering, we may be able to specify an even more predictive model by selecting and *tuning* a more sophisticated algorithm. While in the first two learning labs we used logistic regression as the "engine" (or algorithm), in this learning lab, we use a random forest as the engine for our model. This more sophisticated type of model requires us to specify **tuning parameters**, specifications that determine how the model works.
 
 ]
 
-.panel[.panel-name[5]
+.panel[.panel-name[LL 4]
 
 **Machine Learning Learning Lab 4: Finding groups (or codes) in data**
 
-The previous three learning labs involved the use of data with known outcome variables (coded for the substantive or transactional nature of the conversations taking place through #NGSSchat in learning labs 1 and 3 and students' grades in learning lab 2). Accordingly, we explored different aspects of supervised machine learning. What if we have data without something that we can consider to be a dependent variable? **Unsupervised machine learning methods** can be used in such cases. In this learning lab, we explore the use of latent profile analysis as a way of estimating groups on the basis of a set of predictor variables. Using *data from the ASSISTments adaptive mathematics tutoring tool*). At a conceptual level, we consider computational grounded theory as a way of integrating an approach such as latent profile analysis with qualitative methods as a means of leveraging the strengths of both machine learning and traditional analytic methods. 
-
+The previous three learning labs involved the use of data with known outcome variables (coded for the substantive or transactional nature of the conversations taking place through #NGSSchat in learning labs 1 and 3 and students' grades in learning lab 2). Accordingly, we explored different aspects of supervised machine learning. What if we have data without something that we can consider to be a dependent variable? **Unsupervised machine learning methods** can be used in such cases.
+]
 ]
 
 ---
 
-# Thanks!
+# Thanks
 
-class: clear, center
+I hope to see you in the ML topic area learning labs!
+
+Slides: https://laser-institute.github.io/machine-learning/introductory-presentation.html#1
 
 ## .font130[.center[**Thank you!**]]
 <br/>
