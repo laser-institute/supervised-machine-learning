@@ -250,11 +250,12 @@ Do you not yet have codes/outcomes -- and do you want to?
 
 ---
 
+
+.panelset[
+
+.panel[.panel-name[1]
+
 # What will I learn in this topic area?
-
-You'll have the chance to learn about both _supervised_ and _unsupervised_ machine learning methods.
-
-You'll use three different data sets while doing so. 
 
 We'll work to answer these four questions:
 
@@ -263,37 +264,40 @@ We'll work to answer these four questions:
 - How much of a difference does a more complex model make?
 - What if we do not have training data?
 
----
+]
 
-# Machine Learning Learning Lab 1: Focusing on prediction
+.panel[.panel-name[2]
 
-- Motivation: We want to train a computer to learn and reproduce coding we carried out
-- Data: #NGSSchat data on transactional and substantive conversations
-- Skills: Understanding how prediction differs from explanation; splitting data into a train and test set
+**Machine Learning Learning Lab 1: Focusing on prediction**
 
----
+Once we have trained a computer in the context of using supervised machine learning methods, we may realize we can improve it by adding new variables or changing how the variables we are using were prepared. In this learning lab, we consider **feature engineering** *a variety of types of data from many online science courses* to predict students' success after only a few weeks of the course. In order to engineer and include features in our model and see how different the models' predictive performance is (without introducing bias by "over-fitting" our model to the data), we use cross-validation.
 
-# Machine Learning Learning Lab 2: Feature engineering
 
-- Motivation: After training our computer, we realized we want to change our model
-- Data: Survey, trace, and discussion data from online classes
-- Skills: Feature engineering, resampling and cross-validation
+]
 
----
+.panel[.panel-name[3]
 
-# Machine Learning Learning Lab 3: Fine-tuning the model
+**Machine Learning Learning Lab 2: Feature engineering**
 
-- Motivation: We want to see whether a more complex model performs better
-- Data: #NGSSchat data on transactional and substantive conversations
-- Skills: Changing models (algorithms), determining the best tuning parameters
+Once we have trained a computer in the context of using supervised machine learning methods, we may realize we can improve it by adding new variables or changing how the variables we are using were prepared. In this learning lab, we consider **feature engineering** *a variety of types of data from many online science courses* to predict students' success after only a few weeks of the course. In order to engineer and include features in our model and see how different the models' predictive performance is (without introducing bias by "over-fitting" our model to the data), we use cross-validation.
 
----
+]
 
-# Machine Learning Learning Lab 4: Finding groups (or codes) in data
+.panel[.panel-name[4]
 
-- Motivation: We have complex trace data, but we don't have any codes (yet)
-- Data: ASSISTments data 
-- Skills: estimating latent profiles, computational grounded theory
+**Machine Learning Learning Lab 3: Fine-tuning the model**
+
+Even with optimal feature engineering, we may be able to specify an even more predictive model by selecting and *tuning* a more sophisticated algorithm. While in the first two learning labs we used logistic regression as the "engine" (or algorithm), in this learning lab, we use a random forest as the engine for our model. This more sophisticated type of model requires us to specify **tuning parameters**, specifications that determine how the model works. In this learning lab, we again use the _#NGSSchat_ data set with the aim of seeing how much better we can predict the nature of the conversations taking place there with model tuning (and some of the feature engineering steps we took in the previous learning lab). We discuss the bias-variance trade-off as it relates to choosing between a more simple or complex model.
+
+]
+
+.panel[.panel-name[5]
+
+**Machine Learning Learning Lab 4: Finding groups (or codes) in data**
+
+The previous three learning labs involved the use of data with known outcome variables (coded for the substantive or transactional nature of the conversations taking place through #NGSSchat in learning labs 1 and 3 and students' grades in learning lab 2). Accordingly, we explored different aspects of supervised machine learning. What if we have data without something that we can consider to be a dependent variable? **Unsupervised machine learning methods** can be used in such cases. In this learning lab, we explore the use of latent profile analysis as a way of estimating groups on the basis of a set of predictor variables. Using *data from the ASSISTments adaptive mathematics tutoring tool*). At a conceptual level, we consider computational grounded theory as a way of integrating an approach such as latent profile analysis with qualitative methods as a means of leveraging the strengths of both machine learning and traditional analytic methods. 
+
+]
 
 ---
 
@@ -311,4 +315,4 @@ jmrosenberg@utk.edu
 
 Slides created via the R package [xaringan](https://github.com/yihui/xaringan)
 
-Available: <add link>
+Available: 
