@@ -269,6 +269,12 @@ Sherin, B. (2013). A computational study of commonsense science: An exploration 
 
 ---
 
+class: clear, inverse, center, middle
+
+# Learning Labs!
+
+---
+
 # Learning Labs Overviews
 
 .panelset[
@@ -279,10 +285,10 @@ Sherin, B. (2013). A computational study of commonsense science: An exploration 
 
 We'll work to answer these four questions:
 
-- Can we predict something we would have coded by hand?
-- How much do new predictors improve the prediction quality?
-- How much of a difference does a more complex model make?
-- What if we do not have training data?
+- LL 1: Can we predict something we would have coded by hand?
+- LL 2: How much do new predictors improve the prediction quality?
+- LL 3: How much of a difference does a more complex model make?
+- LL 4: What if we do not have training data?
 
 ]
 
