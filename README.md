@@ -13,7 +13,7 @@ We have some data, but we want to use a computer to **automate** or scale up the
 
 ## ML Learning Lab 2: Feature Engineering
 
-Once we have trained a computer in the context of using supervised machine learning methods, we may realize we can improve it by adding new variables or changing how the variables we are using were prepared. In this learning lab, we consider **feature engineering* *a variety of types of data from many online science courses* to predict students' success after only a few weeks of the course. In order to engineer and include features in our model and see how different the models' predictive performance is (without introducing bias by "over-fitting" our model to the data), we use cross-validation.
+Once we have trained a computer in the context of using supervised machine learning methods, we may realize we can improve it by adding new variables or changing how the variables we are using were prepared. In this learning lab, we consider **feature engineering** *a variety of types of data from many online science courses* to predict students' success after only a few weeks of the course. In order to engineer and include features in our model and see how different the models' predictive performance is (without introducing bias by "over-fitting" our model to the data), we use cross-validation.
 
 ## ML Learning Lab 3: Model Tuning
 
