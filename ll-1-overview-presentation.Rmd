@@ -469,6 +469,18 @@ We'll dive into each of these subsequently
 
 .panelset[
 
+.panel[.panel-name[0]
+
+**Loading, setting up**
+
+```{r}
+library(tidyverse)
+library(tidymodels)
+
+d <- read_csv(here("data", "ngsschat-processed-data.csv"))
+```
+]
+
 .panel[.panel-name[1]
 
 **Split data**
@@ -486,9 +498,7 @@ data_test <- testing(train_test_split)
 **Engineer features**
 
 ```{r panel-chunk-2, echo = TRUE, eval = FALSE}
-my_rec <- recipe(code ~ ., data = ddd) %>% 
-    step_normalize(all_numeric_predictors()) %>%
-    step_nzv(all_predictors())
+my_rec <- recipe(code ~ ., data = data_train)
 ```
 ]
 
@@ -498,16 +508,15 @@ my_rec <- recipe(code ~ ., data = ddd) %>%
  
 ```{r panel-chunk-3, echo = TRUE, eval = FALSE}
 # specify model
-rf_mod_many <-
+my_mod <-
     logistic_reg() %>% 
     set_engine("glm") %>%
-    set_mode("classification") %>%  # note this
-    step_impute_knn(all_predictors(), all_outcomes())
+    set_mode("classification")
 
 # specify workflow
-rf_wf_many <-
+my_wf <-
     workflow() %>%
-    add_model(rf_mod_many) %>% 
+    add_model(my_mod) %>% 
     add_recipe(my_rec)
 ```
 ]
@@ -517,13 +526,9 @@ rf_wf_many <-
 **Fit model**
 
 ```{r panel-chunk-4, echo = TRUE, eval = FALSE}
-tree_res <- fit(rf_wf_many, data = data_train)
+fitted_model <- fit(my_wf, data = data_train)
 
-predict(tree_res, data_test)
-
-final_fit <- last_fit(tree_res, train_test_split,
-               metrics = metric_set(roc_auc, accuracy, kap, 
-                                                    sensitivity, specificity, precision))
+final_fit <- last_fit(fitted_model, train_test_split)
 ```
 ]
 
@@ -645,7 +650,8 @@ We used a coding frame from [van Bommel et al. (2020)](https://www.sciencedirect
 # Interpreting accuracy
 
 ```{r}
-
+final_fit %>% 
+    collect_metrics()
 ```
 
 ---
@@ -654,7 +660,6 @@ We used a coding frame from [van Bommel et al. (2020)](https://www.sciencedirect
 
 - **Guided walkthrough**: You'll run all of this code, focusing on interpreting the predictions  
 - **Independent practice**: In the independent practice, you'll focus on interpreting the fit measures (agreement, Kappa, and others)  
-
 ---
 class: clear, center
 

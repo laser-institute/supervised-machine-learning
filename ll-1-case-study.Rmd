@@ -64,7 +64,7 @@ the green arrow to run the code chunk.
 library(tidyverse)
 library(here)
 library(tidymodels)
-library(tabyl)
+library(janitor)
 ```
 
 Next, we'll load the *already-processed* (for this lab) data set that
@@ -148,7 +148,8 @@ use the remainder for the training set, which are the defaults for the
 
 Additionally, since random sampling uses random numbers, it is important
 to set the random number seed. This ensures that the random numbers can
-be reproduced at a later time (if needed).
+be reproduced at a later time (if needed). We pick the first date on which we may
+carry out this learning lab as the seed, but any number will work!
 
 The function `initial_split()` function from the {rsample} package takes
 the original data and saves the information on how to make the
@@ -156,9 +157,10 @@ partitions. The {rsample} package has two aptly named functions for
 created a training and testing data set called `training()` and
 `testing()`, respectively.
 
-Run the following code to split the data
+Run the following code to split the data:
 
 ```{r}
+set.seed(20220212)
 train_test_split <- initial_split(d, prop = .80)
 data_train <- training(train_test_split)
 ```
@@ -263,8 +265,7 @@ its accuracy using the *testing data set* (which is not used to train
 the model).
 
 ```{r, include = FALSE}
-final_fit <- last_fit(fitted_model, train_test_split,
-               metrics = metric_set(roc_auc, accuracy, kap, sensitivity, specificity, precision))
+final_fit <- last_fit(fitted_model, train_test_split)
 ```
 
 [Your Turn]{style="color: green;"} ⤵
@@ -317,6 +318,14 @@ final_fit %>%
 
 Let's interpret the above. If the value of `correct` is `TRUE` when the predicted and known code are the same, what does the `percent` column tell us? Add one or more notes to the dashes below:
 
+- 
+
+A short-cut to the above is below:
+
+```{r}
+final_fit %>% 
+    collect_metrics()
+```
 **Observations**
 
 - 

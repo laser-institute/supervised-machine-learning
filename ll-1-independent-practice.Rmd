@@ -54,6 +54,7 @@ We'll use a shortcut to cut to the chase -- interpreting the model. The code bel
 ```{r}
 library(here)
 library(readr)
+library(tidymodels)
 
 final_fit <- read_rds(here("out", "ngsschat-final-fit.rds"))
 
