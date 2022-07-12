@@ -442,7 +442,7 @@ We'll dive into each of these subsequently
 
 **Loading, setting up**
 
-```{r, message = FALSE, warning = FALSE}
+```{r, message = FALSE, warning = FALSE, echo = TRUE}
 library(tidyverse)
 library(tidymodels)
 
