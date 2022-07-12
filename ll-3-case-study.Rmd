@@ -19,148 +19,299 @@ bibliography: lit/references.bib
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-Even after feature engineering, machine learning approaches can often (but not always) be improved by choosing a more sophisticated model type. Note how we used a regression model in the first two case studies; here, we explore a considerably more sophisticated model, a random forest. 
+Even after feature engineering, machine learning approaches can often
+(but not always) be improved by choosing a more sophisticated model
+type. Note how we used a regression model in the first two case studies;
+here, we explore a considerably more sophisticated model, a random
+forest.
 
-Choosing a more sophisticated model adds some complexity to the modeling. Notably, more complex models have _tuning parameters_ - parts of the model that are not estimated from the data. In addition to using feature engineering in a way akin to how we did in the last case study, Bertolini et al. (2021) use tuning parameters to improve the performance of their predictive model. 
+Choosing a more sophisticated model adds some complexity to the
+modeling. Notably, more complex models have *tuning parameters* - parts
+of the model that are not estimated from the data. In addition to using
+feature engineering in a way akin to how we did in the last case study,
+Bertolini et al. (2021) use tuning parameters to improve the performance
+of their predictive model.
 
-Our driving question is: How much of a difference does a more complex model make?
+> Bertolini, R., Finch, S. J., & Nehm, R. H. (2021). Enhancing data
+> pipelines for forecasting student performance: integrating feature
+> selection with cross-validation. *International Journal of Educational
+> Technology in Higher Education, 18*(1), 1-23.
+> <https://github.com/laser-institute/essential-readings/blob/main/machine-learning/ml-lab-3/bertolini-et-al-2021-ijethe.pdf>
 
-While answering this question, we focus not only on estimating, but also on tuning a complex model. 
+Our driving question is: **How much of a difference does a more complex
+model make?** Looking back to our predictive model from LL1, we can see
+that our accuracy was around 87%: 0.872, more specifically. Can we
+improve on that?
 
-The data we use is from the #NGSSchat community on Twitter, as in doing so we can compare the performance of this tuned, complex model to the initial model we used in the first case study.
+While answering this question, we focus not only on estimating, but also
+on tuning a complex model. The data we use is, again, from the #NGSSchat
+community on Twitter, as in doing so we can compare the performance of
+this tuned, complex model to the initial model we used in the first case
+study.
 
 ## Step 0: Loading and setting up
 
-First, let's load the packages we'll use---the familiar {tidyverse} and several others focused on modeling. Like in earlier learning labs, click the green arrow to run the code chunk.
+First, let's load the packages we'll use---the familiar {tidyverse} and
+several others focused on modeling. Like in earlier learning labs, click
+the green arrow to run the code chunk.
+
+#### [Your Turn]{style="color: green;"} ⤵
+
+Please add to the chunk below code to load three packages we've used in
+both LL1 and LL2 - tidyverse, tidymodels, and here.
 
 ```{r}
-library(tidyverse)
-library(here)
-library(tidymodels)
-library(vip)
-library(ranger)
+library(vip) # a new package we're adding for variable importance measures
+library(ranger) # this is needed for the random forest algorithm
 ```
 
-Next, we'll load two data sources, one with the tweets, the other with our qualitative codes. 
+Next, we'll load the processed data.
 
-*Note*: We created a means of visualizing the threads to make coding them easier; that's here and it provides a means of seeing what the raw data is like: https://jmichaelrosenberg.shinyapps.io/ngsschat-shiny/
+*Note*: We created a means of visualizing the threads to make coding
+them easier; that's here and it provides a means of seeing what the raw
+data is like: <https://jmichaelrosenberg.shinyapps.io/ngsschat-shiny/>.
+
+We've added three additional variables for this analysis; thus, the
+variables we have to consider to use as features are:
+
+1.  `n`: The number of tweets in the *thread* (independent variable)
+2.  `mean_favorite_count`: The mean number of favorites for the tweets
+    in the thread (*independent* variable)
+3.  `sum_favorite_count`: The sum of the number of favorites for the
+    tweets in the thread (*independent* variable)
+4.  `mean_retweet_count`: The mean number of retweets for the tweets in
+    the thread (*independent* variable)
+5.  `sum_retweet_count`: The sum of the number of retweets for the
+    tweets in the thread (*independent* variable)
+6.  `sum_display_text_width`: The sum of the number of characters for
+    the tweets in the thread (*independent* variable)
+7.  `mean_display_text_width`: The mean of the number of characters for
+    the tweets in the thread (*independent* variable)
+8.  `code`: The qualitative code (TS = transactional; TF =
+    transformational) (*dependent* variable)
+
+One *big* type of feature not included in this analysis - more
+information on the text in the tweets. This is likely to be quite
+predictive: the words that users included in their tweets are probably
+associated with (and predictive of) substantive or transactional
+conversations. Given our focus on ML in this topic area, we do *not
+include features relating to the text data*, but think this could be a
+great direction for future work (and research) in this area.
 
 ```{r}
-d <- read_rds(here("data", "ngsschat-data.rds"))
+d <- read_csv(here("data", "ngsschat-processed-data.csv"))
 
-codes <- read_csv(here("data", "ngsschat-qualitative-codes.csv"))
+d <- d %>% 
+    mutate(code = as.factor(code)) # this is needed for the classification mode
 ```
 
 ## Step 1. Split data
 
+We treat this step relatively minimally as we have now carried out a
+step very similar to this in LL1 and LL2; return to the case study for
+those (especially LL1) for more on data splitting. Note that we carry
+out the *k*-folds cross-validation process introduced in LL2. Consider -
+like there - setting a different value for *v* (*k*) as you think is
+appropriate.
+
+#### [Your Turn]{style="color: green;"} ⤵
+
+You do have one step that is your turn! Please add the code for setting
+up the k-folds cross-validation (exactly as you did this in LL2.
+
 ```{r}
-library(tidymodels) # doesn't load forcats, stringr, readr from tidyverse
-library(readr)
-library(here)
-library(vip)
-
-d <- read_csv(here("spring-workshop", "data-to-model.csv"))
-
-d <- select(d, -time_spent) # this is another continuous outcome
-
-train_test_split <- initial_split(d, prop = .70)
-
+set.seed(20220712)
+train_test_split <- initial_split(d, prop = .80)
 data_train <- training(train_test_split)
 
-kfcv <- vfold_cv(data_train)
-
+<replace this line with your kfcv code!>
 ```
 
 ## Step 2: Engineer features
 
+In Step 1, we noted how we added three variables as potential features.
+Here, we carry out two feature engineering steps we have carried out
+before - standardizing the numeric variables (to have a mean equal to 0
+and a standard deviation equal to 1) and dropping any features with
+near-zero variance. Consider adding other feature engineering steps -
+perhaps the step you carried out complete the badge requirements for
+LL2.
+
+#### [Your Turn]{style="color: green;"} ⤵
+
+Add a feature engineering step below. Consider those described
+[here](https://recipes.tidymodels.org/reference/index.html).
+
 ```{r panel-chunk-2, echo = TRUE, eval = FALSE}
-# pre-processing/feature engineering
-
-# d <- select(d, student_id:final_grade, subject:percomp) # selecting the contextual/demographic variables
-# and the survey variables
-
-d <- d %>% select(-student_id)
-
-sci_rec <- recipe(final_grade ~ ., data = d) %>% 
-    add_role(course_id, new_role = "ID variable") %>% # this can be any string
-    step_novel(all_nominal_predictors()) %>% 
+my_rec <- recipe(code ~ ., data = data_train) %>% 
     step_normalize(all_numeric_predictors()) %>%
-    step_dummy(all_nominal_predictors()) %>% 
-    step_nzv(all_predictors()) %>% 
-    step_impute_knn(all_predictors(), all_outcomes())
+    step_nzv(all_predictors())
 ```
 
 ## Step 3: Specify recipe, model, and workflow
- 
+
+There are several steps that are different from the past learning labs
+here.
+
+-   using the `random_forest()` function to set the *model* as a random
+    forest
+-   using `set_engine("ranger", importance = "impurity")` to set the
+    *engine* as that provided for random forests through the {ranger}
+    package; we also add the `importance = "impurity"` line to be able
+    to interpret a particular variable importance metric (impurity)
+    specific to random forest models
+-   finally, using `set_mode("classification"))` as we are again
+    predicting categories (transactional and substantive conversations
+    taking place through #NGSSchat)
+
 ```{r panel-chunk-3, echo = TRUE, eval = FALSE}
 # specify model
-rf_mod_many <-
+my_mod <-
     rand_forest(mtry = tune(),
                 min_n = tune()) %>%
     set_engine("ranger", importance = "impurity") %>%
-    set_mode("regression")
+    set_mode("classification")
 
 # specify workflow
-rf_wf_many <-
+my_wf <-
     workflow() %>%
-    add_model(rf_mod_many) %>% 
-    add_recipe(sci_rec)
-
+    add_model(my_mod) %>% 
+    add_recipe(my_rec)
 ```
- 
+
 ## Step 4: Fit model
 
+Here, things become are different once again. We'll follow a grid method
+to specify two tuning parameters, the number of predictor variables that
+are randomly sampled for each split in the tree (`mtry`) and the number
+of data points required to execute a split (`min_n`). `size` refers to
+how many distinct combinations of the tuning parameters will be
+returned. 10 is a relatively small number - we can imagine a much larger
+number of combinations of the `mtry` and `min_n` hyperparameters - but
+it should give us a sense of what parameters lead to the best
+performance.
+
+These next two functions are used to get a sense of what the values for
+`mtry` and `min_n` should be based on the dimensions or range of the
+values of the variables in the data.
+
 ```{r panel-chunk-4, echo = TRUE, eval = FALSE}
-# specify tuning grid
 finalize(mtry(), data_train)
 finalize(min_n(), data_train)
+```
 
-tree_grid <- grid_max_entropy(mtry(range(1, 15)),
+#### [Your Turn]{style="color: green;"} ⤵
+
+We then use these values in the `grid_max_entropy()` function below;
+replace the `xx` values below with the *maximum* value provided by the
+`mtry` and `min_n` variables, above. You can see that `tree_grid` is
+simply a combination of values of the hyperparameters.
+
+```{r}
+tree_grid <- grid_max_entropy(mtry(range(1, 8)),
                               min_n(range(2, 40)),
                               size = 10)
 
-# fit model with tune_grid
-tree_res <- rf_wf_many %>% 
+tree_grid
+```
+
+Now, we're ready to fit the model. Note - this can take some time, the
+longest of any function we've run so far, as we're estimating a) as many
+models as there are folds (*v =* 10 as default) and b) distinct
+combinations of hyperparameters (`size = 10` as default).
+
+```{r, warning = FALSE}
+# fit model with tune_grid()
+fitted_model <- my_wf %>% 
     tune_grid(
         resamples = kfcv,
         grid = tree_grid,
-        metrics = metric_set(rmse, mae, rsq)
+        metrics = metric_set(roc_auc, accuracy, kap, sensitivity, specificity, precision)
     )
+```
 
+Here comes some further additional steps. This next step is key
+technically and conceptually - we're examining the best tuning
+parameters *ranked by their predictive accuracy*.
+
+```{r}
 # examine best set of tuning parameters; repeat?
-show_best(tree_res, n = 10)
+show_best(fitted_model, n = 10, metric = "accuracy")
+```
 
+This function simply indicates that you want to use the best of the sets
+of tuning parameters examined though the code in the above chunk -
+literally the first row.
+
+```{r}
 # select best set of tuning parameters
-best_tree <- tree_res %>%
-    select_best()
+best_tree <- fitted_model %>%
+    select_best(metric = "accuracy")
+```
 
-# finalize workflow with best set of tuning parameters
-final_wf <- rf_wf_many %>% 
+Next, we'll finalize workflow with best set of tuning parameters and
+then fit the model on the training data.
+
+```{r}
+final_wf <- my_wf %>% 
     finalize_workflow(best_tree)
 
-# fit split data (separately)
 final_fit <- final_wf %>% 
-    last_fit(train_test_split, metrics = metric_set(rmse, mae, rsq))
+    last_fit(train_test_split, metrics = metric_set(roc_auc, accuracy, kap, sensitivity, specificity, precision))
+```
+
+We can see that `final_fit` is for a single fit: a random forest with
+the best performing tuning parameters trained with the *entire* training
+set of data to predict the values in our (otherwise not used/"spent")
+testing set of data.
+
+```{r}
+final_fit
 ```
 
 ## Step 5: Interpret accuracy
 
-```{r panel-chunk-5, echo = TRUE, eval = FALSE}
-# variable importance plot
-final_fit %>% 
-    pluck(".workflow", 1) %>%   
-    pull_workflow_fit() %>% 
-    vip(num_features = 10)
+Last, we can interpret the accuracy of our tuned model.
 
+```{r panel-chunk-5, echo = TRUE, eval = FALSE}
 # fit stats
 final_fit %>%
     collect_metrics()
+```
 
-# test set predictions
-final_fit %>%
-    collect_predictions() 
+Interpreting these - apart from `accuracy` - may present some
+challenges. First, we can focus on the accuracy - around 89% (0.886).
+Accuracy and the others are defined below.
+
+-   *Accuracy*: For the known codes, what percentage of the predictions
+    are correct
+
+-   *Cohen's K*: Same as accuracy, while account for the base rate of
+    (chance) agreement
+
+-   *Sensitivity (AKA recall)*: Among the true "positives", what
+    percentage are classified as "positive"?
+
+-   *Specificity*: Among the true "negatives", what percentage are
+    classified as "negative"?
+
+-   *ROC AUC*: For different levels of the threshold, what is the
+    sensitivity and specificity?
+
+You'll have the chance to interpret these further in the badge for this
+learning lab.
+
+One last note - we may be interested to see which variables were most
+importance. We can do this with the following.
+
+```{r}
+final_fit %>% 
+    pluck(".workflow", 1) %>%   
+    extract_fit_parsnip() %>% 
+    vip(num_features = 10)
 ```
 
 ### 🧶 Knit & Check ✅
 
-Congratulations - you've completed the Machine Learning Learning Lab 1 Guided Practice! Consider moving on to the independent practice next.
+Congratulations - you've completed the Machine Learning Learning Lab 1
+Guided Practice! Consider moving on to the independent practice next.

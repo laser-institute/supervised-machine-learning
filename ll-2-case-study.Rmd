@@ -105,14 +105,16 @@ at the data and do some processing of it.
 d <- read_csv(here("data", "data-to-model-no-gradebook.csv"))
 d <- select(d, -time_spent) # this is another outcome, so we'll cut this here
 
-d <- mutate(d, passing_grade = ifelse(final_grade > 70, 1, 0), # create a passing score (70% or higher)
-            passing_grade = as.factor(passing_grade)) %>% # specify this as a factor
-    select(-final_grade) # remove the final grade variable as this is another outcome
-
 gb <- read_csv(here("data", "data-to-model-gradebook.csv"))
 ```
 
-We mentioned that this lab is premised on the need to improve on an earlier model. Indeed, an earlier version of this model without feature engineering achieved predictive accuracy of around .75; predicting students' passing (or not passing) the course with around 75% accuracy. We think we can do better -- the aim of this learning lab is to do just that.
+We mentioned that this lab is premised on the need to improve on an
+earlier model. Indeed, an earlier version of this model without feature
+engineering achieved predictive accuracy of an RMSE of approximately 13
+(see more [here](https://datascienceineducation.com/c14.html)).
+Predicting students' passing (or not passing) the course with around 75%
+accuracy. We think we can do better -- the aim of this learning lab is
+to do just that.
 
 As a bit more background, the online science classes we explore in this
 chapter were designed and taught by instructors through a state-wide
@@ -128,7 +130,8 @@ included:
 2.  Log-trace data, such as data output from the learning management
     system (LMS)
 3.  Discussion board data
-4.  Academic achievement data provided in a gradebook (for the first 20 assignments students' completed)
+4.  Academic achievement data provided in a gradebook (for the first 20
+    assignments students' completed)
 
 *Data sources 1-3 are already joined together in the data frame we named
 `d` above*
@@ -310,7 +313,7 @@ recipe.
 -   `step_impute_knn(all_predictors(), all_outcomes())`
 
 ```{r,}
-my_rec <- recipe(passing_grade ~ ., data = d) %>% 
+my_rec <- recipe(final_grade ~ ., data = d) %>% 
     step_normalize(all_numeric_predictors()) %>% # standardizes numeric variables
     step_nzv(all_predictors()) %>% # remove predictors with a "near-zero variance"
     step_novel(all_nominal_predictors()) %>% # add a musing label for factors
@@ -320,22 +323,20 @@ my_rec <- recipe(passing_grade ~ ., data = d) %>%
 
 ## Step 3: Specify the model and workflow
 
-Next, we specify the model and workflow, using the same logistic
-regression as in the first learning lab. Specifically, for the model, we
-are:
+Next, we specify the model and workflow, using the same engine *but a
+different engine and mode*, here, regression for a *continuous outcome*.
+Specifically, we use:
 
--   using the `logistic_reg()` function to set the *model*
+-   using the `linear_reg()` function to set the *model*
 -   using `set_engine("glm")` to set the *engine*
--   finally, using `set_mode("classification"))` to set the "*mode* to
-    classification; this could be changed to regression for a
-    continuous/numeric outcome
+-   finally, using `set_mode("regression"))`
 
 ```{r}
 # specify model
 my_mod <-
-    logistic_reg() %>% 
+    linear_reg() %>% 
     set_engine("glm") %>%
-    set_mode("classification")
+    set_mode("regression")
 ```
 
 Last, we'll put the pieces together - the model and recipe - in a
@@ -351,51 +352,99 @@ my_wf <-
 
 ## Step 4: Fit model
 
-Note that here we use the `kfcv` data. We'll run that in the next chunk. We can ignore the warnings and messages we see.
+Note that here we use the `kfcv` data. We'll run that in the next chunk.
+
+We can ignore the warnings and messages we see.
 
 ```{r, warning = FALSE}
-fitted_model <- fit_resamples(my_wf, resamples = kfcv,
+fitted_model_resamples <- fit_resamples(my_wf, resamples = kfcv,
                               control = control_grid(save_pred = TRUE)) # this allows us to inspect the predictions
 ```
 
 ## Step 5: Interpret accuracy
 
-What did we get as output? Let's take a look at the metrics. This is critical to understanding how and why we use k-folds cross validation. Each of the rows below represents the accuracy (in the `.estimate` column) for each of the 20 folds that we used to train our model; our model was fit 20 times, and accuracy was calculated separately for each of these times. Next, we'll summarize these.
+What did we get as output? Let's take a look at the metrics. This is
+critical to understanding how and why we use k-folds cross validation.
+Each of the rows below represents the accuracy (in the `.estimate`
+column) for each of the 20 folds that we used to train our model; our
+model was fit 20 times, and accuracy was calculated separately for each
+of these times. Next, we'll summarize these.
+
+Recall our definition of the Root Mean Squared Error (RMSE) - it is the
+*square root* of the mean of the squared error, or difference between
+the predicted and known *y* variables (here, students' final grade).
+Since this is the square root of a statistic that is squared, its
+interpretation can be considerably simplified: **RMSE can be interpreted
+as the average error, or difference between the predicted and known *y*
+variables (here, students' final grade)**. This, along with the Mean
+Squared Error (MSE), are the most common metrics of predictive accuracy
+for a numeric outcome such as students' final grade. See more about fit
+metrics for numeric/continuous outcomes (those utilized in a
+*regression* mode)
+[here](https://bradleyboehmke.github.io/HOML/process.html#regression-models).
+The goal is to minimize both the RMSE and MSE.
+
+Note that the common R-squared measure (`rsq` in the output) can also be
+interpreted. Though helpful descriptively, it has less useful as a
+measure of the predictive effectiveness of a trained model, and it
+should generally not be used to select between competing model
+specifications.
 
 ```{r}
 fitted_model %>% 
     unnest(.metrics) %>% 
-    filter(.metric == "accuracy") # we also get another metric, the ROC; we focus just on accuracy for now
+    filter(.metric == "rmse") # we also get another metric, the RSQ; we focus just on RMSE for nwo
 ```
 
-Running the code below calculates the _mean_ of the metrics we inspected in the previous chunk. Focus on the **mean** variable for the accuracy metric. This can be interpreted in the precise same was as our accuracy measure we calculated in learning lab 1 - this is the percentage of students the model correctly classified as passing or not passing the course. 
+Running the code below calculates the *mean* of the metrics we inspected
+in the previous chunk. Focus on the **mean** variable for the accuracy
+metric. This can be interpreted in the precise same was as our accuracy
+measure we calculated in learning lab 1 - this is the percentage of
+students the model correctly classified as passing or not passing the
+course.
 
 ```{r}
 # fit stats
-fitted_model %>%
+fitted_model_resamples %>%
     collect_metrics()
 ```
-We can imagine trying out many different sets of features (engineered in different ways). So long as we evaluate the accuracy using the resampling method used above, we can repeat this process as needed. Then, we can carry out a process like that in the first learning lab - fitting the model not using the different *folds* obtained through the `kfcv` function, but rather using the **entire training data set**. 
 
-```{r}
+We can imagine trying out many different sets of features (engineered in
+different ways). So long as we evaluate the accuracy using the
+resampling method used above, we can repeat this process as needed.
+Then, we can carry out a process like that in the first learning lab -
+fitting the model not using the different *folds* obtained through the
+`kfcv` function, but rather using the **entire training data set**.
+
+```{r, warning = FALSE}
 fitted_model <- fit(my_wf, data_train)
 ```
 
-Then, we can use the model to predict students passing (or not passing) using our testing data _that we have not used for any purpose until this point_ --- and interpret that model. This output is suggestive to us of how the model would perform on new data, as this testing data set has not been used to make any decisions about the feature engineering.
+Then, we can use the model to predict students passing (or not passing)
+using our testing data *that we have not used for any purpose until this
+point* --- and interpret that model. This output is suggestive to us of
+how the model would perform on new data, as this testing data set has
+not been used to make any decisions about the feature engineering.
 
 ```{r}
 final_fit <- last_fit(fitted_model, train_test_split)
-
-collect_metrics(final_fit)
-
-collect_predictions(final_fit) %>% 
-    conf_mat(.pred_class, passing_grade)
 ```
 
-How successful is this model? Add a few notes with your thoughts below:
+```{r}
+collect_metrics(final_fit)
+```
 
-- 
-- 
+Last, we can plot the predicted versus known *y* variables to gain a
+graphical sense for how the model performed:
+
+```{r}
+collect_predictions(final_fit) %>% 
+    ggplot(aes(x = .pred, y = final_grade)) +
+    geom_point()
+```
+
+Consider making a modification to the above plot (small or large) using
+ggplot2.
 
 ### 🧶 Knit & Check ✅
 

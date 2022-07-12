@@ -1,0 +1,171 @@
+---
+title: 'Machine Learning - Learning Lab 4 Badge'
+author: ""
+date: "`r format(Sys.Date(),'%B %e, %Y')`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+![](img/ML_MT_Hx.jpg){width="30%"}
+
+As a reminder, to earn a badge for each lab, you are required to respond to a set of prompts for two parts:
+
+-   In Part I, you will reflect on your understanding of key concepts and begin to think about potential next steps for your own study.
+
+-   In Part II, you will create a simple data product in R that demonstrates your ability to apply an analytic technique introduced in this learning lab.
+
+### Part I: Reflect and Plan
+
+Part A:
+
+1.  Like after each of the previous two learning labs, please interpret the predictive accuracy of the model. How much better was it relative to the untuned model? Was tuning worth the investment.
+
+-   
+
+2.  Please interpret the fit metrics other than accuracy. What do the Kappa, sensitivity, specificity, and AOC tell us about the predictive accuracy of the model?
+
+-   
+
+Part B: Once again, use the institutional library (e.g. [NCSU Library](https://www.lib.ncsu.edu/#articles)), [Google Scholar](https://scholar.google.com/) or search engine to locate a research article, presentation, or resource that applies machine learning to an educational context aligned with your research interests. More specifically, **locate a machine learning study that involve making predictions -- and, ideally, one that utilizes a random forest**.
+
+1.  Provide an APA citation for your selected study.
+
+    -   
+
+2.  What research questions were the authors of this study trying to address and why did they consider these questions important?
+
+    -   
+
+3.  What were the results of these analyses?
+
+    -   
+
+### Part II: Data Product
+
+This is likely to be the most challenging data product to date. Here, tune an even more complex model - a neural network - and evaluate how much more predictively accurate (if at all fr this data set!) this highly complex algorithm is.
+
+The code we ran in the case study is below. Please modify this code to specify and tune a neural network.
+
+A tutorial you can use as a starting point to adapt the code below is [here](https://www.tidymodels.org/learn/models/parsnip-nnet/).
+
+Documentation for a neural network engine we recommend - keras - is [here](https://parsnip.tidymodels.org/reference/details_linear_reg_keras.html).
+
+**Prepare**
+
+```{r panel-chunk-1, echo = TRUE, eval = FALSE}
+library(tidyverse)
+library(tidymodels)
+library(here)
+library(vip) # a new package we're adding for variable importance measures
+
+d <- read_csv(here("data", "ngsschat-processed-data.csv"))
+```
+
+**Split data**
+
+```{r panel-chunk-1, echo = TRUE, eval = FALSE}
+train_test_split <- initial_split(d, prop = .80)
+data_train <- training(train_test_split)
+
+kfcv <- vfold_cv(data_train) # again, we will use resampling
+```
+
+**Engineer features**
+
+```{r panel-chunk-2, echo = TRUE, eval = FALSE}
+my_rec <- recipe(code ~ ., data = data_train) %>% 
+    step_normalize(all_numeric_predictors()) %>%
+    step_nzv(all_predictors())
+```
+
+**Specify recipe, model, and workflow**
+
+```{r panel-chunk-3, echo = TRUE, eval = FALSE}
+# specify model
+my_mod <-
+    rand_forest(mtry = tune(), # this specifies that we'll take steps later to tune the model
+                min_n = tune()) %>%
+    set_engine("ranger", importance = "impurity") %>%
+    set_mode("regression")
+
+# specify workflow
+my_wf <-
+    workflow() %>%
+    add_model(my_mod) %>% 
+    add_recipe(my_rec)
+```
+
+**Fit model**
+
+```{r panel-chunk-4, echo = TRUE, eval = FALSE}
+# specify tuning grid
+finalize(mtry(), data_train)
+finalize(min_n(), data_train)
+
+tree_grid <- grid_max_entropy(mtry(range(1, 18)),
+                              min_n(range(2, 40)),
+                              size = 10)
+
+# fit model with tune_grid
+fitted_model <- my_wf %>% 
+    tune_grid(
+        resamples = kfcv,
+        grid = tree_grid,
+        metrics = metric_set((roc_auc, accuracy, kap, sensitivity, specificity, precision))
+```
+
+**Fit model (part 2)**
+
+```{r panel-chunk-4b, echo = TRUE, eval = FALSE}
+# examine best set of tuning parameters; repeat?
+show_best(fitted_model, n = 10, metric = "accuracy")
+
+# select best set of tuning parameters
+best_tree <- fitted_model %>% select_best(metric = "accuracy")
+
+# finalize workflow with best set of tuning parameters
+final_wf <- my_wf %>% 
+    finalize_workflow(best_tree)
+
+final_fit <- final_wf %>% 
+    last_fit(train_test_split, metrics = metric_set(roc_auc, accuracy, kap, sensitivity, specificity, precision))
+```
+
+**Evaluate accuracy**
+
+```{r panel-chunk-5, echo = TRUE, eval = FALSE}
+# fit stats
+final_fit %>%
+    collect_metrics()
+
+# variable importance plot
+final_fit %>% 
+    pluck(".workflow", 1) %>%   
+    pull_workflow_fit() %>% 
+    vip(num_features = 10)
+```
+
+Did specifying and tuning a neural network make any difference compared to the mean predictive accuracy you found in the case study? Add a few notes below:
+
+-   
+
+### Knit & Submit
+
+Congratulations, you've completed your Prediction badge! Complete the following steps to submit your work for review:
+
+1.  Change the name of the `author:` in the [YAML header](https://monashdatafluency.github.io/r-rep-res/yaml-header.html) at the very top of this document to your name. As noted in [Reproducible Research in R](https://monashdatafluency.github.io/r-rep-res/index.html), The YAML header controls the style and feel for knitted document but doesn't actually display in the final output.
+
+2.  Click the yarn icon above to "knit" your data product to a [HTML](https://bookdown.org/yihui/rmarkdown/html-document.html) file that will be saved in your R Project folder.
+
+3.  Commit your changes in GitHub Desktop and push them to your online GitHub repository.
+
+4.  Publish your HTML page the web using one of the following [publishing methods](https://rpubs.com/cathydatascience/518692):
+
+    -   Publish on [RPubs](https://rpubs.com) by clicking the "Publish" button located in the Viewer Pane when you knit your document. Note, you will need to quickly create a RPubs account.
+
+    -   Publishing on GitHub using either [GitHub Pages](https://pages.github.com) or the [HTML previewer](http://htmlpreview.github.io).
+
+5.  Post a new discussion on GitHub to our [ML badges forum](https://github.com/orgs/laser-institute/teams/machine-learning/discussions/2). In your post, include a link to your published web page and a short reflection highlighting one thing you learned from this lab and one thing you'd like to explore further.

@@ -21,15 +21,19 @@ As a reminder, to earn a badge for each lab, you are required to respond to a se
 
 Part A:
 
-1.  Like we considered after LL1, how good was the machine learning model we developed in the case study? Would you be comfortable using this? What if you read about someone using such a model as a reviewer of research. Please add your thoughts and reflections following the bullet point below.
+1.  Like we considered after LL1, how good was the machine learning model we developed in the case study? Stepping back, how successful is this as a predictive model of students' success in the class using data collected through roughly the first one month of the class? How might this model be used in practice?
 
 -   
 
-2.  How might the model be improved? Share any ideas you have at this time below:
+3.  Would you be comfortable using this? What if you read about someone using such a model as a reviewer of research. Please add your thoughts and reflections following the bullet point below.
 
 -   
 
-Part B: Again, use the institutional library (e.g. [NCSU Library](https://www.lib.ncsu.edu/#articles)), [Google Scholar](https://scholar.google.com/) or search engine to locate a research article, presentation, or resource that applies machine learning to an educational context aligned with your research interests. More specifically, **locate a machine learning study that involve making predictions -- and, ideally, one that involved in some way engineering features from data**. 
+3.  How might the model be improved? Share any ideas you have at this time below:
+
+-   
+
+Part B: Again, use the institutional library (e.g. [NCSU Library](https://www.lib.ncsu.edu/#articles)), [Google Scholar](https://scholar.google.com/) or search engine to locate a research article, presentation, or resource that applies machine learning to an educational context aligned with your research interests. More specifically, **locate a machine learning study that involve making predictions -- and, ideally, one that involved in some way engineering features from data**.
 
 1.  Provide an APA citation for your selected study.
 
@@ -45,9 +49,9 @@ Part B: Again, use the institutional library (e.g. [NCSU Library](https://www.li
 
 ### Part II: Data Product
 
-For the data product, you are asked to investigate and add to our **recipe** a feature engineering step we did not carry out. 
+For the data product, you are asked to investigate and add to our **recipe** a feature engineering step we did not carry out.
 
-Run the code below through the step in which you write down the recipe. 
+Run the code below through the step in which you write down the recipe.
 
 ```{r}
 library(tidyverse)
@@ -66,7 +70,7 @@ kfcv <- vfold_cv(data_train, v = 20) # this differentiates this from what we did
 
 ```
 
-Here's where you can add a new feature engineering step. For the sake of this badge, choose from among those options here: https://recipes.tidymodels.org/reference/index.html. You can see more - if helpful - here: https://www.tmwr.org/recipes.html
+Here's where you can add a new feature engineering step. For the sake of this badge, choose from among those options here: <https://recipes.tidymodels.org/reference/index.html>. You can see more - if helpful - here: <https://www.tmwr.org/recipes.html>
 
 ```{r}
 my_rec <- recipe(passing_grade ~ ., data = d) %>% 
@@ -100,7 +104,7 @@ fitted_model %>%
 
 Did that feature engineering make any difference compared to the mean predictive accuracy you found in the case study? Add a few notes below:
 
--
+-   
 
 ### Knit & Submit
 

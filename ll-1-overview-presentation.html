@@ -4,7 +4,7 @@
     <title>Machine Learning Learning Lab 1 Overview: Prediction</title>
     <meta charset="utf-8" />
     <meta name="author" content="Dr. Joshua Rosenberg" />
-    <meta name="date" content="2022-07-11" />
+    <meta name="date" content="2022-07-12" />
     <script src="libs/header-attrs-2.14/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
@@ -37,7 +37,7 @@ class: clear, title-slide, inverse, center, top, middle
 # Machine Learning Learning Lab 1 Overview: Prediction
 ----
 ### **Dr. Joshua Rosenberg**
-### July 11, 2022
+### July 12, 2022
 
 ---
 
@@ -107,11 +107,6 @@ What are the differences between supervised and unsupervised machine learning?
 - Uses coded/outcome data to train an algorithm
 - Uses that algorithm to **predict the codes/outcomes for new data** (data not used during the training)
 - Can take the form of a *classification* (predicting a dichotomous or categorical outcome) or a *regression* (predicting a continuous outcome)
-- Algorithms include:
-  - [Linear regression (really!)](https://web.stanford.edu/~hastie/ElemStatLearn/)
-  - Logistic regression
-  - Decision tree
-  - Support Vector Machine
 
 ---
 
@@ -149,9 +144,6 @@ In an ML approach, we can use the same linear regression model, but with a goal 
 - Is used to discover groups among observations/cases or to summarize across variables
 - Can be used in an _exploratory mode_ (see [Nelson, 2020](https://journals.sagepub.com/doi/full/10.1177/0049124118769114?casa_token=EV5XH31qbyAAAAAA%3AFg09JQ1XHOOzlxYT2SSJ06vZv0jG-s4Qfz8oDIQwh2jrZ-jrHNr7xZYL2FwnZtZiokhPalvV1RL2Bw)) 
 - **Warning**: The results of unsupervised ML _cannot_ directly be used to provide codes/outcomes for supervised ML techniques 
-- Algorithms include:
-  - Cluster analysis and Latent Profile analysis
-  - [Principle Components Analysis (really!)](https://web.stanford.edu/~hastie/ElemStatLearn/)
 
 ---
 
@@ -179,15 +171,18 @@ Do you not yet have codes/outcomes -- and do you want to?
 
 ---
 
-# What if we want to *scale* a coding frame?
+# Discussion
 
-In a recent study, I was interested in whether the conversation was meaningful or more superficial
+.pull-left[
+### Turn to an elbow partner and discuss:
 
-With colleagues, I coded a large number of tweets to the #NGSSchat community ([Rosenberg et al., 2020](https://onlinelibrary.wiley.com/doi/pdf/10.1002/tea.21660))
+- Which modality (supervised or unsupervised machine learning) are you interested in using?
+- What data or context are you interested in for your use of ML?
+]
 
-We spent a _lot of time_ coding these tweets (using a coding frame from [van Bommel et al. (2020)](https://www.sciencedirect.com/science/article/pii/S0742051X19300629))
+.pull-right[
 
-Threads: https://jmichaelrosenberg.shinyapps.io/ngsschat-shiny
+&lt;img src="img/joro-pointing.jpeg" width="75%" /&gt;
 
 ---
 
@@ -351,38 +346,6 @@ In other words, can the computer use the features of tweets in threads to assign
 
 ---
 
-# How do I select a model?
-
-One general principle is to **start with the simplest useful model** and to _build toward
-more complex models as helpful_.
-
-This principle applies in multiple ways:
-
-- To choose an algorithm, start with simpler models that you can efficiently use and understand
-- To carry out feature engineering, understand your predictors well by starting with a subset
-- To tune an algorithm, start with a relatively simple set of tuning parameters
-
-This isn't just for beginners or those of us in education; [most spam filters use Support Vector Machines (and used Naive Bayes until recently)](https://vas3k.com/blog/machine_learning/) due to their combination of effectiveness and efficiency "in production."
-
----
-
-# Super complex?
-
-- Nothing too much, apart from computing power and time
-- A "check" on your work is your predictions on _test_ set data
-  - *Train data*: Coded/outcome data that you use to train ("estimate") your model
-  - *Validation data&lt;sup&gt;1&lt;/sup&gt;*: Data you use to select a particular algorithm
-  - *Test ("hold-out") data*: Data that you do not use in any way to train your data
-
-- An important way to achieve good performance with test data is to balance between the inherent _bias_ in your algorithm and the _variance_ in the predictions of your algorithm; this is referred to as the **bias-variance** trade-off of _all_ models
-
-.footnote[
-[1] not always/often used, for reasons we'll discuss later
-
-]
-
----
-
 class: clear, inverse, center, middle
 
 # Code Examples
@@ -437,6 +400,51 @@ We'll dive into each of these subsequently
 
 .panelset[
 
+.panel[.panel-name[0]
+
+**Loading, setting up**
+
+
+```
+## ── Attaching packages ────────────────────────────────────── tidymodels 0.2.0 ──
+```
+
+```
+## ✔ broom        0.8.0     ✔ rsample      0.1.1
+## ✔ dials        0.1.1     ✔ tune         0.2.0
+## ✔ infer        1.0.0     ✔ workflows    0.2.6
+## ✔ modeldata    0.1.1     ✔ workflowsets 0.2.1
+## ✔ parsnip      0.2.1     ✔ yardstick    1.0.0
+## ✔ recipes      0.2.0
+```
+
+```
+## ── Conflicts ───────────────────────────────────────── tidymodels_conflicts() ──
+## ✖ scales::discard() masks purrr::discard()
+## ✖ dplyr::filter()   masks stats::filter()
+## ✖ recipes::fixed()  masks stringr::fixed()
+## ✖ dplyr::lag()      masks stats::lag()
+## ✖ yardstick::spec() masks readr::spec()
+## ✖ recipes::step()   masks stats::step()
+## • Use tidymodels_prefer() to resolve common conflicts.
+```
+
+```
+## here() starts at /Users/joshuarosenberg/machine-learning
+```
+
+```
+## Rows: 3793 Columns: 5
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: ","
+## chr (1): code
+## dbl (4): mean_favorite_count, mean_retweet_count, sum_display_text_width, n
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+```
+]
+
 .panel[.panel-name[1]
 
 **Split data**
@@ -456,9 +464,7 @@ data_test &lt;- testing(train_test_split)
 
 
 ```r
-my_rec &lt;- recipe(code ~ ., data = ddd) %&gt;% 
-    step_normalize(all_numeric_predictors()) %&gt;%
-    step_nzv(all_predictors())
+my_rec &lt;- recipe(code ~ ., data = data_train)
 ```
 ]
 
@@ -469,16 +475,15 @@ my_rec &lt;- recipe(code ~ ., data = ddd) %&gt;%
 
 ```r
 # specify model
-rf_mod_many &lt;-
+my_mod &lt;-
     logistic_reg() %&gt;% 
     set_engine("glm") %&gt;%
-    set_mode("classification") %&gt;%  # note this
-    step_impute_knn(all_predictors(), all_outcomes())
+    set_mode("classification")
 
 # specify workflow
-rf_wf_many &lt;-
+my_wf &lt;-
     workflow() %&gt;%
-    add_model(rf_mod_many) %&gt;% 
+    add_model(my_mod) %&gt;% 
     add_recipe(my_rec)
 ```
 ]
@@ -489,13 +494,9 @@ rf_wf_many &lt;-
 
 
 ```r
-tree_res &lt;- fit(rf_wf_many, data = data_train)
+fitted_model &lt;- fit(my_wf, data = data_train)
 
-predict(tree_res, data_test)
-
-final_fit &lt;- last_fit(tree_res, train_test_split,
-               metrics = metric_set(roc_auc, accuracy, kap, 
-                                                    sensitivity, specificity, precision))
+final_fit &lt;- last_fit(fitted_model, train_test_split)
 ```
 ]
 
@@ -505,20 +506,15 @@ final_fit &lt;- last_fit(tree_res, train_test_split,
 
 
 ```r
-# fit stats
 final_fit %&gt;%
     collect_metrics()
-
-# confusion matrix
-final_fit$.predictions[[1]] %&gt;% 
-    conf_mat(.pred_class, code)
 ```
 ]
 ]
 
 ---
 
-# Let's see how the model did
+# Let's see how the model does
 
 .pull-left[
 `id_string`: 46
@@ -540,7 +536,7 @@ We used a coding frame from [van Bommel et al. (2020)](https://www.sciencedirect
 
 ---
 
-# Let's see how the model did
+# Let's see how the model does
 
 .pull-left[
 `id_string`: 30
@@ -562,7 +558,7 @@ We used a coding frame from [van Bommel et al. (2020)](https://www.sciencedirect
 
 ---
 
-# Let's see how the model did
+# Let's see how the model does
 
 .pull-left[
 `id_string`: 45
@@ -584,8 +580,9 @@ We used a coding frame from [van Bommel et al. (2020)](https://www.sciencedirect
 
 ---
 
+# Let's see how the model does
+
 .pull-left[
-# Let's see how the model did
 
 `id_string`: 2
 
@@ -616,7 +613,6 @@ We used a coding frame from [van Bommel et al. (2020)](https://www.sciencedirect
 
 - **Guided walkthrough**: You'll run all of this code, focusing on interpreting the predictions  
 - **Independent practice**: In the independent practice, you'll focus on interpreting the fit measures (agreement, Kappa, and others)  
-- **Readings**: There are two readings, one closely related to the guided walkthrough, the other an example of using supervised machine learning like used here for assessment purposes  
 
 ---
 class: clear, center

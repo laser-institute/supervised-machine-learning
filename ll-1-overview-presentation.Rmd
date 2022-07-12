@@ -383,35 +383,6 @@ In other words, can the computer use the features of tweets in threads to assign
 
 ---
 
-# How do I select a model?
-
-One general principle is to **start with the simplest useful model** and to _build toward
-more complex models as helpful_.
-
-This principle applies in multiple ways:
-
-- To choose an algorithm, start with simpler models that you can efficiently use and understand
-- To carry out feature engineering, understand your predictors well by starting with a subset
-- To tune an algorithm, start with a relatively simple set of tuning parameters
-
-This isn't just for beginners or those of us in education; [most spam filters use Support Vector Machines (and used Naive Bayes until recently)](https://vas3k.com/blog/machine_learning/) due to their combination of effectiveness and efficiency "in production."
-
----
-
-# Super complex?
-
-- Nothing too much, apart from computing power and time
-- A "check" on your work is your predictions on _test_ set data
-  - *Train data*: Coded/outcome data that you use to train ("estimate") your model
-  - *Validation data<sup>1</sup>*: Data you use to select a particular algorithm
-  - *Test ("hold-out") data*: Data that you do not use in any way to train your data
-
-.footnote[
-[1] not always/often used, for reasons we'll discuss later
-]
-
----
-
 class: clear, inverse, center, middle
 
 # Code Examples
@@ -473,6 +444,7 @@ We'll dive into each of these subsequently
 ```{r}
 library(tidyverse)
 library(tidymodels)
+library(here)
 
 d <- read_csv(here("data", "ngsschat-processed-data.csv"))
 ```

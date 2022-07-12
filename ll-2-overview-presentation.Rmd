@@ -179,6 +179,7 @@ knitr::include_graphics("img/joro-pointing.jpeg")
 ```
 
 ]
+
 ---
 
 # What else should we consider?
@@ -354,14 +355,41 @@ class: clear, inverse, center, middle
 # Data from online science classes
 
 - This data comes from a study of ~700 secondary/high school-aged students in the United States
-- These were "one-off" classes that helped to fill gaps in students' schedules
 - The data were collected _over multiple semesters_ from _multiple classes_
-- There are a number of types of variables:
-  - Demographic/contextual variables, e.g. `subject` and `gender`
+- There are a number of types of variables
+
+
+.panelset[
+.panel[.panel-name[1]
+
+ - Demographic/contextual variables, e.g. `subject` and `gender`
+
+]
+
+.panel[.panel-name[2]
+
   - Self-report survey variables: `uv` (utility value), `percomp` (perceived competence), and `int` (interest)
+  
+]
+
+.panel[.panel-name[3]
+
   - Gradebook variables: `overall_percent_earned`, `variability_percent_earned`, `n_with_100_pct` (based on the first 20 assignments)
+
+]
+
+.panel[.panel-name[4]
+
   - Discussion variables: `sum_discussion_posts`, `sum_n_words` (for the first 3 discussions)
+
+]
+
+.panel[.panel-name[5]
+
   - Outcomes: `final_grade`, `passing_grade`, `time_spent` (in minutes)
+
+]
+]
 
 ---
 
@@ -373,12 +401,13 @@ This data is described further (and descriptively and inferentially analyzed usi
 
 - Chapter 13: The Role (and Usefulness) of Multilevel Models: https://datascienceineducation.com/c13.html
 
+- Chapter 14: Predicting Students’ Final Grades Using Machine Learning Methods with Online Course Data: https://datascienceineducation.com/c14.html
 
 ---
 
 # Let's take a look at the data together
 
-```{r}
+```{r, message = FALSE}
 d <- read_csv("data/data-to-model.csv")
 d <- select(d, -time_spent) # this is another outcome, so we'll cut this here
 
@@ -404,12 +433,12 @@ class: clear, inverse, center, middle
 
 **Prepare**
 
-```{r, message = FALSE, warning = FALSE}
+```{r, message = FALSE, warning = FALSE, echo = TRUE}
 library(tidyverse)
 library(here)
 library(tidymodels)
 
-d <- read_csv("data/online-sci-data-joined.csv")
+d <- read_csv(here("data", "online-sci-data-joined.csv"))
 ```
 
 ]
@@ -435,7 +464,7 @@ kfcv <- vfold_cv(data_train, v = 15) # this differentiates this from what we did
 **Engineer features**
 
 ```{r, echo = TRUE, eval = FALSE}
-my_rec <- recipe(passing_grade ~ ., data = d) %>% 
+my_rec <- recipe(final_grade ~ ., data = d) %>% # a continuous measure of students' final grade
     step_normalize(all_numeric_predictors()) %>% # standardizes numeric variables
     step_nzv(all_predictors()) %>% # remove predictors with a "near-zero variance"
     step_novel(all_nominal_predictors()) %>% # add a musing label for factors
@@ -450,9 +479,9 @@ my_rec <- recipe(passing_grade ~ ., data = d) %>%
  
 ```{r panel-chunk-3, echo = TRUE, eval = FALSE}
 my_mod <-
-    logistic_reg() %>% 
-    set_engine("glm") %>%
-    set_mode("classification")
+    linear_reg() %>% # note the difference here
+    set_engine("glm") %>% 
+    set_mode("regression") # and here
 
 # specify workflow
 my_wf <-
@@ -479,7 +508,7 @@ fitted_model <- fit_resamples(my_wf, resamples = kfcv,
 ```{r panel-chunk-5, echo = TRUE, eval = FALSE}
 fitted_model %>% 
     unnest(.metrics) %>% 
-    filter(.metric == "accuracy") # we also get another metric, the ROC; we focus just on accuracy for now
+    filter(.metric == "rmse") # we also get another metric, the ROC; we focus just on accuracy for now
 ```
 ]
 ]

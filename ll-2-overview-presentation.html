@@ -4,7 +4,7 @@
     <title>Machine Learning Learning Lab 2: Feature Engineering</title>
     <meta charset="utf-8" />
     <meta name="author" content="Dr. Joshua Rosenberg" />
-    <meta name="date" content="2022-07-11" />
+    <meta name="date" content="2022-07-12" />
     <script src="libs/header-attrs-2.14/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
@@ -37,7 +37,7 @@ class: clear, title-slide, inverse, center, top, middle
 # Machine Learning Learning Lab 2: Feature Engineering
 ----
 ### **Dr. Joshua Rosenberg**
-### July 11, 2022
+### July 12, 2022
 
 ---
 
@@ -142,7 +142,7 @@ Here's a time stamp:
 
 
 ```
-## [1] "2022-07-11 23:04:06 EDT"
+## [1] "2022-07-12 05:24:39 EDT"
 ```
 
 **How could this variable be used as a predictor variable?**
@@ -273,18 +273,18 @@ Say we have a data set, `d`, with 100 observations (rows or data points) with _k
 
 ```
 ## # A tibble: 100 × 3
-##       id  var_a var_b
-##    &lt;int&gt;  &lt;dbl&gt; &lt;dbl&gt;
-##  1     1 0.700  0.783
-##  2     2 0.632  0.208
-##  3     3 0.784  0.532
-##  4     4 0.244  0.467
-##  5     5 0.169  0.354
-##  6     6 0.294  0.369
-##  7     7 0.281  0.731
-##  8     8 0.669  0.381
-##  9     9 0.652  0.507
-## 10    10 0.0296 0.393
+##       id  var_a   var_b
+##    &lt;int&gt;  &lt;dbl&gt;   &lt;dbl&gt;
+##  1     1 0.154  0.618  
+##  2     2 0.681  0.639  
+##  3     3 0.461  0.325  
+##  4     4 0.829  0.362  
+##  5     5 0.371  0.853  
+##  6     6 0.718  0.00279
+##  7     7 0.441  0.00925
+##  8     8 0.0611 0.469  
+##  9     9 0.801  0.189  
+## 10    10 0.857  0.0122 
 ## # … with 90 more rows
 ```
 
@@ -299,18 +299,18 @@ Say we have a data set, `d`, with 100 observations (rows or data points) with _k
 ## # A tibble: 3 × 3
 ##      id var_a var_b
 ##   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1     1 0.700 0.783
-## 2     2 0.632 0.208
-## 3     3 0.784 0.532
+## 1     1 0.154 0.618
+## 2     2 0.681 0.639
+## 3     3 0.461 0.325
 ```
 
 ```
 ## # A tibble: 3 × 3
 ##      id var_a var_b
 ##   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1    91 0.974 0.114
-## 2    92 0.320 0.806
-## 3    93 0.702 0.418
+## 1    91 0.726 0.203
+## 2    92 0.624 0.924
+## 3    93 0.396 0.838
 ```
 
 ---
@@ -322,18 +322,18 @@ Say we have a data set, `d`, with 100 observations (rows or data points) with _k
 ## # A tibble: 3 × 3
 ##      id var_a var_b
 ##   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1     1 0.700 0.783
-## 2     2 0.632 0.208
-## 3     3 0.784 0.532
+## 1     1 0.154 0.618
+## 2     2 0.681 0.639
+## 3     3 0.461 0.325
 ```
 
 ```
 ## # A tibble: 3 × 3
-##      id var_a var_b
-##   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1    81 0.305 0.638
-## 2    82 0.162 0.308
-## 3    83 0.877 0.762
+##      id var_a  var_b
+##   &lt;int&gt; &lt;dbl&gt;  &lt;dbl&gt;
+## 1    81 0.469 0.0963
+## 2    82 0.865 0.133 
+## 3    83 0.440 0.181
 ```
 
 ---
@@ -345,18 +345,18 @@ Say we have a data set, `d`, with 100 observations (rows or data points) with _k
 ## # A tibble: 3 × 3
 ##      id var_a var_b
 ##   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1     1 0.700 0.783
-## 2     2 0.632 0.208
-## 3     3 0.784 0.532
+## 1     1 0.154 0.618
+## 2     2 0.681 0.639
+## 3     3 0.461 0.325
 ```
 
 ```
 ## # A tibble: 3 × 3
-##      id  var_a var_b
-##   &lt;int&gt;  &lt;dbl&gt; &lt;dbl&gt;
-## 1    71 0.134  0.418
-## 2    72 0.0510 0.682
-## 3    73 0.238  0.936
+##      id var_a var_b
+##   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1    71 0.251 0.868
+## 2    72 0.954 0.846
+## 3    73 0.443 0.969
 ```
 
 ... through the tenth resampling, after which the fit measures are simply summed
@@ -381,14 +381,41 @@ class: clear, inverse, center, middle
 # Data from online science classes
 
 - This data comes from a study of ~700 secondary/high school-aged students in the United States
-- These were "one-off" classes that helped to fill gaps in students' schedules
 - The data were collected _over multiple semesters_ from _multiple classes_
-- There are a number of types of variables:
-  - Demographic/contextual variables, e.g. `subject` and `gender`
+- There are a number of types of variables
+
+
+.panelset[
+.panel[.panel-name[1]
+
+ - Demographic/contextual variables, e.g. `subject` and `gender`
+
+]
+
+.panel[.panel-name[2]
+
   - Self-report survey variables: `uv` (utility value), `percomp` (perceived competence), and `int` (interest)
+  
+]
+
+.panel[.panel-name[3]
+
   - Gradebook variables: `overall_percent_earned`, `variability_percent_earned`, `n_with_100_pct` (based on the first 20 assignments)
+
+]
+
+.panel[.panel-name[4]
+
   - Discussion variables: `sum_discussion_posts`, `sum_n_words` (for the first 3 discussions)
+
+]
+
+.panel[.panel-name[5]
+
   - Outcomes: `final_grade`, `passing_grade`, `time_spent` (in minutes)
+
+]
+]
 
 ---
 
@@ -400,22 +427,12 @@ This data is described further (and descriptively and inferentially analyzed usi
 
 - Chapter 13: The Role (and Usefulness) of Multilevel Models: https://datascienceineducation.com/c13.html
 
+- Chapter 14: Predicting Students’ Final Grades Using Machine Learning Methods with Online Course Data: https://datascienceineducation.com/c14.html
 
 ---
 
 # Let's take a look at the data together
 
-
-```
-## Rows: 546 Columns: 16
-## ── Column specification ────────────────────────────────────────────────────────
-## Delimiter: ","
-## chr (7): course_id, gender, enrollment_reason, enrollment_status, subject, s...
-## dbl (9): student_id, final_grade, time_spent, int, uv, percomp, percentage_e...
-## 
-## ℹ Use `spec()` to retrieve the full column specification for this data.
-## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
-```
 
 ```
 ## Rows: 546
@@ -456,6 +473,13 @@ class: clear, inverse, center, middle
 **Prepare**
 
 
+```r
+library(tidyverse)
+library(here)
+library(tidymodels)
+
+d &lt;- read_csv(here("data", "online-sci-data-joined.csv"))
+```
 
 ]
 
@@ -482,7 +506,7 @@ kfcv &lt;- vfold_cv(data_train, v = 15) # this differentiates this from what we 
 
 
 ```r
-my_rec &lt;- recipe(passing_grade ~ ., data = d) %&gt;% 
+my_rec &lt;- recipe(final_grade ~ ., data = d) %&gt;% # a continuous measure of students' final grade
     step_normalize(all_numeric_predictors()) %&gt;% # standardizes numeric variables
     step_nzv(all_predictors()) %&gt;% # remove predictors with a "near-zero variance"
     step_novel(all_nominal_predictors()) %&gt;% # add a musing label for factors
@@ -498,9 +522,9 @@ my_rec &lt;- recipe(passing_grade ~ ., data = d) %&gt;%
 
 ```r
 my_mod &lt;-
-    logistic_reg() %&gt;% 
-    set_engine("glm") %&gt;%
-    set_mode("classification")
+    linear_reg() %&gt;% # note the difference here
+    set_engine("glm") %&gt;% 
+    set_mode("regression") # and here
 
 # specify workflow
 my_wf &lt;-
@@ -529,7 +553,7 @@ fitted_model &lt;- fit_resamples(my_wf, resamples = kfcv,
 ```r
 fitted_model %&gt;% 
     unnest(.metrics) %&gt;% 
-    filter(.metric == "accuracy") # we also get another metric, the ROC; we focus just on accuracy for now
+    filter(.metric == "rmse") # we also get another metric, the ROC; we focus just on accuracy for now
 ```
 ]
 ]

@@ -85,7 +85,7 @@ The data has only five variables:
 1.  `n`: The number of tweets in the *thread* (independent variable)
 2.  `mean_favorite_count`: The mean number of favorites for the tweets
     in the thread (*independent* variable)
-3.  `mean_retweet_count`: The mean nunber of tweets for the tweets in
+3.  `mean_retweet_count`: The mean nunber of retweets for the tweets in
     the thread (*independent* variable)
 4.  `sum_display_text_width`: The sum of the number of characters for
     the tweets in the thread (*independent* variable)
@@ -160,7 +160,7 @@ created a training and testing data set called `training()` and
 Run the following code to split the data:
 
 ```{r}
-set.seed(20220212)
+set.seed(20220712)
 train_test_split <- initial_split(d, prop = .80)
 data_train <- training(train_test_split)
 ```
