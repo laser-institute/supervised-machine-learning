@@ -257,7 +257,7 @@ knitr::include_graphics("img/ngsschat-example-tweets_1.png")
 
 .pull-right[
 
-**We coded this as *transactional***
+**We coded this as *substantive***
 
 We used a coding frame from [van Bommel et al. (2020)](https://www.sciencedirect.com/science/article/pii/S0742051X19300629):
 
@@ -442,7 +442,7 @@ We'll dive into each of these subsequently
 
 **Loading, setting up**
 
-```{r}
+```{r, message = FALSE, warning = FALSE}
 library(tidyverse)
 library(tidymodels)
 
