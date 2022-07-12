@@ -128,11 +128,6 @@ What are the differences between supervised and unsupervised machine learning?
 - Uses coded/outcome data to train an algorithm
 - Uses that algorithm to **predict the codes/outcomes for new data** (data not used during the training)
 - Can take the form of a *classification* (predicting a dichotomous or categorical outcome) or a *regression* (predicting a continuous outcome)
-- Algorithms include:
-  - [Linear regression (really!)](https://web.stanford.edu/~hastie/ElemStatLearn/)
-  - Logistic regression
-  - Decision tree
-  - Support Vector Machine
 
 ---
 
@@ -170,9 +165,6 @@ In an ML approach, we can use the same linear regression model, but with a goal 
 - Is used to discover groups among observations/cases or to summarize across variables
 - Can be used in an _exploratory mode_ (see [Nelson, 2020](https://journals.sagepub.com/doi/full/10.1177/0049124118769114?casa_token=EV5XH31qbyAAAAAA%3AFg09JQ1XHOOzlxYT2SSJ06vZv0jG-s4Qfz8oDIQwh2jrZ-jrHNr7xZYL2FwnZtZiokhPalvV1RL2Bw)) 
 - **Warning**: The results of unsupervised ML _cannot_ directly be used to provide codes/outcomes for supervised ML techniques 
-- Algorithms include:
-  - Cluster analysis and Latent Profile analysis
-  - [Principle Components Analysis (really!)](https://web.stanford.edu/~hastie/ElemStatLearn/)
 
 ---
 
@@ -200,15 +192,20 @@ Do you not yet have codes/outcomes -- and do you want to?
 
 ---
 
-# What if we want to *scale* a coding frame?
+# Discussion
 
-In a recent study, I was interested in whether the conversation was meaningful or more superficial
+.pull-left[
+### Turn to an elbow partner and discuss:
 
-With colleagues, I coded a large number of tweets to the #NGSSchat community ([Rosenberg et al., 2020](https://onlinelibrary.wiley.com/doi/pdf/10.1002/tea.21660))
+- Which modality (supervised or unsupervised machine learning) are you interested in using?
+- What data or context are you interested in for your use of ML?
+]
 
-We spent a _lot of time_ coding these tweets (using a coding frame from [van Bommel et al. (2020)](https://www.sciencedirect.com/science/article/pii/S0742051X19300629))
+.pull-right[
 
-Threads: https://jmichaelrosenberg.shinyapps.io/ngsschat-shiny
+```{r, echo = FALSE, out.width = "75%"}
+knitr::include_graphics("img/joro-pointing.jpeg")
+```
 
 ---
 

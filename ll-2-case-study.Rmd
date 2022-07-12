@@ -1,5 +1,5 @@
 ---
-title: 'Learning Lab 2 Case Study'
+title: 'Learning Lab 2 Case Study: Feature Engineering'
 author: ""
 date: "`r format(Sys.Date(),'%B %e, %Y')`"
 output:
@@ -19,15 +19,18 @@ bibliography: lit/references.bib
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-This case study is similar to the first, but it differs in two key ways:
+This case study is similar to the first, but it differs in three key
+ways:
 
 1.  We use a very different data set, on from *online science classes*
     that involves a variety of variables types
 2.  We focus on *feature engineering*, a key step in which we prepare
     variables for inclusion in our machine learning models
+3.  We use resampling to evaluate the effectiveness of the feature
+    engineering steps
 
 Feature engineering is a rich topic in machine learning research,
-including research in the learning analytics and educational data mining
+including in the learning analytics and educational data mining
 communities.
 
 Consider research on online learning and the work of Li et al. (2020)
@@ -38,7 +41,20 @@ technologies, was used to study elements of the theoretical frame of
 Notably, the authors took several steps to prepare the data so that it
 could be validly interpreted as measures of students' self-regulated
 learning. In short, we need to process the data from contexts such as
-online classes to use them in analyses.
+online classes to use them in analyses. Citations and links to these
+papers follow.
+
+> Li, Q., Baker, R., & Warschauer, M. (2020). Using clickstream data to
+> measure, understand, and support self-regulated learning in online
+> courses. The Internet and Higher Education, 45, 100727.
+> <https://github.com/laser-institute/essential-readings/blob/main/machine-learning/ml-lab-2/li-et-al-2020-ihe.pdf>
+>
+> Rodriguez, F., Lee, H. R., Rutherford, T., Fischer, C., Potma, E., &
+> Warschauer, M. (2021, April). Using clickstream data mining techniques
+> to understand and support first-generation college students in an
+> online chemistry course. In LAK21: 11th International Learning
+> Analytics and Knowledge Conference (pp. 313-322).
+> <https://github.com/laser-institute/essential-readings/blob/main/machine-learning/ml-lab-2/rodriguez-et-al-2021-lak.pdf>
 
 The same is true here in the context of machine learning. In a different
 context, the work of Gobert et al. (2013) is a great example of using
@@ -49,6 +65,23 @@ engineering (Bosch et al., 2021), though such processes are not
 necessarily interpretable and they usually require some degree of
 tailoring to your particular context.
 
+> Gobert, J. D., Sao Pedro, M., Raziuddin, J., & Baker, R. S. (2013).
+> From log files to assessment metrics: Measuring students' science
+> inquiry skills using educational data mining. Journal of the Learning
+> Sciences, 22(4), 521-563.
+> <https://github.com/laser-institute/essential-readings/blob/main/machine-learning/ml-lab-3/gobert-et-al-2013-jls.pdf>
+
+> Salmeron-Majadas, S., Baker, R. S., Santos, O. C., & Boticario, J. G.
+> (2018). A machine learning approach to leverage individual keyboard
+> and mouse interaction behavior from multiple users in real-world
+> learning scenarios. IEEE Access, 6, 39154-39179.
+> <https://ieeexplore.ieee.org/iel7/6287639/8274985/08416736.pdf>
+
+> Bosch, N. (2021). AutoML Feature Engineering for Student Modeling
+> Yields High Accuracy, but Limited Interpretability. Journal of
+> Educational Data Mining, 13(2), 55-79.
+> <https://github.com/laser-institute/essential-readings/blob/main/machine-learning/ml-lab-3/bosch-et-al-2021-jedm.pdf>
+
 Our driving question for this case study is: How much do new predictors
 improve the prediction quality?
 
@@ -57,87 +90,239 @@ answer it, we will engage in several feature engineering steps.
 
 ## Step 0: Loading and setting up
 
-Like in the first learning lab, we'll load several packages, first.
+Like in the first learning lab, we'll first load several packages.
 
 ```{r, load packages}
 library(tidyverse)
 library(here)
 library(tidymodels)
-library(vip)
-library(ranger)
 ```
 
-# Let's take a look at the data
+Like in the code-along for the overview presentation, let's take a look
+at the data and do some processing of it.
 
-```{r, include = FALSE}
-d <- read_csv("data/data-to-model.csv")
+```{r}
+d <- read_csv(here("data", "data-to-model-no-gradebook.csv"))
+d <- select(d, -time_spent) # this is another outcome, so we'll cut this here
 
-d <- select(d, -time_spent) # this is another outcome
+d <- mutate(d, passing_grade = ifelse(final_grade > 70, 1, 0), # create a passing score (70% or higher)
+            passing_grade = as.factor(passing_grade)) %>% # specify this as a factor
+    select(-final_grade) # remove the final grade variable as this is another outcome
 
-d <- mutate(d, passing_grade = ifelse(final_grade > 70, 1, 0),
-                  passing_grade = as.factor(passing_grade)) %>% 
-    select(-final_grade)
+gb <- read_csv(here("data", "data-to-model-gradebook.csv"))
+```
+
+We mentioned that this lab is premised on the need to improve on an earlier model. Indeed, an earlier version of this model without feature engineering achieved predictive accuracy of around .75; predicting students' passing (or not passing) the course with around 75% accuracy. We think we can do better -- the aim of this learning lab is to do just that.
+
+As a bit more background, the online science classes we explore in this
+chapter were designed and taught by instructors through a state-wide
+online course provider designed to supplement---but not
+replace---students' enrollment in their local school. For example,
+students may have chosen to enroll in an online physics class because
+one was not offered at their school. The data were originally collected
+for a research study, which utilized a number of different data sources
+to understand students' course-related motivation. These datasets
+included:
+
+1.  A self-report survey assessing three aspects of students' motivation
+2.  Log-trace data, such as data output from the learning management
+    system (LMS)
+3.  Discussion board data
+4.  Academic achievement data provided in a gradebook (for the first 20 assignments students' completed)
+
+*Data sources 1-3 are already joined together in the data frame we named
+`d` above*
+
+*Data source 4 - the gradebook data - is separate, in the data frame we
+named `gb`.*
+
+Take a look at the two data frames by running the two chunks below.
+
+```{r}
+d
 ```
 
 ```{r}
-d %>% 
+gb
+```
+
+You'll notice the data have different dimensions. We'll have to take
+some steps to further process the gradebook data. In doing so, we'll
+engineer some features. Let's take a closer look at the gradebook data.
+
+```{r}
+gb %>% 
     glimpse()
 ```
 
-Before proceeding, we'll mention that we'll use similar data in this
-study, treating students' interactions with the online course learning
-management system - and other variables, including self-report measures,
-to predict learners' achievement. This case study is related to this one
-[here](https://datascienceineducation.com/c14.html) in the *Data Science
-in Education Using R* book.
+#### [Your Turn]{style="color: green;"} ⤵
 
-In that case study, the predictive accuracy was so-so. We think we can
-do better -- the aim of this learning lab.
+You may also want to take a look *through* the data with the `View()`
+function; try that out below (asking for help or searching the Internet
+for help as needed!).
+
+```{r, eval = FALSE}
+
+```
+
+Let's first consider what these variables are, focusing just on some key
+variables:
+
+-   `course_id`: an identifier for the course
+-   `student_id`: an identifier for the student
+-   `gradebook_item`: the name of the gradebook entry/assignment\
+-   `item_position`: the position of the gradebook item in the
+    gradebook; differs between students
+-   `grade_category`: `Hw` (homework), `Qz` (quiz or test), or `NA` (not
+    classified)
+-   `points_earned`: the number of points student earned
+-   `points_possible`: the number of points possible to earn
+
+What are some *features* we could create based on these variables? And
+how might we create them?
+
+#### [Your Turn]{style="color: green;"} ⤵
+
+Add a few ideas below before proceeding:
+
+-   
+
+-   
+
+```{r}
+gb
+```
+
+Let's get to feature engineering. First, we'll have to *group* our data
+by course and student ID.
+
+```{r}
+gb <- gb %>% 
+    group_by(course_id, student_id)
+```
+
+#### [Your Turn]{style="color: green;"} ⤵
+
+Next, let's create a variable with the percent of points earned (points
+earned divided by points attempted). To do so, add to the `mutate()`
+function below. Create a new variable called `percent_earned`. You can
+read more about mutate [here](https://r4ds.had.co.nz/transform.html)
+
+```{r, warning = FALSE}
+gb <- gb %>% 
+    mutate()
+```
+
+Finally, let's create three features from the gradebook data:
+
+-   The overall percent of points earned (*across* all assignments)
+-   The variability (in standard deviation units) in the percent earned
+    (*between* assignments)
+-   The number of assignments for which students earned 100% of the
+    possible points
+
+You can probably imagine others; you're welcome to explore adding those,
+too.
+
+We'll use *summarize* to do this, as below:
+
+```{r}
+gb <- gb %>% 
+    summarize(overall_percent_earned = sum(points_earned, na.rm = TRUE) / sum(points_possible, na.rm = TRUE),
+              variability_percent_earned = sd(percent_earned, na.rm = TRUE),
+              n_with_100_pct = sum(percent_earned == 1, na.rm = TRUE)) %>% 
+    select(student_id, course_id, overall_percent_earned, variability_percent_earned, n_with_100_pct) # selecting just the variables we'll use
+```
+
+We have one last step before we can get to modeling (`gb`) - joining
+this data with all of the other data (`d`).
+
+```{r}
+d <- d %>% 
+    left_join(gb)
+```
+
+#### [Your Turn]{style="color: green;"} ⤵
+
+Let's talk a look at the joined data to make sure everything is looking
+as we intend it to. Inspect the data using the code chunk below:
+
+```{r}
+
+```
 
 ## Step 1. Split data
 
-Next, we'll split the data, just like before. We use an 80% split again;
-how will you "spend" your data? You can change this number if you wish,
-but cnsider how much data you have to "spend" for both training and
-testing.
+Next, we'll split the data, just like before. We'll set the seed again
+to ensure that we obtain the same results (when running the analysis
+again and between analysts at the LASER Institute). We use an 80% split
+again; how will you "spend" your data? You can change this number if you
+wish, but consider how much data you have to "spend" for both training
+and testing.
 
 ```{r}
-train_test_split <- initial_split(d_class, prop = .80)
+set.seed(20220712)
+
+train_test_split <- initial_split(d, prop = .80)
 
 data_train <- training(train_test_split)
 ```
 
-Here's a key difference! Pay careful attention to this next line of code
+Here's a key difference! Pay careful attention to this next line of
+code, which sets the groundwork for *k*-folds cross-validation. Note
+that in the function below (run `?vfold_cv` to see more), the letter *v*
+is used instead of *k*, though they share a meaning, as the
+documentation notes).
 
 ```{r}
 kfcv <- vfold_cv(data_train) # this differentiates this from what we did before
 # before, we simple used data_train to fit our model
+kfcv
 ```
 
-## Step 2: Engineer features
+#### [Your Turn]{style="color: green;"} ⤵
 
-We'll engage in feature engineering, like before, but, here, we add
-considerably more steps.
+Above, we split the data into 10 different folds. Change the number of
+folds from 10 to 20 by changing the value of v; 10 is simply the
+default. For help, run `?vfold_cv` to get a hint.
 
-#### [Your Turn]{style="color: green;"} ⤵ {style="font-style: normal; font-variant-caps: normal; letter-spacing: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-tap-highlight-color: rgba(26, 26, 26, 0.3); -webkit-text-size-adjust: auto; -webkit-text-stroke-width: 0px; text-decoration: none; caret-color: rgb(0, 0, 0); color: rgb(0, 0, 0);"}
-
-Read about (here: <https://www.tmwr.org/recipes.html>) and add the
-following four steps to the code chunk below.
-
--   add_role(student_id, course_id, new_role = "ID variable")\
--   step_novel(all_nominal_predictors())\
--   step_dummy(all_nominal_predictors())\
--   step_impute_knn(all_predictors(), all_outcomes())
-
-```{r panel-chunk-2, echo = TRUE, eval = FALSE}
-sci_rec <- recipe(passing_grade ~ ., data = d_class) %>% 
-    step_normalize(all_numeric_predictors()) %>%
-    step_nzv(all_predictors())
+```{r}
+kfcv <- vfold_cv(data_train) # this differentiates this from what we did before
+# before, we simple used data_train to fit our model
+kfcv
 ```
 
-## Step 3: Specify recipe, model, and workflow
+## Step 2: Engineer features and write down the recipe
 
-Here, we specify the same logistic regression as above:
+Here, we'll carry out several feature engineering steps.
+
+#### [Your Turn]{style="color: green;"} ⤵
+
+Read about [possible steps](https://www.tmwr.org/recipes.html) and see
+more about how the following five feature engineering steps below work.
+Like in the first learning lab, this is the step in which we set the
+recipe.
+
+-   `step_normalize(all_numeric_predictors())`
+-   `step_nzv(all_predictors())`
+-   `step_novel(all_nominal_predictors())`
+-   `step_dummy(all_nominal_predictors())`
+-   `step_impute_knn(all_predictors(), all_outcomes())`
+
+```{r,}
+my_rec <- recipe(passing_grade ~ ., data = d) %>% 
+    step_normalize(all_numeric_predictors()) %>% # standardizes numeric variables
+    step_nzv(all_predictors()) %>% # remove predictors with a "near-zero variance"
+    step_novel(all_nominal_predictors()) %>% # add a musing label for factors
+    step_dummy(all_nominal_predictors()) %>%  # dummy code all factor variables
+    step_impute_knn(all_predictors()) # impute missing data for all predictor variables
+```
+
+## Step 3: Specify the model and workflow
+
+Next, we specify the model and workflow, using the same logistic
+regression as in the first learning lab. Specifically, for the model, we
+are:
 
 -   using the `logistic_reg()` function to set the *model*
 -   using `set_engine("glm")` to set the *engine*
@@ -145,61 +330,72 @@ Here, we specify the same logistic regression as above:
     classification; this could be changed to regression for a
     continuous/numeric outcome
 
-```{r panel-chunk-3, echo = TRUE, eval = FALSE}
+```{r}
 # specify model
-rf_mod_many <-
-    rand_forest() %>%
-    set_engine("ranger", importance = "impurity") %>%
+my_mod <-
+    logistic_reg() %>% 
+    set_engine("glm") %>%
     set_mode("classification")
 ```
 
-Last, we'll put the pieces together - the model and recipe.
+Last, we'll put the pieces together - the model and recipe - in a
+workflow.
 
 ```{r}
 # specify workflow
-rf_wf_many <-
+my_wf <-
     workflow() %>%
-    add_model(rf_mod_many) %>% 
-    add_recipe(sci_rec)
+    add_model(my_mod) %>% 
+    add_recipe(my_rec)
 ```
 
 ## Step 4: Fit model
 
-Note that here we use the `kfcv` data. We'll run that in the next chunk.
+Note that here we use the `kfcv` data. We'll run that in the next chunk. We can ignore the warnings and messages we see.
 
-```{r panel-chunk-4, echo = TRUE, eval = FALSE}
-tree_res <- fit_resamples(rf_wf_many, data = kfcv)
-```
-
-How does this output differ from that from fitting the data on a single
-(training) set, as in the first learning lab? Add one or more ideas
-here:
-
--   
-
-Finally, we'll use the `last_fit` function to fit the model using the
-entire data set.
-
-```{r}
-final_fit <- last_fit(tree_res, train_test_split,
-               metrics = metric_set(roc_auc, accuracy, kap, 
-                                                    sensitivity, specificity, precision))
+```{r, warning = FALSE}
+fitted_model <- fit_resamples(my_wf, resamples = kfcv,
+                              control = control_grid(save_pred = TRUE)) # this allows us to inspect the predictions
 ```
 
 ## Step 5: Interpret accuracy
 
-```{r panel-chunk-5, echo = TRUE, eval = FALSE}
-# fit stats
-final_fit %>%
-    collect_metrics()
-```
-
-Run the code below to calculate a *confusion matrix*:
+What did we get as output? Let's take a look at the metrics. This is critical to understanding how and why we use k-folds cross validation. Each of the rows below represents the accuracy (in the `.estimate` column) for each of the 20 folds that we used to train our model; our model was fit 20 times, and accuracy was calculated separately for each of these times. Next, we'll summarize these.
 
 ```{r}
-final_fit$.predictions[[1]] %>% 
-    conf_mat(.pred_class, code)
+fitted_model %>% 
+    unnest(.metrics) %>% 
+    filter(.metric == "accuracy") # we also get another metric, the ROC; we focus just on accuracy for now
 ```
+
+Running the code below calculates the _mean_ of the metrics we inspected in the previous chunk. Focus on the **mean** variable for the accuracy metric. This can be interpreted in the precise same was as our accuracy measure we calculated in learning lab 1 - this is the percentage of students the model correctly classified as passing or not passing the course. 
+
+```{r}
+# fit stats
+fitted_model %>%
+    collect_metrics()
+```
+We can imagine trying out many different sets of features (engineered in different ways). So long as we evaluate the accuracy using the resampling method used above, we can repeat this process as needed. Then, we can carry out a process like that in the first learning lab - fitting the model not using the different *folds* obtained through the `kfcv` function, but rather using the **entire training data set**. 
+
+```{r}
+fitted_model <- fit(my_wf, data_train)
+```
+
+Then, we can use the model to predict students passing (or not passing) using our testing data _that we have not used for any purpose until this point_ --- and interpret that model. This output is suggestive to us of how the model would perform on new data, as this testing data set has not been used to make any decisions about the feature engineering.
+
+```{r}
+final_fit <- last_fit(fitted_model, train_test_split)
+
+collect_metrics(final_fit)
+
+collect_predictions(final_fit) %>% 
+    conf_mat(.pred_class, passing_grade)
+```
+
+How successful is this model? Add a few notes with your thoughts below:
+
+- 
+- 
 
 ### 🧶 Knit & Check ✅
 

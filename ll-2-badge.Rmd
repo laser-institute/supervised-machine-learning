@@ -1,0 +1,121 @@
+---
+title: 'Machine Learning - Learning Lab 2 Badge'
+author: ""
+date: "`r format(Sys.Date(),'%B %e, %Y')`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+![](img/ML_FE_Hx.jpg){width="30%"}
+
+As a reminder, to earn a badge for each lab, you are required to respond to a set of prompts for two parts:
+
+-   In Part I, you will reflect on your understanding of key concepts and begin to think about potential next steps for your own study.
+
+-   In Part II, you will create a simple data product in R that demonstrates your ability to apply an analytic technique introduced in this learning lab.
+
+### Part I: Reflect and Plan
+
+Part A:
+
+1.  Like we considered after LL1, how good was the machine learning model we developed in the case study? Would you be comfortable using this? What if you read about someone using such a model as a reviewer of research. Please add your thoughts and reflections following the bullet point below.
+
+-   
+
+2.  How might the model be improved? Share any ideas you have at this time below:
+
+-   
+
+Part B: Again, use the institutional library (e.g. [NCSU Library](https://www.lib.ncsu.edu/#articles)), [Google Scholar](https://scholar.google.com/) or search engine to locate a research article, presentation, or resource that applies machine learning to an educational context aligned with your research interests. More specifically, **locate a machine learning study that involve making predictions -- and, ideally, one that involved in some way engineering features from data**. 
+
+1.  Provide an APA citation for your selected study.
+
+    -   
+
+2.  What research questions were the authors of this study trying to address and why did they consider these questions important?
+
+    -   
+
+3.  What were the results of these analyses?
+
+    -   
+
+### Part II: Data Product
+
+For the data product, you are asked to investigate and add to our **recipe** a feature engineering step we did not carry out. 
+
+Run the code below through the step in which you write down the recipe. 
+
+```{r}
+library(tidyverse)
+library(here)
+library(tidymodels)
+
+d <- read_csv("data/online-sci-data-joined.csv")
+
+set.seed(20220712)
+
+train_test_split <- initial_split(d, prop = .80)
+
+data_train <- training(train_test_split)
+
+kfcv <- vfold_cv(data_train, v = 20) # this differentiates this from what we did before
+
+```
+
+Here's where you can add a new feature engineering step. For the sake of this badge, choose from among those options here: https://recipes.tidymodels.org/reference/index.html. You can see more - if helpful - here: https://www.tmwr.org/recipes.html
+
+```{r}
+my_rec <- recipe(passing_grade ~ ., data = d) %>% 
+    step_normalize(all_numeric_predictors()) %>% # standardizes numeric variables
+    step_nzv(all_predictors()) %>% # remove predictors with a "near-zero variance"
+    step_novel(all_nominal_predictors()) %>% # add a musing label for factors
+    step_dummy(all_nominal_predictors()) %>%  # dummy code all factor variables
+    step_impute_knn(all_predictors()) # impute missing data for all predictor variables
+```
+
+Run the remaining steps.
+
+```{r}
+my_mod <-
+    logistic_reg() %>% 
+    set_engine("glm") %>%
+    set_mode("classification")
+
+my_wf <-
+    workflow() %>%
+    add_model(my_mod) %>% 
+    add_recipe(my_rec)
+
+fitted_model <- fit_resamples(my_wf, resamples = kfcv,
+                              control = control_grid(save_pred = TRUE)) # this allows us to inspect the predictions
+
+fitted_model %>% 
+    unnest(.metrics) %>% 
+    filter(.metric == "accuracy") # we also get another metric, the ROC; we focus just on accuracy for now
+```
+
+Did that feature engineering make any difference compared to the mean predictive accuracy you found in the case study? Add a few notes below:
+
+-
+
+### Knit & Submit
+
+Congratulations, you've completed your Prediction badge! Complete the following steps to submit your work for review:
+
+1.  Change the name of the `author:` in the [YAML header](https://monashdatafluency.github.io/r-rep-res/yaml-header.html) at the very top of this document to your name. As noted in [Reproducible Research in R](https://monashdatafluency.github.io/r-rep-res/index.html), The YAML header controls the style and feel for knitted document but doesn't actually display in the final output.
+
+2.  Click the yarn icon above to "knit" your data product to a [HTML](https://bookdown.org/yihui/rmarkdown/html-document.html) file that will be saved in your R Project folder.
+
+3.  Commit your changes in GitHub Desktop and push them to your online GitHub repository.
+
+4.  Publish your HTML page the web using one of the following [publishing methods](https://rpubs.com/cathydatascience/518692):
+
+    -   Publish on [RPubs](https://rpubs.com) by clicking the "Publish" button located in the Viewer Pane when you knit your document. Note, you will need to quickly create a RPubs account.
+
+    -   Publishing on GitHub using either [GitHub Pages](https://pages.github.com) or the [HTML previewer](http://htmlpreview.github.io).
+
+5.  Post a new discussion on GitHub to our [ML badges forum](https://github.com/orgs/laser-institute/teams/machine-learning/discussions/2). In your post, include a link to your published web page and a short reflection highlighting one thing you learned from this lab and one thing you'd like to explore further.
