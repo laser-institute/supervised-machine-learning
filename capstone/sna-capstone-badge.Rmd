@@ -1,0 +1,26 @@
+---
+title: 'ML Capstone Badge'
+author: ""
+date: "`r format(Sys.Date(),'%B %e, %Y')`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+![](img/ML_Primary_Hx.png){width="30%"}
+
+The culminating activity for the ML Learning Labs is designed to provide you some space for independent analysis of a self-identified data source. To earn your ML Capstone Badge, you are required to demonstrate your ability to formulate a basic research question appropriate to the use of ML, process and wrangle data as necessary, and communicate key findings. Your primary goal for this analysis is to create a simple data product that illustrates key findings by applying the knowledge and skills acquired from the case studies.
+
+1.  **Identify a data source.** For your ML Capstone badge, you are required to identify your own data source related to an area of professional interest. This may be data that you have already collected prior to the LASER Institute, or data that you may be interested in working with for a future study.
+
+2.  **Formulate a question.** I recommend keeping this simple and limiting to no more than one or two questions. Your question(s) should be appropriate to your data set and ideally be answered by applying concepts and skills from our case studies. For example, you may be interested in applying supervised machine learning to scale or automate coding or unsupervised methods to discover patterns in data.
+
+3.  **Analyze the data.** Create a new R script or R Markdown file. Your R script or R Markdown file will likely contain code that doesn't make it into your final data product since you will experiment with different approaches and figure out code that works and code that does not.
+
+4.  **Create a data product.** When you feel you've wrangled and analyzed the data to your satisfaction, finalize your script or file. Your script or file file should include a output and your interpretation of it.
+
+5.  **Share your findings.** Knit your data product to a desired output format. This may be a simple [HTML](https://bookdown.org/yihui/rmarkdown/html-document.html), [PDF](https://bookdown.org/yihui/rmarkdown/pdf-document.html), or [MS Word](https://bookdown.org/yihui/rmarkdown/word-document.html) file; or something more complex like [HTML5 slides](https://bookdown.org/yihui/rmarkdown/ioslides-presentation.html), a [Tufte-style handout](https://bookdown.org/yihui/rmarkdown/tufte-handouts.html), [dashboard](https://rmarkdown.rstudio.com/flexdashboard/), or [website](https://bookdown.org/yihui/rmarkdown/rmarkdown-site.html). When you're ready to share your analysis, create a new discussion post below to share your analysis on the [GitHub discussion thread](https://github.com/orgs/laser-institute/teams/machine-learning/discussions/2) Include in the post your published web link (e.g., via [RPubs](https://rpubs.com/about/getting-started) or [GitHub Pages](https://towardsdatascience.com/how-to-create-a-free-github-pages-website-53743d7524e1)) or attached file (e.g. HTML or PDF) and add a short reflection including one thing you learned and one thing you'd like to explore further.
+
+If you have any questions about this badge, or run into any technical issues, don't hesitate to email your [Learning Lab Lead](https://docs.google.com/spreadsheets/d/147_1um4J4kqOJSNKB7H3_CakS7hxXXyzvMdHYKuvfHQ/edit#gid=0).

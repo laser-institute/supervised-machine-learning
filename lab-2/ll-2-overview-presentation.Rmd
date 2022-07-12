@@ -1,0 +1,528 @@
+---
+title: "Machine Learning Learning Lab 2: Feature Engineering"
+subtitle: "Overview Presentation"
+author: "**Dr. Joshua Rosenberg**"
+institute: "LASER Institute"
+date: '`r format(Sys.time(), "%B %d, %Y")`'
+output:
+  xaringan::moon_reader:
+    css:
+     - default
+     - css/laser.css
+     - css/laser-fonts.css
+    lib_dir: libs                        # creates directory for libraries
+    seal: false                          # false: custom title slide
+    nature:
+      highlightStyle: default         # highlighting syntax for code
+      highlightLines: true               # true: enables code line highlighting 
+      highlightLanguage: ["r"]           # languages to highlight
+      countIncrementalSlides: false      # false: disables counting of incremental slides
+      ratio: "16:9"                      # 4:3 for standard size,16:9
+      slideNumberFormat: |
+       <div class="progress-bar-container">
+        <div class="progress-bar" style="width: calc(%current% / %total% * 100%);">
+        </div>
+       </div>
+---
+class: clear, title-slide, inverse, center, top, middle
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r, echo=FALSE}
+# then load all the relevant packages
+pacman::p_load(pacman, knitr, tidyverse, readxl)
+```
+
+```{r xaringan-panelset, echo=FALSE}
+xaringanExtra::use_panelset()
+```
+
+```{r xaringanExtra-clipboard, echo=FALSE}
+# these allow any code snippets to be copied to the clipboard so they 
+# can be pasted easily
+htmltools::tagList(
+  xaringanExtra::use_clipboard(
+    button_text = "<i class=\"fa fa-clipboard\"></i>",
+    success_text = "<i class=\"fa fa-check\" style=\"color: #90BE6D\"></i>",
+  ),
+  rmarkdown::html_dependency_font_awesome()
+)
+```
+
+```{r xaringan-extras, echo=FALSE}
+xaringanExtra::use_tile_view()
+
+```
+
+# `r rmarkdown::metadata$title`
+----
+### `r rmarkdown::metadata$author`
+### `r format(Sys.time(), "%B %d, %Y")`
+
+---
+
+# Background
+
+- In the last learning lab, we did a nice job of training a model that was _pretty good_
+- But, can we do better?
+- This question motivates this learning lab, specifically:
+    - Answering it
+    - And, developing a _means_ to answer it in a way that does not introduce bias into our analysis
+- Feature engineering is a key way we can improve our model
+- Feature engineering refers to the part of machine learning wherein we decide which variables to include in which forms
+
+---
+
+# Agenda
+
+.pull-left[
+## Part 1: Core Concepts
+### Feature engineering
+- Selecting and preparing variables for inclusion as features
+- k-folds cross-validation
+]
+
+.pull-right[
+
+## Part 2: R Code Examples
+### Online science classes
+- Daa from online science classes
+- Interpreting changes in fit measures
+]
+
+---
+
+class: clear, inverse, center, middle
+
+# Core Concepts
+
+---
+
+# Why feature engineering matters
+
+- Let's consider a very simple data set, one with _time series_ (or longitudinal) data for a single student
+
+```{r, include = FALSE}
+d <- tibble(student_id = "janyia", time_point = 1:10, var_a = c(0.01, 0.32, 0.32, 0.34, 0.04, 0.54, 0.56, 0.75, 0.63, 0.78))
+```
+
+```{r}
+d
+```
+
+- **How can we include a variable, `var_a`, in a machine learning model?**
+
+---
+
+# How can we include a single variable?
+
+Let's take a look at the variable
+
+```{r}
+d %>% 
+    ggplot(aes(x = time_point, y = var_a)) +
+    geom_point()
+```
+
+---
+
+# How can we include a single variables
+
+- Well, what if we just add the values for these variables directly
+- But, that ignores that they are at different time points
+    - We could include the time point variable, but that is (about) the same for every student
+
+*What are some other ideas?*
+
+---
+
+# A few (other) options
+
+- Raw data points
+- Their mean
+- Their maximum
+- Their variability (standard deviation)
+- Their linear slope
+- Their quadratic slope
+
+**Each of these may derive from a single _variable_ but may offer predictive utility as distinct _features_**
+
+---
+
+# Let's consider one more example
+
+Here's a time stamp:
+
+```{r, echo = FALSE}
+Sys.time()
+```
+
+**How could this variable be used as a predictor variable?**
+
+---
+
+# Discussion
+
+.pull-left[
+### Turn to an elbow partner and discuss:
+
+- What _variables_ might you use in your use of ML?
+- What _features_ could be created from these variables?
+- What is unclear or about what do you have a question (so far)?
+]
+
+.pull-right[
+
+```{r, out.width = "75%"}
+knitr::include_graphics("img/joro-pointing.jpeg", error = FALSE)
+```
+
+---
+
+# What else should we consider?
+
+## For all variables
+
+- Removing those with "near-zero variance"
+- Removing ID variables and others that _should not be_ informative
+- Imputing missing values
+- Extract particular elements (i.e., particular _days_ or _times_) from time-related data 
+
+## For specific types of variables
+
+- Categorical variables
+    - Combining categories
+- Numeric variables
+    - Normalizing ("standardizing")
+
+---
+
+# How to do this?
+
+- We can do all of these things manually
+- But, there are also helpful functions to do this
+- Any, the {recipes} package makes it practical to carry out feature engineering steps for not only single variables, but groups of variables (or all of the variables)
+- Examples, all of which start with `_step()`:
+    - `step_dummy()`
+    - `step_normalize()`
+    - `step_nzv()`
+    - `step_impute_knn()`
+
+*We'll dive in deeper in the code examples*
+
+---
+
+# The importance of training data
+
+- Training data is what we use to "learn" from data
+- A "check" on your work is your predictions on _test_ set data
+  - *Train data*: Outcome data that you use to fit your model
+  - *Validation data<sup>1</sup>*: Data you use to select a particular algorithm
+  - *Test ("hold-out") data*: Data that you do not use in any way to train your model
+
+.footnote[
+[1] not always/often used in practice, for reasons we'll discuss momentarily
+]
+
+---
+
+# The problem introduced by feature engineering
+
+In LL1, we fit and interpreted a single model; let's think carefully through how we "spent" our training and testing data in that lab
+
+--
+
+*Training data*: Used this set (80%) of the data to train our model
+*Testing data*: Evaluated the performance of the model using this set (20%) of the data
+
+--
+
+What if we decided to _add new features_ or _change existing features_?
+
+We'd need to use the same training data to tune a new model---and the same testing data to evaluate its performance
+
+--
+
+**But, doing this could lead us to specifying a model based on how well we predict the data that happened to end up in the testing set. We could be optimizing our model for our testing data; when used with new data, that model could do poorly.**
+
+---
+
+# The problem introduced by feature engineering
+
+- In short, a challenges arises when we wish to use our training data _more than once_
+- Namely, if we repeatedly training an algorithm on the same data and then make changes, we may be tailoring our model to specific features of the testing data
+- This is a _very common and pervasive problem_ in machine learning applications
+- Resampling conserves our testing data; we don't have to spend it until we've finalized our model
+
+---
+
+# Resampling (and _k_-folds cross-validation)
+
+- Resampling involves blurring the boundaries between training and testing data, _but only for the training split of the data_
+- Specifically, it involves combining these two portions of our data into one, iteratively considering:
+    - Some of the data to be for "training"
+    - Some for "testing"
+- Then, fit measures are summed across these different samples
+
+---
+
+# *k*-folds cross validation
+
+- One of the most common and useful forms of resampling is *k*-folds cross validation
+    - Here, some of the data is considered to be a part of the *training* set 
+    - The remaining data is a part of the *testing* set
+
+- How many sets (samples taken through resampling)?
+    - This is determined by _k_, number of times the data is resampled
+    - When _k_ is equivalent to the number of rows in the data, this is often called "Leave One Out Cross-Validation" (LOOCV)
+---
+
+# Let's consider an example
+
+Say we have a data set, `d`, with 100 observations (rows or data points) with _k_ = 10.
+
+```{r, include = FALSE}
+d <- tibble(id = 1:100, var_a = runif(100), var_b = runif(100))
+```
+
+```{r}
+d
+```
+
+**Using _k_ = 10, how can we split this data into ten distinct training and testing sets?**
+
+---
+
+# First resampling
+
+```{r}
+train <- d[1:90, ]
+test <- d[91:100, ]
+
+train  %>% head(3)
+test %>% head(3)
+# then, train the model (using train) and calculate a fit measure (using test)
+```
+
+---
+
+# Second resampling
+
+```{r}
+train <- d[c(1:80, 91:100), ]
+test <- d[81:90, ]
+
+train  %>% head(3)
+test %>% head(3)
+# then, train the model (using train) and calculate a fit measure (using test)
+```
+
+---
+
+# Third resampling
+
+```{r}
+train <- d[c(1:70, 81:100), ]
+test <- d[71:80, ]
+
+train  %>% head(3)
+test %>% head(3)
+# then, train the model (using train) and calculate a fit measure (using test)
+```
+
+... through the tenth resampling, after which the fit measures are simply summed
+
+That's it! Thankfully, we have automated tools to do this that we'll work on in the code examples
+
+---
+
+# But how do you determine what _k_ should be?
+
+- A _historically common value_ for _k_ has been 10
+- But, as computers have grown in processing power, setting _k_ equal to the number of rows in the data has become more common
+
+---
+
+class: clear, inverse, center, middle
+
+# Code Examples
+
+---
+
+# Data from online science classes
+
+- This data comes from a study of ~700 secondary/high school-aged students in the United States
+- The data were collected _over multiple semesters_ from _multiple classes_
+- There are a number of types of variables
+
+
+.panelset[
+.panel[.panel-name[1]
+
+ - Demographic/contextual variables, e.g. `subject` and `gender`
+
+]
+
+.panel[.panel-name[2]
+
+  - Self-report survey variables: `uv` (utility value), `percomp` (perceived competence), and `int` (interest)
+  
+]
+
+.panel[.panel-name[3]
+
+  - Gradebook variables: `overall_percent_earned`, `variability_percent_earned`, `n_with_100_pct` (based on the first 20 assignments)
+
+]
+
+.panel[.panel-name[4]
+
+  - Discussion variables: `sum_discussion_posts`, `sum_n_words` (for the first 3 discussions)
+
+]
+
+.panel[.panel-name[5]
+
+  - Outcomes: `final_grade`, `passing_grade`, `time_spent` (in minutes)
+
+]
+]
+
+---
+
+# Sidebar
+
+This data is described further (and descriptively and inferentially analyzed using a regression and multi-level modeling approach) in *Data Science in Education Using R*:
+
+- Chapter 7: The Education Data Science Pipeline With Online Science Class Data: https://datascienceineducation.com/c07.html
+
+- Chapter 13: The Role (and Usefulness) of Multilevel Models: https://datascienceineducation.com/c13.html
+
+- Chapter 14: Predicting Students’ Final Grades Using Machine Learning Methods with Online Course Data: https://datascienceineducation.com/c14.html
+
+---
+
+# Let's take a look at the data together
+
+```{r, message = FALSE}
+d <- read_csv("data/data-to-model.csv")
+d <- select(d, -time_spent) # this is another outcome, so we'll cut this here
+
+d %>% 
+    glimpse()
+```
+
+---
+
+class: clear, inverse, center, middle
+
+# Code Examples
+
+*Note how these steps are the same as in the classification example for LL 1*
+
+---
+
+# Let's walk through a few steps
+
+.panelset[
+
+.panel[.panel-name[0]
+
+**Prepare**
+
+```{r, message = FALSE, warning = FALSE, echo = TRUE}
+library(tidyverse)
+library(tidymodels)
+
+d <- read_csv("data/online-sci-data-joined.csv")
+```
+
+]
+
+.panel[.panel-name[1]
+
+**Split data**
+
+```{r panel-chunk-1, echo = TRUE, eval = FALSE}
+set.seed(20220712)
+
+train_test_split <- initial_split(d, prop = .80)
+
+data_train <- training(train_test_split)
+
+kfcv <- vfold_cv(data_train, v = 15) # this differentiates this from what we did before
+# before, we simple used data_train to fit our model
+```
+]
+
+.panel[.panel-name[2]
+
+**Engineer features**
+
+```{r, echo = TRUE, eval = FALSE}
+my_rec <- recipe(final_grade ~ ., data = d) %>% # a continuous measure of students' final grade
+    step_normalize(all_numeric_predictors()) %>% # standardizes numeric variables
+    step_nzv(all_predictors()) %>% # remove predictors with a "near-zero variance"
+    step_novel(all_nominal_predictors()) %>% # add a musing label for factors
+    step_dummy(all_nominal_predictors()) %>%  # dummy code all factor variables
+    step_impute_knn(all_predictors()) # impute missing data for all predictor variables
+```
+]
+
+.panel[.panel-name[3]
+
+**Specify the model and workflow**
+ 
+```{r panel-chunk-3, echo = TRUE, eval = FALSE}
+my_mod <-
+    linear_reg() %>% # note the difference here
+    set_engine("glm") %>% 
+    set_mode("regression") # and here
+
+# specify workflow
+my_wf <-
+    workflow() %>%
+    add_model(my_mod) %>% 
+    add_recipe(my_rec)
+```
+]
+
+.panel[.panel-name[4]
+
+**Fit model**
+
+```{r panel-chunk-4, echo = TRUE, eval = FALSE}
+fitted_model <- fit_resamples(my_wf, resamples = kfcv,
+                              control = control_grid(save_pred = TRUE)) # this allows us to inspect the predictions
+```
+]
+
+.panel[.panel-name[5]
+
+**Evaluate accuracy**
+
+```{r panel-chunk-5, echo = TRUE, eval = FALSE}
+fitted_model %>% 
+    unnest(.metrics) %>% 
+    filter(.metric == "rmse") # we also get another metric, the ROC; we focus just on accuracy for now
+```
+]
+]
+
+---
+
+# What's next?
+
+- **Case study**: You'll run all of this code, focusing on feature engineering and working with resamples
+- **Independent practice**: In the independent practice, you'll focus on adding a new (not yet used!) feature engineering step
+
+---
+
+class: clear, center
+
+## .font130[.center[**Thank you!**]]
+
+<br/>
+.center[<img style="border-radius: 80%;" src="img/jr-cycling.jpeg" height="200px"/><br/>**Dr. Joshua Rosenberg**<br/><mailto:jmrosenberg@utk.edu>]
