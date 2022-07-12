@@ -313,5 +313,5 @@ final_fit %>%
 
 ### 🧶 Knit & Check ✅
 
-Congratulations - you've completed the Machine Learning Learning Lab 1
-Guided Practice! Consider moving on to the independent practice next.
+Congratulations - you've completed this case study! Consider moving on
+to the badge activity next.

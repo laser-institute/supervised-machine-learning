@@ -1,0 +1,106 @@
+---
+title: 'Machine Learning - Learning Lab 4 Badge'
+author: ""
+date: "`r format(Sys.Date(),'%B %e, %Y')`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+![](img/ML_UM_Hx.jpg){width="30%"}
+
+
+As a reminder, to earn a badge for each lab, you are required to respond to a set of prompts for two parts:
+
+-   In Part I, you will reflect on your understanding of key concepts and begin to think about potential next steps for your own study.
+
+-   In Part II, you will create a simple data product in R that demonstrates your ability to apply an analytic technique introduced in this learning lab.
+
+### Part I: Reflect and Plan
+
+Part A:
+
+1.  How interpretable or useful is the solution we estimated in the case study? 
+
+-   
+
+2.  How might a qualitative analysis follow from the Latent Profile Analysis we carried out? What steps could you take in a qualitative investigation? Feel free to think broadly and creatively here!
+
+-   
+
+Part B: Once again, use the institutional library (e.g. [NCSU Library](https://www.lib.ncsu.edu/#articles)), [Google Scholar](https://scholar.google.com/) or search engine to locate a research article, presentation, or resource that applies unsupervised machine learning to an educational context aligned with your research interests. More specifically, **locate a machine learning study that involve using Latent Profile Analysis or a similar method**. You may find the published papers that have used LPA helpful in this respect; those can be browsed [here](https://scholar.google.com/scholar?hl=en&as_sdt=0%2C34&q=tidylpa&btnG=). 
+
+1.  Provide an APA citation for your selected study.
+
+    -   
+
+2.  What research questions were the authors of this study trying to address and why did they consider these questions important?
+
+    -   
+
+3.  What were the results of these analyses?
+
+    -   
+
+### Part II: Data Product
+
+Like the last data product, this one may be a challenge, too. Here, estimate latent profiles using _your own data_. If you do not have ready access to appropriate data (for LPA, continuous/numeric data), choose any of the data sets in the `data` folder of this repository.
+
+Some code is provided below as a starting point.
+
+```{r}
+library(tidyverse)
+library(tidyLPA)
+
+d <- read_csv("data/dat_csv_combine_final_full.csv")
+
+d <- d %>% 
+    select(AveCarelessness, AveKnow, AveCorrect = AveCorrect.x, AveResBored, 
+           AveResEngcon, AveResConf, AveResFrust, AveResOfftask, 
+           AveResGaming, NumActions) %>%
+    janitor::clean_names()
+
+scale_data <- function(x) {
+    x = x - mean(x, na.rm = TRUE)
+    x = x / sd(x, na.rm = TRUE)
+    x
+}
+
+d <- d %>%
+    mutate_all(funs(scaled = scale_data)) %>% # using our function to scale all of the variables
+    select(contains("_scaled")) # selecting only the scaled version
+
+d %>%
+    estimate_profiles(1:10) %>% 
+    compare_solutions()
+
+our_solution <- d %>%
+    estimate_profiles(4)
+
+plot_profiles(our_solution, add_line = TRUE) +
+    theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1))
+```
+
+Please interpret the results of your analysis below. What did you find? How interpretable and useful are the profiles? And, what next steps - including those involving qualitative analysis - might you take to deepen this analysis?
+
+-   
+
+### Knit & Submit
+
+Congratulations, you've completed your Prediction badge! Complete the following steps to submit your work for review:
+
+1.  Change the name of the `author:` in the [YAML header](https://monashdatafluency.github.io/r-rep-res/yaml-header.html) at the very top of this document to your name. As noted in [Reproducible Research in R](https://monashdatafluency.github.io/r-rep-res/index.html), The YAML header controls the style and feel for knitted document but doesn't actually display in the final output.
+
+2.  Click the yarn icon above to "knit" your data product to a [HTML](https://bookdown.org/yihui/rmarkdown/html-document.html) file that will be saved in your R Project folder.
+
+3.  Commit your changes in GitHub Desktop and push them to your online GitHub repository.
+
+4.  Publish your HTML page the web using one of the following [publishing methods](https://rpubs.com/cathydatascience/518692):
+
+    -   Publish on [RPubs](https://rpubs.com) by clicking the "Publish" button located in the Viewer Pane when you knit your document. Note, you will need to quickly create a RPubs account.
+
+    -   Publishing on GitHub using either [GitHub Pages](https://pages.github.com) or the [HTML previewer](http://htmlpreview.github.io).
+
+5.  Post a new discussion on GitHub to our [ML badges forum](https://github.com/orgs/laser-institute/teams/machine-learning/discussions/2). In your post, include a link to your published web page and a short reflection highlighting one thing you learned from this lab and one thing you'd like to explore further.

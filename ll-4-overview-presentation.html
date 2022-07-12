@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="" xml:lang="">
   <head>
-    <title>Machine Learning Learning Lab 4</title>
+    <title>Machine Learning Learning Lab 4: Unsupervised Methods</title>
     <meta charset="utf-8" />
     <meta name="author" content="Dr. Joshua Rosenberg" />
-    <meta name="date" content="2022-07-01" />
+    <meta name="date" content="2022-07-12" />
     <script src="libs/header-attrs-2.14/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
@@ -26,10 +26,10 @@ class: clear, title-slide, inverse, center, top, middle
 
 
 
-# Machine Learning Learning Lab 4
+# Machine Learning Learning Lab 4: Unsupervised Methods
 ----
 ### **Dr. Joshua Rosenberg**
-### July 01, 2022
+### July 12, 2022
 
 ---
 
@@ -48,16 +48,18 @@ class: clear, title-slide, inverse, center, top, middle
 .pull-left[
 
 ## Part 1: Core Concepts
-- Determining the number of groups/codes in the data
-- Interpreting the groups
+### Latent Profile Analysis
+- Latent Profile Analysis: Determining the number of profiles
+- Latent Profile Analysis: Interpreting profiles
 - Computational Grounded Theory
 ]
 
 .pull-right[
 
 ## Part 2: R Code-Along
+### tidyLPA 
+- `tidyLPA()` functions
 - ASSISTments data
-- The tidyLPA package
 ]
 
 ---
@@ -139,7 +141,7 @@ Do you not yet have codes/outcomes -- and do you want to?
 
 # An example in science education research
 
-- In [Rosenberg and Krist (2020)](https://link.springer.com/article/10.1007/s10956-020-09862-4), students' written responses were the raw (unstrcutred) data that was used
+- In [Rosenberg and Krist (2020)](https://link.springer.com/article/10.1007/s10956-020-09862-4), students' written responses were the raw (unstructured) data that was used
 - Though a coding frame existed, it was not well suited to the specific data that was available
 - At the same time, there was _a lot_ of data available
 - The three steps of computational grounded theory were carried out:
@@ -263,14 +265,14 @@ pisaUSA15[1:100, ] %&gt;%
 ## Compare tidyLPA solutions:
 ## 
 ##  Model Classes AIC     BIC    
-##  1     1       671.475 687.106
-##  1     2       632.022 658.073
-##  1     3       627.941 664.414
-##  6     1       614.137 637.584
-##  6     2       621.929 671.427
-##  6     3       617.313 692.863
+##  1     1       674.312 689.943
+##  1     2       639.978 666.030
+##  1     3       636.314 672.786
+##  6     1       621.808 645.254
+##  6     2       619.529 669.027
+##  6     3       636.838 712.388
 ## 
-## Best model according to AIC is Model 6 with 1 classes.
+## Best model according to AIC is Model 6 with 2 classes.
 ## Best model according to BIC is Model 6 with 1 classes.
 ## 
 ## An analytic hierarchy process, based on the fit indices AIC, AWE, BIC, CLC, and KIC (Akogul &amp; Erisoglu, 2017), suggests the best solution is Model 6 with 1 classes.
@@ -281,14 +283,18 @@ pisaUSA15[1:100, ] %&gt;%
 # Other functions for working with LPA output
 
 
+```r
+get_estimates(m3)
+get_data(m3)
+get_fit(m3)
+```
 
 ---
 
 # In the remainder of this learning lab, you'll dive deeper into this model
 
-- **Guided walkthrough**: an LPA
-- **Independent practice**: your own data
-- **Readings**: paper: nelson, CGT
+- **Guided walkthrough**: We'll walk through a Latent Profile Analysis using data from the ASSISTments platform.
+- **Case study**: Specify a latent profile analysis using your own data.
 
 ---
 
@@ -296,7 +302,7 @@ class: clear, center
 
 ## .font130[.center[**Thank you!**]]
 &lt;br/&gt;
-.center[&lt;img style="border-radius: 80%;" src="img/jr-cycling" height="200px"/&gt;&lt;br/&gt;**Dr. Joshua Rosrenberg**&lt;br/&gt;&lt;mailto:jmrosenberg@utk.edu&gt;]
+.center[&lt;img style="border-radius: 80%;" src="img/jr-cycling" height="200px"/&gt;&lt;br/&gt;**Dr. Joshua Rosenberg**&lt;br/&gt;&lt;mailto:jmrosenberg@utk.edu&gt;]
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>

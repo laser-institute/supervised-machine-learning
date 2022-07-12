@@ -148,8 +148,9 @@ use the remainder for the training set, which are the defaults for the
 
 Additionally, since random sampling uses random numbers, it is important
 to set the random number seed. This ensures that the random numbers can
-be reproduced at a later time (if needed). We pick the first date on which we may
-carry out this learning lab as the seed, but any number will work!
+be reproduced at a later time (if needed). We pick the first date on
+which we may carry out this learning lab as the seed, but any number
+will work!
 
 The function `initial_split()` function from the {rsample} package takes
 the original data and saves the information on how to make the
@@ -293,12 +294,15 @@ final_fit %>%
 
 This is our first set of real output! Note two things:
 
-1.  `.pres_class`: This is the *predicted* code  
-2.  `code`: This is the known *code*  
+1.  `.pres_class`: This is the *predicted* code\
+2.  `code`: This is the known *code*
 
-When these are **the same**, the model predicted the code _correctly_; when they aren't the same, the model was incorrect.
+When these are **the same**, the model predicted the code *correctly*;
+when they aren't the same, the model was incorrect.
 
-Importantly, we can _summarize_ across all of these codes. One way to do this is straightforward; how many of the codes were the same, as in the following chunk of code:
+Importantly, we can *summarize* across all of these codes. One way to do
+this is straightforward; how many of the codes were the same, as in the
+following chunk of code:
 
 ```{r}
 final_fit %>% 
@@ -306,7 +310,9 @@ final_fit %>%
     select(.pred_class, code) %>% # just to make the output easier to view 
     mutate(correct = .pred_class == code) # create a new variable, correct, telling us when the model was and was not correct
 ```
-That's helpful, but there's one more step we can take -- counting up the values of `correct`:
+
+That's helpful, but there's one more step we can take -- counting up the
+values of `correct`:
 
 ```{r}
 final_fit %>% 
@@ -316,9 +322,11 @@ final_fit %>%
     tabyl(correct)
 ```
 
-Let's interpret the above. If the value of `correct` is `TRUE` when the predicted and known code are the same, what does the `percent` column tell us? Add one or more notes to the dashes below:
+Let's interpret the above. If the value of `correct` is `TRUE` when the
+predicted and known code are the same, what does the `percent` column
+tell us? Add one or more notes to the dashes below:
 
-- 
+-   
 
 A short-cut to the above is below:
 
@@ -326,14 +334,18 @@ A short-cut to the above is below:
 final_fit %>% 
     collect_metrics()
 ```
+
 **Observations**
 
-- 
-- 
+-   
 
-That's it for now; the core parts of machine learning are used in the above steps you took; what we'll do after this leaning lab only adds nuance and complexity to what we've already done.
+-   
+
+That's it for now; the core parts of machine learning are used in the
+above steps you took; what we'll do after this leaning lab only adds
+nuance and complexity to what we've already done.
 
 ## 🧶 Knit & Check ✅
 
-Congratulations - you've completed the Machine Learning Learning Lab 1
-Case study! Move on to the Independent Practice next.
+Congratulations - you've completed this case study! Consider moving on
+to the badge activity next.

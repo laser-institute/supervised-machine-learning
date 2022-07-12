@@ -1,5 +1,5 @@
 ---
-title: "Machine Learning Learning Lab 4"
+title: "Machine Learning Learning Lab 4: Unsupervised Methods"
 subtitle: "Overview Presentation"
 author: "**Dr. Joshua Rosenberg**"
 institute: "LASER Institute"
@@ -66,16 +66,18 @@ xaringanExtra::use_panelset()
 .pull-left[
 
 ## Part 1: Core Concepts
-- Determining the number of groups/codes in the data
-- Interpreting the groups
+### Latent Profile Analysis
+- Latent Profile Analysis: Determining the number of profiles
+- Latent Profile Analysis: Interpreting profiles
 - Computational Grounded Theory
 ]
 
 .pull-right[
 
 ## Part 2: R Code-Along
+### tidyLPA 
+- `tidyLPA()` functions
 - ASSISTments data
-- The tidyLPA package
 ]
 
 ---
@@ -159,7 +161,7 @@ knitr::include_graphics("https://journals.sagepub.com/na101/home/literatum/publi
 
 # An example in science education research
 
-- In [Rosenberg and Krist (2020)](https://link.springer.com/article/10.1007/s10956-020-09862-4), students' written responses were the raw (unstrcutred) data that was used
+- In [Rosenberg and Krist (2020)](https://link.springer.com/article/10.1007/s10956-020-09862-4), students' written responses were the raw (unstructured) data that was used
 - Though a coding frame existed, it was not well suited to the specific data that was available
 - At the same time, there was _a lot_ of data available
 - The three steps of computational grounded theory were carried out:
@@ -286,26 +288,24 @@ pisaUSA15[1:100, ] %>%
                       variances = c("equal", "varying"),
                       covariances = c("zero", "varying")) %>%
     compare_solutions(statistics = c("AIC", "BIC"))
-
 ```
 
 ---
 
 # Other functions for working with LPA output
 
-```{r, eval = FALSE}
+```{r, eval = FALSE, echo = TRUE}
 get_estimates(m3)
 get_data(m3)
-get_fit(m4)
+get_fit(m3)
 ```
 
 ---
 
 # In the remainder of this learning lab, you'll dive deeper into this model
 
-- **Guided walkthrough**: an LPA
-- **Independent practice**: your own data
-- **Readings**: paper: nelson, CGT
+- **Guided walkthrough**: We'll walk through a Latent Profile Analysis using data from the ASSISTments platform.
+- **Case study**: Specify a latent profile analysis using your own data.
 
 ---
 
@@ -313,4 +313,4 @@ class: clear, center
 
 ## .font130[.center[**Thank you!**]]
 <br/>
-.center[<img style="border-radius: 80%;" src="img/jr-cycling" height="200px"/><br/>**Dr. Joshua Rosrenberg**<br/><mailto:jmrosenberg@utk.edu>]
+.center[<img style="border-radius: 80%;" src="img/jr-cycling" height="200px"/><br/>**Dr. Joshua Rosenberg**<br/><mailto:jmrosenberg@utk.edu>]

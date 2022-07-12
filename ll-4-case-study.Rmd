@@ -19,18 +19,52 @@ bibliography: lit/references.bib
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-While the past three case studies have focused on cases for which we have coded data (in case studies 1 and 3, from the #NGSSchat data; in case study 2, from having students' end of course grades), sometimes, we do not have smething that we can consider to be coded data---or a dependent variable. Machine learning does offer us way forward in such cases, but not through the supervised machine learning methods we've been using until this point. Instead, we can use _unsupervised_ methods.
+While the past three case studies have focused on cases for which we
+have coded data (in case studies 1 and 3, from the #NGSSchat data; in
+case study 2, from having students' end of course grades), sometimes, we
+do not have something that we can consider to be coded data---or a
+dependent variable. Machine learning does offer us way forward in such
+cases, but not through the supervised machine learning methods we've
+been using until this point. Instead, we can use *unsupervised* methods.
 
-Our driving question is: What if we do not have training data? 
+Our driving question is: *What if we do not have training data?*
 
-The goal is to estimate those groups, here through the process of Latent Profile Analysis. We follow the example of Commeford et al. (2022), who estimated profiles of college-levels instructors' teaching practices, specifically their teaching practices relating to active learning. They did so using Latent Profile Analysis -- and [the tidyLPA package in R](https://data-edu.github.io/tidyLPA/index.html) that we'll be using.
+The goal is to estimate those groups, here through the process of Latent
+Profile Analysis. We follow the example of Commeford et al. (2022), who
+estimated profiles of college-levels instructors' teaching practices,
+specifically their teaching practices relating to active learning. They
+did so using Latent Profile Analysis -- and [the tidyLPA package in
+R](https://data-edu.github.io/tidyLPA/index.html) that we'll be using.
 
-One other resource that may be helpful is the chapter by Pastor et al. (2007) on Latent Profile Analysis, or, as it is often abbreviated, LPA.
+> Commeford, K., Brewe, E., & Traxler, A. (2022). Characterizing active
+> learning environments in physics using latent profile analysis.
+> Physical Review Physics Education Research, 18(1), 010113.
+> <https://github.com/laser-institute/essential-readings/blob/main/machine-learning/ml-lab-4/commeford-et-al-2022-per.pdf>
 
+One other resource that may be helpful is the chapter by Pastor et al.
+(2007) on Latent Profile Analysis, or, as it is often abbreviated, LPA.
+
+> Pastor, D. A., Barron, K. E., Miller, B. J., & Davis, S. L. (2007). A
+> latent profile analysis of college students' achievement goal
+> orientation. Contemporary educational psychology, 32(1), 8-47.
+> <https://github.com/laser-institute/essential-readings/blob/main/machine-learning/ml-lab-4/pastor-et-al-2007-cep.pdf>
+
+One note for this learning lab. LPA can be a finnicky method; the best
+practices regarding model selection are often difficult to achieve in
+practice, and we'll see that with the data we use, which doesn't present
+a clear picture regarding which model is best. We'll do our best working
+with the information we have - as we often have to do in practice. If
+publishing a paper, we can present these issues in our manuscript in a
+transparent manner.
+
+You can see examples of the around 300 papers that have been published
+in journals in a wide range of fields on [Google
+Scholar](https://scholar.google.com/scholar?hl=en&as_sdt=0%2C34&q=tidylpa&btnG=).
 
 ## Step 0: Loading and setting up
 
-First, let's load the packages we'll use---the familiar {tidyverse} and the {tidyLPA package}.
+First, let's load the packages we'll use---the familiar {tidyverse} and
+the {tidyLPA package}.
 
 ```{r}
 library(tidyverse)
@@ -57,16 +91,24 @@ d
 
 ## Step 1: Explore a range of solutions
 
-We _could_ estimate a single solution, as in the following (run this code).
+We *could* estimate a single solution, as in the following (run this
+code).
 
 ```{r}
 d %>%
     estimate_profiles(3) %>% 
     plot_profiles()
 ```
-Wait a minute - something's not right. Let's center and standardize all of the variables, first, to make this graph more interpretable.
 
-This is a bit of a new technique, but we'll create a new function that we'll use to do this. There _is_ a built-in function in R, `scale()`, but it often causes problems because it returns a data frame (technically a matrix) with a single column, rather than simply a single column. In short, it doesn't work well in many cases, so we'll write our own version of it.
+Wait a minute - something's not right. Let's center and standardize all
+of the variables, first, to make this graph more interpretable.
+
+This is a bit of a new technique, but we'll create a new function that
+we'll use to do this. There *is* a built-in function in R, `scale()`,
+but it often causes problems because it returns a data frame
+(technically a matrix) with a single column, rather than simply a single
+column. In short, it doesn't work well in many cases, so we'll write our
+own version of it.
 
 ```{r}
 scale_data <- function(x) {
@@ -76,7 +118,9 @@ scale_data <- function(x) {
 }
 ```
 
-Then, we'll use the function as follows with the `mutate_all()` function, creating a scaled version of all of our variables and saving the results back to our data frame.
+Then, we'll use the function as follows with the `mutate_all()`
+function, creating a scaled version of all of our variables and saving
+the results back to our data frame.
 
 ```{r}
 d <- d %>%
@@ -84,13 +128,21 @@ d <- d %>%
     select(contains("_scaled")) # selecting only the scaled version
 ```
 
+## Step 2: Select a solution
+
 ```{r}
 d %>%
     estimate_profiles(3) %>% 
     plot_profiles()
 ```
 
-Done, right? Not quite. Notice that above, we specified that the number of profiles was 3. How do we know that 3 is best? This is a key decision that we as the individual or group analyzing the data must make. Fortunately, there are tools to help us. Let's try the `compare_solutions()` function, which does just that. The `estimate_profiles()` function can, helpfully, estiamte more than one set of profiles at once --- here, those with 1 through 10 profiles.
+Done, right? Not quite. Notice that above, we specified that the number
+of profiles was 3. How do we know that 3 is best? This is a key decision
+that we as the individual or group analyzing the data must make.
+Fortunately, there are tools to help us. Let's try the
+`compare_solutions()` function, which does just that. The
+`estimate_profiles()` function can, helpfully, estimate more than one
+set of profiles at once --- here, those with 1 through 10 profiles.
 
 ```{r}
 d %>%
@@ -98,7 +150,12 @@ d %>%
     compare_solutions()
 ```
 
-Often, we wish to look for a _change in the rate_ of the decrease of fit indices, with the BIC fit index being arguably the most important. Above, we can see that the rate of change appears to level off after around 4 "Classes" - or, profiles. Let's consider that solution as one that fits best (even though the utput suggests that the "best" model is one with 10 classes, as that may be over-fitting the data.
+Often, we wish to look for a *change in the rate* of the decrease of fit
+indices, with the BIC fit index being arguably the most important.
+Above, we can see that the rate of change appears to level off after
+around 4 "Classes" - or, profiles. Let's consider that solution as one
+that fits best (even though the output suggests that the "best" model is
+one with 10 classes, as that may be over-fitting the data.
 
 Let's interrogate that fourth solution next.
 
@@ -110,23 +167,38 @@ plot_profiles(our_solution, add_line = TRUE) +
     theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1)) # this rotates the x-axis labels to make them easier to read
 ```
 
-Typically, we'd name these solutions. Let's get started with one, the second:
+Typically, we'd name these solutions. Let's get started with one, the
+second:
 
-- Profile 1: 
-- Profile 2: Bored and off-task
-- Profile 3:
-- Profile 4:
+-   Profile 1:
+-   Profile 2: Bored and off-task
+-   Profile 3:
+-   Profile 4:
 
-You may wish to review the paper to interpret the other variables: https://educationaldatamining.org/EDM2014/uploads/procs2014/short%20papers/276_EDM-2014-Short.pdf
+You may wish to review the paper to interpret the other variables:
+<https://educationaldatamining.org/EDM2014/uploads/procs2014/short%20papers/276_EDM-2014-Short.pdf>
 
-We still aren't done! Recall from the presentation how we discussed computational grounded theory. In this approach, an exploratory approach such as Latent Profile Analysis is carried out not as the end point, but as a first step in understanding the data. The second step involves examining the data with the output from the first step as a guide. In this step, you as the human can interrogate and make sense of the output of the first step.
+We still aren't done! Recall from the presentation how we discussed
+computational grounded theory -- the work of Nelson (2020).
+
+> Nelson, L. K. (2020). Computational grounded theory: A methodological
+> framework. *Sociological Methods & Research, 49*(1), 3-42.
+> <https://github.com/laser-institute/essential-readings/blob/main/machine-learning/ml-lab-4/nelson-et-al-2020.pdf>
+
+In this approach, an exploratory approach such as Latent Profile
+Analysis is carried out not as the end point, but as a first step in
+understanding the data. The second step involves examining the data with
+the output from the first step as a guide. In this step, you as the
+human can interrogate and make sense of the output of the first step.
 
 ```{r}
 get_data(our_solution)
 ```
 
-What we do we notice about the solutions? What might the model have missed? We'll explore these questions further in the independent practice.
+What we do we notice about the solutions? What might the model have
+missed? We'll explore these questions further in the badge activity.
 
 ### 🧶 Knit & Check ✅
 
-Congratulations - you've completed the Machine Learning Learning Lab 1 Guided Practice! Consider moving on to the independent practice next.
+Congratulations - you've completed this case study! Consider moving on
+to the badge activity next.
