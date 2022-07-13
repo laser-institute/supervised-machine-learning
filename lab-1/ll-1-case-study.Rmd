@@ -12,11 +12,10 @@ output:
 editor_options:
   markdown:
     wrap: 72
-bibliography: lit/references.bib
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
 ```
 
 First, please add your name above!

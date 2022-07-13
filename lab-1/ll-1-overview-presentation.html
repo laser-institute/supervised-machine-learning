@@ -43,10 +43,9 @@ class: clear, title-slide, inverse, center, top, middle
 
 # Background
 
-- We have some data, but we want to use a computer to **automate** or scale up the relationships between predictor (independent) and outcome (dependent) variables. Supervised machine learning is suited to this aim.  
+- We have some data, but we want to use a computer to **automate** or scale up the relationships between predictor (independent) and outcome (dependent) variables. Supervised machine learning is suited to this aim. 
 - We use *data from a large, social media-based community focused on supporting the implementation of the Next Generation Science Standards, #NGSSchat on Twitter*.   
-- Using 1000s of qualitative codes from two years of the chat, we explore how well a computer can scale up this coding.
-Conceptually, we focus on understanding how prediction differs from explanation and why it is essential to split our data for supervised machine learning into "training" and "testing" sets.  
+- Using 1000s of qualitative codes from two years of the chat, we explore how well a computer can scale up this coding **to code others years data**
 
 ---
 
@@ -72,78 +71,6 @@ Conceptually, we focus on understanding how prediction differs from explanation 
 class: clear, inverse, center, middle
 
 # Core Concepts
-
----
-
-# A brief review
-
-What are the differences between supervised and unsupervised machine learning?
-
-.pull-left[
-
-## Supervised ML
-
-- Requires a known outcome (a _y_ variable)
-- Useful for _automating_ or _scaling up_ data with a known outcome
-
-]
-
-.pull-right[
-
-## Unsupervised ML 
-
-- Useful for _identifying groups or patterns in data_
-- Can be used in concert with qualitative methods
-
-]
-
----
-
-# Supervised &amp; unsupervised
-
-## Supervised ML
-
-- Requires coded data or data with a known outcome
-- Uses coded/outcome data to train an algorithm
-- Uses that algorithm to **predict the codes/outcomes for new data** (data not used during the training)
-- Can take the form of a *classification* (predicting a dichotomous or categorical outcome) or a *regression* (predicting a continuous outcome)
-
----
-
-# What kind of coded data?
-
-&gt; Want to detect spam? Get samples of spam messages. Want to forecast stocks? Find the price history. Want to find out user preferences? Parse their activities on Facebook (no, Mark, stop collecting it, enough!) (from [ML for Everyone](https://vas3k.com/blog/machine_learning/))
-
-In educational research:
-
-- Assessment data (e.g., [1](https://link.springer.com/article/10.1007/s10956-020-09895-9))
-- Data from log files ("trace data") (e.g., [1](https://www.tandfonline.com/doi/full/10.1080/10508406.2013.837391?casa_token=-8Fm2KCFJ30AAAAA%3Altbc8Y8ci_z-uLJx4se9tgvru9mzm3yqCTFi12ndJ5uM6RDl5YJGG6_4KpUgIK5BYa_Ildeh2qogoQ))
-- Open-ended written responses (e.g., [1](https://link.springer.com/article/10.1007/s10956-020-09889-7), [2](https://doi.org/10.1007/s11423-020-09761-w))
-- Achievement data (i.e., end-of-course grades) (e.g., [1](https://link.springer.com/article/10.1007/s10956-020-09888-8), [2](https://search.proquest.com/docview/2343734516?pq-origsite=gscholar&amp;fromopenview=true))
-- What else?
-
----
-
-# How is this different from regression?
-
-The _aim_ is different, the algorithms and methods of estimation are not (or, are differences in degree, rather than in kind).
-
-In a linear regression, our aim is to estimate parameters, such as `\(\beta_0\)` (intercept) and `\(\beta_1\)` (slope), and to make inferences about them that are not biased by our particular sample.
-
-In an ML approach, we can use the same linear regression model, but with a goal other than making unbiased inferences about the `\(\beta\)` parameters:
-
-**In supervised ML, our goal is to minimize the difference between a known `\(y\)` and our predictions, `\(\hat{y}\)`**
-
----
-
-# A helpful frame 
-
-## Unsupervised ML
-
-- Does not require coded data; one way to think about unsupervised ML is that its purpose is to discover codes/labels
-- Is used to discover groups among observations/cases or to summarize across variables
-- Can be used in an _exploratory mode_ (see [Nelson, 2020](https://journals.sagepub.com/doi/full/10.1177/0049124118769114?casa_token=EV5XH31qbyAAAAAA%3AFg09JQ1XHOOzlxYT2SSJ06vZv0jG-s4Qfz8oDIQwh2jrZ-jrHNr7xZYL2FwnZtZiokhPalvV1RL2Bw)) 
-- **Warning**: The results of unsupervised ML _cannot_ directly be used to provide codes/outcomes for supervised ML techniques 
 
 ---
 

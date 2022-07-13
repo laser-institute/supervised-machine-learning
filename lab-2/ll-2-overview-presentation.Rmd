@@ -249,7 +249,7 @@ Sys.time()
 ```{r, out.width = "75%"}
 knitr::include_graphics("img/joro-pointing.jpeg", error = FALSE)
 ```
-
+]
 ---
 
 # What else should we consider?

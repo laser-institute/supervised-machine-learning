@@ -206,7 +206,7 @@ gb <- gb %>%
 #### [Your Turn]{style="color: green;"} ⤵
 
 Next, let's create a variable with the percent of points earned (points
-earned divided by points attempted). To do so, add to the `mutate()`
+earned divided by points **possible**). To do so, add to the `mutate()`
 function below. Create a new variable called `percent_earned`. You can
 read more about mutate [here](https://r4ds.had.co.nz/transform.html)
 
