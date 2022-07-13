@@ -93,6 +93,24 @@ class: clear, title-slide, inverse, center, top, middle
 
 ---
 
+# Brief (15-20 seconds each) reflection
+
+
+.pull-left[
+### Turn to an elbow partner and discuss:
+
+- Any additional thoughts on the following?
+    - Which modality (supervised or unsupervised machine learning) are you interested in using?
+    - What data or context are you interested in for your use of ML?
+]
+
+.pull-right[
+
+&lt;img src="img/joro-pointing.jpeg" width="75%" /&gt;
+
+]
+
+---
 # Background
 
 - In the last learning lab, we did a nice job of training a model that was _pretty good_
@@ -161,7 +179,7 @@ class: clear, inverse, center, middle
 
 Let's take a look at the variable
 
-![](ll-2-overview-presentation_files/figure-html/unnamed-chunk-4-1.png)&lt;!-- --&gt;
+![](ll-2-overview-presentation_files/figure-html/unnamed-chunk-5-1.png)&lt;!-- --&gt;
 
 ---
 
@@ -194,7 +212,7 @@ Here's a time stamp:
 
 
 ```
-## [1] "2022-07-13 09:50:30 EDT"
+## [1] "2022-07-13 09:52:01 EDT"
 ```
 
 **How could this variable be used as a predictor variable?**
@@ -324,18 +342,18 @@ Say we have a data set, `d`, with 100 observations (rows or data points) with _k
 
 ```
 ## # A tibble: 100 × 3
-##       id  var_a  var_b
-##    &lt;int&gt;  &lt;dbl&gt;  &lt;dbl&gt;
-##  1     1 0.303  0.411 
-##  2     2 0.108  0.492 
-##  3     3 0.180  0.236 
-##  4     4 0.777  0.648 
-##  5     5 0.586  0.225 
-##  6     6 0.892  0.0264
-##  7     7 0.365  0.785 
-##  8     8 0.463  0.206 
-##  9     9 0.0747 0.802 
-## 10    10 0.534  0.108 
+##       id  var_a var_b
+##    &lt;int&gt;  &lt;dbl&gt; &lt;dbl&gt;
+##  1     1 0.0224 0.383
+##  2     2 0.236  0.381
+##  3     3 0.527  0.868
+##  4     4 0.329  0.846
+##  5     5 0.588  0.917
+##  6     6 0.518  0.811
+##  7     7 0.963  0.974
+##  8     8 0.732  0.311
+##  9     9 0.775  0.398
+## 10    10 0.142  0.206
 ## # … with 90 more rows
 ```
 
@@ -348,20 +366,20 @@ Say we have a data set, `d`, with 100 observations (rows or data points) with _k
 
 ```
 ## # A tibble: 3 × 3
-##      id var_a var_b
-##   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1     1 0.303 0.411
-## 2     2 0.108 0.492
-## 3     3 0.180 0.236
+##      id  var_a var_b
+##   &lt;int&gt;  &lt;dbl&gt; &lt;dbl&gt;
+## 1     1 0.0224 0.383
+## 2     2 0.236  0.381
+## 3     3 0.527  0.868
 ```
 
 ```
 ## # A tibble: 3 × 3
-##      id  var_a var_b
-##   &lt;int&gt;  &lt;dbl&gt; &lt;dbl&gt;
-## 1    91 0.591  0.383
-## 2    92 0.614  0.444
-## 3    93 0.0898 0.671
+##      id var_a var_b
+##   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1    91 0.780 0.483
+## 2    92 0.624 0.670
+## 3    93 0.718 0.494
 ```
 
 ---
@@ -371,20 +389,20 @@ Say we have a data set, `d`, with 100 observations (rows or data points) with _k
 
 ```
 ## # A tibble: 3 × 3
-##      id var_a var_b
-##   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1     1 0.303 0.411
-## 2     2 0.108 0.492
-## 3     3 0.180 0.236
+##      id  var_a var_b
+##   &lt;int&gt;  &lt;dbl&gt; &lt;dbl&gt;
+## 1     1 0.0224 0.383
+## 2     2 0.236  0.381
+## 3     3 0.527  0.868
 ```
 
 ```
 ## # A tibble: 3 × 3
 ##      id var_a  var_b
 ##   &lt;int&gt; &lt;dbl&gt;  &lt;dbl&gt;
-## 1    81 0.112 0.0528
-## 2    82 0.369 0.948 
-## 3    83 0.454 0.473
+## 1    81 0.416 0.0451
+## 2    82 0.954 0.993 
+## 3    83 0.385 0.120
 ```
 
 ---
@@ -394,20 +412,20 @@ Say we have a data set, `d`, with 100 observations (rows or data points) with _k
 
 ```
 ## # A tibble: 3 × 3
-##      id var_a var_b
-##   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1     1 0.303 0.411
-## 2     2 0.108 0.492
-## 3     3 0.180 0.236
+##      id  var_a var_b
+##   &lt;int&gt;  &lt;dbl&gt; &lt;dbl&gt;
+## 1     1 0.0224 0.383
+## 2     2 0.236  0.381
+## 3     3 0.527  0.868
 ```
 
 ```
 ## # A tibble: 3 × 3
-##      id   var_a var_b
-##   &lt;int&gt;   &lt;dbl&gt; &lt;dbl&gt;
-## 1    71 0.597   0.521
-## 2    72 0.615   0.796
-## 3    73 0.00482 0.475
+##      id var_a var_b
+##   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1    71 0.753 0.630
+## 2    72 0.268 0.245
+## 3    73 0.636 0.894
 ```
 
 ... through the tenth resampling, after which the fit measures are simply summed

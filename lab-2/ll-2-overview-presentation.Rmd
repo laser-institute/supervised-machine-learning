@@ -114,6 +114,26 @@ xaringanExtra::use_tile_view()
 
 ---
 
+# Brief (15-20 seconds each) reflection
+
+
+.pull-left[
+### Turn to an elbow partner and discuss:
+
+- Any additional thoughts on the following?
+    - Which modality (supervised or unsupervised machine learning) are you interested in using?
+    - What data or context are you interested in for your use of ML?
+]
+
+.pull-right[
+
+```{r, echo = FALSE, out.width = "75%"}
+knitr::include_graphics("img/joro-pointing.jpeg")
+```
+
+]
+
+---
 # Background
 
 - In the last learning lab, we did a nice job of training a model that was _pretty good_
