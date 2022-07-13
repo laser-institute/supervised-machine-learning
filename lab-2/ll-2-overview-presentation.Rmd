@@ -63,6 +63,57 @@ xaringanExtra::use_tile_view()
 
 ---
 
+# Happy Wednesday
+
+.panelset[
+
+.panel[.panel-name[Recap]
+
+- We have _four learning labs_ within the _machine learning topic area_
+    - Each is associated with ne badge
+- We began with _supervised machine learning_ and focused on its **predictive** emphasis
+    - We talked a bit about plans for using ML
+    - We worked through a presentation (reflection: the code-along took to long)
+    - We started on the case study
+    
+]
+
+.panel[.panel-name[A few more thoughts]
+
+- If you are still figuring out how you are planning to use ML . . . 
+    - Great! Let's make progress today (and this week)
+- If you have a _specific use of ML in mind_ . . . 
+    - Make sense of the labs
+    - And, at the same time, begin to look for _how_ you can achieve your goal
+        - R packages (recently updated, with good documentation, with active users, compatibility, papers)
+- Machine learning is _not_ magical
+
+]
+
+.panel[.panel-name[Logistics]
+
+- Links to presentations are here: https://laser-institute.github.io/machine-learning
+    - And in the machine learning "team": https://github.com/orgs/laser-institute/teams/machine-learning
+- GitHub will probably continue to work, but be challenging (but should be less so)
+    - You'll need to fork the repository to "submit" your badge; you can do this at any time (through GitHub.com or GitHub Desktop)
+- Installation of required packages will continue to work, but may be challenging (but should be less so)
+
+]
+
+.panel[.panel-name[Plan for today]
+
+- **This morning**
+    - We'll spend the first _30 minutes_ of our 75 minutes working through the case study and badge activity
+    - Then, we'll start the presentation for learning lab #2
+- **This afternoon**
+    - We'll spend the first _10-20 minutes_ finishing the presentation for learning lab #1
+    - Then, you'll have time to _continue the case study and badge activity for learning lab #1_
+        - Or, you can move on to the case study and badge activity for learning lab #2
+]
+]
+
+---
+
 # Background
 
 - In the last learning lab, we did a nice job of training a model that was _pretty good_

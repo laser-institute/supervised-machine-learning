@@ -611,15 +611,7 @@ We used a coding frame from [van Bommel et al. (2020)](https://www.sciencedirect
 
 ---
 
-# Interpreting accuracy
-
-```{r}
-
-```
-
----
-
-# In the remainder of this learning lab, you'll dive deeper into this model
+# In the remainder of this learning lab, you'll dive deeper
 
 - **Guided walkthrough**: You'll run all of this code, focusing on interpreting the predictions  
 - **Independent practice**: In the independent practice, you'll focus on interpreting the fit measures (agreement, Kappa, and others)  

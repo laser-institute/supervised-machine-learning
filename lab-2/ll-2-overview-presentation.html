@@ -4,7 +4,7 @@
     <title>Machine Learning Learning Lab 2: Feature Engineering</title>
     <meta charset="utf-8" />
     <meta name="author" content="Dr. Joshua Rosenberg" />
-    <meta name="date" content="2022-07-12" />
+    <meta name="date" content="2022-07-13" />
     <script src="libs/header-attrs-2.14/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
@@ -38,7 +38,58 @@ class: clear, title-slide, inverse, center, top, middle
 # Machine Learning Learning Lab 2: Feature Engineering
 ----
 ### **Dr. Joshua Rosenberg**
-### July 12, 2022
+### July 13, 2022
+
+---
+
+# Happy Wednesday
+
+.panelset[
+
+.panel[.panel-name[Recap]
+
+- We have _four learning labs_ within the _machine learning topic area_
+    - Each is associated with ne badge
+- We began with _supervised machine learning_ and focused on its **predictive** emphasis
+    - We talked a bit about plans for using ML
+    - We worked through a presentation (reflection: the code-along took to long)
+    - We started on the case study
+    
+]
+
+.panel[.panel-name[A few more thoughts]
+
+- If you are still figuring out how you are planning to use ML . . . 
+    - Great! Let's make progress today (and this week)
+- If you have a _specific use of ML in mind_ . . . 
+    - Make sense of the labs
+    - And, at the same time, begin to look for _how_ you can achieve your goal
+        - R packages (recently updated, with good documentation, with active users, compatibility, papers)
+- Machine learning is _not_ magical
+
+]
+
+.panel[.panel-name[Logistics]
+
+- Links to presentations are here: https://laser-institute.github.io/machine-learning
+    - And in the machine learning "team": https://github.com/orgs/laser-institute/teams/machine-learning
+- GitHub will probably continue to work, but be challenging (but should be less so)
+    - You'll need to fork the repository to "submit" your badge; you can do this at any time (through GitHub.com or GitHub Desktop)
+- Installation of required packages will continue to work, but may be challenging (but should be less so)
+
+]
+
+.panel[.panel-name[Plan for today]
+
+- **This morning**
+    - We'll spend the first _30 minutes_ of our 75 minutes working through the case study and badge activity
+    - Then, we'll start the presentation for learning lab #2
+- **This afternoon**
+    - We'll spend the first _10-20 minutes_ finishing the presentation for learning lab #1
+    - Then, you'll have time to _continue the case study and badge activity for learning lab #1_
+        - Or, you can move on to the case study and badge activity for learning lab #2
+]
+]
 
 ---
 
@@ -143,7 +194,7 @@ Here's a time stamp:
 
 
 ```
-## [1] "2022-07-12 09:27:51 EDT"
+## [1] "2022-07-13 09:50:30 EDT"
 ```
 
 **How could this variable be used as a predictor variable?**
@@ -162,9 +213,7 @@ Here's a time stamp:
 
 .pull-right[
 
-&lt;img src="img/joro-cycle.jpeg" width="75%" /&gt;
-
-]
+&lt;img src="img/joro-pointing.jpeg" width="75%" /&gt;
 
 ---
 
@@ -277,16 +326,16 @@ Say we have a data set, `d`, with 100 observations (rows or data points) with _k
 ## # A tibble: 100 × 3
 ##       id  var_a  var_b
 ##    &lt;int&gt;  &lt;dbl&gt;  &lt;dbl&gt;
-##  1     1 0.375  0.0263
-##  2     2 0.156  0.267 
-##  3     3 0.204  0.172 
-##  4     4 0.104  0.238 
-##  5     5 0.0806 0.760 
-##  6     6 0.539  0.426 
-##  7     7 0.701  0.985 
-##  8     8 0.237  0.406 
-##  9     9 0.216  0.159 
-## 10    10 0.865  0.0728
+##  1     1 0.303  0.411 
+##  2     2 0.108  0.492 
+##  3     3 0.180  0.236 
+##  4     4 0.777  0.648 
+##  5     5 0.586  0.225 
+##  6     6 0.892  0.0264
+##  7     7 0.365  0.785 
+##  8     8 0.463  0.206 
+##  9     9 0.0747 0.802 
+## 10    10 0.534  0.108 
 ## # … with 90 more rows
 ```
 
@@ -299,20 +348,20 @@ Say we have a data set, `d`, with 100 observations (rows or data points) with _k
 
 ```
 ## # A tibble: 3 × 3
-##      id var_a  var_b
-##   &lt;int&gt; &lt;dbl&gt;  &lt;dbl&gt;
-## 1     1 0.375 0.0263
-## 2     2 0.156 0.267 
-## 3     3 0.204 0.172
+##      id var_a var_b
+##   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1     1 0.303 0.411
+## 2     2 0.108 0.492
+## 3     3 0.180 0.236
 ```
 
 ```
 ## # A tibble: 3 × 3
-##      id var_a var_b
-##   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1    91 0.538 0.226
-## 2    92 0.839 0.862
-## 3    93 0.396 0.295
+##      id  var_a var_b
+##   &lt;int&gt;  &lt;dbl&gt; &lt;dbl&gt;
+## 1    91 0.591  0.383
+## 2    92 0.614  0.444
+## 3    93 0.0898 0.671
 ```
 
 ---
@@ -322,20 +371,20 @@ Say we have a data set, `d`, with 100 observations (rows or data points) with _k
 
 ```
 ## # A tibble: 3 × 3
-##      id var_a  var_b
-##   &lt;int&gt; &lt;dbl&gt;  &lt;dbl&gt;
-## 1     1 0.375 0.0263
-## 2     2 0.156 0.267 
-## 3     3 0.204 0.172
+##      id var_a var_b
+##   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1     1 0.303 0.411
+## 2     2 0.108 0.492
+## 3     3 0.180 0.236
 ```
 
 ```
 ## # A tibble: 3 × 3
-##      id var_a var_b
-##   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1    81 0.491 0.455
-## 2    82 0.299 0.601
-## 3    83 0.818 0.702
+##      id var_a  var_b
+##   &lt;int&gt; &lt;dbl&gt;  &lt;dbl&gt;
+## 1    81 0.112 0.0528
+## 2    82 0.369 0.948 
+## 3    83 0.454 0.473
 ```
 
 ---
@@ -345,20 +394,20 @@ Say we have a data set, `d`, with 100 observations (rows or data points) with _k
 
 ```
 ## # A tibble: 3 × 3
-##      id var_a  var_b
-##   &lt;int&gt; &lt;dbl&gt;  &lt;dbl&gt;
-## 1     1 0.375 0.0263
-## 2     2 0.156 0.267 
-## 3     3 0.204 0.172
+##      id var_a var_b
+##   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1     1 0.303 0.411
+## 2     2 0.108 0.492
+## 3     3 0.180 0.236
 ```
 
 ```
 ## # A tibble: 3 × 3
-##      id var_a  var_b
-##   &lt;int&gt; &lt;dbl&gt;  &lt;dbl&gt;
-## 1    71 0.441 0.0448
-## 2    72 0.929 0.266 
-## 3    73 0.402 0.381
+##      id   var_a var_b
+##   &lt;int&gt;   &lt;dbl&gt; &lt;dbl&gt;
+## 1    71 0.597   0.521
+## 2    72 0.615   0.796
+## 3    73 0.00482 0.475
 ```
 
 ... through the tenth resampling, after which the fit measures are simply summed
