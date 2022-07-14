@@ -212,7 +212,7 @@ read more about mutate [here](https://r4ds.had.co.nz/transform.html)
 
 ```{r, warning = FALSE}
 gb <- gb %>% 
-    mutate(percent_earned = points_earned / points_possible)
+    mutate()
 ```
 
 Finally, let's create three features from the gradebook data:
@@ -312,11 +312,12 @@ recipe.
 -   `step_impute_knn(all_predictors(), all_outcomes())`
 
 ```{r,}
-my_rec <- recipe(final_grade ~ ., data = data_train) %>% # **edit: this needs to be data train**
+recipe(final_grade ~ ., data = data_train) %>% # **edit**: change t final grade
+    update_role(student_id, course_id, section, new_role = "ID variable") %>% # this can be any string; for ID variables
     step_normalize(all_numeric_predictors()) %>% # standardizes numeric variables
     step_nzv(all_predictors()) %>% # remove predictors with a "near-zero variance"
-    step_novel(all_nominal_predictors()) %>% # add a musing label for factors
     step_dummy(all_nominal_predictors()) %>%  # dummy code all factor variables
+    step_novel(all_nominal_predictors()) %>% # add a musing label for factors
     step_impute_knn(all_predictors()) # impute missing data for all predictor variables
 ```
 

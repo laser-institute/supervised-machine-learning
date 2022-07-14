@@ -182,7 +182,7 @@ my_wf <-
 
 ## Step 4: Fit model
 
-Here, things become are different once again. We'll follow a grid method
+Here, things become different once again. We'll follow a grid method
 to specify two tuning parameters, the number of predictor variables that
 are randomly sampled for each split in the tree (`mtry`) and the number
 of data points required to execute a split (`min_n`). `size` refers to

@@ -57,26 +57,27 @@ Run the code below through the step in which you write down the recipe.
 library(tidyverse)
 library(tidymodels)
 
+set.seed(20220712)
+
 d <- read_csv("data/online-sci-data-joined.csv")
 # **edit: if your data has 10,000+ rows, d <- distinct(student_id, course_id, .keep_all = TRUE) **
-
-set.seed(20220712)
 
 train_test_split <- initial_split(d, prop = .80)
 
 data_train <- training(train_test_split)
 
-kfcv <- vfold_cv(data_train, v = 20) # this differentiates this from what we did before
+kfcv <- vfold_cv(data_train, v = 10) # this differentiates this from what we did before
 ```
 
 Here's where you can add a new feature engineering step. For the sake of this badge, choose from among those options here: <https://recipes.tidymodels.org/reference/index.html>. You can see more - if helpful - here: <https://www.tmwr.org/recipes.html>
 
 ```{r}
-my_rec <- recipe(final_grade ~ ., data = d) %>% # **edit**: change t final grade
+my_rec <- recipe(final_grade ~ ., data = data_train) %>% # **edit**: change t final grade
+    update_role(student_id, course_id, section, new_role = "ID variable") %>% # this can be any string; for ID variables
     step_normalize(all_numeric_predictors()) %>% # standardizes numeric variables
     step_nzv(all_predictors()) %>% # remove predictors with a "near-zero variance"
-    step_novel(all_nominal_predictors()) %>% # add a musing label for factors
     step_dummy(all_nominal_predictors()) %>%  # dummy code all factor variables
+    step_novel(all_nominal_predictors()) %>% # add a musing label for factors
     step_impute_knn(all_predictors()) # impute missing data for all predictor variables
 ```
 
@@ -84,8 +85,8 @@ Run the remaining steps.
 
 ```{r}
 my_mod <-
-    logistic_reg() %>% 
-    set_engine("glm") %>%
+    linear_reg() %>% 
+    set_engine("lm") %>%
     set_mode("regression") # **edit**: change to regression
 
 my_wf <-
@@ -93,12 +94,12 @@ my_wf <-
     add_model(my_mod) %>% 
     add_recipe(my_rec)
 
-fitted_model_resamples <- fit_resamples(my_wf, resamples = kfcv, # **edit: this needs to be fitted_model_resamples**
+# okay to ignore warnings here
+fitted_model_resamples <- fit_resamples(my_wf, resamples = kfcv, # **edit: this should be fitted_model_resamples**
                               control = control_grid(save_pred = TRUE)) # this allows us to inspect the predictions
 
-fitted_model_resamples %>% # **edit: this needs to be fitted_model_resamples**
-    unnest(.metrics) %>% 
-    filter(.metric == "rmse") # **edit: change to rmse; we also get another metric, the rsq**
+fitted_model_resamples %>%
+    collect_metrics()
 ```
 
 Did that feature engineering make any difference compared to the mean predictive accuracy you found in the case study? Add a few notes below:

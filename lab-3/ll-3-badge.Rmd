@@ -49,6 +49,8 @@ This is likely to be the most challenging data product to date. Here, tune an ev
 
 The code we ran in the case study is below. Please modify this code to specify and tune a neural network.
 
+You are also welcome to **another model type**. The key here is that it's a more complex model that requires using tuning parameters. Another option is a support vector machine (tutorial [here](https://emilhvitfeldt.github.io/ISLR-tidymodels-labs/support-vector-machines.html)).
+
 A tutorial you can use as a starting point to adapt the code below is [here](https://www.tidymodels.org/learn/models/parsnip-nnet/).
 
 Documentation for a neural network engine we recommend - keras - is [here](https://parsnip.tidymodels.org/reference/details_linear_reg_keras.html).

@@ -546,7 +546,7 @@ train_test_split <- initial_split(d, prop = .80)
 
 data_train <- training(train_test_split)
 
-kfcv <- vfold_cv(data_train, v = 15) # this differentiates this from what we did before
+kfcv <- vfold_cv(data_train, v = 10) # this differentiates this from what we did before
 # before, we simple used data_train to fit our model
 ```
 ]
@@ -556,11 +556,12 @@ kfcv <- vfold_cv(data_train, v = 15) # this differentiates this from what we did
 **Engineer features**
 
 ```{r, echo = TRUE, eval = FALSE}
-my_rec <- recipe(final_grade ~ ., data = d) %>% # a continuous measure of students' final grade
+recipe(final_grade ~ ., data = data_train) %>% # **edit**: change t final grade
+    update_role(student_id, course_id, section, new_role = "ID variable") %>% # this can be any string; for ID variables
     step_normalize(all_numeric_predictors()) %>% # standardizes numeric variables
     step_nzv(all_predictors()) %>% # remove predictors with a "near-zero variance"
-    step_novel(all_nominal_predictors()) %>% # add a musing label for factors
     step_dummy(all_nominal_predictors()) %>%  # dummy code all factor variables
+    step_novel(all_nominal_predictors()) %>% # add a musing label for factors
     step_impute_knn(all_predictors()) # impute missing data for all predictor variables
 ```
 ]
