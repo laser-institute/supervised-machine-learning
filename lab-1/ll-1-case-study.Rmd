@@ -140,7 +140,7 @@ model later. You can change this number if you wish.
 
 After you decide how much to set aside, the most common approach for
 actually partitioning your data is to use a random sample. For our
-purposes, we'll use random sampling to select 25% for the test set and
+purposes, we'll use random sampling to select 20% for the test set and
 use the remainder for the training set, which are the defaults for the
 {[rsample](https://tidymodels.github.io/rsample/)} package.
 

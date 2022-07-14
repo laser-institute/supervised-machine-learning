@@ -77,7 +77,7 @@ xaringanExtra::use_tile_view()
 ## Part 1: Core Concepts
 ### Model tuning
 - hyperparameters
-- random fores
+- random forest
 
 ]
 
@@ -86,7 +86,7 @@ xaringanExtra::use_tile_view()
 ## Part 2: R Code-Along
 ### NGSSchat
 - NGSS and transactional and substantive (again)
-- Using a grid to estimate tuning parameters
+- Using a grid (grid search) to estimate tuning parameters
 
 ]
 
@@ -101,18 +101,18 @@ class: clear, inverse, center, middle
 # Discussion
 
 .pull-left[
+
 ### Turn to an elbow partner and discuss:
 
-- What do you think the benefits of fitting a more complex model may be?
-- Which more complex models - if any - are you familiar with?
-- What "costs" or downsides - if any - might accompany the estimation of a more complex model?
+- What do you think the benefits (and/or costs) of fitting a more complex model may be?
+- What ideas do you _now_ have regarding your use of ML (or another methodological approach)?
 
 ]
 
 .pull-right[
 
-```{r, echo = FALSE, out.width = "75%"}
-knitr::include_graphics("img/joro-pointing.jpeg")
+```{r, echo = FALSE, out.width = "100%"}
+knitr::include_graphics("img/joro-cycle.jpeg")
 ```
 
 ]
@@ -297,6 +297,8 @@ ggsave("img/bias-variance-data-6.png")
 
 - How (in)correct our models' (algorithms') predictions are
 
+--
+
 - Models with high bias can fail to capture important relationships--they can be *under-fit* to our data
 
 - In short, how well our model reflects the patterns in the data
@@ -309,7 +311,10 @@ ggsave("img/bias-variance-data-6.png")
 
 - *Definition*: Using a different sample of data, the difference in $\hat{y}$ values
 
-- How sensitive our predictions are to the specific sample on which we trained the model 
+- How sensitive our predictions are to the specific sample on which we trained (and tested) the model 
+
+--
+
 - Models with high variance can fail to predict different data well--they can be *over-fit* to our data
 
 - In short, how stable the predictions of our model are
@@ -331,7 +336,7 @@ ggsave("img/bias-variance-data-6.png")
 # Aside: Random forests and classification trees
 
 - *Random forests* are extensions of classification trees
-- _Classification trees_ are a type of algorithm that - at their core - use conditional logic ("if-then" statements) in a _nested_ manner
+- _Classification trees_ are a type of algorithm that use conditional logic ("if-then" statements) in a _nested_ manner
     - For instance, here's a _very, very_ simple tree (from [APM](https://link.springer.com/book/10.1007/978-1-4614-6849-3)):
 
 ```{code}
@@ -361,28 +366,37 @@ As you can imagine, with many variables, these trees can become very complex
 
 # Random forests
 
-- Random forest is an extension of decision tree modeling, whereby a collection of decision trees are simultaneously estimated ("grown") and are evaluated based on out-of-sample predictive accuracy
-- Random forest estimates all the decision trees at once so each tree is independent of every other tree. 
-    - The random forest algorithm provides a regression approach that is distinct from other modeling approaches. 
-    - The final random forest model aggregates the findings across all the separate trees in the forest
+- Random forest is an extension of decision tree modeling whereby a collection of decision trees are sequentially **estimated using training data** - and **validated/tested using testing data**
+- Different _samples_ of predictors are sampled for inclusion in each individual tree
+- Highly complex and non-linear relationships between variables can be estimated
+- Each tree is independent of every other tree  
 
----
+--
 
-```{r, echo = FALSE}
-knitr::include_graphics("https://miro.medium.com/max/1184/1*i0o8mjFfCn-uD79-F1Cqkw.png")
-```
-
-[Koehrsen (2017)](https://williamkoehrsen.medium.com/random-forest-simple-explanation-377895a60d2d)
+- For classification ML, the final output is the category/group/class selected by individual trees
+- For regression ML, the mean or average prediction of the individual trees is returned
 
 ---
 
 # Tuning parameters for random forests
 
 - There are several important tuning parameters for these models:
-    - the number of predictor variables that are randomly sampled for each split in the tree (`mtry` in the code we'll run later)
-    - the number of data points required to execute a split (`min_n`)
-    - the minimum number of observations in each node (`size`)
+    - the number of predictor variables that are randomly sampled for each split (`mtry`)
+    - the minimum number of data points required to execute a split into branches (`min_n`)
+    - the number of trees estimated as a part of the "forest" (`trees`)
 - These tuning parameters, broadly, balance predictive performance with the training data with how well the model will perform on new data 
+
+---
+
+# Warning!
+
+- We're estimating _a lot_ of decision trees
+- How many? Let's say . . . 
+    - For each modeling step, we're estimating *10* folds
+    - But, we have to tune our model using a grid of size *10*
+    - Some of the sets of tuning parameters involve estimating *1000+* trees
+    
+Thus, we're fitting somewhere around 100,000 decision trees in a single attempt!
 
 ---
 
@@ -449,9 +463,10 @@ my_rec <- recipe(code ~ ., data = data_train) %>%
 # specify model
 my_mod <-
     rand_forest(mtry = tune(), # this specifies that we'll take steps later to tune the model
-                min_n = tune()) %>%
+                min_n = tune(),
+                trees = tune()) %>%
     set_engine("ranger", importance = "impurity") %>%
-    set_mode("regression")
+    set_mode("classification")
 
 # specify workflow
 my_wf <-
@@ -469,9 +484,11 @@ my_wf <-
 # specify tuning grid
 finalize(mtry(), data_train)
 finalize(min_n(), data_train)
+finalize(trees(), data_train)
 
 tree_grid <- grid_max_entropy(mtry(range(1, 18)),
                               min_n(range(2, 40)),
+                              trees(range(1, 2000)),
                               size = 10)
 
 # fit model with tune_grid
@@ -479,7 +496,8 @@ fitted_model <- my_wf %>%
     tune_grid(
         resamples = kfcv,
         grid = tree_grid,
-        metrics = metric_set((roc_auc, accuracy, kap, sensitivity, specificity, precision))
+        metrics = metric_set(roc_auc, accuracy, kap, sensitivity, specificity, precision)
+        )
 ```
 
 ]
@@ -496,8 +514,7 @@ show_best(fitted_model, n = 10, metric = "accuracy")
 best_tree <- fitted_model %>% select_best(metric = "accuracy")
 
 # finalize workflow with best set of tuning parameters
-final_wf <- my_wf %>% 
-    finalize_workflow(best_tree)
+final_wf <- my_wf %>% finalize_workflow(best_tree)
 
 final_fit <- final_wf %>% 
     last_fit(train_test_split, metrics = metric_set(roc_auc, accuracy, kap, sensitivity, specificity, precision))

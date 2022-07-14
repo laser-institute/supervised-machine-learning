@@ -129,7 +129,7 @@ data_train <- training(train_test_split)
 
 ## Step 2: Engineer features
 
-In Step 1, we noted how we added three variables as potential features.
+In Step 0, we noted how we added three variables as potential features.
 Here, we carry out two feature engineering steps we have carried out
 before - standardizing the numeric variables (to have a mean equal to 0
 and a standard deviation equal to 1) and dropping any features with
@@ -167,8 +167,9 @@ here.
 ```{r panel-chunk-3, echo = TRUE, eval = FALSE}
 # specify model
 my_mod <-
-    rand_forest(mtry = tune(),
-                min_n = tune()) %>%
+    rand_forest(mtry = tune(), # this specifies that we'll take steps later to tune the model
+                min_n = tune(),
+                trees = tune()) %>%
     set_engine("ranger", importance = "impurity") %>%
     set_mode("classification")
 
@@ -196,23 +197,24 @@ These next two functions are used to get a sense of what the values for
 values of the variables in the data.
 
 ```{r panel-chunk-4, echo = TRUE, eval = FALSE}
+# specify tuning grid
 finalize(mtry(), data_train)
 finalize(min_n(), data_train)
+finalize(trees(), data_train)
 ```
 
 #### [Your Turn]{style="color: green;"} ⤵
 
 We then use these values in the `grid_max_entropy()` function below;
-replace the `xx` values below with the *maximum* value provided by the
+replace the `xx` values below with the *minimum* and *maximum* value provided by the
 `mtry` and `min_n` variables, above. You can see that `tree_grid` is
 simply a combination of values of the hyperparameters.
 
 ```{r}
-tree_grid <- grid_max_entropy(mtry(range(1, 8)),
-                              min_n(range(2, 40)),
+tree_grid <- grid_max_entropy(mtry(range(xx, xx)),
+                              min_n(range(xx, xx)),
+                              trees(range(xx, xx)),
                               size = 10)
-
-tree_grid
 ```
 
 Now, we're ready to fit the model. Note - this can take some time, the
@@ -257,7 +259,8 @@ final_wf <- my_wf %>%
     finalize_workflow(best_tree)
 
 final_fit <- final_wf %>% 
-    last_fit(train_test_split, metrics = metric_set(roc_auc, accuracy, kap, sensitivity, specificity, precision))
+    last_fit(train_test_split, metrics = metric_set(roc_auc, accuracy, kap, sensitivity, specificity, precision)
+             )
 ```
 
 We can see that `final_fit` is for a single fit: a random forest with
@@ -295,8 +298,8 @@ Accuracy and the others are defined below.
 -   *Specificity*: Among the true "negatives", what percentage are
     classified as "negative"?
 
--   *ROC AUC*: For different levels of the threshold, what is the
-    sensitivity and specificity?
+-   *ROC AUC*: For different levels of the threshold (for making a predicting), what is the
+    sensitivity (predicted true, true positive) and specificity (predicted negative, true negative) rate?
 
 You'll have the chance to interpret these further in the badge for this
 learning lab.

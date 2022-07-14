@@ -4,7 +4,7 @@
     <title>Machine Learning Learning Lab 2: Feature Engineering</title>
     <meta charset="utf-8" />
     <meta name="author" content="Dr. Joshua Rosenberg" />
-    <meta name="date" content="2022-07-13" />
+    <meta name="date" content="2022-07-14" />
     <script src="libs/header-attrs-2.14/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
@@ -38,7 +38,7 @@ class: clear, title-slide, inverse, center, top, middle
 # Machine Learning Learning Lab 2: Feature Engineering
 ----
 ### **Dr. Joshua Rosenberg**
-### July 13, 2022
+### July 14, 2022
 
 ---
 
@@ -212,7 +212,7 @@ Here's a time stamp:
 
 
 ```
-## [1] "2022-07-13 11:30:03 EDT"
+## [1] "2022-07-14 09:01:41 EDT"
 ```
 
 **How could this variable be used as a predictor variable?**
@@ -247,6 +247,7 @@ Here's a time stamp:
 ## For specific types of variables
 
 - Categorical variables
+    - Dummy coding 
     - Combining categories
 - Numeric variables
     - Normalizing ("standardizing")
@@ -258,7 +259,7 @@ Here's a time stamp:
 - We can do all of these things manually
 - But, there are also helpful functions to do this
 - Any, the {recipes} package makes it practical to carry out feature engineering steps for not only single variables, but groups of variables (or all of the variables)
-- Examples, all of which start with `_step()`:
+- Examples, all of which start with `step()`:
     - `step_dummy()`
     - `step_normalize()`
     - `step_nzv()`
@@ -306,8 +307,17 @@ We'd need to use the same training data to tune a new model---and the same testi
 # The problem introduced by feature engineering
 
 - In short, a challenges arises when we wish to use our training data _more than once_
+
+-- 
+
 - Namely, if we repeatedly training an algorithm on the same data and then make changes, we may be tailoring our model to specific features of the testing data
+
+-- 
+
 - This is a _very common and pervasive problem_ in machine learning applications
+
+-- 
+
 - Resampling conserves our testing data; we don't have to spend it until we've finalized our model
 
 ---
@@ -315,10 +325,18 @@ We'd need to use the same training data to tune a new model---and the same testi
 # Resampling (and _k_-folds cross-validation)
 
 - Resampling involves blurring the boundaries between training and testing data, _but only for the training split of the data_
+
+--
+
 - Specifically, it involves combining these two portions of our data into one, iteratively considering:
     - Some of the data to be for "training"
     - Some for "testing"
-- Then, fit measures are summed across these different samples
+
+--
+
+- Then, fit measures are **averaged** across these different samples
+
+--
 
 ---
 
@@ -328,9 +346,12 @@ We'd need to use the same training data to tune a new model---and the same testi
     - Here, some of the data is considered to be a part of the *training* set 
     - The remaining data is a part of the *testing* set
 
+--
+
 - How many sets (samples taken through resampling)?
     - This is determined by _k_, number of times the data is resampled
-    - When _k_ is equivalent to the number of rows in the data, this is often called "Leave One Out Cross-Validation" (LOOCV)
+    - When _k_ is equivalent to the number of rows in the data, this is often called "Leave One Out Cross-Validation" (LOOCV) 
+
 ---
 
 # Let's consider an example
@@ -342,18 +363,18 @@ Say we have a data set, `d`, with 100 observations (rows or data points) with _k
 
 ```
 ## # A tibble: 100 × 3
-##       id  var_a  var_b
-##    &lt;int&gt;  &lt;dbl&gt;  &lt;dbl&gt;
-##  1     1 0.693  0.596 
-##  2     2 0.130  0.863 
-##  3     3 0.491  0.574 
-##  4     4 0.609  0.473 
-##  5     5 0.628  0.401 
-##  6     6 0.833  0.0103
-##  7     7 0.703  0.500 
-##  8     8 0.616  0.809 
-##  9     9 0.0327 0.679 
-## 10    10 0.414  0.493 
+##       id  var_a var_b
+##    &lt;int&gt;  &lt;dbl&gt; &lt;dbl&gt;
+##  1     1 0.984  0.493
+##  2     2 0.382  0.646
+##  3     3 0.480  0.657
+##  4     4 0.182  0.415
+##  5     5 0.447  0.537
+##  6     6 0.0875 0.914
+##  7     7 0.111  0.575
+##  8     8 0.204  0.510
+##  9     9 0.305  0.753
+## 10    10 0.960  0.421
 ## # … with 90 more rows
 ```
 
@@ -368,18 +389,18 @@ Say we have a data set, `d`, with 100 observations (rows or data points) with _k
 ## # A tibble: 3 × 3
 ##      id var_a var_b
 ##   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1     1 0.693 0.596
-## 2     2 0.130 0.863
-## 3     3 0.491 0.574
+## 1     1 0.984 0.493
+## 2     2 0.382 0.646
+## 3     3 0.480 0.657
 ```
 
 ```
 ## # A tibble: 3 × 3
 ##      id var_a var_b
 ##   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1    91 0.458 0.135
-## 2    92 0.188 0.363
-## 3    93 0.138 0.779
+## 1    91 0.705 0.177
+## 2    92 0.566 0.300
+## 3    93 0.791 0.476
 ```
 
 ---
@@ -391,18 +412,18 @@ Say we have a data set, `d`, with 100 observations (rows or data points) with _k
 ## # A tibble: 3 × 3
 ##      id var_a var_b
 ##   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1     1 0.693 0.596
-## 2     2 0.130 0.863
-## 3     3 0.491 0.574
+## 1     1 0.984 0.493
+## 2     2 0.382 0.646
+## 3     3 0.480 0.657
 ```
 
 ```
 ## # A tibble: 3 × 3
 ##      id var_a var_b
 ##   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1    81 0.879 0.872
-## 2    82 0.986 0.557
-## 3    83 0.406 0.730
+## 1    81 0.485 0.415
+## 2    82 0.344 0.814
+## 3    83 0.861 0.780
 ```
 
 ---
@@ -414,21 +435,23 @@ Say we have a data set, `d`, with 100 observations (rows or data points) with _k
 ## # A tibble: 3 × 3
 ##      id var_a var_b
 ##   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1     1 0.693 0.596
-## 2     2 0.130 0.863
-## 3     3 0.491 0.574
+## 1     1 0.984 0.493
+## 2     2 0.382 0.646
+## 3     3 0.480 0.657
 ```
 
 ```
 ## # A tibble: 3 × 3
-##      id var_a  var_b
-##   &lt;int&gt; &lt;dbl&gt;  &lt;dbl&gt;
-## 1    71 0.195 0.0459
-## 2    72 0.886 0.621 
-## 3    73 0.333 0.655
+##      id  var_a  var_b
+##   &lt;int&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+## 1    71 0.0201 0.477 
+## 2    72 1.00   0.972 
+## 3    73 0.471  0.0224
 ```
 
 ... through the tenth resampling, after which the fit measures are simply summed
+
+--
 
 That's it! Thankfully, we have automated tools to do this that we'll work on in the code examples
 

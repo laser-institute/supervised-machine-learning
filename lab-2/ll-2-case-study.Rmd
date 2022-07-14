@@ -82,8 +82,8 @@ tailoring to your particular context.
 > Educational Data Mining, 13(2), 55-79.
 > <https://github.com/laser-institute/essential-readings/blob/main/machine-learning/ml-lab-3/bosch-et-al-2021-jedm.pdf>
 
-Our driving question for this case study is: How much do new predictors
-improve the prediction quality?
+Our driving question for this case study is: **How much do new
+predictors improve the prediction quality?**
 
 We use a data set of many online classes to answer this question. To
 answer it, we will engage in several feature engineering steps.
@@ -101,7 +101,7 @@ Like in the code-along for the overview presentation, let's take a look
 at the data and do some processing of it.
 
 ```{r}
-d <- read_csv("data/data-to-model-no-gradebook.csv")
+d <- read_csv("data/data-to-model-no-gradebook.csv") # **edit: did this cause a problem**
 d <- select(d, -time_spent) # this is another outcome, so we'll cut this here
 
 gb <- read_csv("data/data-to-model-gradebook.csv")
@@ -172,7 +172,7 @@ variables:
 
 -   `course_id`: an identifier for the course
 -   `student_id`: an identifier for the student
--   `gradebook_item`: the name of the gradebook entry/assignment\
+-   `gradebook_item`: the name of the gradebook entry/assignment
 -   `item_position`: the position of the gradebook item in the
     gradebook; differs between students
 -   `grade_category`: `Hw` (homework), `Qz` (quiz or test), or `NA` (not
@@ -212,7 +212,7 @@ read more about mutate [here](https://r4ds.had.co.nz/transform.html)
 
 ```{r, warning = FALSE}
 gb <- gb %>% 
-    mutate()
+    mutate(percent_earned = points_earned / points_possible)
 ```
 
 Finally, let's create three features from the gradebook data:
@@ -312,7 +312,7 @@ recipe.
 -   `step_impute_knn(all_predictors(), all_outcomes())`
 
 ```{r,}
-my_rec <- recipe(final_grade ~ ., data = d) %>% 
+my_rec <- recipe(final_grade ~ ., data = data_train) %>% # **edit: this needs to be data train**
     step_normalize(all_numeric_predictors()) %>% # standardizes numeric variables
     step_nzv(all_predictors()) %>% # remove predictors with a "near-zero variance"
     step_novel(all_nominal_predictors()) %>% # add a musing label for factors
@@ -390,7 +390,7 @@ should generally not be used to select between competing model
 specifications.
 
 ```{r}
-fitted_model %>% 
+fitted_model_resamples %>% # **edit: this needs to be fitted_model_resamples** 
     unnest(.metrics) %>% 
     filter(.metric == "rmse") # we also get another metric, the RSQ; we focus just on RMSE for nwo
 ```

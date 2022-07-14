@@ -55,18 +55,17 @@ Documentation for a neural network engine we recommend - keras - is [here](https
 
 **Prepare**
 
-```{r panel-chunk-1, echo = TRUE, eval = FALSE}
+```{r}
 library(tidyverse)
 library(tidymodels)
-library(here)
 library(vip) # a new package we're adding for variable importance measures
 
-d <- read_csv(here("data", "ngsschat-processed-data.csv"))
+d <- read_csv("data/ngsschat-processed-data.csv")
 ```
 
 **Split data**
 
-```{r panel-chunk-1, echo = TRUE, eval = FALSE}
+```{r}
 train_test_split <- initial_split(d, prop = .80)
 data_train <- training(train_test_split)
 
@@ -75,7 +74,7 @@ kfcv <- vfold_cv(data_train) # again, we will use resampling
 
 **Engineer features**
 
-```{r panel-chunk-2, echo = TRUE, eval = FALSE}
+```{r}
 my_rec <- recipe(code ~ ., data = data_train) %>% 
     step_normalize(all_numeric_predictors()) %>%
     step_nzv(all_predictors())
@@ -83,13 +82,13 @@ my_rec <- recipe(code ~ ., data = data_train) %>%
 
 **Specify recipe, model, and workflow**
 
-```{r panel-chunk-3, echo = TRUE, eval = FALSE}
+```{r}
 # specify model
 my_mod <-
     rand_forest(mtry = tune(), # this specifies that we'll take steps later to tune the model
                 min_n = tune()) %>%
     set_engine("ranger", importance = "impurity") %>%
-    set_mode("regression")
+    set_mode("classification")
 
 # specify workflow
 my_wf <-
@@ -100,13 +99,15 @@ my_wf <-
 
 **Fit model**
 
-```{r panel-chunk-4, echo = TRUE, eval = FALSE}
+```{r}
 # specify tuning grid
 finalize(mtry(), data_train)
 finalize(min_n(), data_train)
+finalize(trees(), data_train)
 
 tree_grid <- grid_max_entropy(mtry(range(1, 18)),
                               min_n(range(2, 40)),
+                              trees(range(1, 2000)),
                               size = 10)
 
 # fit model with tune_grid
@@ -114,17 +115,19 @@ fitted_model <- my_wf %>%
     tune_grid(
         resamples = kfcv,
         grid = tree_grid,
-        metrics = metric_set((roc_auc, accuracy, kap, sensitivity, specificity, precision))
+        metrics = metric_set(roc_auc, accuracy, kap, sensitivity, specificity, precision)
+    )
 ```
 
 **Fit model (part 2)**
 
-```{r panel-chunk-4b, echo = TRUE, eval = FALSE}
+```{r}
 # examine best set of tuning parameters; repeat?
 show_best(fitted_model, n = 10, metric = "accuracy")
 
 # select best set of tuning parameters
-best_tree <- fitted_model %>% select_best(metric = "accuracy")
+best_tree <- fitted_model %>% 
+    select_best(metric = "accuracy")
 
 # finalize workflow with best set of tuning parameters
 final_wf <- my_wf %>% 
@@ -136,7 +139,7 @@ final_fit <- final_wf %>%
 
 **Evaluate accuracy**
 
-```{r panel-chunk-5, echo = TRUE, eval = FALSE}
+```{r}
 # fit stats
 final_fit %>%
     collect_metrics()
