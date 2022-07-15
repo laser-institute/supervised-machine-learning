@@ -111,7 +111,7 @@ class: clear, inverse, center, middle
 
 .pull-right[
 
-```{r, echo = FALSE, out.width = "60%"}
+```{r, echo = FALSE, out.width = "100%"}
 knitr::include_graphics("img/IMG_8152.jpeg")
 ```
 
@@ -320,6 +320,8 @@ ggsave("img/bias-variance-data-6.png")
 - In short, how stable the predictions of our model are
 
 <h4><center>Regardless of model, we often wish to balance between bias and variance</center></h4>
+
+]
 
 ---
 

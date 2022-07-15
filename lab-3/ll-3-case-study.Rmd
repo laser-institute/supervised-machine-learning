@@ -16,7 +16,7 @@ bibliography: lit/references.bib
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE)
 ```
 
 Even after feature engineering, machine learning approaches can often
@@ -61,6 +61,7 @@ Please add to the chunk below code to load three packages we've used in
 both LL1 and LL2 - tidyverse, tidymodels, and here.
 
 ```{r}
+
 library(vip) # a new package we're adding for variable importance measures
 library(ranger) # this is needed for the random forest algorithm
 ```
@@ -142,7 +143,7 @@ LL2.
 Add a feature engineering step below. Consider those described
 [here](https://recipes.tidymodels.org/reference/index.html).
 
-```{r panel-chunk-2, echo = TRUE, eval = FALSE}
+```{r panel-chunk-2, echo = TRUE, eval = TRUE}
 my_rec <- recipe(code ~ ., data = data_train) %>% 
     step_normalize(all_numeric_predictors()) %>%
     step_nzv(all_predictors())
@@ -164,7 +165,7 @@ here.
     predicting categories (transactional and substantive conversations
     taking place through #NGSSchat)
 
-```{r panel-chunk-3, echo = TRUE, eval = FALSE}
+```{r panel-chunk-3, echo = TRUE, eval = TRUE}
 # specify model
 my_mod <-
     rand_forest(mtry = tune(), # this specifies that we'll take steps later to tune the model
@@ -182,8 +183,8 @@ my_wf <-
 
 ## Step 4: Fit model
 
-Here, things become different once again. We'll follow a grid method
-to specify two tuning parameters, the number of predictor variables that
+Here, things become different once again. We'll follow a grid method to
+specify two tuning parameters, the number of predictor variables that
 are randomly sampled for each split in the tree (`mtry`) and the number
 of data points required to execute a split (`min_n`). `size` refers to
 how many distinct combinations of the tuning parameters will be
@@ -196,7 +197,7 @@ These next two functions are used to get a sense of what the values for
 `mtry` and `min_n` should be based on the dimensions or range of the
 values of the variables in the data.
 
-```{r panel-chunk-4, echo = TRUE, eval = FALSE}
+```{r panel-chunk-4, echo = TRUE, eval = TRUE}
 # specify tuning grid
 finalize(mtry(), data_train)
 finalize(min_n(), data_train)
@@ -206,9 +207,9 @@ finalize(trees(), data_train)
 #### [Your Turn]{style="color: green;"} ⤵
 
 We then use these values in the `grid_max_entropy()` function below;
-replace the `xx` values below with the *minimum* and *maximum* value provided by the
-`mtry` and `min_n` variables, above. You can see that `tree_grid` is
-simply a combination of values of the hyperparameters.
+replace the `xx` values below with the *minimum* and *maximum* value
+provided by the `mtry` and `min_n` variables, above. You can see that
+`tree_grid` is simply a combination of values of the hyperparameters.
 
 ```{r}
 tree_grid <- grid_max_entropy(mtry(range(xx, xx)),
@@ -276,7 +277,7 @@ final_fit
 
 Last, we can interpret the accuracy of our tuned model.
 
-```{r panel-chunk-5, echo = TRUE, eval = FALSE}
+```{r panel-chunk-5}
 # fit stats
 final_fit %>%
     collect_metrics()
@@ -298,8 +299,9 @@ Accuracy and the others are defined below.
 -   *Specificity*: Among the true "negatives", what percentage are
     classified as "negative"?
 
--   *ROC AUC*: For different levels of the threshold (for making a predicting), what is the
-    sensitivity (predicted true, true positive) and specificity (predicted negative, true negative) rate?
+-   *ROC AUC*: For different levels of the threshold (for making a
+    predicting), what is the sensitivity (predicted true, true positive)
+    and specificity (predicted negative, true negative) rate?
 
 You'll have the chance to interpret these further in the badge for this
 learning lab.
