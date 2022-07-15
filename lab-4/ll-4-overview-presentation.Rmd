@@ -51,6 +51,73 @@ xaringanExtra::use_panelset()
 
 ---
 
+# Happy Friday
+
+.panelset[
+
+.panel[.panel-name[Recap]
+
+- We began with _supervised machine learning_ and focused on its **predictive** emphasis
+- We considered how to **engineer features**, using _k-folds cross-validation_ to make our training data go further
+    - We did some serious debugging
+- We discussed a more complex model - _a random forest_ - and how to engage in **model tuning** 
+    - We haven't had time to work through the case study for this yet    
+]
+
+.panel[.panel-name[A few more thoughts]
+
+- If you are still figuring out how you are planning to use ML . . . 
+    - Great! Let's hear what you're thinking _at this time_
+        - This is a lengthy process -- not something to finalize within one week
+- Again, if you have a _specific use of ML in mind_ . . . 
+    - Make sense of the labs
+    - And, at the same time, begin to look for _how_ you can achieve your goal
+        - R packages (recently updated, with good documentation, with active users, compatibility, papers)
+
+]
+
+.panel[.panel-name[Logistics]
+
+- Please come see me at a break for your badge(s)!
+    - We may need to get you your badge(s) at a later time 
+- Links to readings are here: https://github.com/laser-institute/essential-readings/tree/main/machine-learning
+
+]
+
+.panel[.panel-name[Plan for today]
+
+- Discussion and code-along for LL3
+- Time to work on case study for LL3
+- **BREAK!**
+- Presentation for LL4
+- Work time
+
+]
+]
+
+---
+
+# Discussion
+
+.pull-left[
+
+### Turn to an elbow partner and discuss:
+
+- For what context/purpose might _discovering patterns or themes_ in data be helpful?
+- Which data might you use for **unsupervised methods**?
+
+]
+
+.pull-right[
+
+```{r, echo = FALSE, out.width = "60%"}
+knitr::include_graphics("img/IMG_8152.jpeg")
+```
+
+]
+
+---
+
 # Background
 
 - Until now, we've used coded data to _train_ an algorithm
@@ -96,7 +163,7 @@ class: clear, inverse, center, middle
 - **Warning**: The results of unsupervised ML _cannot_ directly be used to provide codes/outcomes for supervised ML techniques 
 - Can work with both continuous and dichotomous or categorical variables
 - Algorithms include:
-  - Cluster analysis
+  - Latent Profile Analysis (and _general mixture models_
   - [Principle Components Analysis (really!)](https://web.stanford.edu/~hastie/ElemStatLearn/)
   - Latent Dirichlet Allocation (topic modeling)
 
@@ -125,7 +192,7 @@ Do you not yet have codes/outcomes -- and do you want to?
         - Images
         - Video
 
-**We'll focus here on structured, numeric data**
+**We'll focus here on structured, numeric data** as a way into using these methods
 
 ---
 
@@ -142,7 +209,7 @@ Do you not yet have codes/outcomes -- and do you want to?
 
 # Computational Grounded Theory
 
-- To draw a connection between LPA and machine learning, we'll consider its use in a part of a broader frame, Computational Grounded Theory
+- To draw a connection between LPA and machine learning, we'll consider its use in a part of a broader frame, _Computational Grounded Theory_
 - Laura Nelson developed this approach in a pioneering paper ([Nelson, 2020](https://journals.sagepub.com/doi/full/10.1177/0049124117729703))
 - It involves three steps:
     1. Unsupervised machine learning to _explore_ the data
@@ -159,18 +226,6 @@ knitr::include_graphics("https://journals.sagepub.com/na101/home/literatum/publi
 
 ---
 
-# An example in science education research
-
-- In [Rosenberg and Krist (2020)](https://link.springer.com/article/10.1007/s10956-020-09862-4), students' written responses were the raw (unstructured) data that was used
-- Though a coding frame existed, it was not well suited to the specific data that was available
-- At the same time, there was _a lot_ of data available
-- The three steps of computational grounded theory were carried out:
-    1. Unsupervised exploration of the textual data (topic modeling)
-    2. Careful qualitative analysis/reading of the textual data and the topics
-    3. Validation (using supervised machine learning methods)
-
----
-
 # Using Computational Grounded Theory
 
 - We can consider the results of LPA to not be a _final_, but an _initial_ step in the analysis
@@ -180,6 +235,32 @@ knitr::include_graphics("https://journals.sagepub.com/na101/home/literatum/publi
     - Referral to criterion/varied sources of validity evidence
     - Supervised machine learning methods
 
+---
+
+---
+
+# An example in science education research
+
+- In [Rosenberg and Krist (2021)](https://link.springer.com/article/10.1007/s10956-020-09862-4), students' written responses were the raw (unstructured) data that was used
+- Though a coding frame existed, it was not well suited to the specific data that was available
+- At the same time, there was _a lot_ of data available
+- The three steps of computational grounded theory were carried out:
+    1. Unsupervised exploration of the textual data (topic modeling)
+    2. Careful qualitative analysis/reading of the textual data and the topics
+    3. Validation (using supervised machine learning methods)
+
+https://faast.shinyapps.io/generality-shiny/
+
+---
+
+# A bit more on using machine learning in science education
+
+- Kubsch et al. (in press) ask how machine learning can be used in ways _beyond automation_ and the scaling of existing coding
+- Unsupervised methods play a key role here
+- *Distributing Epistemic Functions and Tasks (DEFT)* highlights the functions and tasks that pertain to generating knowledge that can be carried out by either skilled researchers or machine learning algorithms
+    - Asking questions
+    - Analyzing data
+    - Interpreting findings
 
 ---
 
@@ -190,7 +271,7 @@ knitr::include_graphics("https://journals.sagepub.com/na101/home/literatum/publi
     1. Determining the number of profiles
     1. Interpreting the profile
     
-**We'll explore each of these in the context of the ASSISTments data next**
+**We'll explore each of these in the context of the PISA data next** -- then ASSISTments data in the case study
 
 ---
 
@@ -198,7 +279,9 @@ knitr::include_graphics("https://journals.sagepub.com/na101/home/literatum/publi
 
 - We will use a portion of the ASSISTment data from a [data mining
 competition](https://sites.google.com/view/assistmentsdatamining/home?authuser=0), identifying groups/patterns in learners' interactions with ASSISTments
-- [This paper](https://educationaldatamining.org/EDM2014/uploads/procs2014/short%20papers/276_EDM-2014-Short.pdf) provides helpful context
+- [This paper](https://educationaldatamining.org/EDM2014/uploads/procs2014/short%20papers/276_EDM-2014-Short.pdf) provides helpful context; sidebar: ~60% accuracy predicting student STEM enrollment (in college)
+    - Features for student affect and behavior within ASSISTments, including: **boredom**, **engaged concentration**, **confusion**, and other (9 total)
+- Developed from a classroom observational measure, BROMP, to identify these and _synchronized_ log files
 
 ---
 
@@ -211,7 +294,7 @@ library(dplyr)
 d <- read_csv("data/dat_csv_combine_final_full.csv") %>% 
       select(AveCarelessness, AveKnow, AveCorrect = AveCorrect.x, AveResBored, 
          AveResEngcon, AveResConf, AveResFrust, AveResOfftask, 
-         AveResGaming, NumActions) %>%
+         AveResGaming) %>%
     janitor::clean_names()
 
 d
@@ -233,10 +316,10 @@ We can see all three steps in this code chunk
 library(tidyLPA)
 library(dplyr)
 
-pisaUSA15[1:100, ] %>%
+pisaUSA15 %>%
   select(broad_interest, enjoyment, self_efficacy) %>% # select three variables
   estimate_profiles(3) %>%  # estimate 3 profiles
-  plot_profiles()
+  plot_profiles(add_line = TRUE, rawdata = FALSE)
 ```
 
 ---
@@ -247,10 +330,10 @@ pisaUSA15[1:100, ] %>%
 library(tidyLPA)
 library(dplyr)
 
-pisaUSA15[1:100, ] %>%
+pisaUSA15 %>%
   select(broad_interest, enjoyment, self_efficacy) %>% # select three variables
-  estimate_profiles(3) %>% # estimate 3 profiles
-  plot_profiles() # interpret
+  estimate_profiles(3) %>%  # estimate 3 profiles
+  plot_profiles(add_line = TRUE, rawdata = FALSE)
 ```
 
 ---
@@ -258,7 +341,7 @@ pisaUSA15[1:100, ] %>%
 # Interpreting
 
 - How might we interpret these profiles?
-- Let's look at the raw data (see `get_data()`)
+- What could we name them?
 - How might we validate them?
 
 ---
@@ -266,14 +349,11 @@ pisaUSA15[1:100, ] %>%
 # Comparing profiles
  
 ```{r, echo = TRUE, eval = FALSE}
-pisaUSA15[1:100, ] %>%
+pisaUSA15 %>%
     select(broad_interest, enjoyment, self_efficacy) %>%
     single_imputation() %>%
-    estimate_profiles(1:3, 
-                      variances = c("equal", "varying"),
-                      covariances = c("zero", "varying")) %>%
+    estimate_profiles(1:5) %>% # note: we can also specify different model paramaterizations
     compare_solutions(statistics = c("AIC", "BIC"))
-
 ```
 
 ---
@@ -281,12 +361,10 @@ pisaUSA15[1:100, ] %>%
 # Comparing profiles
 
 ```{r, echo = FALSE, eval = TRUE}
-pisaUSA15[1:100, ] %>%
+pisaUSA15 %>%
     select(broad_interest, enjoyment, self_efficacy) %>%
     single_imputation() %>%
-    estimate_profiles(1:3, 
-                      variances = c("equal", "varying"),
-                      covariances = c("zero", "varying")) %>%
+    estimate_profiles(1:5) %>% # note: we can also specify different model paramaterizations
     compare_solutions(statistics = c("AIC", "BIC"))
 ```
 
