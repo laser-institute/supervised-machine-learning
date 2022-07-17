@@ -277,7 +277,7 @@ final_fit
 
 Last, we can interpret the accuracy of our tuned model.
 
-```{r panel-chunk-5}
+```{r fit-stats}
 # fit stats
 final_fit %>%
     collect_metrics()

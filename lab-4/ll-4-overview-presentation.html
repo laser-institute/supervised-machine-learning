@@ -92,7 +92,7 @@ class: clear, title-slide, inverse, center, top, middle
 
 .pull-right[
 
-&lt;img src="img/IMG_8152.jpeg" width="60%" /&gt;
+&lt;img src="img/IMG_8152.jpeg" width="100%" /&gt;
 
 ]
 
@@ -294,7 +294,7 @@ class: clear, inverse, center, middle
 
 # Estimating 3 groups
 
-We can see all three steps in this code chunk
+We can see all three steps (select variables, estimate profiles, interpret results) in this code chunk
 
 
 ```r
@@ -329,7 +329,6 @@ pisaUSA15 %&gt;%
 ```r
 pisaUSA15 %&gt;%
     select(broad_interest, enjoyment, self_efficacy) %&gt;%
-    single_imputation() %&gt;%
     estimate_profiles(1:5) %&gt;% # note: we can also specify different model paramaterizations
     compare_solutions(statistics = c("AIC", "BIC"))
 ```
@@ -338,6 +337,10 @@ pisaUSA15 %&gt;%
 
 # Comparing profiles
 
+
+```
+## Warning in estimate_profiles_mclust(df_full, n_profiles, model_numbers, : The mclust algorithm does not allow for missing data. Some rows were omitted from analysis. Consider using Mplus, which accounts for cases with partially missing data, or use a non-parametric single imputation technique prior to analysis, such as the R-package 'missForest'.
+```
 
 ```
 ## Warning: The solution with the maximum number of classes under consideration was
@@ -349,11 +352,11 @@ pisaUSA15 %&gt;%
 ## Compare tidyLPA solutions:
 ## 
 ##  Model Classes AIC       BIC      
-##  1     1       37861.801 37901.703
-##  1     2       35421.538 35488.041
-##  1     3       34735.781 34828.886
-##  1     4       32820.103 32939.809
-##  1     5       32482.624 32628.931
+##  1     1       35664.880 35704.418
+##  1     2       33290.010 33355.906
+##  1     3       32662.919 32755.172
+##  1     4       30712.776 30831.387
+##  1     5       30333.396 30478.365
 ## 
 ## Best model according to AIC is Model 1 with 5 classes.
 ## Best model according to BIC is Model 1 with 5 classes.
@@ -363,13 +366,42 @@ pisaUSA15 %&gt;%
 
 ---
 
+# Saving the output of an analysis
+
+Let's say we selected a model with _four_ profiles.
+
+
+```
+## Warning in estimate_profiles_mclust(df_full, n_profiles, model_numbers, : The mclust algorithm does not allow for missing data. Some rows were omitted from analysis. Consider using Mplus, which accounts for cases with partially missing data, or use a non-parametric single imputation technique prior to analysis, such as the R-package 'missForest'.
+```
+
+```
+## tidyLPA analysis using mclust: 
+## 
+##  Model Classes AIC      BIC      Entropy prob_min prob_max n_min n_max BLRT_p
+##  1     4       30712.73 30831.34 0.94    0.95     0.98     0.08  0.54  0.01
+```
+ 
+---
+
+# Saving the output of an analysis
+
+
+```
+## Warning in estimate_profiles_mclust(df_full, n_profiles, model_numbers, : The mclust algorithm does not allow for missing data. Some rows were omitted from analysis. Consider using Mplus, which accounts for cases with partially missing data, or use a non-parametric single imputation technique prior to analysis, such as the R-package 'missForest'.
+```
+
+![](ll-4-overview-presentation_files/figure-html/unnamed-chunk-9-1.png)&lt;!-- --&gt;
+
+---
+
 # Other functions for working with LPA output
 
 
 ```r
-get_estimates(m3)
-get_data(m3)
-get_fit(m3)
+get_estimates(m4)
+get_data(m4)
+get_fit(m4)
 ```
 
 ---
@@ -385,7 +417,7 @@ class: clear, center
 
 ## .font130[.center[**Thank you!**]]
 &lt;br/&gt;
-.center[&lt;img style="border-radius: 80%;" src="img/jr-cycling" height="200px"/&gt;&lt;br/&gt;**Dr. Joshua Rosenberg**&lt;br/&gt;&lt;mailto:jmrosenberg@utk.edu&gt;]
+.center[&lt;img style="border-radius: 80%;" src="img/jr-cycling.jpeg" height="200px"/&gt;&lt;br/&gt;**Dr. Joshua Rosenberg**&lt;br/&gt;&lt;mailto:jmrosenberg@utk.edu&gt;]
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>

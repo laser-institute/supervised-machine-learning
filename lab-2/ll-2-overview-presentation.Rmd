@@ -573,7 +573,7 @@ recipe(final_grade ~ ., data = data_train) %>% # **edit**: change t final grade
 ```{r panel-chunk-3, echo = TRUE, eval = FALSE}
 my_mod <-
     linear_reg() %>% # note the difference here
-    set_engine("glm") %>% 
+    set_engine("lm") %>% 
     set_mode("regression") # and here
 
 # specify workflow

@@ -482,7 +482,7 @@ my_wf <-
 
 **Fit model**
 
-```{r panel-chunk-4, echo = TRUE, eval = FALSE}
+```{r}
 # specify tuning grid
 finalize(mtry(), data_train)
 finalize(min_n(), data_train)

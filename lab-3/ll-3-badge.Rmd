@@ -62,7 +62,8 @@ library(tidyverse)
 library(tidymodels)
 library(vip) # a new package we're adding for variable importance measures
 
-d <- read_csv("data/ngsschat-processed-data.csv")
+# OLD! d <- read_csv("data/ngsschat-processed-data.csv")
+d <- read_csv("ngsschat-processed-data-add-three-features.csv") 
 ```
 
 **Split data**

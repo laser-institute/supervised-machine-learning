@@ -335,7 +335,7 @@ Specifically, we use:
 # specify model
 my_mod <-
     linear_reg() %>% 
-    set_engine("glm") %>%
+    set_engine("lm") %>%
     set_mode("regression")
 ```
 

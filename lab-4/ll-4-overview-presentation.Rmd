@@ -310,7 +310,7 @@ class: clear, inverse, center, middle
 
 # Estimating 3 groups
 
-We can see all three steps in this code chunk
+We can see all three steps (select variables, estimate profiles, interpret results) in this code chunk
 
 ```{r, eval = FALSE, echo = TRUE}
 library(tidyLPA)
@@ -351,7 +351,6 @@ pisaUSA15 %>%
 ```{r, echo = TRUE, eval = FALSE}
 pisaUSA15 %>%
     select(broad_interest, enjoyment, self_efficacy) %>%
-    single_imputation() %>%
     estimate_profiles(1:5) %>% # note: we can also specify different model paramaterizations
     compare_solutions(statistics = c("AIC", "BIC"))
 ```
@@ -363,9 +362,35 @@ pisaUSA15 %>%
 ```{r, echo = FALSE, eval = TRUE}
 pisaUSA15 %>%
     select(broad_interest, enjoyment, self_efficacy) %>%
-    single_imputation() %>%
     estimate_profiles(1:5) %>% # note: we can also specify different model paramaterizations
     compare_solutions(statistics = c("AIC", "BIC"))
+```
+
+---
+
+# Saving the output of an analysis
+
+Let's say we selected a model with _four_ profiles.
+
+```{r}
+m4 <- pisaUSA15 %>%
+  select(broad_interest, enjoyment, self_efficacy) %>% # select three variables
+  estimate_profiles(4)  # estimate 4 profiles
+
+m4
+```
+ 
+---
+
+# Saving the output of an analysis
+
+```{r}
+m4 <- pisaUSA15 %>%
+  select(broad_interest, enjoyment, self_efficacy) %>% # select three variables
+  estimate_profiles(4)  # estimate 4 profiles
+
+m4 %>% 
+    plot_profiles(add_line = TRUE, rawdata = FALSE)
 ```
 
 ---
@@ -373,9 +398,9 @@ pisaUSA15 %>%
 # Other functions for working with LPA output
 
 ```{r, eval = FALSE, echo = TRUE}
-get_estimates(m3)
-get_data(m3)
-get_fit(m3)
+get_estimates(m4)
+get_data(m4)
+get_fit(m4)
 ```
 
 ---
@@ -391,4 +416,4 @@ class: clear, center
 
 ## .font130[.center[**Thank you!**]]
 <br/>
-.center[<img style="border-radius: 80%;" src="img/jr-cycling" height="200px"/><br/>**Dr. Joshua Rosenberg**<br/><mailto:jmrosenberg@utk.edu>]
+.center[<img style="border-radius: 80%;" src="img/jr-cycling.jpeg" height="200px"/><br/>**Dr. Joshua Rosenberg**<br/><mailto:jmrosenberg@utk.edu>]
