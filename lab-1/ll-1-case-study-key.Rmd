@@ -61,7 +61,9 @@ several others focused on modeling: tidymodels and janitor. As a tip, use the
 the green arrow to run the code chunk.
 
 ```{r}
-
+library(tidyverse)
+library(tidymodels)
+library(janitor)
 ```
 
 Next, we'll load the *already-processed* (for this lab) data set that
@@ -72,7 +74,9 @@ It is in the `data` sub-folder and is named `ngsschat-processes-data.csv`.
 Load it and assign the name `d` to it in the code chunk below, then run the chunk.
 
 ```{r}
+d <- read_csv("data/ngsschat-processed-data.csv")
 
+d
 ```
 
 The data has only five variables:
@@ -96,12 +100,16 @@ Note its dimensions --- especially how many rows it has. Add a few
 dashes after the chunk with your observations.
 
 ```{r}
-
+d
 ```
+
+[Your Turn]{style="color: green;"} ⤵
 
 *Observations*:
 
 -   
+
+- 
 
 \*What other variables might we include?\*\* This is a great question to
 be asking - surely, including just the four variables we have cannot be
@@ -161,14 +169,15 @@ train_test_split <- initial_split(d, prop = .80)
 data_train <- training(train_test_split)
 ```
 
-Go ahead and type `data_train` and `d` into the console (in steps) to
+Go ahead and type `data_train` and `d` below to
 check that this data set indeed has 80% of the number of observations as
 in the larger data. Do that in the chunk below:
 
 [Your Turn]{style="color: green;"} ⤵
 
 ```{r}
-
+data_train
+d
 ```
 
 ## Step 2: Engineer features and write down the recipe
@@ -270,11 +279,11 @@ Type `final_fit` below; this is the final, fitted model---one that can
 be interpreted further in the next step!
 
 ```{r}
-
+final_fit
 ```
 
 You may see a message/warning above or when you examine `final_fit`; you
-can safely ignore that.
+can safely ignore that in this instance.
 
 ## Step 5: Interpret accuracy
 
@@ -318,11 +327,15 @@ final_fit %>%
     tabyl(correct)
 ```
 
+[Your Turn]{style="color: green;"} ⤵
+
 Let's interpret the above. If the value of `correct` is `TRUE` when the
 predicted and known code are the same, what does the `percent` column
 tell us? Add one or more notes to the dashes below:
 
 -   
+
+-
 
 A short-cut to the above is below:
 
@@ -343,5 +356,5 @@ nuance and complexity to what we've already done.
 
 ## 🧶 Knit & Check ✅
 
-Congratulations - you've completed this case study! Consider moving on
+Nice work - you've completed this case study! Move on
 to the badge activity next.

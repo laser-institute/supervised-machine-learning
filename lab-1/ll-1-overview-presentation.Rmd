@@ -540,8 +540,8 @@ We used a coding frame from [van Bommel et al. (2020)](https://www.sciencedirect
 
 # In the remainder of this learning lab, you'll dive deeper
 
-- **Guided walkthrough**: You'll run all of this code, focusing on interpreting the predictions  
-- **Independent practice**: In the independent practice, you'll focus on interpreting the fit measures (agreement, Kappa, and others)  
+- **Case study**: You'll run all of this code, focusing on interpreting the predictions; walk through this slowly, as this is intended to be a gentle introduction to _all_ of the core parts of machine learning
+- **Badge**: In the independent practice, you'll focus on interpreting the fit measures (agreement, Kappa, and others)  
 
 ---
 class: clear, center
