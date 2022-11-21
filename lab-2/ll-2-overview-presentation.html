@@ -4,8 +4,8 @@
     <title>Machine Learning Learning Lab 2: Feature Engineering</title>
     <meta charset="utf-8" />
     <meta name="author" content="Dr. Joshua Rosenberg" />
-    <meta name="date" content="2022-07-14" />
-    <script src="libs/header-attrs-2.14/header-attrs.js"></script>
+    <meta name="date" content="2022-11-21" />
+    <script src="libs/header-attrs-2.18/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
     <script src="libs/panelset-0.2.6/panelset.js"></script>
@@ -38,11 +38,11 @@ class: clear, title-slide, inverse, center, top, middle
 # Machine Learning Learning Lab 2: Feature Engineering
 ----
 ### **Dr. Joshua Rosenberg**
-### July 14, 2022
+### November 21, 2022
 
 ---
 
-# Happy Wednesday
+# Trying to reflect on the big picture
 
 .panelset[
 
@@ -69,25 +69,12 @@ class: clear, title-slide, inverse, center, top, middle
 
 ]
 
-.panel[.panel-name[Logistics]
+.panel[.panel-name[Today]
 
-- Links to presentations are here: https://laser-institute.github.io/machine-learning
-    - And in the machine learning "team": https://github.com/orgs/laser-institute/teams/machine-learning
-- GitHub will probably continue to work, but be challenging (but should be less so)
-    - You'll need to fork the repository to "submit" your badge; you can do this at any time (through GitHub.com or GitHub Desktop)
-- Installation of required packages will continue to work, but may be challenging (but should be less so)
-
-]
-
-.panel[.panel-name[Plan for today]
-
-- **This morning**
-    - We'll spend the first _30 minutes_ of our 75 minutes working through the case study and badge activity
-    - Then, we'll start the presentation for learning lab #2
-- **This afternoon**
-    - We'll spend the first _10-20 minutes_ finishing the presentation for learning lab #1
-    - Then, you'll have time to _continue the case study and badge activity for learning lab #1_
-        - Or, you can move on to the case study and badge activity for learning lab #2
+    - We'll recap ML LL #1
+    - Then dive into the presentation for ML LL #2
+    - We'll reserve at least an hour for discussion
+    
 ]
 ]
 
@@ -97,11 +84,10 @@ class: clear, title-slide, inverse, center, top, middle
 
 
 .pull-left[
-### Turn to an elbow partner and discuss:
+### Eiscuss:
 
-- Any additional thoughts on the following?
-    - Which modality (supervised or unsupervised machine learning) are you interested in using?
-    - What data or context are you interested in for your use of ML?
+  - Which modality (supervised or unsupervised machine learning) are you interested in using?
+  - What data or context are you interested in for your use of ML?
 ]
 
 .pull-right[
@@ -212,7 +198,7 @@ Here's a time stamp:
 
 
 ```
-## [1] "2022-07-14 10:07:16 EDT"
+## [1] "2022-11-21 08:55:18 EST"
 ```
 
 **How could this variable be used as a predictor variable?**
@@ -363,18 +349,18 @@ Say we have a data set, `d`, with 100 observations (rows or data points) with _k
 
 ```
 ## # A tibble: 100 × 3
-##       id var_a var_b
-##    &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
-##  1     1 0.601 0.455
-##  2     2 0.244 0.445
-##  3     3 0.221 0.226
-##  4     4 0.185 0.198
-##  5     5 0.470 0.289
-##  6     6 0.492 0.423
-##  7     7 0.632 0.659
-##  8     8 0.898 0.477
-##  9     9 0.309 0.476
-## 10    10 0.830 0.449
+##       id var_a  var_b
+##    &lt;int&gt; &lt;dbl&gt;  &lt;dbl&gt;
+##  1     1 0.195 0.309 
+##  2     2 0.820 0.512 
+##  3     3 0.480 0.589 
+##  4     4 0.750 0.746 
+##  5     5 0.457 0.413 
+##  6     6 0.557 0.954 
+##  7     7 0.731 0.0380
+##  8     8 0.411 0.0563
+##  9     9 0.331 0.513 
+## 10    10 0.681 0.377 
 ## # … with 90 more rows
 ```
 
@@ -389,18 +375,18 @@ Say we have a data set, `d`, with 100 observations (rows or data points) with _k
 ## # A tibble: 3 × 3
 ##      id var_a var_b
 ##   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1     1 0.601 0.455
-## 2     2 0.244 0.445
-## 3     3 0.221 0.226
+## 1     1 0.195 0.309
+## 2     2 0.820 0.512
+## 3     3 0.480 0.589
 ```
 
 ```
 ## # A tibble: 3 × 3
-##      id var_a var_b
-##   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1    91 0.586 0.271
-## 2    92 0.828 0.211
-## 3    93 0.877 0.558
+##      id var_a  var_b
+##   &lt;int&gt; &lt;dbl&gt;  &lt;dbl&gt;
+## 1    91 0.989 0.0275
+## 2    92 0.672 0.0782
+## 3    93 0.566 0.477
 ```
 
 ---
@@ -412,18 +398,18 @@ Say we have a data set, `d`, with 100 observations (rows or data points) with _k
 ## # A tibble: 3 × 3
 ##      id var_a var_b
 ##   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1     1 0.601 0.455
-## 2     2 0.244 0.445
-## 3     3 0.221 0.226
+## 1     1 0.195 0.309
+## 2     2 0.820 0.512
+## 3     3 0.480 0.589
 ```
 
 ```
 ## # A tibble: 3 × 3
-##      id  var_a  var_b
-##   &lt;int&gt;  &lt;dbl&gt;  &lt;dbl&gt;
-## 1    81 0.728  0.0488
-## 2    82 0.0234 0.299 
-## 3    83 0.870  0.259
+##      id var_a var_b
+##   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1    81 0.522 0.986
+## 2    82 0.878 0.191
+## 3    83 0.209 0.789
 ```
 
 ---
@@ -435,18 +421,18 @@ Say we have a data set, `d`, with 100 observations (rows or data points) with _k
 ## # A tibble: 3 × 3
 ##      id var_a var_b
 ##   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1     1 0.601 0.455
-## 2     2 0.244 0.445
-## 3     3 0.221 0.226
+## 1     1 0.195 0.309
+## 2     2 0.820 0.512
+## 3     3 0.480 0.589
 ```
 
 ```
 ## # A tibble: 3 × 3
-##      id  var_a var_b
-##   &lt;int&gt;  &lt;dbl&gt; &lt;dbl&gt;
-## 1    71 0.0253 0.425
-## 2    72 0.488  0.559
-## 3    73 0.758  0.751
+##      id var_a var_b
+##   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1    71 0.450 0.248
+## 2    72 0.581 0.851
+## 3    73 0.708 0.892
 ```
 
 ... through the tenth resampling, after which the fit measures are simply summed
@@ -586,7 +572,7 @@ train_test_split &lt;- initial_split(d, prop = .80)
 
 data_train &lt;- training(train_test_split)
 
-kfcv &lt;- vfold_cv(data_train, v = 15) # this differentiates this from what we did before
+kfcv &lt;- vfold_cv(data_train, v = 10) # this differentiates this from what we did before
 # before, we simple used data_train to fit our model
 ```
 ]
@@ -597,11 +583,12 @@ kfcv &lt;- vfold_cv(data_train, v = 15) # this differentiates this from what we 
 
 
 ```r
-my_rec &lt;- recipe(final_grade ~ ., data = d) %&gt;% # a continuous measure of students' final grade
+recipe(final_grade ~ ., data = data_train) %&gt;% # **edit**: change t final grade
+    update_role(student_id, course_id, section, new_role = "ID variable") %&gt;% # this can be any string; for ID variables
     step_normalize(all_numeric_predictors()) %&gt;% # standardizes numeric variables
     step_nzv(all_predictors()) %&gt;% # remove predictors with a "near-zero variance"
-    step_novel(all_nominal_predictors()) %&gt;% # add a musing label for factors
     step_dummy(all_nominal_predictors()) %&gt;%  # dummy code all factor variables
+    step_novel(all_nominal_predictors()) %&gt;% # add a musing label for factors
     step_impute_knn(all_predictors()) # impute missing data for all predictor variables
 ```
 ]
@@ -614,7 +601,7 @@ my_rec &lt;- recipe(final_grade ~ ., data = d) %&gt;% # a continuous measure of 
 ```r
 my_mod &lt;-
     linear_reg() %&gt;% # note the difference here
-    set_engine("glm") %&gt;% 
+    set_engine("lm") %&gt;% 
     set_mode("regression") # and here
 
 # specify workflow

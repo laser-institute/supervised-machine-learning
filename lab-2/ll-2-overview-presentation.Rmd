@@ -63,7 +63,7 @@ xaringanExtra::use_tile_view()
 
 ---
 
-# Happy Wednesday
+# Trying to reflect on the big picture
 
 .panelset[
 
@@ -90,25 +90,12 @@ xaringanExtra::use_tile_view()
 
 ]
 
-.panel[.panel-name[Logistics]
+.panel[.panel-name[Today]
 
-- Links to presentations are here: https://laser-institute.github.io/machine-learning
-    - And in the machine learning "team": https://github.com/orgs/laser-institute/teams/machine-learning
-- GitHub will probably continue to work, but be challenging (but should be less so)
-    - You'll need to fork the repository to "submit" your badge; you can do this at any time (through GitHub.com or GitHub Desktop)
-- Installation of required packages will continue to work, but may be challenging (but should be less so)
-
-]
-
-.panel[.panel-name[Plan for today]
-
-- **This morning**
-    - We'll spend the first _30 minutes_ of our 75 minutes working through the case study and badge activity
-    - Then, we'll start the presentation for learning lab #2
-- **This afternoon**
-    - We'll spend the first _10-20 minutes_ finishing the presentation for learning lab #1
-    - Then, you'll have time to _continue the case study and badge activity for learning lab #1_
-        - Or, you can move on to the case study and badge activity for learning lab #2
+    - We'll recap ML LL #1
+    - Then dive into the presentation for ML LL #2
+    - We'll reserve at least an hour for discussion
+    
 ]
 ]
 
@@ -118,11 +105,10 @@ xaringanExtra::use_tile_view()
 
 
 .pull-left[
-### Turn to an elbow partner and discuss:
+### Eiscuss:
 
-- Any additional thoughts on the following?
-    - Which modality (supervised or unsupervised machine learning) are you interested in using?
-    - What data or context are you interested in for your use of ML?
+  - Which modality (supervised or unsupervised machine learning) are you interested in using?
+  - What data or context are you interested in for your use of ML?
 ]
 
 .pull-right[
