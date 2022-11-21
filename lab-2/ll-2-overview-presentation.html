@@ -198,7 +198,7 @@ Here's a time stamp:
 
 
 ```
-## [1] "2022-11-21 08:55:18 EST"
+## [1] "2022-11-21 08:58:03 EST"
 ```
 
 **How could this variable be used as a predictor variable?**
@@ -294,15 +294,9 @@ We'd need to use the same training data to tune a new model---and the same testi
 
 - In short, a challenges arises when we wish to use our training data _more than once_
 
--- 
-
 - Namely, if we repeatedly training an algorithm on the same data and then make changes, we may be tailoring our model to specific features of the testing data
 
--- 
-
 - This is a _very common and pervasive problem_ in machine learning applications
-
--- 
 
 - Resampling conserves our testing data; we don't have to spend it until we've finalized our model
 
@@ -349,18 +343,18 @@ Say we have a data set, `d`, with 100 observations (rows or data points) with _k
 
 ```
 ## # A tibble: 100 × 3
-##       id var_a  var_b
-##    &lt;int&gt; &lt;dbl&gt;  &lt;dbl&gt;
-##  1     1 0.195 0.309 
-##  2     2 0.820 0.512 
-##  3     3 0.480 0.589 
-##  4     4 0.750 0.746 
-##  5     5 0.457 0.413 
-##  6     6 0.557 0.954 
-##  7     7 0.731 0.0380
-##  8     8 0.411 0.0563
-##  9     9 0.331 0.513 
-## 10    10 0.681 0.377 
+##       id  var_a var_b
+##    &lt;int&gt;  &lt;dbl&gt; &lt;dbl&gt;
+##  1     1 0.602  0.593
+##  2     2 0.392  0.409
+##  3     3 0.301  0.944
+##  4     4 0.786  0.125
+##  5     5 0.0994 0.720
+##  6     6 0.316  0.796
+##  7     7 0.870  0.318
+##  8     8 0.269  0.388
+##  9     9 0.919  0.256
+## 10    10 0.0668 0.883
 ## # … with 90 more rows
 ```
 
@@ -375,18 +369,18 @@ Say we have a data set, `d`, with 100 observations (rows or data points) with _k
 ## # A tibble: 3 × 3
 ##      id var_a var_b
 ##   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1     1 0.195 0.309
-## 2     2 0.820 0.512
-## 3     3 0.480 0.589
+## 1     1 0.602 0.593
+## 2     2 0.392 0.409
+## 3     3 0.301 0.944
 ```
 
 ```
 ## # A tibble: 3 × 3
-##      id var_a  var_b
-##   &lt;int&gt; &lt;dbl&gt;  &lt;dbl&gt;
-## 1    91 0.989 0.0275
-## 2    92 0.672 0.0782
-## 3    93 0.566 0.477
+##      id  var_a var_b
+##   &lt;int&gt;  &lt;dbl&gt; &lt;dbl&gt;
+## 1    91 0.256  0.168
+## 2    92 0.0170 0.360
+## 3    93 0.754  0.720
 ```
 
 ---
@@ -398,18 +392,18 @@ Say we have a data set, `d`, with 100 observations (rows or data points) with _k
 ## # A tibble: 3 × 3
 ##      id var_a var_b
 ##   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1     1 0.195 0.309
-## 2     2 0.820 0.512
-## 3     3 0.480 0.589
+## 1     1 0.602 0.593
+## 2     2 0.392 0.409
+## 3     3 0.301 0.944
 ```
 
 ```
 ## # A tibble: 3 × 3
 ##      id var_a var_b
 ##   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1    81 0.522 0.986
-## 2    82 0.878 0.191
-## 3    83 0.209 0.789
+## 1    81 0.656 0.898
+## 2    82 0.417 0.498
+## 3    83 0.864 0.558
 ```
 
 ---
@@ -421,18 +415,18 @@ Say we have a data set, `d`, with 100 observations (rows or data points) with _k
 ## # A tibble: 3 × 3
 ##      id var_a var_b
 ##   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1     1 0.195 0.309
-## 2     2 0.820 0.512
-## 3     3 0.480 0.589
+## 1     1 0.602 0.593
+## 2     2 0.392 0.409
+## 3     3 0.301 0.944
 ```
 
 ```
 ## # A tibble: 3 × 3
 ##      id var_a var_b
 ##   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1    71 0.450 0.248
-## 2    72 0.581 0.851
-## 3    73 0.708 0.892
+## 1    71 0.772 0.822
+## 2    72 0.377 0.432
+## 3    73 0.899 0.186
 ```
 
 ... through the tenth resampling, after which the fit measures are simply summed

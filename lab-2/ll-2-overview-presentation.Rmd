@@ -311,15 +311,9 @@ We'd need to use the same training data to tune a new model---and the same testi
 
 - In short, a challenges arises when we wish to use our training data _more than once_
 
--- 
-
 - Namely, if we repeatedly training an algorithm on the same data and then make changes, we may be tailoring our model to specific features of the testing data
 
--- 
-
 - This is a _very common and pervasive problem_ in machine learning applications
-
--- 
 
 - Resampling conserves our testing data; we don't have to spend it until we've finalized our model
 
