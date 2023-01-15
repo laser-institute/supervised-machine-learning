@@ -81,10 +81,9 @@ xaringanExtra::use_tile_view()
 .panel[.panel-name[A few more thoughts]
 
 - If you are still figuring out how you are planning to use ML . . . 
-    - Great! Let's make progress today (and this week)
+    - Great! Let's make progress
 - If you have a _specific use of ML in mind_ . . . 
-    - Make sense of the labs
-    - And, at the same time, begin to look for _how_ you can achieve your goal
+    - Negin to look for _how_ you can achieve your goal
         - R packages (recently updated, with good documentation, with active users, compatibility, papers)
 - Machine learning is _not_ magical
 
@@ -92,9 +91,9 @@ xaringanExtra::use_tile_view()
 
 .panel[.panel-name[Today]
 
-    - We'll recap ML LL #1
-    - Then dive into the presentation for ML LL #2
-    - We'll reserve at least an hour for discussion
+ - We'll recap ML LL #1
+ - Then dive into the presentation for ML LL #2
+ - We'll reserve at least one hour for discussion
     
 ]
 ]

@@ -297,8 +297,6 @@ ggsave("img/bias-variance-data-6.png")
 
 - How (in)correct our models' (algorithms') predictions are
 
---
-
 - Models with high bias can fail to capture important relationships--they can be *under-fit* to our data
 
 - In short, how well our model reflects the patterns in the data
@@ -312,8 +310,6 @@ ggsave("img/bias-variance-data-6.png")
 - *Definition*: Using a different sample of data, the difference in $\hat{y}$ values
 
 - How sensitive our predictions are to the specific sample on which we trained (and tested) the model 
-
---
 
 - Models with high variance can fail to predict different data well--they can be *over-fit* to our data
 
@@ -341,7 +337,7 @@ ggsave("img/bias-variance-data-6.png")
 - _Classification trees_ are a type of algorithm that use conditional logic ("if-then" statements) in a _nested_ manner
     - For instance, here's a _very, very_ simple tree (from [APM](https://link.springer.com/book/10.1007/978-1-4614-6849-3)):
 
-```{code}
+```{code, echo = TRUE}
 if Predictor B >= 0.197 then
 | if Predictor A >= 0.13 then Class = 1
 | else Class = 2
@@ -354,7 +350,7 @@ else Class = 2
 
 # A more complex tree
 
-```{code}
+```{code, echo = TRUE}
 if Predictor B >= 0.197 then
 | if Predictor A >= 0.13 then
     | if Predictor C < -1.04 then Class = 1
@@ -418,13 +414,15 @@ class: clear, inverse, center, middle
 
 ---
 
+# Code Examples
+
 .panelset[
 
 .panel[.panel-name[0]
 
 **Prepare**
 
-```{r panel-chunk-0, echo = TRUE, eval = FALSE}
+```{r panel-chunk-0, echo = TRUE, eval = TRUE, message = FALSE, warning = FALSE}
 library(tidyverse)
 library(tidymodels)
 library(vip) # a new package we're adding for variable importance measures
@@ -462,16 +460,14 @@ my_rec <- recipe(code ~ ., data = data_train) %>%
 **Specify recipe, model, and workflow**
  
 ```{r panel-chunk-3, echo = TRUE, eval = FALSE}
-# specify model
-my_mod <-
+my_mod <- # specify model
     rand_forest(mtry = tune(), # this specifies that we'll take steps later to tune the model
                 min_n = tune(),
                 trees = tune()) %>%
     set_engine("ranger", importance = "impurity") %>%
     set_mode("classification")
 
-# specify workflow
-my_wf <-
+my_wf <- # specify workflow
     workflow() %>%
     add_model(my_mod) %>% 
     add_recipe(my_rec)
@@ -482,9 +478,8 @@ my_wf <-
 
 **Fit model**
 
-```{r}
-# specify tuning grid
-finalize(mtry(), data_train)
+```{r, eval = FALSE, echo = TRUE}
+finalize(mtry(), data_train) # specify tuning grid
 finalize(min_n(), data_train)
 finalize(trees(), data_train)
 
@@ -493,8 +488,7 @@ tree_grid <- grid_max_entropy(mtry(range(1, 18)),
                               trees(range(1, 2000)),
                               size = 10)
 
-# fit model with tune_grid
-fitted_model <- my_wf %>% 
+fitted_model <- my_wf %>% # fit model with tune_grid
     tune_grid(
         resamples = kfcv,
         grid = tree_grid,
@@ -547,12 +541,6 @@ final_fit %>%
 
 - **Case study**: We'll work through this code in much more depth to tune a model
 - **Independent practice**: we'll try tuning an even more sophisticated model
-
----
-
-# Readings
-
-
 
 ---
 
