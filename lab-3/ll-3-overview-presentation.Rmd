@@ -313,7 +313,7 @@ ggsave("img/bias-variance-data-6.png")
 
 - Models with high variance can fail to predict different data well--they can be *over-fit* to our data
 
-- In short, how stable the predictions of our model are
+- How stable the predictions of our model are
 
 <h4><center>Regardless of model, we often wish to balance between bias and variance</center></h4>
 
@@ -368,9 +368,6 @@ As you can imagine, with many variables, these trees can become very complex
 - Different _samples_ of predictors are sampled for inclusion in each individual tree
 - Highly complex and non-linear relationships between variables can be estimated
 - Each tree is independent of every other tree  
-
---
-
 - For classification ML, the final output is the category/group/class selected by individual trees
 - For regression ML, the mean or average prediction of the individual trees is returned
 

@@ -4,7 +4,7 @@
     <title>Machine Learning Learning Lab 3: Model Tuning</title>
     <meta charset="utf-8" />
     <meta name="author" content="Dr. Joshua Rosenberg" />
-    <meta name="date" content="2023-01-15" />
+    <meta name="date" content="2023-01-19" />
     <script src="libs/header-attrs-2.18/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
@@ -37,7 +37,7 @@ class: clear, title-slide, inverse, center, top, middle
 # Machine Learning Learning Lab 3: Model Tuning
 ----
 ### **Dr. Joshua Rosenberg**
-### January 15, 2023
+### January 19, 2023
 
 ---
 
@@ -204,7 +204,7 @@ This isn't just for beginners or those of us in education; [most spam filters us
 
 - Models with high variance can fail to predict different data well--they can be *over-fit* to our data
 
-- In short, how stable the predictions of our model are
+- How stable the predictions of our model are
 
 &lt;h4&gt;&lt;center&gt;Regardless of model, we often wish to balance between bias and variance&lt;/center&gt;&lt;/h4&gt;
 
@@ -261,9 +261,6 @@ As you can imagine, with many variables, these trees can become very complex
 - Different _samples_ of predictors are sampled for inclusion in each individual tree
 - Highly complex and non-linear relationships between variables can be estimated
 - Each tree is independent of every other tree  
-
---
-
 - For classification ML, the final output is the category/group/class selected by individual trees
 - For regression ML, the mean or average prediction of the individual trees is returned
 

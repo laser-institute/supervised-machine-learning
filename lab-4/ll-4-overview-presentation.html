@@ -4,8 +4,8 @@
     <title>Machine Learning Learning Lab 4: Unsupervised Methods</title>
     <meta charset="utf-8" />
     <meta name="author" content="Dr. Joshua Rosenberg" />
-    <meta name="date" content="2022-07-15" />
-    <script src="libs/header-attrs-2.14/header-attrs.js"></script>
+    <meta name="date" content="2023-02-14" />
+    <script src="libs/header-attrs-2.18/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
     <script src="libs/panelset-0.2.6/panelset.js"></script>
@@ -29,11 +29,11 @@ class: clear, title-slide, inverse, center, top, middle
 # Machine Learning Learning Lab 4: Unsupervised Methods
 ----
 ### **Dr. Joshua Rosenberg**
-### July 15, 2022
+### February 14, 2023
 
 ---
 
-# Happy Friday
+# Recap
 
 .panelset[
 
@@ -46,33 +46,10 @@ class: clear, title-slide, inverse, center, top, middle
     - We haven't had time to work through the case study for this yet    
 ]
 
-.panel[.panel-name[A few more thoughts]
-
-- If you are still figuring out how you are planning to use ML . . . 
-    - Great! Let's hear what you're thinking _at this time_
-        - This is a lengthy process -- not something to finalize within one week
-- Again, if you have a _specific use of ML in mind_ . . . 
-    - Make sense of the labs
-    - And, at the same time, begin to look for _how_ you can achieve your goal
-        - R packages (recently updated, with good documentation, with active users, compatibility, papers)
-
-]
-
-.panel[.panel-name[Logistics]
-
-- Please come see me at a break for your badge(s)!
-    - We may need to get you your badge(s) at a later time 
-- Links to readings are here: https://github.com/laser-institute/essential-readings/tree/main/machine-learning
-
-]
-
 .panel[.panel-name[Plan for today]
 
-- Discussion and code-along for LL3
-- Time to work on case study for LL3
-- **BREAK!**
-- Presentation for LL4
-- Work time
+- Brief overview of unsupervised methods
+- Time to discuss your questions/topic
 
 ]
 ]
@@ -200,7 +177,7 @@ Do you not yet have codes/outcomes -- and do you want to?
 
 # Nelson's approach
 
-![](https://journals.sagepub.com/na101/home/literatum/publisher/sage/journals/content/smra/2020/smra_49_1/0049124117729703/20200108/images/medium/10.1177_0049124117729703-fig2.gif)&lt;!-- --&gt;
+&lt;img src="https://journals.sagepub.com/na101/home/literatum/publisher/sage/journals/content/smra/2020/smra_49_1/0049124117729703/20200108/images/medium/10.1177_0049124117729703-fig2.gif"  /&gt;
 
 ---
 
@@ -212,8 +189,6 @@ Do you not yet have codes/outcomes -- and do you want to?
     - Expert review
     - Referral to criterion/varied sources of validity evidence
     - Supervised machine learning methods
-
----
 
 ---
 
@@ -230,10 +205,8 @@ Do you not yet have codes/outcomes -- and do you want to?
 https://faast.shinyapps.io/generality-shiny/
 
 ---
-
 # A bit more on using machine learning in science education
-
-- Kubsch et al. (in press) ask how machine learning can be used in ways _beyond automation_ and the scaling of existing coding
+- [Kubsch et al. (2023)](https://onlinelibrary.wiley.com/doi/full/10.1002/tea.21803) ask how machine learning can be used in ways _beyond automation_ and the scaling of existing coding
 - Unsupervised methods play a key role here
 - *Distributing Epistemic Functions and Tasks (DEFT)* highlights the functions and tasks that pertain to generating knowledge that can be carried out by either skilled researchers or machine learning algorithms
     - Asking questions
@@ -241,6 +214,13 @@ https://faast.shinyapps.io/generality-shiny/
     - Interpreting findings
 
 ---
+
+# Kubsch et al.s (2023) DEFT Framework
+
+&lt;img src="https://pbs.twimg.com/media/FongblYX0AIvtdk?format=png&amp;name=900x900"  /&gt;
+
+---
+
 
 # Back to LPA
 
@@ -268,20 +248,21 @@ competition](https://sites.google.com/view/assistmentsdatamining/home?authuser=0
 
 ```
 ## # A tibble: 514 × 9
-##    ave_carelessness ave_know ave_correct ave_res_bored ave_res_engcon
-##               &lt;dbl&gt;    &lt;dbl&gt;       &lt;dbl&gt;         &lt;dbl&gt;          &lt;dbl&gt;
-##  1           0.159    0.255        0.380         0.223          0.650
-##  2           0.0942   0.192        0.413         0.261          0.639
-##  3           0.111    0.251        0.5           0.273          0.647
-##  4           0.126    0.230        0.445         0.243          0.659
-##  5           0.0932   0.146        0.310         0.211          0.656
-##  6           0.0899   0.151        0.328         0.221          0.658
-##  7           0.0691   0.117        0.291         0.199          0.665
-##  8           0.0443   0.0826       0.204         0.198          0.687
-##  9           0.0690   0.109        0.294         0.196          0.688
-## 10           0.0749   0.133        0.317         0.230          0.670
-## # … with 504 more rows, and 4 more variables: ave_res_conf &lt;dbl&gt;,
-## #   ave_res_frust &lt;dbl&gt;, ave_res_offtask &lt;dbl&gt;, ave_res_gaming &lt;dbl&gt;
+##    ave_care…¹ ave_k…² ave_c…³ ave_r…⁴ ave_r…⁵ ave_r…⁶ ave_r…⁷ ave_r…⁸ ave_r…⁹
+##         &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
+##  1     0.159   0.255    0.380   0.223   0.650  0.0700   0.164   0.153  0.237 
+##  2     0.0942  0.192    0.413   0.261   0.639  0.0640   0.130   0.234  0.0451
+##  3     0.111   0.251    0.5     0.273   0.647  0.105    0.132   0.230  0.0402
+##  4     0.126   0.230    0.445   0.243   0.659  0.112    0.132   0.185  0.0778
+##  5     0.0932  0.146    0.310   0.211   0.656  0.0793   0.103   0.127  0.245 
+##  6     0.0899  0.151    0.328   0.221   0.658  0.102    0.113   0.138  0.173 
+##  7     0.0691  0.117    0.291   0.199   0.665  0.0849   0.133   0.114  0.345 
+##  8     0.0443  0.0826   0.204   0.198   0.687  0.0290   0.127   0.133  0.424 
+##  9     0.0690  0.109    0.294   0.196   0.688  0.0897   0.124   0.112  0.349 
+## 10     0.0749  0.133    0.317   0.230   0.670  0.0992   0.116   0.185  0.290 
+## # … with 504 more rows, and abbreviated variable names ¹​ave_carelessness,
+## #   ²​ave_know, ³​ave_correct, ⁴​ave_res_bored, ⁵​ave_res_engcon, ⁶​ave_res_conf,
+## #   ⁷​ave_res_frust, ⁸​ave_res_offtask, ⁹​ave_res_gaming
 ```
 
 ---
@@ -343,9 +324,9 @@ pisaUSA15 %&gt;%
 ```
 
 ```
-## Warning: The solution with the maximum number of classes under consideration was
-## considered to be the best solution according to one or more fit indices. Examine
-## your results with care and consider estimating more classes.
+## Warning: The solution with the maximum number of classes under consideration
+## was considered to be the best solution according to one or more fit indices.
+## Examine your results with care and consider estimating more classes.
 ```
 
 ```
@@ -353,10 +334,10 @@ pisaUSA15 %&gt;%
 ## 
 ##  Model Classes AIC       BIC      
 ##  1     1       35664.880 35704.418
-##  1     2       33290.010 33355.906
-##  1     3       32662.919 32755.172
-##  1     4       30712.776 30831.387
-##  1     5       30333.396 30478.365
+##  1     2       33290.140 33356.035
+##  1     3       32662.940 32755.193
+##  1     4       30712.770 30831.381
+##  1     5       30563.670 30708.639
 ## 
 ## Best model according to AIC is Model 1 with 5 classes.
 ## Best model according to BIC is Model 1 with 5 classes.
@@ -378,8 +359,10 @@ Let's say we selected a model with _four_ profiles.
 ```
 ## tidyLPA analysis using mclust: 
 ## 
-##  Model Classes AIC      BIC      Entropy prob_min prob_max n_min n_max BLRT_p
-##  1     4       30712.73 30831.34 0.94    0.95     0.98     0.08  0.54  0.01
+##  Model Classes AIC      BIC      Entropy prob_min prob_max n_min n_max
+##  1     4       30712.72 30831.34 0.94    0.95     0.98     0.08  0.54 
+##  BLRT_p
+##  0.01
 ```
  
 ---
@@ -391,7 +374,7 @@ Let's say we selected a model with _four_ profiles.
 ## Warning in estimate_profiles_mclust(df_full, n_profiles, model_numbers, : The mclust algorithm does not allow for missing data. Some rows were omitted from analysis. Consider using Mplus, which accounts for cases with partially missing data, or use a non-parametric single imputation technique prior to analysis, such as the R-package 'missForest'.
 ```
 
-![](ll-4-overview-presentation_files/figure-html/unnamed-chunk-9-1.png)&lt;!-- --&gt;
+![](ll-4-overview-presentation_files/figure-html/unnamed-chunk-10-1.png)&lt;!-- --&gt;
 
 ---
 

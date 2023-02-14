@@ -28,7 +28,7 @@ output:
 class: clear, title-slide, inverse, center, top, middle
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE)
 ```
 
 ```{r, echo=FALSE}
@@ -51,7 +51,7 @@ xaringanExtra::use_panelset()
 
 ---
 
-# Happy Friday
+# Recap
 
 .panelset[
 
@@ -64,33 +64,10 @@ xaringanExtra::use_panelset()
     - We haven't had time to work through the case study for this yet    
 ]
 
-.panel[.panel-name[A few more thoughts]
-
-- If you are still figuring out how you are planning to use ML . . . 
-    - Great! Let's hear what you're thinking _at this time_
-        - This is a lengthy process -- not something to finalize within one week
-- Again, if you have a _specific use of ML in mind_ . . . 
-    - Make sense of the labs
-    - And, at the same time, begin to look for _how_ you can achieve your goal
-        - R packages (recently updated, with good documentation, with active users, compatibility, papers)
-
-]
-
-.panel[.panel-name[Logistics]
-
-- Please come see me at a break for your badge(s)!
-    - We may need to get you your badge(s) at a later time 
-- Links to readings are here: https://github.com/laser-institute/essential-readings/tree/main/machine-learning
-
-]
-
 .panel[.panel-name[Plan for today]
 
-- Discussion and code-along for LL3
-- Time to work on case study for LL3
-- **BREAK!**
-- Presentation for LL4
-- Work time
+- Brief overview of unsupervised methods
+- Time to discuss your questions/topic
 
 ]
 ]
@@ -220,7 +197,7 @@ Do you not yet have codes/outcomes -- and do you want to?
 
 # Nelson's approach
 
-```{r, echo = FALSE}
+```{r, fig.align = "middle", echo = FALSE}
 knitr::include_graphics("https://journals.sagepub.com/na101/home/literatum/publisher/sage/journals/content/smra/2020/smra_49_1/0049124117729703/20200108/images/medium/10.1177_0049124117729703-fig2.gif")
 ```
 
@@ -237,8 +214,6 @@ knitr::include_graphics("https://journals.sagepub.com/na101/home/literatum/publi
 
 ---
 
----
-
 # An example in science education research
 
 - In [Rosenberg and Krist (2021)](https://link.springer.com/article/10.1007/s10956-020-09862-4), students' written responses were the raw (unstructured) data that was used
@@ -252,17 +227,25 @@ knitr::include_graphics("https://journals.sagepub.com/na101/home/literatum/publi
 https://faast.shinyapps.io/generality-shiny/
 
 ---
+# A bit more on using machine learning in science
 
-# A bit more on using machine learning in science education
-
-- Kubsch et al. (in press) ask how machine learning can be used in ways _beyond automation_ and the scaling of existing coding
-- Unsupervised methods play a key role here
+- [Kubsch et al. (2023)](https://onlinelibrary.wiley.com/doi/full/10.1002/tea.21803) ask how machine learning can be used in ways _beyond automation_ and the scaling of existing coding  
+- Unsupervised methods play a key role here  
 - *Distributing Epistemic Functions and Tasks (DEFT)* highlights the functions and tasks that pertain to generating knowledge that can be carried out by either skilled researchers or machine learning algorithms
     - Asking questions
     - Analyzing data
     - Interpreting findings
 
 ---
+
+# Kubsch et al.s (2023) DEFT Framework
+
+```{r, fig.align = "middle", echo = FALSE}
+knitr::include_graphics("deft.png")
+```
+
+---
+
 
 # Back to LPA
 
