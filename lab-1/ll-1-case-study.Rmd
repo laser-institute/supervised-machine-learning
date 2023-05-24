@@ -23,69 +23,37 @@ First, please add your name above!
 In the overview presentation for this learning lab, we considered five
 steps in our supervised machine learning process. Those steps are
 mirrored here in this case study---with the addition of a preamble step
-whereby we load and process the data. Our driving question is: Can we
-predict something we would have coded by hand?
+whereby we load and process the data. 
 
-We use the #NGSSchat data set as the context in which we answer this
-question. See the network analysis of #NGSSchat (Rosenberg et al., 2020)
-that used the coding frame from van Bommel et al. (2020) (available
-[here](https://github.com/laser-institute/essential-readings/blob/main/machine-learning/ml-lab-1/van-bommel-et-al-2020-tate.pdf))
-for the transactional or substantive nature of social media-based
-conversations. Notably, Rosenberg et. al. coded *a lot* of data by hand,
-and it would be quite convenient if the coding could be automated
-through supervised machine learning methods. Though this case study is
-tied to the #NGSSchat data, you can consider how qualitative coding you
-or colleagues have done could be automated in a similar manner. In
-short, again, can we predict something we would, heretofore, have coded
-by hand?
-
-That paper - that presents the qualitative coding of a large number of
-tweets to the #NGSSchat - is available
-[here](https://github.com/laser-institute/essential-readings/blob/main/machine-learning/ml-lab-1/rosenberg-et-al-2020-jrst.pdf):
-
-> Rosenberg, J. M., Reid, J. W., Dyer, E. B., Koehler, M. J., Fischer,
-> C., & McKenna, T. J. (2020). Idle chatter or compelling conversation?
-> The potential of the social media‐based# NGSSchat network for
-> supporting science education reform efforts. Journal of Research in
-> Science Teaching, 57(9), 1322-1355.
-> [Link](https://github.com/laser-institute/essential-readings/blob/main/machine-learning/ml-lab-1/rosenberg-et-al-2020-jrst.pdf).
+Our driving question is: How well can we predict students' course outcomes?
 
 Conceptually, we focus on prediction and how it differs from the goals
 of description or explanation.
 
 ## Step 0: Loading and setting up
 
-First, let's load the packages we'll use---the familiar {tidyverse} and
-several others focused on modeling: tidymodels and janitor. As a tip, use the  
-`library()` function to load these packages. After you've done that, like in earlier learning labs, click
-the green arrow to run the code chunk.
+First, let's load the packages we'll use---the {tidyverse} and
+another focused on modeling: {tidymodels} As a tip, use the  
+`library()` function to load these packages. After you've done that, click
+the green arrow to run the code chunk. We'll also load {janitor}.
+
+```{r}
+library(tidyverse)
+library(tidymodels)
+library(janitor)
+```
+
+Next, we'll load the OULAD data set.
+
+It is in the `data` sub-folder and is named 
+
+Load it and assign the name ...
 
 ```{r}
 
 ```
 
-Next, we'll load the *already-processed* (for this lab) data set that
-we'll use for our supervised machine learning modeling.
-
-It is in the `data` sub-folder and is named `ngsschat-processes-data.csv`.
-
-Load it and assign the name `d` to it in the code chunk below, then run the chunk.
-
-```{r}
-
-```
-
-The data has only five variables:
-
-1.  `n`: The number of tweets in the *thread* (independent variable)
-2.  `mean_favorite_count`: The mean number of favorites for the tweets
-    in the thread (*independent* variable)
-3.  `mean_retweet_count`: The mean nunber of retweets for the tweets in
-    the thread (*independent* variable)
-4.  `sum_display_text_width`: The sum of the number of characters for
-    the tweets in the thread (*independent* variable)
-5.  `code`: The qualitative code (TS = transactional; TF =
-    transformational) (*dependent* variable)
+The data has these variables 
 
 [Your Turn]{style="color: green;"} ⤵
 
@@ -96,7 +64,46 @@ Note its dimensions --- especially how many rows it has. Add a few
 dashes after the chunk with your observations.
 
 ```{r}
+library(tidyverse)
 
+f <- list.files("lab-1/data/oulad", full.names = TRUE)
+f
+
+l <- map(f, read_csv)
+
+# l[[2]] # courses
+l[[3]] # student assessment
+l[[4]] # student info
+l[[5]] # student registration
+l[[6]] # student interactions
+
+# how many students?
+l[[5]] %>% count(id_student)
+l[[5]] %>% count(id_student, code_module, code_presentation)
+
+# how many courses
+l[[2]] %>% count(code_module, code_presentation)
+
+# how many assessments
+l[[1]] %>% count(id_assessment) # some assessments apparently not taken
+l[[3]] %>% count(id_assessment)
+
+# how many interactions
+l[[7]] %>% count(id_site)
+l[[6]] %>% count(id_site)
+
+# student assessment (3), info (4), registration (5), assessments (1), and courses (2)
+students <- l[[4]] %>% # student info
+    left_join(l[[2]]) %>% # courses
+    left_join(l[[5]])
+
+assessments <- l[[3]] %>% 
+    left_join(l[[1]])
+
+# student VLE (6), VLE (7), and courses (2)
+interactions <- l[[6]] %>% 
+    left_join(l[[7]]) %>% 
+    left_join(l[[2]])
 ```
 
 *Observations*:
@@ -156,8 +163,33 @@ created a training and testing data set called `training()` and
 Run the following code to split the data:
 
 ```{r}
-set.seed(20220712)
-train_test_split <- initial_split(d, prop = .80)
+set.seed(20230712)
+
+students <- students %>% 
+    mutate(withdrawn = ifelse(final_result == "Withdrawn", 1, 0)) %>% 
+    mutate(withdrawn = as.factor(withdrawn))
+
+students %>% 
+    skimr::skim()
+
+students <- students %>% 
+    mutate(disability = ifelse(disability == "Y", 1, 0)) %>% 
+    mutate(disability = as.factor(disability))
+
+students <- students %>% 
+    mutate(imd_band = factor(imd_band, levels = c("0-10%",
+                                                  "10-20%",
+                                                  "20-30%",
+                                                  "30-40%",
+                                                  "40-50%",
+                                                  "50-60%",
+                                                  "60-70%",
+                                                  "70-80%",
+                                                  "80-90%",
+                                                  "90-100%"))) %>% 
+    mutate(imd_band = as.integer(imd_band))
+
+train_test_split <- initial_split(students, prop = .80)
 data_train <- training(train_test_split)
 ```
 
@@ -205,7 +237,7 @@ we used it here has two arguments:
     variables and their types, like factors, integers, dates, etc.
 
 ```{r}
-my_rec <- recipe(code ~ ., data = data_train)
+my_rec <- recipe(withdrawn ~ disability + imd_band, data = data_train)
 ```
 
 ## Step 3: Specify the model and workflow
@@ -270,7 +302,7 @@ Type `final_fit` below; this is the final, fitted model---one that can
 be interpreted further in the next step!
 
 ```{r}
-
+final_fit
 ```
 
 You may see a message/warning above or when you examine `final_fit`; you
@@ -303,8 +335,8 @@ following chunk of code:
 ```{r}
 final_fit %>% 
     collect_predictions() %>% # see test set predictions
-    select(.pred_class, code) %>% # just to make the output easier to view 
-    mutate(correct = .pred_class == code) # create a new variable, correct, telling us when the model was and was not correct
+    select(.pred_class, withdrawn) %>% # just to make the output easier to view 
+    mutate(correct = .pred_class == withdrawn) # create a new variable, correct, telling us when the model was and was not correct
 ```
 
 That's helpful, but there's one more step we can take -- counting up the
@@ -313,8 +345,8 @@ values of `correct`:
 ```{r}
 final_fit %>% 
     collect_predictions() %>% # see test set predictions
-    select(.pred_class, code) %>% # just to make the output easier to view 
-    mutate(correct = .pred_class == code) %>% # create a new variable, correct, telling us when the model was and was not correct
+    select(.pred_class, withdrawn) %>% # just to make the output easier to view 
+    mutate(correct = .pred_class == withdrawn) %>% # create a new variable, correct, telling us when the model was and was not correct
     tabyl(correct)
 ```
 

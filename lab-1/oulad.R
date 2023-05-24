@@ -43,13 +43,22 @@ interactions <- l[[6]] %>%
     left_join(l[[7]]) %>% 
     left_join(l[[2]])
 
-students
+# ---
+
+students_ss <- students %>% 
+    select(gender, highest_education, num_of_prev_attempts, disability, 
+           final_result, age_band, studied_credits)
+
+students %>% View()
 
 assessments %>% 
     count(assessment_type)
 
-interactions %>% 
-    count(activity_type)
+l[[1]] %>% 
+    count(code_module, code_presentation, assessment_type) %>% View()
+
+assessments %>% 
+    filter(assessment_type == "Exam")
 
 interactions %>% 
     group_by(activity_type) %>% 
