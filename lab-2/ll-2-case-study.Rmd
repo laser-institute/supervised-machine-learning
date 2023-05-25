@@ -100,6 +100,14 @@ library(tidymodels)
 Like in the code-along for the overview presentation, let's take a look
 at the data and do some processing of it.
 
+We'll load the students file together; you'll write code to read the assessments file. Please assign the name assessments to the loaded assessments file.
+
+students <- read_csv("data/oulad-students.csv")
+assessments <- read_csv("data/oulad-assessments.csv")
+
+assessments %>% 
+    distinct(id_assessment) # this many unique assessments
+
 ```{r}
 d <- read_csv("data/data-to-model-no-gradebook.csv") # **edit: did this cause a problem**
 d <- select(d, -time_spent) # this is another outcome, so we'll cut this here

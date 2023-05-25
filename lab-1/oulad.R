@@ -43,6 +43,10 @@ interactions <- l[[6]] %>%
     left_join(l[[7]]) %>% 
     left_join(l[[2]])
 
+students %>% write_csv("oulad-students.csv")
+interactions %>% write_csv("lab-1/data/oulad-interactions.csv")
+assessments %>% write_csv("lab-1/data/students-assessments.csv")
+
 # ---
 
 students_ss <- students %>% 

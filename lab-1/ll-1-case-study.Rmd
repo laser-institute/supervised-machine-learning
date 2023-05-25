@@ -18,24 +18,66 @@ editor_options:
 knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
 ```
 
-First, please add your name above!
+[First, please add your name above!]{.underline}
+
+## Background
 
 In the overview presentation for this learning lab, we considered five
 steps in our supervised machine learning process. Those steps are
-mirrored here in this case study---with the addition of a preamble step
-whereby we load and process the data. 
+mirrored here in this case study, with the addition of a preamble step
+whereby we load and process the data.
 
-Our driving question is: How well can we predict students' course outcomes?
+We'll focus on **machine learning**, but you'll also do a good bit of
+**data wrangling**, too.
+
+When we step back and think about how we want to use machine learning,
+**predicting** is a key word. Many scholars have focused on predicting
+students who are *at-risk*: of dropping a course or not succeeding in
+it.
+
+We'll dive deeper into specific examples of this in the next learning
+lab, for now focusing on the mechanics of **making predictions**.
+
+### Conceptual focus
 
 Conceptually, we focus on prediction and how it differs from the goals
-of description or explanation.
+of description or explanation. We have two readings that accompany this.
 
-## Step 0: Loading and setting up
+The first reading is on this distinction between prediction and
+description or explanation--and it is one of the most widely-read papers
+in machine learning in that it articulated how machine learning differs
+from other kinds of statistical models. Breiman describes the difference
+in terms of *data modeling* (models for description and explanation) and
+*algorithmic modeling* (what we call prediction or machine learning
+models)\*
+
+> Breiman, L. (2001). Statistical modeling: The two cultures (with
+> comments and a rejoinder by the author). *Statistical Science, 16*(3),
+> 199-231.
+> <https://projecteuclid.org/journals/statistical-science/volume-16/issue-3/Statistical-Modeling--The-Two-Cultures-with-comments-and-a/10.1214/ss/1009213726.pdf>
+
+You'll be asked to reflect on this article later on (in the badge
+activity); consider reading it now.
+
+### Technical focus
+
+Technically, we'll focus on the core parts of doing a machine learning
+analysis in R. We'll use the {[tidymodels](https://www.tidymodels.org/)}
+set of R packages (add-ons) to do so.
+
+We'll focus on a driving question: *How well can we predict students who
+are at risk of dropping a course?*
+
+## Step 0: Loading, setting up, and wrangling data
 
 First, let's load the packages we'll use---the {tidyverse} and
-another focused on modeling: {tidymodels} As a tip, use the  
-`library()` function to load these packages. After you've done that, click
-the green arrow to run the code chunk. We'll also load {janitor}.
+{tidymodels}. We'll also load {janitor} to help with some data cleaning
+tasks.
+
+As a tip, use the `library()` function to load these packages. After
+you've done that, click the green arrow to run the code chunk. If you
+see a bunch of messages (but anything labeled as an error), you are good
+to go! These messages mean the packages loaded correctly.
 
 ```{r}
 library(tidyverse)
@@ -43,78 +85,139 @@ library(tidymodels)
 library(janitor)
 ```
 
-Next, we'll load the OULAD data set.
+We'll be using a widely-used data set in the learning analytics field:
+the [Open University Learning Analytics Dataset
+(OULAD)](https://analyse.kmi.open.ac.uk/open_dataset). The OULAD was
+created by learning analytics researchers at the United Kingdom-based
+Open University. It includes data from post-secondary learners
+participation in one of several Massive Open Online Courses (called
+*modules* in the OULAD).
 
-It is in the `data` sub-folder and is named 
+> Kuzilek, J., Hlosta, M., & Zdrahal, Z. (2017). Open university
+> learning analytics dataset. *Scientific Data, 4(*1), 1-8.
+> <https://www.nature.com/articles/sdata2017171>
 
-Load it and assign the name ...
+Please read this article.
+
+The data can be downloaded at the above link; however, for our purposes,
+they are already downloaded to the `data` sub-folder.
+
+We'll use the `read_csv()` function to load the files -- two in total,
+with data on students and assessments. Note: we have done some minimal
+processing of these files to make getting us started easier. If you're
+interested in what we've done, check out the `oulad.R` file in the
+`lab-1` folder.
+
+For now, please read in the `oulad-students.csv` file. Use the
+`read_csv()` function to do this, paying attention to where those files
+are located relative to this case study file.
 
 ```{r}
-
+students <- read_csv("data/oulad-students.csv")
 ```
 
-The data has these variables 
+You can see a description of the data
+[here](https://analyse.kmi.open.ac.uk/open_dataset#description). The
+students file includes five files joined together: studentInfo, courses,
+and studentRegistration. The assessment file includes studentAssessments
+and Assessments. Take a look at the data description to get a sense for
+what variables are in which data frame.
 
-[Your Turn]{style="color: green;"} ⤵
-
-In the chunk below, examine the prepared data using a function or means
-of your choice (such as just *printing* the data set by typing its name
-or using the `glimpse()` function). Do this in the code chunk below!
-Note its dimensions --- especially how many rows it has. Add a few
-dashes after the chunk with your observations.
+In the chunk below, examine the data set using a function or means of
+your choice (such as just *printing* the data set by typing its name or
+using the `glimpse()` function). Do this in the code chunk below! Note
+its dimensions --- especially how many rows it has. Add a few dashes
+after the chunk with your observations.
 
 ```{r}
-library(tidyverse)
-
-f <- list.files("lab-1/data/oulad", full.names = TRUE)
-f
-
-l <- map(f, read_csv)
-
-# l[[2]] # courses
-l[[3]] # student assessment
-l[[4]] # student info
-l[[5]] # student registration
-l[[6]] # student interactions
-
-# how many students?
-l[[5]] %>% count(id_student)
-l[[5]] %>% count(id_student, code_module, code_presentation)
-
-# how many courses
-l[[2]] %>% count(code_module, code_presentation)
-
-# how many assessments
-l[[1]] %>% count(id_assessment) # some assessments apparently not taken
-l[[3]] %>% count(id_assessment)
-
-# how many interactions
-l[[7]] %>% count(id_site)
-l[[6]] %>% count(id_site)
-
-# student assessment (3), info (4), registration (5), assessments (1), and courses (2)
-students <- l[[4]] %>% # student info
-    left_join(l[[2]]) %>% # courses
-    left_join(l[[5]])
-
-assessments <- l[[3]] %>% 
-    left_join(l[[1]])
-
-# student VLE (6), VLE (7), and courses (2)
-interactions <- l[[6]] %>% 
-    left_join(l[[7]]) %>% 
-    left_join(l[[2]])
+glimpse(students)
 ```
 
 *Observations*:
 
 -   
 
-\*What other variables might we include?\*\* This is a great question to
-be asking - surely, including just the four variables we have cannot be
-*that* predictive (right?)! Let's use these few, relatively simple
-variables for now, but know that we'll use far more variables when we
-get to the third learning lab.
+-   
+
+A useful function for exploring data is `count()`; it does what it
+sounds like! It counts how many times values for a variable appear.
+
+Referring to the [data
+description](https://analyse.kmi.open.ac.uk/open_dataset#description),
+in the chunk below, count the number of students. Also, count the number
+of courses (modules) and specific offerings (as modules can be offered
+multiple times per year). Learn more about `count()`
+[here](https://dplyr.tidyverse.org/reference/count.html).
+
+```{r}
+students %>% 
+    count(id_student) # this many students
+
+students %>% 
+    count(code_module, code_presentation) # this many offerings
+```
+
+Another handy function is `distinct()`. This returns the unique (or
+distinct) values for a specified variable. Learn more about `distinct()`
+[here](https://dplyr.tidyverse.org/reference/distinct.html). Below, find
+the distinct assessment IDs.
+
+```{r}
+assessments %>% 
+    distinct(id_assessment) # this many unique assessments
+```
+
+We're going to do a few more steps related to data wrangling
+here--noting we could also do these at later stages of our process
+(namely, in the feature engineering stage).
+
+First, let's use `mutate()` to create a dichotomous variable for whether
+or not the student withdrew from the course. Here's a way we can do
+this, using `if_else()` and `as.factor()`. This will be our *outcome*
+variable, or the predicted variable.
+
+```{r}
+students <- students %>% 
+    mutate(withdrawn = ifelse(final_result == "Withdrawn", 1, 0)) %>% # creates a dummy code
+    mutate(withdrawn = as.factor(withdrawn)) # makes the variable a factor, helping later steps
+```
+
+Next, let's do something similar for whether a student identifies as
+having a disability. In this case, there are only two values for the
+disability variable, so we can simply convert it directly to a factor.
+Look at the code you used above, *modifying* it for the disability
+variable. This will be an *independent variable*, or a predictor
+variablve.
+
+```{r}
+students <- students %>% 
+    mutate(disability = as.factor(disability))
+```
+
+We have one last step. Let's create one more predictor variable based on
+a measure of socioeconomic resources--the index of multiple depravity
+variable. The process we take here is to turn this variable that is a
+character string into a number of creating a factor and then *coercing*
+it to an integer. Please replace the \_\_\_ values in the code below
+with the correct variable.
+
+```{r}
+students <- students %>% 
+    mutate(imd_band = factor(imd_band, levels = c("0-10%",
+                                                  "10-20%",
+                                                  "20-30%",
+                                                  "30-40%",
+                                                  "40-50%",
+                                                  "50-60%",
+                                                  "60-70%",
+                                                  "70-80%",
+                                                  "80-90%",
+                                                  "90-100%"))) %>% # this creates a factor with ordered levels
+    mutate(imd_band = as.integer(imd_band)) # this changes the levels into integers based on the order of the factor levels
+
+```
+
+We're now ready to proceed to the five machine learning steps.
 
 ## Step 1. Split data
 
@@ -165,30 +268,6 @@ Run the following code to split the data:
 ```{r}
 set.seed(20230712)
 
-students <- students %>% 
-    mutate(withdrawn = ifelse(final_result == "Withdrawn", 1, 0)) %>% 
-    mutate(withdrawn = as.factor(withdrawn))
-
-students %>% 
-    skimr::skim()
-
-students <- students %>% 
-    mutate(disability = ifelse(disability == "Y", 1, 0)) %>% 
-    mutate(disability = as.factor(disability))
-
-students <- students %>% 
-    mutate(imd_band = factor(imd_band, levels = c("0-10%",
-                                                  "10-20%",
-                                                  "20-30%",
-                                                  "30-40%",
-                                                  "40-50%",
-                                                  "50-60%",
-                                                  "60-70%",
-                                                  "70-80%",
-                                                  "80-90%",
-                                                  "90-100%"))) %>% 
-    mutate(imd_band = as.integer(imd_band))
-
 train_test_split <- initial_split(students, prop = .80)
 data_train <- training(train_test_split)
 ```
@@ -196,8 +275,6 @@ data_train <- training(train_test_split)
 Go ahead and type `data_train` and `d` into the console (in steps) to
 check that this data set indeed has 80% of the number of observations as
 in the larger data. Do that in the chunk below:
-
-[Your Turn]{style="color: green;"} ⤵
 
 ```{r}
 
@@ -213,9 +290,10 @@ To do feature engineering, we introduce another {tidymodels} package,
 [recipes](https://recipes.tidymodels.org/), which is designed to help
 you prepare your data *before* training your model - in other words, to
 engage in *feature engineering*. That's all we'll say about this now;
-we'll dive into feature engineering in the third learning lab. For now,
-we'll just use the variables as they are -- we'll do *no* feature
-engineering at this stage.
+we'll dive into feature engineering in the third learning lab.
+
+**For now, we'll just use the variables as they are -- we'll do *no*
+feature engineering at this stage.**
 
 To get started, let's create a recipe for a simple logistic regression
 model. Before training the model, we can use a recipe.
@@ -236,6 +314,10 @@ we used it here has two arguments:
     the data itself; it is only used to catalog the names of the
     variables and their types, like factors, integers, dates, etc.
 
+Let's create a recipe where we predict `withdrawn` (the outcome
+variable) on the basis of the `disability` and `imd_band` (predictor)
+variables.
+
 ```{r}
 my_rec <- recipe(withdrawn ~ disability + imd_band, data = data_train)
 ```
@@ -252,8 +334,8 @@ continuous/numeric outcome:
 # specify model
 my_mod <-
     logistic_reg() %>% 
-    set_engine("glm") %>%
-    set_mode("classification")
+    set_engine("glm") %>% # generalized linear model
+    set_mode("classification") # since we are predicting a dichotomous outcome, specify classification; for a number, specify regression
 ```
 
 ## Step 4: Fit model
@@ -281,9 +363,24 @@ my_wf <-
 
 Finally, we'll fit our model.
 
-```{r, warning = FALSE}
+```{r}
 fitted_model <- fit(my_wf, data = data_train)
 ```
+
+Importantly, here, we can look at the model. Type `fitted_model` in a
+code chunk and note what you observe, focusing on the coefficients.
+While we don't typically interpret the coefficients for a machine
+learning model, it's important to recognize that many models *do*
+produce coefficients we *could* interpret. Instead, we focus on how the
+model does with respect to predicting the dependent variable.
+
+```{r}
+fitted_model
+```
+
+**Observations**
+
+-   
 
 Finally, we'll use the `last_fit` function, which is the key here: note
 that it uses the `train_test_split` data---not just the training data.
@@ -292,11 +389,9 @@ Here, then, we fit the data *using the training data set* and evaluate
 its accuracy using the *testing data set* (which is not used to train
 the model).
 
-```{r, message = FALSE}
+```{r}
 final_fit <- last_fit(fitted_model, train_test_split)
 ```
-
-[Your Turn]{style="color: green;"} ⤵
 
 Type `final_fit` below; this is the final, fitted model---one that can
 be interpreted further in the next step!
@@ -339,6 +434,11 @@ final_fit %>%
     mutate(correct = .pred_class == withdrawn) # create a new variable, correct, telling us when the model was and was not correct
 ```
 
+You may notice some of the rows may be missing values. This is because
+there were some missing values in the `imd_band` variable, and for this
+machine learning algorithm (the generalized linear model), missing
+values result in row-wise deletion.
+
 That's helpful, but there's one more step we can take -- counting up the
 values of `correct`:
 
@@ -356,11 +456,27 @@ tell us? Add one or more notes to the dashes below:
 
 -   
 
-A short-cut to the above is below:
+A short-cut to the above is below; **we'll use this short-cut from here
+forward**, having seen how accuracy is calculated.
 
 ```{r}
 final_fit %>% 
     collect_metrics()
+```
+
+How accurate was our predictive model? Consider how well our model would
+have done by chance alone -- what would the accuracy be in that case
+(with the model predicting withdrawn one-half of the time)?
+
+```{r}
+students_ss %>% 
+    count(withdrawn)
+
+students_ss %>% 
+    mutate(prediction = sample(c(0, 1), nrow(students_ss), replace = TRUE)) %>% 
+    mutate(correct = if_else(prediction == 1 & withdrawn == 1 |
+               prediction == 0 & withdrawn == 0, 1, 0)) %>% 
+    tabyl(correct)
 ```
 
 **Observations**
