@@ -118,9 +118,8 @@ students <- read_csv("data/oulad-students.csv")
 
 You can see a description of the data
 [here](https://analyse.kmi.open.ac.uk/open_dataset#description). The
-students file includes five files joined together: studentInfo, courses,
-and studentRegistration. The assessment file includes studentAssessments
-and Assessments. Take a look at the data description to get a sense for
+students file includes three files joined together: studentInfo, courses,
+and studentRegistration. Take a look at the data description to get a sense for
 what variables are in which data frame.
 
 In the chunk below, examine the data set using a function or means of
@@ -356,9 +355,9 @@ recipe (`my_rec`).
 
 ```{r}
 my_wf <-
-    workflow() %>%
-    add_model(my_mod) %>% 
-    add_recipe(my_rec)
+    workflow() %>% # create a workflow
+    add_model(my_mod) %>% # add the model we wrote above
+    add_recipe(my_rec) # add our recipe we wrote above
 ```
 
 Finally, we'll fit our model.
@@ -479,11 +478,19 @@ students_ss %>%
     tabyl(correct)
 ```
 
+Curiously, randomly picking a 0 (did not withdraw) or a 1 (withdrawn)
+will *always* lead to around a 50% accuracy, regardless of how many
+observations are actually associated with a 0 or a 1.
+
 **Observations**
 
 -   
 
 -   
+
+Let's step back a bit. How well *could* we do if we include more data?
+And how *useful* could such a model be in the real world? We'll dive
+into these questions more over the forthcoming learning labs.
 
 That's it for now; the core parts of machine learning are used in the
 above steps you took; what we'll do after this leaning lab only adds

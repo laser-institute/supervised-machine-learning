@@ -15,15 +15,97 @@ The final activity for each learning lab provides space to work with data and to
 
 To earn a badge for each lab, you are required to respond to a set of prompts for two parts:
 
--   In Part I, you will reflect on your understanding of key concepts and begin to think about potential next steps for your own study.
+-   In Part I, you will extend our model by adding another variable.
 
--   In Part II, you will create a simple data product in R that demonstrates your ability to apply an analytic technique introduced in this learning lab.
+-   In Part II, you will reflect on your understanding of key concepts and begin to think about potential next steps for your own study.
 
-### Part I: Reflect and Plan
+### Part I: Extending our model
 
-Part A:
+In this part of the badge activity, please add another variable -- a variable for the number of days before the start of the module students registered. This variable will be a **third predictor**. By adding it, you'll be able to examine how much *more accurate* your model is (if at al, as this variable might not have great predictive power). Note that this variable is a number and so no pre-processing is necessary.
 
-1.  How good was the machine learning model we developed in the guiding practice? Would you be comfortable using it to code more conversations? What if you read about someone using such a model as a reviewer of research? Please add your thoughts and reflections following the bullet point below.
+In doing so, please move all of your code needed to run the analysis over from your case study file here. This is essential for your analysis to be reproducible. You may wish to break your code into multiple chunks based on the overall purpose of the code in the chunk (e.g., loading packages and data, wrangling data, and each of the machine learning steps).
+
+```{r}
+library(tidyverse)
+library(tidymodels)
+library(janitor)
+
+students <- read_csv("data/oulad-students.csv")
+```
+
+```{r}
+students <- students %>% 
+    mutate(withdrawn = ifelse(final_result == "Withdrawn", 1, 0)) %>% # creates a dummy code
+    mutate(withdrawn = as.factor(withdrawn)) # makes the variable a factor, helping later steps
+
+students <- students %>% 
+    mutate(disability = as.factor(disability))
+
+students <- students %>% 
+    mutate(imd_band = factor(imd_band, levels = c("0-10%",
+                                                  "10-20%",
+                                                  "20-30%",
+                                                  "30-40%",
+                                                  "40-50%",
+                                                  "50-60%",
+                                                  "60-70%",
+                                                  "70-80%",
+                                                  "80-90%",
+                                                  "90-100%"))) %>% # this creates a factor with ordered levels
+    mutate(imd_band = as.integer(imd_band)) # this changes the levels into integers based on the order of the factor levels
+
+students %>% 
+    select(date_registration) # just taking a look at this variable
+```
+
+```{r}
+set.seed(20230712)
+
+train_test_split <- initial_split(students, prop = .80)
+data_train <- training(train_test_split)
+
+my_rec <- recipe(withdrawn ~ disability + imd_band + date_registration, data = data_train) # this is the key change and addition!
+
+# specify model
+my_mod <-
+    logistic_reg() %>% 
+    set_engine("glm") %>% # generalized linear model
+    set_mode("classification") # since we are predicting a dichotomous outcome, specify classification; for a number, specify regression
+
+my_wf <-
+    workflow() %>% # create a workflow
+    add_model(my_mod) %>% # add the model we wrote above
+    add_recipe(my_rec) # add our recipe we wrote above
+
+fitted_model <- fit(my_wf, data = data_train)
+
+final_fit %>% 
+    collect_metrics()
+```
+
+How does the accuracy of this new model compare? Add a few reflections below:
+
+-   
+
+### Part II: Reflect and Plan
+
+Part A: Please refer back to Breiman's (2001) article for these three questions.
+
+1.  Can you summarize the primary difference between the two cultures of statistical modeling that Breiman outlines in his paper?
+
+-   
+
+2.  How has the advent of big data and machine learning affected or reinforced Breiman's argument since the article was published?
+
+-   
+
+3. Breiman emphasized the importance of predictive accuracy over understanding why a method works. To what extent do you agree or disagree with this stance?
+
+-   
+
+Part B:
+
+1.  How good was the machine learning model we developed in the badge activity? What if you read about someone using such a model as a reviewer of research? Please add your thoughts and reflections following the bullet point below.
 
 -   
 
@@ -31,7 +113,7 @@ Part A:
 
 -   
 
-Part B: Use the institutional library (e.g. [NCSU Library](https://www.lib.ncsu.edu/#articles)), [Google Scholar](https://scholar.google.com/) or search engine to locate a research article, presentation, or resource that applies machine learning to an educational context aligned with your research interests. More specifically, **locate a machine learning study that involve making predictions**.
+Part C: Use the institutional library (e.g. [NCSU Library](https://www.lib.ncsu.edu/#articles)), [Google Scholar](https://scholar.google.com/) or search engine to locate a research article, presentation, or resource that applies machine learning to an educational context aligned with your research interests. More specifically, **locate a machine learning study that involves making predictions**.
 
 1.  Provide an APA citation for your selected study.
 
@@ -44,45 +126,6 @@ Part B: Use the institutional library (e.g. [NCSU Library](https://www.lib.ncsu.
 3.  What were the results of these analyses?
 
     -   
-
-### Part II: Data Product
-
-For the data product, you are asked to dive into what it means for the model to be *predictively accurate*. Specifically, we'll explore some measures of just how predictively accurate the model we developed in the guided practice is.
-
-We'll use a shortcut to cut to the chase -- interpreting the model. The code below loads the model we estimated in the guided practice -- in the form of the `final_fit`. This is necessary even if you currently have `final_fit` loaded in your environment/current R session, as you'll need to have everything generated by code in this document for it to successfully "knit".
-
-```{r}
-library(here)
-library(readr)
-library(tidymodels)
-
-final_fit <- read_rds("out/ngsschat-final-fit.rds")
-
-final_fit
-```
-
-Run the code below to calculate a \*confusion matrix\*
-
-```{r}
-final_fit$.predictions[[1]] %>% 
-    conf_mat(.pred_class, code)
-```
-
-Please interpret the above confusion matrix using [these guidelines](https://towardsdatascience.com/understanding-confusion-matrix-a9ad42dcfd62) in terms of the true positive, true negative, false positive, and false negative rates. After each of the following (i.e., "True positive"), add both the *number* and percentage of observations. For instance, if there were 100 true positives out of a total of 400 data points, please write: 100 (25%).
-
-**True positive**:
-
-**True negative**:
-
-**False positive**:
-
-**False negative**:
-
-You can read more about interpreting these [here](https://bradleyboehmke.github.io/HOML/process.html#classification-models) in terms of the specificity, sensitivity, precision, and recall, four statistics based on the information in the confusion matrix.
-
-Return to your answer for Part 1A. Now, having examined the true and false positive and negative rates, how good do you think machine learning model we developed in the case study was? Write more specifically using the evidence you have from creating and interpreting the confusion matrix (above) after the following bullet point.
-
--   
 
 ### Knit & Submit
 

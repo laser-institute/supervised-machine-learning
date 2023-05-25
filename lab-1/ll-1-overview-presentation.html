@@ -4,8 +4,8 @@
     <title>Machine Learning Learning Lab 1 Overview: Prediction</title>
     <meta charset="utf-8" />
     <meta name="author" content="Dr. Joshua Rosenberg" />
-    <meta name="date" content="2022-11-21" />
-    <script src="libs/header-attrs-2.18/header-attrs.js"></script>
+    <meta name="date" content="2023-05-25" />
+    <script src="libs/header-attrs-2.21/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
     <script src="libs/panelset-0.2.6/panelset.js"></script>
@@ -13,8 +13,8 @@
     <link href="libs/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.css" rel="stylesheet" />
     <script src="libs/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.js"></script>
     <script>window.xaringanExtraClipboard(null, {"button":"<i class=\"fa fa-clipboard\"><\/i>","success":"<i class=\"fa fa-check\" style=\"color: #90BE6D\"><\/i>","error":"Press Ctrl+C to Copy"})</script>
-    <link href="libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
-    <link href="libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+    <link href="libs/font-awesome-6.4.0/css/all.min.css" rel="stylesheet" />
+    <link href="libs/font-awesome-6.4.0/css/v4-shims.min.css" rel="stylesheet" />
     <link href="libs/tile-view-0.2.6/tile-view.css" rel="stylesheet" />
     <script src="libs/tile-view-0.2.6/tile-view.js"></script>
     <link rel="stylesheet" href="css/laser.css" type="text/css" />
@@ -37,15 +37,22 @@ class: clear, title-slide, inverse, center, top, middle
 # Machine Learning Learning Lab 1 Overview: Prediction
 ----
 ### **Dr. Joshua Rosenberg**
-### November 21, 2022
+### May 25, 2023
 
 ---
 
 # Background
 
-- We have some data, but we want to use a computer to **automate** or scale up the relationships between predictor (independent) and outcome (dependent) variables. Supervised machine learning is suited to this aim. 
-- We use *data from a large, social media-based community focused on supporting the implementation of the Next Generation Science Standards, #NGSSchat on Twitter*.   
-- Using 1000s of qualitative codes from two years of the chat, we explore how well a computer can scale up this coding **to code others years data**
+- We want to make predictions about an outcome of interest based on predictor variables that we think are related to the outcome. 
+- We'll be using a widely-used data set in the learning analytics field:
+the [Open University Learning Analytics Dataset
+(OULAD)](https://analyse.kmi.open.ac.uk/open_dataset). 
+- The OULAD was
+created by learning analytics researchers at the United Kingdom-based
+Open University. 
+- It includes data from post-secondary learners
+participation in one of several Massive Open Online Courses (called
+*modules* in the OULAD).
 
 ---
 
@@ -61,7 +68,7 @@ class: clear, title-slide, inverse, center, top, middle
 .pull-right[
 
 ## Part 2: R Code Examples
-### #NGSSchat data
+### OULAD data
 - Estimating a logistic regression model
 - Interpreting the model in terms of its predictive accuracy
 ]
@@ -114,163 +121,52 @@ Do you not yet have codes/outcomes -- and do you want to?
 
 ---
 
-# What if we want to *scale* a coding frame?
+# Can we predict students' withdrawal from OULAD courses?
 
-&lt;img src="img/ngsschat-article.png" width="50%" style="display: block; margin: auto;" /&gt;
-
----
-
-# Let's look at a few examples
-
-.pull-left[
-
-`id_string`: 46
-
-&lt;img src="img/ngsschat-example-tweets_1.png" width="70%" /&gt;
-
-]
-
-.pull-right[
-
-**How would you code this?**
-
-We used a coding frame from [van Bommel et al. (2020)](https://www.sciencedirect.com/science/article/pii/S0742051X19300629):
-
-- *Transactional*: A transactional interaction refers to those in which participation or learning is acknowledged.
-- *Substantive*: Discussions of NGSS- and science education-related content.
-
-]
+- Many students withdraw from these courses
+- We have data on students' initial characteristics and their interactions in the course
+- If we could develop a good prediction model, we could provide additional supports to students--and maybe move the needle on some students succeeding who might not otherwise
 
 ---
 
-# Let's look at a few examples
+# OULAD
 
-.pull-left[
-
-`id_string`: 46
-
-&lt;img src="img/ngsschat-example-tweets_1.png" width="70%" /&gt;
-
-]
-
-.pull-right[
-
-**We coded this as *substantive***
-
-We used a coding frame from [van Bommel et al. (2020)](https://www.sciencedirect.com/science/article/pii/S0742051X19300629):
-
-- *Transactional*: A transactional interaction refers to those in which participation or learning is acknowledged.
-- *Substantive*: Discussions of NGSS- and science education-related content.
-
-]
+&lt;img src="img/oulad-data.png" width="1063" /&gt;
 
 ---
 
+# OULAD
 
-# Let's look at a few examples
+We'll be focusing on three files:
 
-.pull-left[
+- studentInfo, courses, and studentRegistration
 
-`id_string`: 30
+These are joined together (see `oulad.R`) for this learning lab. You'll be doing more joining later!
 
-&lt;img src="img/ngsschat-example-tweets_2.png" width="70%" /&gt;
 
-]
+```
+## Rows: 32593 Columns: 15
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: ","
+## chr (9): code_module, code_presentation, gender, region, highest_education, ...
+## dbl (6): id_student, num_of_prev_attempts, studied_credits, module_presentat...
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+```
 
-.pull-right[
-
-**How would you code this?**
-
-We used a coding frame from [van Bommel et al. (2020)](https://www.sciencedirect.com/science/article/pii/S0742051X19300629):
-
-- *Transactional*: A transactional interaction refers to those in which participation or learning is acknowledged.
-- *Substantive*: Discussions of NGSS- and science education-related content.
-
-]
-
----
-
-# Let's look at a few examples
-
-.pull-left[
-`id_string`: 30
-
-&lt;img src="img/ngsschat-example-tweets_2.png" width="70%" /&gt;
-
-]
-
-.pull-right[
-
-**We coded this as *transactional***
-
-We used a coding frame from [van Bommel et al. (2020)](https://www.sciencedirect.com/science/article/pii/S0742051X19300629):
-
-- *Transactional*: A transactional interaction refers to those in which participation or learning is acknowledged.
-- *Substantive*: Discussions of NGSS- and science education-related content.
-
-]
-
----
-
-# Let's look at a few examples
-
-.pull-left[
-`id_string`: 45
-
-&lt;img src="img/ngsschat-example-tweets_3.png" width="70%" /&gt;
-
-]
-
-.pull-right[
-
-**We coded this as *substantive***
-
-We used a coding frame from [van Bommel et al. (2020)](https://www.sciencedirect.com/science/article/pii/S0742051X19300629):
-
-- *Transactional*: A transactional interaction refers to those in which participation or learning is acknowledged.
-- *Substantive*: Discussions of NGSS- and science education-related content.
-
-]
-
----
-
-# Let's look at a few examples
-
-.pull-left[
-`id_string`: 2
-
-&lt;img src="img/ngsschat-example-tweets_4.png" width="70%" /&gt;
-
-]
-
-.pull-right[
-
-**We coded this as *transactional***
-
-We used a coding frame from [van Bommel et al. (2020)](https://www.sciencedirect.com/science/article/pii/S0742051X19300629):
-
-- *Transactional*: A transactional interaction refers to those in which participation or learning is acknowledged.
-- *Substantive*: Discussions of NGSS- and science education-related content.
-
-]
-
----
-
-# Can we scale up?
-
-There are *hundreds of thousands* of tweets like this in threads; practically, there's no way we could code all of them.
-
---
-
-But, we did code several thousand threads
-
---
-
-Can we use these to scale up our coding?
-
---
-
-In other words, can the computer use the features of tweets in threads to assign them labels as *transactional* or *substantive* conversations?
+```
+## # A tibble: 3 × 15
+##   code_module code_presentation id_student gender region       highest_education
+##   &lt;chr&gt;       &lt;chr&gt;                  &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;        &lt;chr&gt;            
+## 1 AAA         2013J                  11391 M      East Anglia… HE Qualification 
+## 2 AAA         2013J                  28400 F      Scotland     HE Qualification 
+## 3 AAA         2013J                  30268 F      North Weste… A Level or Equiv…
+## # ℹ 9 more variables: imd_band &lt;chr&gt;, age_band &lt;chr&gt;,
+## #   num_of_prev_attempts &lt;dbl&gt;, studied_credits &lt;dbl&gt;, disability &lt;chr&gt;,
+## #   final_result &lt;chr&gt;, module_presentation_length &lt;dbl&gt;,
+## #   date_registration &lt;dbl&gt;, date_unregistration &lt;dbl&gt;
+```
 
 ---
 
@@ -337,7 +233,7 @@ We'll dive into each of these subsequently
 library(tidyverse)
 library(tidymodels)
 
-d &lt;- read_csv("data/ngsschat-processed-data.csv")
+students &lt;- read_csv("data/students-ss.csv")
 ```
 ]
 
@@ -347,7 +243,7 @@ d &lt;- read_csv("data/ngsschat-processed-data.csv")
 
 
 ```r
-train_test_split &lt;- initial_split(ddd, prop = .70)
+train_test_split &lt;- initial_split(students, prop = .80)
 
 data_train &lt;- training(train_test_split)
 data_test &lt;- testing(train_test_split)
@@ -360,7 +256,7 @@ data_test &lt;- testing(train_test_split)
 
 
 ```r
-my_rec &lt;- recipe(code ~ ., data = data_train)
+my_rec &lt;- recipe(withdrawn ~ disability + imd_band, data = data_train) # this is the key change and addition
 ```
 ]
 
@@ -406,95 +302,6 @@ final_fit %&gt;%
     collect_metrics()
 ```
 ]
-]
-
----
-
-# Let's see how the model does
-
-.pull-left[
-`id_string`: 46
-
-&lt;img src="img/ngsschat-example-tweets_1.png" width="70%" /&gt;
-
-We coded this as *substantive*  
-The model predicted: *substantive* **correct!**
-]
-
-.pull-right[
-
-We used a coding frame from [van Bommel et al. (2020)](https://www.sciencedirect.com/science/article/pii/S0742051X19300629):
-
-- *Transactional*: A transactional interaction refers to those in which participation or learning is acknowledged.
-- *Substantive*: Discussions of NGSS- and science education-related content.
-
-]
-
----
-
-# Let's see how the model does
-
-.pull-left[
-`id_string`: 30
-
-&lt;img src="img/ngsschat-example-tweets_2.png" width="70%" /&gt;
-
-We coded this as *transactional*  
-The model predicted: *transactional* **correct!**
-]
-
-.pull-right[
-
-We used a coding frame from [van Bommel et al. (2020)](https://www.sciencedirect.com/science/article/pii/S0742051X19300629):
-
-- *Transactional*: A transactional interaction refers to those in which participation or learning is acknowledged.
-- *Substantive*: Discussions of NGSS- and science education-related content.
-
-]
-
----
-
-# Let's see how the model does
-
-.pull-left[
-`id_string`: 45
-
-&lt;img src="img/ngsschat-example-tweets_3.png" width="70%" /&gt;
-
-We coded this as *substantive*  
-The model predicted: *transactional* **incorrect; why?**
-]
-
-.pull-right[
-
-We used a coding frame from [van Bommel et al. (2020)](https://www.sciencedirect.com/science/article/pii/S0742051X19300629):
-
-- *Transactional*: A transactional interaction refers to those in which participation or learning is acknowledged.
-- *Substantive*: Discussions of NGSS- and science education-related content.
-
-]
-
----
-
-# Let's see how the model does
-
-.pull-left[
-
-`id_string`: 2
-
-&lt;img src="img/ngsschat-example-tweets_4.png" width="70%" /&gt;
-
-We coded this as *transactional*  
-The model predicted: *substantive* **incorrect; why?**
-]
-
-.pull-right[
-
-We used a coding frame from [van Bommel et al. (2020)](https://www.sciencedirect.com/science/article/pii/S0742051X19300629):
-
-- *Transactional*: A transactional interaction refers to those in which participation or learning is acknowledged.
-- *Substantive*: Discussions of NGSS- and science education-related content.
-
 ]
 
 ---
