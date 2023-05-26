@@ -180,17 +180,8 @@ students <- students %>%
     mutate(withdrawn = as.factor(withdrawn)) # makes the variable a factor, helping later steps
 ```
 
-Next, let's do something similar for whether a student identifies as
-having a disability. In this case, there are only two values for the
-disability variable, so we can simply convert it directly to a factor.
-Look at the code you used above, *modifying* it for the disability
-variable. This will be an *independent variable*, or a predictor
-variable.
-
-```{r}
-students <- students %>% 
-    mutate(disability = as.factor(disability))
-```
+We'll create another predictor variable for students' self-reported disability status, 
+but we'll do this as sa part of our machine learning workflow (in Step 2, below).
 
 We have one last step. Let's create one more predictor variable based on
 a measure of socioeconomic resources--the index of multiple depravity
@@ -275,7 +266,8 @@ check that this data set indeed has 80% of the number of observations as
 in the larger data. Do that in the chunk below:
 
 ```{r}
-
+data_train
+d
 ```
 
 ## Step 2: Engineer features and write down the recipe
@@ -287,11 +279,9 @@ engineering [here](https://www.tmwr.org/recipes.html).
 To do feature engineering, we introduce another {tidymodels} package,
 [recipes](https://recipes.tidymodels.org/), which is designed to help
 you prepare your data *before* training your model - in other words, to
-engage in *feature engineering*. That's all we'll say about this now;
-we'll dive into feature engineering in the third learning lab.
+engage in *feature engineering*.
 
-**For now, we'll just use the variables as they are -- we'll do *no*
-feature engineering at this stage.**
+**For now, we'll do just one feature engineering step**.
 
 To get started, let's create a recipe for a simple logistic regression
 model. Before training the model, we can use a recipe.
@@ -314,10 +304,11 @@ we used it here has two arguments:
 
 Let's create a recipe where we predict `withdrawn` (the outcome
 variable) on the basis of the `disability` and `imd_band` (predictor)
-variables.
+variables. We'll also add `step_dummy()`, which dummy codes the specified variable -- here, for students' self-reported disability status.
 
 ```{r}
-my_rec <- recipe(withdrawn ~ disability + imd_band, data = data_train)
+my_rec <- recipe(withdrawn ~ disability + imd_band, data = data_train) %>% 
+    step_dummy(disability)
 ```
 
 ## Step 3: Specify the model and workflow
