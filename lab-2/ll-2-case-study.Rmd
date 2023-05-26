@@ -54,9 +54,6 @@ students <- students %>%
     mutate(withdrawn = as.factor(withdrawn)) # makes the variable a factor, helping later steps
 
 students <- students %>% 
-    mutate(disability = as.factor(disability))
-
-students <- students %>% 
     mutate(imd_band = factor(imd_band, levels = c("0-10%",
                                                   "10-20%",
                                                   "20-30%",
@@ -182,12 +179,13 @@ train_test_split <- initial_split(students, prop = .80)
 data_train <- training(train_test_split)
 ```
 
-Go ahead and type `data_train` and `d` into the console (in steps) to
+Go ahead and type `data_train` and `students` into the console (in steps) to
 check that this data set indeed has 80% of the number of observations as
 in the larger data. Do that in the chunk below:
 
 ```{r}
-
+data_train
+students
 ```
 
 ## Step 2: Engineer features and write down the recipe
@@ -226,11 +224,16 @@ we used it here has two arguments:
 
 Let's create a recipe where we predict `withdrawn` (the outcome
 variable) on the basis of the `disability` and `imd_band` (predictor)
-variables.
+variables. We'll add several other variables, including the date registration variable we used in the last learning lab, gender and highest education levels, and students' assessment scores through 1/4 of the course.
 
 ```{r}
 my_rec <- recipe(withdrawn ~ disability + imd_band +
-                     date_registration + mean_weighted_score, data = data_train)
+                     date_registration + 
+                     gender + highest_education + 
+                     mean_weighted_score, data = data_train) %>% 
+    step_dummy(disability) %>% 
+    step_dummy(gender) %>% 
+    step_dummy(highest_education)
 ```
 
 ## Step 3: Specify the model and workflow

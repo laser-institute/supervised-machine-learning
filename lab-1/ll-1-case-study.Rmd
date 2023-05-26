@@ -261,13 +261,13 @@ train_test_split <- initial_split(students, prop = .80)
 data_train <- training(train_test_split)
 ```
 
-Go ahead and type `data_train` and `d` into the console (in steps) to
+Go ahead and type `data_train` and `students` into the console (in steps) to
 check that this data set indeed has 80% of the number of observations as
 in the larger data. Do that in the chunk below:
 
 ```{r}
 data_train
-d
+students
 ```
 
 ## Step 2: Engineer features and write down the recipe
