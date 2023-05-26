@@ -74,19 +74,15 @@ library(tidyLPA)
 Next, let's load the data.
 
 ```{r}
-d <- read_csv("data/dat_csv_combine_final_full.csv")
+liwc <- read_csv("data/LIWC-22 Results - r-processed-transcripts - LIWC Analysis.csv")
 ```
+
 
 We'll next select the variables we'll use for this analysis.
 
 ```{r}
-d <- d %>% 
-    select(AveCarelessness, AveKnow, AveCorrect = AveCorrect.x, AveResBored, 
-           AveResEngcon, AveResConf, AveResFrust, AveResOfftask, 
-           AveResGaming, NumActions) %>%
-    janitor::clean_names()
-
-d
+liwc_ss <- liwc %>%
+    select(certitude, cogproc, Social)
 ```
 
 ## Step 1: Explore a range of solutions

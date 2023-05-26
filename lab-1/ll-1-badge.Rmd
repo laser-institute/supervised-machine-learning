@@ -39,9 +39,6 @@ students <- students %>%
     mutate(withdrawn = as.factor(withdrawn)) # makes the variable a factor, helping later steps
 
 students <- students %>% 
-    mutate(disability = as.factor(disability))
-
-students <- students %>% 
     mutate(imd_band = factor(imd_band, levels = c("0-10%",
                                                   "10-20%",
                                                   "20-30%",
@@ -64,7 +61,8 @@ set.seed(20230712)
 train_test_split <- initial_split(students, prop = .80)
 data_train <- training(train_test_split)
 
-my_rec <- recipe(withdrawn ~ disability + imd_band + date_registration, data = data_train) # this is the key change and addition!
+my_rec <- recipe(withdrawn ~ disability + imd_band + date_registration, data = data_train) %>%  # this is the key change and addition!
+    step_dummy(disability)
 
 # specify model
 my_mod <-

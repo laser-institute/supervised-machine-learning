@@ -122,49 +122,55 @@ Please add to the chunk below code to load three packages we've used in
 both LL1 and LL2 - tidyverse, tidymodels, and here.
 
 ```{r}
-
+library(tidyverse)
+library(tidymodels)
 library(vip) # a new package we're adding for variable importance measures
 library(ranger) # this is needed for the random forest algorithm
 ```
 
 Next, we'll load the processed data.
 
-*Note*: We created a means of visualizing the threads to make coding
-them easier; that's here and it provides a means of seeing what the raw
-data is like: <https://jmichaelrosenberg.shinyapps.io/ngsschat-shiny/>.
+```{r}
+students <- read_csv("data/oulad-students.csv")
+assessments <- read_csv("data/oulad-assessments.csv")
 
-We've added three additional variables for this analysis; thus, the
-variables we have to consider to use as features are:
+students <- students %>% 
+    mutate(withdrawn = ifelse(final_result == "Withdrawn", 1, 0)) %>% # creates a dummy code
+    mutate(withdrawn = as.factor(withdrawn)) # makes the variable a factor, helping later steps
 
-1.  `n`: The number of tweets in the *thread* (independent variable)
-2.  `mean_favorite_count`: The mean number of favorites for the tweets
-    in the thread (*independent* variable)
-3.  `sum_favorite_count`: The sum of the number of favorites for the
-    tweets in the thread (*independent* variable)
-4.  `mean_retweet_count`: The mean number of retweets for the tweets in
-    the thread (*independent* variable)
-5.  `sum_retweet_count`: The sum of the number of retweets for the
-    tweets in the thread (*independent* variable)
-6.  `sum_display_text_width`: The sum of the number of characters for
-    the tweets in the thread (*independent* variable)
-7.  `mean_display_text_width`: The mean of the number of characters for
-    the tweets in the thread (*independent* variable)
-8.  `code`: The qualitative code (TS = transactional; TF =
-    transformational) (*dependent* variable)
+students <- students %>% 
+    mutate(imd_band = factor(imd_band, levels = c("0-10%",
+                                                  "10-20%",
+                                                  "20-30%",
+                                                  "30-40%",
+                                                  "40-50%",
+                                                  "50-60%",
+                                                  "60-70%",
+                                                  "70-80%",
+                                                  "80-90%",
+                                                  "90-100%"))) %>% # this creates a factor with ordered levels
+    mutate(imd_band = as.integer(imd_band)) # this changes the levels into integers based on the order of the factor levels
 
-One *big* type of feature not included in this analysis - more
-information on the text in the tweets. This is likely to be quite
-predictive: the words that users included in their tweets are probably
-associated with (and predictive of) substantive or transactional
-conversations. Given our focus on ML in this topic area, we do *not
-include features relating to the text data*, but think this could be a
-great direction for future work (and research) in this area.
+students %>% 
+    select(date_registration) # just taking a look at this variable
+```
 
 ```{r}
-d <- read_csv("data/ngsschat-processed-data.csv")
+code_module_dates <- assessments %>% 
+    group_by(code_module, code_presentation) %>% 
+    summarize(quantile_cutoff_date = quantile(date, probs = .25, na.rm = TRUE))
 
-d <- d %>% 
-    mutate(code = as.factor(code)) # this is needed for the classification mode
+assessments <- assessments %>% 
+    left_join(code_module_dates)
+
+assessments_filtered <- assessments %>% 
+    filter(date < quantile_cutoff_date)
+
+assessments_summarized <- assessments_filtered %>% 
+    mutate(weighted_score = score * weight) %>% 
+    group_by(id_student) %>% 
+    summarize(mean_weighted_score = mean(weighted_score)) %>% 
+    arrange(id_student)
 ```
 
 ## Step 1. Split data
@@ -179,14 +185,16 @@ appropriate.
 #### [Your Turn]{style="color: green;"} ⤵
 
 You do have one step that is your turn! Please add the code for setting
-up the k-folds cross-validation (exactly as you did this in LL2.
+up the k-folds cross-validation.
 
 ```{r}
 set.seed(20220712)
-train_test_split <- initial_split(d, prop = .80)
+train_test_split <- initial_split(students, prop = .80)
 data_train <- training(train_test_split)
 
-<replace this line with your kfcv code!>
+kfcv <- vfold_cv(data_train) # this differentiates this from what we did before
+# before, we simple used data_train to fit our model
+kfcv
 ```
 
 
@@ -195,27 +203,6 @@ code, which sets the groundwork for *k*-folds cross-validation. Note
 that in the function below (run `?vfold_cv` to see more), the letter *v*
 is used instead of *k*, though they share a meaning, as the
 documentation notes).
-
-```{r}
-kfcv <- vfold_cv(data_train) # this differentiates this from what we did before
-# before, we simple used data_train to fit our model
-kfcv
-```
-
-#### [Your Turn]{style="color: green;"} ⤵
-
-Above, we split the data into 10 different folds. Change the number of
-folds from 10 to 20 by changing the value of v; 10 is simply the
-default. For help, run `?vfold_cv` to get a hint.
-
-```{r}
-kfcv <- vfold_cv(data_train) # this differentiates this from what we did before
-# before, we simple used data_train to fit our model
-kfcv
-```
-
-## Step 2: Engineer features
-
 
 ## Step 2: Engineer features and write down the recipe
 
@@ -234,14 +221,24 @@ recipe.
 -   `step_dummy(all_nominal_predictors())`
 -   `step_impute_knn(all_predictors(), all_outcomes())`
 
+
+
+In Step 0, we noted how we added three variables as potential features.
+Here, we carry out two feature engineering steps we have carried out
+before - standardizing the numeric variables (to have a mean equal to 0
+and a standard deviation equal to 1) and dropping any features with
+near-zero variance. Consider adding other feature engineering steps -
+perhaps the step you carried out complete the badge requirements for
+LL2.
+
 ```{r,}
-recipe(final_grade ~ ., data = data_train) %>% # **edit**: change t final grade
-    update_role(student_id, course_id, section, new_role = "ID variable") %>% # this can be any string; for ID variables
-    step_normalize(all_numeric_predictors()) %>% # standardizes numeric variables
-    step_nzv(all_predictors()) %>% # remove predictors with a "near-zero variance"
-    step_dummy(all_nominal_predictors()) %>%  # dummy code all factor variables
-    step_novel(all_nominal_predictors()) %>% # add a musing label for factors
-    step_impute_knn(all_predictors()) # impute missing data for all predictor variables
+my_rec <- recipe(withdrawn ~ disability + imd_band +
+                     date_registration + 
+                     gender + highest_education + 
+                     mean_weighted_score, data = data_train) %>% 
+    step_dummy(disability) %>% 
+    step_dummy(gender) %>% 
+    step_dummy(highest_education)
 ```
 
 ## Step 3: Specify the model and workflow
@@ -253,38 +250,6 @@ Specifically, we use:
 -   using the `linear_reg()` function to set the *model*
 -   using `set_engine("glm")` to set the *engine*
 -   finally, using `set_mode("regression"))`
-
-
-## Step 4: Fit model
-
-Note that here we use the `kfcv` data. We'll run that in the next chunk.
-
-We can ignore the warnings and messages we see.
-
-```{r, warning = FALSE}
-fitted_model_resamples <- fit_resamples(my_wf, resamples = kfcv,
-                              control = control_grid(save_pred = TRUE)) # this allows us to inspect the predictions
-```
-
-
-In Step 0, we noted how we added three variables as potential features.
-Here, we carry out two feature engineering steps we have carried out
-before - standardizing the numeric variables (to have a mean equal to 0
-and a standard deviation equal to 1) and dropping any features with
-near-zero variance. Consider adding other feature engineering steps -
-perhaps the step you carried out complete the badge requirements for
-LL2.
-
-#### [Your Turn]{style="color: green;"} ⤵
-
-Add a feature engineering step below. Consider those described
-[here](https://recipes.tidymodels.org/reference/index.html).
-
-```{r panel-chunk-2, echo = TRUE, eval = TRUE}
-my_rec <- recipe(code ~ ., data = data_train) %>% 
-    step_normalize(all_numeric_predictors()) %>%
-    step_nzv(all_predictors())
-```
 
 ## Step 3: Specify recipe, model, and workflow
 
@@ -349,9 +314,9 @@ provided by the `mtry` and `min_n` variables, above. You can see that
 `tree_grid` is simply a combination of values of the hyperparameters.
 
 ```{r}
-tree_grid <- grid_max_entropy(mtry(range(xx, xx)),
-                              min_n(range(xx, xx)),
-                              trees(range(xx, xx)),
+tree_grid <- grid_max_entropy(mtry(range(1, 17)),
+                              min_n(range(2, 40)),
+                              trees(range(1, 2000)),
                               size = 10)
 ```
 
@@ -360,8 +325,21 @@ longest of any function we've run so far, as we're estimating a) as many
 models as there are folds (*v =* 10 as default) and b) distinct
 combinations of hyperparameters (`size = 10` as default).
 
+
+## Step 4: Fit model
+
+Note that here we use the `kfcv` data. We'll run that in the next chunk.
+
+We can ignore the warnings and messages we see.
+
+```{r, warning = FALSE}
+fitted_model_resamples <- fit_resamples(my_wf, resamples = kfcv,
+                              control = control_grid(save_pred = TRUE)) # this allows us to inspect the predictions
+```
+
 ```{r, warning = FALSE}
 # fit model with tune_grid()
+
 fitted_model <- my_wf %>% 
     tune_grid(
         resamples = kfcv,
