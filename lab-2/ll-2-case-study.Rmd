@@ -22,65 +22,6 @@ knitr::opts_chunk$set(echo = TRUE)
 This case study is similar to the first, but it differs in three key
 ways:
 
-1.  We use a very different data set, on from *online science classes*
-    that involves a variety of variables types
-2.  We focus on *feature engineering*, a key step in which we prepare
-    variables for inclusion in our machine learning models
-3.  We use resampling to evaluate the effectiveness of the feature
-    engineering steps
-
-Feature engineering is a rich topic in machine learning research,
-including in the learning analytics and educational data mining
-communities.
-
-Consider research on online learning and the work of Li et al. (2020)
-and Rodriguez et al. (2021). In these two studies, digital *log-trace
-data*, data generated through users' interactions with digital
-technologies, was used to study elements of the theoretical frame of
-*self-regulated learning* and how it related to students' achievement.
-Notably, the authors took several steps to prepare the data so that it
-could be validly interpreted as measures of students' self-regulated
-learning. In short, we need to process the data from contexts such as
-online classes to use them in analyses. Citations and links to these
-papers follow.
-
-> Li, Q., Baker, R., & Warschauer, M. (2020). Using clickstream data to
-> measure, understand, and support self-regulated learning in online
-> courses. The Internet and Higher Education, 45, 100727.
-> <https://github.com/laser-institute/essential-readings/blob/main/machine-learning/ml-lab-2/li-et-al-2020-ihe.pdf>
->
-> Rodriguez, F., Lee, H. R., Rutherford, T., Fischer, C., Potma, E., &
-> Warschauer, M. (2021, April). Using clickstream data mining techniques
-> to understand and support first-generation college students in an
-> online chemistry course. In LAK21: 11th International Learning
-> Analytics and Knowledge Conference (pp. 313-322).
-> <https://github.com/laser-institute/essential-readings/blob/main/machine-learning/ml-lab-2/rodriguez-et-al-2021-lak.pdf>
-
-The same is true here in the context of machine learning. In a different
-context, the work of Gobert et al. (2013) is a great example of using
-data from educational simulations. Salmeron-Majadas provides an example
-of feature engineering using mouse-click data. Last, we note that there
-are methods that intended to automated the process of feature
-engineering (Bosch et al., 2021), though such processes are not
-necessarily interpretable and they usually require some degree of
-tailoring to your particular context.
-
-> Gobert, J. D., Sao Pedro, M., Raziuddin, J., & Baker, R. S. (2013).
-> From log files to assessment metrics: Measuring students' science
-> inquiry skills using educational data mining. Journal of the Learning
-> Sciences, 22(4), 521-563.
-> <https://github.com/laser-institute/essential-readings/blob/main/machine-learning/ml-lab-3/gobert-et-al-2013-jls.pdf>
-
-> Salmeron-Majadas, S., Baker, R. S., Santos, O. C., & Boticario, J. G.
-> (2018). A machine learning approach to leverage individual keyboard
-> and mouse interaction behavior from multiple users in real-world
-> learning scenarios. IEEE Access, 6, 39154-39179.
-> <https://ieeexplore.ieee.org/iel7/6287639/8274985/08416736.pdf>
-
-> Bosch, N. (2021). AutoML Feature Engineering for Student Modeling
-> Yields High Accuracy, but Limited Interpretability. Journal of
-> Educational Data Mining, 13(2), 55-79.
-> <https://github.com/laser-institute/essential-readings/blob/main/machine-learning/ml-lab-3/bosch-et-al-2021-jedm.pdf>
 
 Our driving question for this case study is: **How much do new
 predictors improve the prediction quality?**
@@ -102,274 +43,272 @@ at the data and do some processing of it.
 
 We'll load the students file together; you'll write code to read the assessments file. Please assign the name assessments to the loaded assessments file.
 
+```{r}
 students <- read_csv("data/oulad-students.csv")
 assessments <- read_csv("data/oulad-assessments.csv")
+```
 
+```{r}
+students <- students %>% 
+    mutate(withdrawn = ifelse(final_result == "Withdrawn", 1, 0)) %>% # creates a dummy code
+    mutate(withdrawn = as.factor(withdrawn)) # makes the variable a factor, helping later steps
+
+students <- students %>% 
+    mutate(disability = as.factor(disability))
+
+students <- students %>% 
+    mutate(imd_band = factor(imd_band, levels = c("0-10%",
+                                                  "10-20%",
+                                                  "20-30%",
+                                                  "30-40%",
+                                                  "40-50%",
+                                                  "50-60%",
+                                                  "60-70%",
+                                                  "70-80%",
+                                                  "80-90%",
+                                                  "90-100%"))) %>% # this creates a factor with ordered levels
+    mutate(imd_band = as.integer(imd_band)) # this changes the levels into integers based on the order of the factor levels
+```
+
+Let's take a look at how many unique assessments there are, using the `count()` function. Let's also examine the number of different *types* of assessments.
+
+```{r}
 assessments %>% 
     distinct(id_assessment) # this many unique assessments
 
-```{r}
-d <- read_csv("data/data-to-model-no-gradebook.csv") # **edit: did this cause a problem**
-d <- select(d, -time_spent) # this is another outcome, so we'll cut this here
-
-gb <- read_csv("data/data-to-model-gradebook.csv")
+assessments %>% 
+    count(assessment_type)
 ```
 
-We mentioned that this lab is premised on the need to improve on an
-earlier model. Indeed, an earlier version of this model without feature
-engineering achieved predictive accuracy of an RMSE of approximately 13
-(see more [here](https://datascienceineducation.com/c14.html)).
-Predicting students' passing (or not passing) the course with around 75%
-accuracy. We think we can do better -- the aim of this learning lab is
-to do just that.
-
-As a bit more background, the online science classes we explore in this
-chapter were designed and taught by instructors through a state-wide
-online course provider designed to supplement---but not
-replace---students' enrollment in their local school. For example,
-students may have chosen to enroll in an online physics class because
-one was not offered at their school. The data were originally collected
-for a research study, which utilized a number of different data sources
-to understand students' course-related motivation. These datasets
-included:
-
-1.  A self-report survey assessing three aspects of students' motivation
-2.  Log-trace data, such as data output from the learning management
-    system (LMS)
-3.  Discussion board data
-4.  Academic achievement data provided in a gradebook (for the first 20
-    assignments students' completed)
-
-*Data sources 1-3 are already joined together in the data frame we named
-`d` above*
-
-*Data source 4 - the gradebook data - is separate, in the data frame we
-named `gb`.*
-
-Take a look at the two data frames by running the two chunks below.
+We might be interested in how many assessments there are per course.
 
 ```{r}
-d
+assessments %>% 
+    count(assessment_type, code_module, code_presentation)
+
+assessments %>% 
+    select(date_submitted, date) %>% 
+    mutate(delta_from_date = date_submitted - date)
+
+assessments %>% 
+    count(date) %>% 
+    ggplot(aes(x = date, y = n)) +
+    geom_point()
+
+assessments %>% 
+    summarize(mean_date = mean(date, na.rm = TRUE),
+              median_date = median(date, na.rm = TRUE),
+              sd_date = sd(date, na.rm = TRUE))
+
+assessments %>% 
+    summarize(min_date = min(date, na.rm = TRUE),
+              max_date = max(date, na.rm = TRUE))
+
+assessments %>% 
+    summarize(quantile_date = quantile(date, na.rm = TRUE))
+
+code_module_dates <- assessments %>% 
+    group_by(code_module, code_presentation) %>% 
+    summarize(quantile_cutoff_date = quantile(date, probs = .25, na.rm = TRUE))
+
+assessments <- assessments %>% 
+    left_join(code_module_dates)
+
+assessments_filtered <- assessments %>% 
+    filter(date < quantile_cutoff_date)
+
+assessments_summarized <- assessments_filtered %>% 
+    mutate(weighted_score = score * weight) %>% 
+    group_by(id_student) %>% 
+    summarize(mean_weighted_score = mean(weighted_score)) %>% 
+    arrange(id_student)
 ```
 
 ```{r}
-gb
-```
-
-You'll notice the data have different dimensions. We'll have to take
-some steps to further process the gradebook data. In doing so, we'll
-engineer some features. Let's take a closer look at the gradebook data.
-
-```{r}
-gb %>% 
-    glimpse()
-```
-
-#### [Your Turn]{style="color: green;"} ⤵
-
-You may also want to take a look *through* the data with the `View()`
-function; try that out below (asking for help or searching the Internet
-for help as needed!).
-
-```{r, eval = FALSE}
-
-```
-
-Let's first consider what these variables are, focusing just on some key
-variables:
-
--   `course_id`: an identifier for the course
--   `student_id`: an identifier for the student
--   `gradebook_item`: the name of the gradebook entry/assignment
--   `item_position`: the position of the gradebook item in the
-    gradebook; differs between students
--   `grade_category`: `Hw` (homework), `Qz` (quiz or test), or `NA` (not
-    classified)
--   `points_earned`: the number of points student earned
--   `points_possible`: the number of points possible to earn
-
-What are some *features* we could create based on these variables? And
-how might we create them?
-
-#### [Your Turn]{style="color: green;"} ⤵
-
-Add a few ideas below before proceeding:
-
--   
-
--   
-
-```{r}
-gb
-```
-
-Let's get to feature engineering. First, we'll have to *group* our data
-by course and student ID.
-
-```{r}
-gb <- gb %>% 
-    group_by(course_id, student_id)
-```
-
-#### [Your Turn]{style="color: green;"} ⤵
-
-Next, let's create a variable with the percent of points earned (points
-earned divided by points **possible**). To do so, add to the `mutate()`
-function below. Create a new variable called `percent_earned`. You can
-read more about mutate [here](https://r4ds.had.co.nz/transform.html)
-
-```{r, warning = FALSE}
-gb <- gb %>% 
-    mutate()
-```
-
-Finally, let's create three features from the gradebook data:
-
--   The overall percent of points earned (*across* all assignments)
--   The variability (in standard deviation units) in the percent earned
-    (*between* assignments)
--   The number of assignments for which students earned 100% of the
-    possible points
-
-You can probably imagine others; you're welcome to explore adding those,
-too.
-
-We'll use *summarize* to do this, as below:
-
-```{r}
-gb <- gb %>% 
-    summarize(overall_percent_earned = sum(points_earned, na.rm = TRUE) / sum(points_possible, na.rm = TRUE),
-              variability_percent_earned = sd(percent_earned, na.rm = TRUE),
-              n_with_100_pct = sum(percent_earned == 1, na.rm = TRUE)) %>% 
-    select(student_id, course_id, overall_percent_earned, variability_percent_earned, n_with_100_pct) # selecting just the variables we'll use
-```
-
-We have one last step before we can get to modeling (`gb`) - joining
-this data with all of the other data (`d`).
-
-```{r}
-d <- d %>% 
-    left_join(gb)
-```
-
-#### [Your Turn]{style="color: green;"} ⤵
-
-Let's talk a look at the joined data to make sure everything is looking
-as we intend it to. Inspect the data using the code chunk below:
-
-```{r}
-
+students <- students %>% 
+    left_join(assessments_summarized)
 ```
 
 ## Step 1. Split data
 
-Next, we'll split the data, just like before. We'll set the seed again
-to ensure that we obtain the same results (when running the analysis
-again and between analysts at the LASER Institute). We use an 80% split
-again; how will you "spend" your data? You can change this number if you
-wish, but consider how much data you have to "spend" for both training
-and testing.
+-   The *training set* is used to estimate develop and compare models,
+    feature engineering techniques, tune models, etc.
+
+-   The *test set* is held in reserve until the end of the project, at
+    which point there should only be one or two models under serious
+    consideration. It is used as an unbiased source for measuring final
+    model performance.
+
+There are different ways to create these partitions of the data and
+there is no uniform guideline for determining how much data should be
+set aside for testing. The proportion of data can be driven by many
+factors, including the size of the original pool of samples and the
+total number of predictors.
+
+Here, we split the data. We do so using our first {tidymodels}
+function - `initial_split()`.
+
+It is common when beginning a modeling project to [separate the data
+set](https://bookdown.org/max/FES/data-splitting.html) into two
+partitions. Why do we choose an 80% split (see `prop = .80` below)
+
+This is to reserve a sufficient number of cases for testing our fitted
+model later. You can change this number if you wish.
+
+After you decide how much to set aside, the most common approach for
+actually partitioning your data is to use a random sample. For our
+purposes, we'll use random sampling to select 20% for the test set and
+use the remainder for the training set, which are the defaults for the
+{[rsample](https://tidymodels.github.io/rsample/)} package.
+
+Additionally, since random sampling uses random numbers, it is important
+to set the random number seed. This ensures that the random numbers can
+be reproduced at a later time (if needed). We pick the first date on
+which we may carry out this learning lab as the seed, but any number
+will work!
+
+The function `initial_split()` function from the {rsample} package takes
+the original data and saves the information on how to make the
+partitions. The {rsample} package has two aptly named functions for
+created a training and testing data set called `training()` and
+`testing()`, respectively.
+
+Run the following code to split the data:
 
 ```{r}
-set.seed(20220712)
+set.seed(20230712)
 
-train_test_split <- initial_split(d, prop = .80)
-
+train_test_split <- initial_split(students, prop = .80)
 data_train <- training(train_test_split)
 ```
 
-Here's a key difference! Pay careful attention to this next line of
-code, which sets the groundwork for *k*-folds cross-validation. Note
-that in the function below (run `?vfold_cv` to see more), the letter *v*
-is used instead of *k*, though they share a meaning, as the
-documentation notes).
+Go ahead and type `data_train` and `d` into the console (in steps) to
+check that this data set indeed has 80% of the number of observations as
+in the larger data. Do that in the chunk below:
 
 ```{r}
-kfcv <- vfold_cv(data_train) # this differentiates this from what we did before
-# before, we simple used data_train to fit our model
-kfcv
-```
 
-#### [Your Turn]{style="color: green;"} ⤵
-
-Above, we split the data into 10 different folds. Change the number of
-folds from 10 to 20 by changing the value of v; 10 is simply the
-default. For help, run `?vfold_cv` to get a hint.
-
-```{r}
-kfcv <- vfold_cv(data_train) # this differentiates this from what we did before
-# before, we simple used data_train to fit our model
-kfcv
 ```
 
 ## Step 2: Engineer features and write down the recipe
 
-Here, we'll carry out several feature engineering steps.
+We'll engage in a very basic feature engineering step, though we'll do
+this *much* more in the next learning lab. Read more about feature
+engineering [here](https://www.tmwr.org/recipes.html).
 
-#### [Your Turn]{style="color: green;"} ⤵
+To do feature engineering, we introduce another {tidymodels} package,
+[recipes](https://recipes.tidymodels.org/), which is designed to help
+you prepare your data *before* training your model - in other words, to
+engage in *feature engineering*. That's all we'll say about this now;
+we'll dive into feature engineering in the third learning lab.
 
-Read about [possible steps](https://www.tmwr.org/recipes.html) and see
-more about how the following five feature engineering steps below work.
-Like in the first learning lab, this is the step in which we set the
-recipe.
+**For now, we'll just use the variables as they are -- we'll do *no*
+feature engineering at this stage.**
 
--   `step_normalize(all_numeric_predictors())`
--   `step_nzv(all_predictors())`
--   `step_novel(all_nominal_predictors())`
--   `step_dummy(all_nominal_predictors())`
--   `step_impute_knn(all_predictors(), all_outcomes())`
+To get started, let's create a recipe for a simple logistic regression
+model. Before training the model, we can use a recipe.
 
-```{r,}
-recipe(final_grade ~ ., data = data_train) %>% # **edit**: change t final grade
-    update_role(student_id, course_id, section, new_role = "ID variable") %>% # this can be any string; for ID variables
-    step_normalize(all_numeric_predictors()) %>% # standardizes numeric variables
-    step_nzv(all_predictors()) %>% # remove predictors with a "near-zero variance"
-    step_dummy(all_nominal_predictors()) %>%  # dummy code all factor variables
-    step_novel(all_nominal_predictors()) %>% # add a musing label for factors
-    step_impute_knn(all_predictors()) # impute missing data for all predictor variables
+The
+[`recipe()`function](https://recipes.tidymodels.org/reference/recipe.html) as
+we used it here has two arguments:
+
+-   A **formula**. Any variable on the left-hand side of the tilde (`~`)
+    is considered the model outcome (`code`, in our present case). On
+    the right-hand side of the tilde are the predictors. Variables may
+    be listed by name, or you can use the dot (`.`) to indicate all
+    other variables as predictors.
+
+-   The **data**. A recipe is associated with the data set used to
+    create the model. This will typically be the *training* set, so
+    `data = train_data` here. Naming a data set doesn't actually change
+    the data itself; it is only used to catalog the names of the
+    variables and their types, like factors, integers, dates, etc.
+
+Let's create a recipe where we predict `withdrawn` (the outcome
+variable) on the basis of the `disability` and `imd_band` (predictor)
+variables.
+
+```{r}
+my_rec <- recipe(withdrawn ~ disability + imd_band +
+                     date_registration + mean_weighted_score, data = data_train)
 ```
 
 ## Step 3: Specify the model and workflow
 
-Next, we specify the model and workflow, using the same engine *but a
-different engine and mode*, here, regression for a *continuous outcome*.
-Specifically, we use:
-
--   using the `linear_reg()` function to set the *model*
--   using `set_engine("glm")` to set the *engine*
--   finally, using `set_mode("regression"))`
+Next, we specify the model - using the `logistic_reg()` function to set
+the *model* - using `set_engine("glm")` to set the *engine* - finally,
+using `set_mode("classification"))` to set the "*mode*" to
+classification; this could be changed to regression for a
+continuous/numeric outcome:
 
 ```{r}
 # specify model
 my_mod <-
-    linear_reg() %>% 
-    set_engine("lm") %>%
-    set_mode("regression")
-```
-
-Last, we'll put the pieces together - the model and recipe - in a
-workflow.
-
-```{r}
-# specify workflow
-my_wf <-
-    workflow() %>%
-    add_model(my_mod) %>% 
-    add_recipe(my_rec)
+    logistic_reg() %>% 
+    set_engine("glm") %>% # generalized linear model
+    set_mode("classification") # since we are predicting a dichotomous outcome, specify classification; for a number, specify regression
 ```
 
 ## Step 4: Fit model
 
-Note that here we use the `kfcv` data. We'll run that in the next chunk.
+We will want to use our recipes created earlier across several steps as
+we train and test our model. To simplify this process, we can use a
+*model workflow*, which pairs a model and recipe together.
 
-We can ignore the warnings and messages we see.
+This is a straightforward approach because different recipes are often
+needed for different models, so when a model and recipe are bundled, it
+becomes easier to train and test *workflows*.
 
-```{r, warning = FALSE}
-fitted_model_resamples <- fit_resamples(my_wf, resamples = kfcv,
-                              control = control_grid(save_pred = TRUE)) # this allows us to inspect the predictions
+So, last, we'll put the pieces together - the model and recipe.
+
+We'll use the {[workflows](https://workflows.tidymodels.org/)} package
+from tidymodels to bundle our parsnip model (`my_mod`) with our first
+recipe (`my_rec`).
+
+```{r}
+my_wf <-
+    workflow() %>% # create a workflow
+    add_model(my_mod) %>% # add the model we wrote above
+    add_recipe(my_rec) # add our recipe we wrote above
+```
+
+Finally, we'll fit our model.
+
+```{r}
+fitted_model <- fit(my_wf, data = data_train)
+```
+
+Importantly, here, we can look at the model. Type `fitted_model` in a
+code chunk and note what you observe, focusing on the coefficients.
+While we don't typically interpret the coefficients for a machine
+learning model, it's important to recognize that many models *do*
+produce coefficients we *could* interpret. Instead, we focus on how the
+model does with respect to predicting the dependent variable.
+
+```{r}
+fitted_model
+```
+
+**Observations**
+
+-   
+
+Finally, we'll use the `last_fit` function, which is the key here: note
+that it uses the `train_test_split` data---not just the training data.
+
+Here, then, we fit the data *using the training data set* and evaluate
+its accuracy using the *testing data set* (which is not used to train
+the model).
+
+```{r}
+final_fit <- last_fit(fitted_model, train_test_split)
 ```
 
 ## Step 5: Interpret accuracy
+
+```{r}
+collect_metrics(final_fit)
+```
 
 What did we get as output? Let's take a look at the metrics. This is
 critical to understanding how and why we use k-folds cross validation.

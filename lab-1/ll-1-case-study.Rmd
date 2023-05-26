@@ -102,11 +102,10 @@ Please read this article.
 The data can be downloaded at the above link; however, for our purposes,
 they are already downloaded to the `data` sub-folder.
 
-We'll use the `read_csv()` function to load the files -- two in total,
-with data on students and assessments. Note: we have done some minimal
-processing of these files to make getting us started easier. If you're
-interested in what we've done, check out the `oulad.R` file in the
-`lab-1` folder.
+We'll use the `read_csv()` function to load the file. Note: we have done
+some minimal processing of these files to make getting us started
+easier. If you're interested in what we've done, check out the `oulad.R`
+file in the `lab-1` folder.
 
 For now, please read in the `oulad-students.csv` file. Use the
 `read_csv()` function to do this, paying attention to where those files
@@ -118,9 +117,9 @@ students <- read_csv("data/oulad-students.csv")
 
 You can see a description of the data
 [here](https://analyse.kmi.open.ac.uk/open_dataset#description). The
-students file includes three files joined together: studentInfo, courses,
-and studentRegistration. Take a look at the data description to get a sense for
-what variables are in which data frame.
+students file includes three files joined together: studentInfo,
+courses, and studentRegistration. Take a look at the data description to
+get a sense for what variables are in which data frame.
 
 In the chunk below, examine the data set using a function or means of
 your choice (such as just *printing* the data set by typing its name or
@@ -186,7 +185,7 @@ having a disability. In this case, there are only two values for the
 disability variable, so we can simply convert it directly to a factor.
 Look at the code you used above, *modifying* it for the disability
 variable. This will be an *independent variable*, or a predictor
-variablve.
+variable.
 
 ```{r}
 students <- students %>% 
