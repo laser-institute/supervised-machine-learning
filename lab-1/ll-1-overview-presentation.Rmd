@@ -62,6 +62,37 @@ xaringanExtra::use_tile_view()
 
 ---
 
+# Agenda
+
+.panelset[
+
+.panel[.panel-name[Discussion]
+
+- 
+- 
+-
+    
+]
+
+.panel[.panel-name[Conceptual Overview]
+
+- 
+- 
+-
+
+]
+
+.panel[.panel-name[Coding Walkthrough]
+
+- 
+- 
+- 
+
+]
+]
+
+---
+
 # Background
 
 - We want to make predictions about an outcome of interest based on predictor variables that we think are related to the outcome. 

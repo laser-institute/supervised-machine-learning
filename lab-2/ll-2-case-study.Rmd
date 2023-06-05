@@ -1,5 +1,5 @@
 ---
-title: 'Learning Lab 2 Case Study: Feature Engineering'
+title: 'Learning Lab 2 Case Study: Interpretation'
 author: ""
 date: "`r format(Sys.Date(),'%B %e, %Y')`"
 output:
@@ -19,34 +19,196 @@ bibliography: lit/references.bib
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-This case study is similar to the first, but it differs in three key
-ways:
+## Background
 
+When we left off the first case study, we saw that our model was *pretty
+accurate*. We can and will do better in terms of accuracy. But, the
+accuracy value we found also raises a broader question: How good was our
+model in terms of making predictions?
 
-Our driving question for this case study is: **How much do new
-predictors improve the prediction quality?**
+While accuracy is an easy to understand and interpret value, it provides
+a limited answer to the above question about how good our model was in
+terms of making predictions.
 
-We use a data set of many online classes to answer this question. To
-answer it, we will engage in several feature engineering steps.
+In this learning and case study, we explore a variety of ways to
+understand how good of a predictive model ours is. We do this through a
+variety of means:
+
+-   Other **statistics**, such as sensitivity and specificity
+
+-   **Tables**--particularly, a confusion matrix
+
+Our driving question for this case study, then, is: *How good is our
+model at making predictions?*
+
+We'll use the [Open University Learning Analytics Dataset
+(OULAD)](https://analyse.kmi.open.ac.uk/open_dataset) again--this time,
+adding another data source, one on students' performance on assessments.
 
 ## Step 0: Loading and setting up
 
-Like in the first learning lab, we'll first load several packages.
+Like in the first learning lab, we'll first load several packages --
+{tidyverse}, {tidymodels}, and {janitor}. Make sure these are installed
+(via `install.packages()`). Note that if they're already installed, you
+don't need to install them again.
 
-```{r, load packages}
+```{r}
 library(tidyverse)
 library(tidymodels)
+library(janitor)
 ```
 
 Like in the code-along for the overview presentation, let's take a look
 at the data and do some processing of it.
 
-We'll load the students file together; you'll write code to read the assessments file. Please assign the name assessments to the loaded assessments file.
+We'll load the students file together; you'll write code to read the
+assessments file, which is named "oulad-assessments.csv". Please assign
+the name `assessments` to the loaded assessments file.
 
 ```{r}
 students <- read_csv("data/oulad-students.csv")
 assessments <- read_csv("data/oulad-assessments.csv")
 ```
+
+#### [Your Turn]{style="color: green;"} ⤵
+
+In the last learning lab, we used the `count()` function. Let's practice
+that again, by counting the number of of assessments of different types.
+If you need, recall that the data dictionary is
+[here](https://analyse.kmi.open.ac.uk/open_dataset). Note what the
+different types of assessments mean.
+
+```{r}
+assessments %>% 
+    count(assessment_type)
+```
+
+-   
+
+#### [Your Turn]{style="color: green;"} ⤵
+
+We'll now use another function--like `count()`, from the {tidyverse}.
+Specifically, we'll use the `distinct()` function. This returns the
+unique (or distinct) values for a specified variable. Learn more about
+`distinct()`
+[here](https://dplyr.tidyverse.org/reference/distinct.html). Below, find
+the distinct assessment IDs.
+
+```{r}
+assessments %>% 
+    distinct(id_assessment) # this many unique assessments
+```
+
+Let's explore the assessments data a bit.
+
+We might be interested in how many assessments there are per course. To
+calculate that, we need to `count()` several variables at once; when
+doing this, `count()` tabulates the number of unique combinations of the
+variables passed to it.
+
+```{r}
+assessments %>% 
+    count(assessment_type, code_module, code_presentation)
+```
+
+Let's explore the dates assignments were submitted a bit -- using the
+`summarize()` function:
+
+```{r}
+assessments %>% 
+    summarize(mean_date = mean(date, na.rm = TRUE), # find the mean date for assignments
+              median_date = median(date, na.rm = TRUE), # find the median
+              sd_date = sd(date, na.rm = TRUE), # find the sd
+              min_date = min(date, na.rm = TRUE), # find the min
+              max_date = max(date, na.rm = TRUE)) # find the mad
+```
+
+What can we take from this? It looks like, on average, the average (mean
+and median) date assignments were due was around 130 -- 130 days after
+the start of the course. The first assignment seems to have been due 12
+days into the course, and the last 261 days after.
+
+Crucially, though, these dates vary by course. Thus, we need to first
+group the data by course. Let's use a different function this time --
+`quantile()`, and calculate the first quantile value. Our reasoning is
+that we want to be able to act to support students, and if we wait until
+after the average assignment is due, then that might be too late.
+Whereas the first quantile comes approximately one-quarter through the
+semester --- with, therefore, more time to intervene.
+
+```{r}
+assessments %>% 
+    group_by(code_module, code_presentation) %>% # first, group by course (module: course; presentation: semester)
+    summarize(mean_date = mean(date, na.rm = TRUE),
+              median_date = median(date, na.rm = TRUE),
+              sd_date = sd(date, na.rm = TRUE),
+              min_date = min(date, na.rm = TRUE),
+              max_date = max(date, na.rm = TRUE),
+              first_quantile = quantile(date, probs = .25, na.rm = TRUE)) # find the first (25%) quantile
+```
+
+#### [Your Turn]{style="color: green;"} ⤵
+
+Alright, this is a bit complicated, but we can actually work with this
+data. Let's use just a portion of the above code, assigning it the name
+`code_module_dates`.
+
+```{r}
+code_module_dates <- assessments %>% 
+    group_by(code_module, code_presentation) %>% 
+    summarize(quantile_cutoff_date = quantile(date, probs = .25, na.rm = TRUE))
+```
+
+#### [Your Turn]{style="color: green;"} ⤵
+
+Let's take a look at what we just created; type `code_module_dates()`
+below:
+
+```{r}
+```
+
+What have we created? We found the date that is one-quarter of the way
+through the semester (in terms of the dates assignments are due).
+
+#### [Your Turn]{style="color: green;"} ⤵
+
+We can thus use this to group and calculate students' performance on
+assignments through this point. To do this, we need to use a join
+function --- `left_join()`, in particular. Please use `left_join()` to
+join together `assessments` and `code_module_dates`, with `assessments`
+being the "left" data frame, and `code_module_dates` the right. Save the
+output of the join the name `assessments_joined`.
+
+```{r}
+assessments_joined <- assessments %>% 
+    left_join(code_module_dates) # join the data based on course_module and course_presentation
+```
+
+We're almost there! The next few lines filter the assessments data so it
+only includes assessments before our cutoff date.
+
+```{r}
+assessments_filtered <- assessments_joined %>% 
+    filter(date < quantile_cutoff_date) # filter the data so only assignments before the cutoff date are included
+```
+
+Finally, we'll find the average score for each student.
+
+```{r}
+assessments_summarized <- assessments_filtered %>% 
+    mutate(weighted_score = score * weight) %>% # create a new variable that accounts for the "weight" (comparable to points) given each assignment
+    group_by(id_student) %>% 
+    summarize(mean_weighted_score = mean(weighted_score)) 
+```
+
+As a point of reflection here, note how much work we've done before
+we've gotten to the machine learning steps. Though a challenge, this is
+typical for both machine learning and more traditional statistical
+models: a lot of the work is in the preparation and data wrangling
+stages.
+
+Let's copy the code below that we used to process the students data
+(when processing the `withdrawn` and `imd_band` variables).
 
 ```{r}
 students <- students %>% 
@@ -67,170 +229,49 @@ students <- students %>%
     mutate(imd_band = as.integer(imd_band)) # this changes the levels into integers based on the order of the factor levels
 ```
 
-Let's take a look at how many unique assessments there are, using the `count()` function. Let's also examine the number of different *types* of assessments.
+#### [Your Turn]{style="color: green;"} ⤵
+
+Finally, let's join together `students` and `assessments_summarized`,
+assigning the joined the name `students_and_assessments`.
 
 ```{r}
-assessments %>% 
-    distinct(id_assessment) # this many unique assessments
-
-assessments %>% 
-    count(assessment_type)
-```
-
-We might be interested in how many assessments there are per course.
-
-```{r}
-assessments %>% 
-    count(assessment_type, code_module, code_presentation)
-
-assessments %>% 
-    select(date_submitted, date) %>% 
-    mutate(delta_from_date = date_submitted - date)
-
-assessments %>% 
-    count(date) %>% 
-    ggplot(aes(x = date, y = n)) +
-    geom_point()
-
-assessments %>% 
-    summarize(mean_date = mean(date, na.rm = TRUE),
-              median_date = median(date, na.rm = TRUE),
-              sd_date = sd(date, na.rm = TRUE))
-
-assessments %>% 
-    summarize(min_date = min(date, na.rm = TRUE),
-              max_date = max(date, na.rm = TRUE))
-
-assessments %>% 
-    summarize(quantile_date = quantile(date, na.rm = TRUE))
-
-code_module_dates <- assessments %>% 
-    group_by(code_module, code_presentation) %>% 
-    summarize(quantile_cutoff_date = quantile(date, probs = .25, na.rm = TRUE))
-
-assessments <- assessments %>% 
-    left_join(code_module_dates)
-
-assessments_filtered <- assessments %>% 
-    filter(date < quantile_cutoff_date)
-
-assessments_summarized <- assessments_filtered %>% 
-    mutate(weighted_score = score * weight) %>% 
-    group_by(id_student) %>% 
-    summarize(mean_weighted_score = mean(weighted_score)) %>% 
-    arrange(id_student)
-```
-
-```{r}
-students <- students %>% 
+students_and_assessments <- students %>% 
     left_join(assessments_summarized)
 ```
 
+Big picture, we've added another measure -- another feature -- that we
+can use to make predictions: students' performance on assessments 1/4 of
+the way through the course.
+
+We're now ready to proceed to our machine learning steps!
+
 ## Step 1. Split data
 
--   The *training set* is used to estimate develop and compare models,
-    feature engineering techniques, tune models, etc.
-
--   The *test set* is held in reserve until the end of the project, at
-    which point there should only be one or two models under serious
-    consideration. It is used as an unbiased source for measuring final
-    model performance.
-
-There are different ways to create these partitions of the data and
-there is no uniform guideline for determining how much data should be
-set aside for testing. The proportion of data can be driven by many
-factors, including the size of the original pool of samples and the
-total number of predictors.
-
-Here, we split the data. We do so using our first {tidymodels}
-function - `initial_split()`.
-
-It is common when beginning a modeling project to [separate the data
-set](https://bookdown.org/max/FES/data-splitting.html) into two
-partitions. Why do we choose an 80% split (see `prop = .80` below)
-
-This is to reserve a sufficient number of cases for testing our fitted
-model later. You can change this number if you wish.
-
-After you decide how much to set aside, the most common approach for
-actually partitioning your data is to use a random sample. For our
-purposes, we'll use random sampling to select 20% for the test set and
-use the remainder for the training set, which are the defaults for the
-{[rsample](https://tidymodels.github.io/rsample/)} package.
-
-Additionally, since random sampling uses random numbers, it is important
-to set the random number seed. This ensures that the random numbers can
-be reproduced at a later time (if needed). We pick the first date on
-which we may carry out this learning lab as the seed, but any number
-will work!
-
-The function `initial_split()` function from the {rsample} package takes
-the original data and saves the information on how to make the
-partitions. The {rsample} package has two aptly named functions for
-created a training and testing data set called `training()` and
-`testing()`, respectively.
-
-Run the following code to split the data:
+This is identical to what we did in the first learning lab, using the
+`students_and_assessments` data. We'll also create a testing data set
+we'll use later.
 
 ```{r}
 set.seed(20230712)
 
-train_test_split <- initial_split(students, prop = .80)
+train_test_split <- initial_split(students_and_assessments, prop = .80)
 data_train <- training(train_test_split)
-```
-
-Go ahead and type `data_train` and `students` into the console (in steps) to
-check that this data set indeed has 80% of the number of observations as
-in the larger data. Do that in the chunk below:
-
-```{r}
-data_train
-students
+data_test <- testing(train_test_split)
 ```
 
 ## Step 2: Engineer features and write down the recipe
 
-We'll engage in a very basic feature engineering step, though we'll do
-this *much* more in the next learning lab. Read more about feature
-engineering [here](https://www.tmwr.org/recipes.html).
-
-To do feature engineering, we introduce another {tidymodels} package,
-[recipes](https://recipes.tidymodels.org/), which is designed to help
-you prepare your data *before* training your model - in other words, to
-engage in *feature engineering*. That's all we'll say about this now;
-we'll dive into feature engineering in the third learning lab.
-
-**For now, we'll just use the variables as they are -- we'll do *no*
-feature engineering at this stage.**
-
-To get started, let's create a recipe for a simple logistic regression
-model. Before training the model, we can use a recipe.
-
-The
-[`recipe()`function](https://recipes.tidymodels.org/reference/recipe.html) as
-we used it here has two arguments:
-
--   A **formula**. Any variable on the left-hand side of the tilde (`~`)
-    is considered the model outcome (`code`, in our present case). On
-    the right-hand side of the tilde are the predictors. Variables may
-    be listed by name, or you can use the dot (`.`) to indicate all
-    other variables as predictors.
-
--   The **data**. A recipe is associated with the data set used to
-    create the model. This will typically be the *training* set, so
-    `data = train_data` here. Naming a data set doesn't actually change
-    the data itself; it is only used to catalog the names of the
-    variables and their types, like factors, integers, dates, etc.
-
-Let's create a recipe where we predict `withdrawn` (the outcome
-variable) on the basis of the `disability` and `imd_band` (predictor)
-variables. We'll add several other variables, including the date registration variable we used in the last learning lab, gender and highest education levels, and students' assessment scores through 1/4 of the course.
+We'll also specify the recipe, adding our `mean_weighted_score` variable
+we calculated above as well as variables we used in LL1 (case study and
+badge). Note how we dummy code three variables using `step_dummy()`
+(described further in the first learning lab).
 
 ```{r}
 my_rec <- recipe(withdrawn ~ disability + imd_band +
                      date_registration + 
                      gender + highest_education + 
-                     mean_weighted_score, data = data_train) %>% 
+                     mean_weighted_score, 
+                 data = data_train) %>% 
     step_dummy(disability) %>% 
     step_dummy(gender) %>% 
     step_dummy(highest_education)
@@ -238,42 +279,23 @@ my_rec <- recipe(withdrawn ~ disability + imd_band +
 
 ## Step 3: Specify the model and workflow
 
-Next, we specify the model - using the `logistic_reg()` function to set
-the *model* - using `set_engine("glm")` to set the *engine* - finally,
-using `set_mode("classification"))` to set the "*mode*" to
-classification; this could be changed to regression for a
-continuous/numeric outcome:
+These steps are also the same as in LL1.
 
 ```{r}
 # specify model
 my_mod <-
     logistic_reg() %>% 
-    set_engine("glm") %>% # generalized linear model
-    set_mode("classification") # since we are predicting a dichotomous outcome, specify classification; for a number, specify regression
-```
+    set_engine("glm") %>%
+    set_mode("classification")
 
-## Step 4: Fit model
-
-We will want to use our recipes created earlier across several steps as
-we train and test our model. To simplify this process, we can use a
-*model workflow*, which pairs a model and recipe together.
-
-This is a straightforward approach because different recipes are often
-needed for different models, so when a model and recipe are bundled, it
-becomes easier to train and test *workflows*.
-
-So, last, we'll put the pieces together - the model and recipe.
-
-We'll use the {[workflows](https://workflows.tidymodels.org/)} package
-from tidymodels to bundle our parsnip model (`my_mod`) with our first
-recipe (`my_rec`).
-
-```{r}
+# specify workflow
 my_wf <-
     workflow() %>% # create a workflow
     add_model(my_mod) %>% # add the model we wrote above
     add_recipe(my_rec) # add our recipe we wrote above
 ```
+
+## Step 4: Fit model
 
 Finally, we'll fit our model.
 
@@ -281,120 +303,127 @@ Finally, we'll fit our model.
 fitted_model <- fit(my_wf, data = data_train)
 ```
 
-Importantly, here, we can look at the model. Type `fitted_model` in a
-code chunk and note what you observe, focusing on the coefficients.
-While we don't typically interpret the coefficients for a machine
-learning model, it's important to recognize that many models *do*
-produce coefficients we *could* interpret. Instead, we focus on how the
-model does with respect to predicting the dependent variable.
+Finally, we'll use the `last_fit` function, but we'll add something a
+little different - we'll add the metric set here. To the above, we'll
+add another common metric - Cohen's Kappa, which is similar to accuracy,
+but which accounts for chance agreement.
+
+To do so, we have to specify *which* metrics we want to use using the
+`metric_set()` function (see all of the available options
+[here](https://yardstick.tidymodels.org/articles/metric-types.html)).
+Please specify six metrics in the metric set -- accuracy, sensitivty,
+specificity, ppv (recall), npv, and kappa. Assign the name
+`class_metrics` to the output of your use of the `metric_set()`
+function.
+
+#### [Your Turn]{style="color: green;"} ⤵
 
 ```{r}
-fitted_model
+class_metrics <- metric_set(accuracy, sensitivity, specificity, ppv, npv, kap) # add probs?
 ```
 
-**Observations**
-
--   
-
-Finally, we'll use the `last_fit` function, which is the key here: note
-that it uses the `train_test_split` data---not just the training data.
-
-Here, then, we fit the data *using the training data set* and evaluate
-its accuracy using the *testing data set* (which is not used to train
-the model).
+Then, please use `last_fit`, looking to how we did this in the last
+learning lab for a guide on how to specify the arguments. To the
+arguments, add `metrics = class_metrics`.
 
 ```{r}
-final_fit <- last_fit(fitted_model, train_test_split)
+final_fit <- last_fit(fitted_model, train_test_split, metrics = class_metrics)
 ```
+
+We're now ready to move on to interpreting the accuracy of our model.
 
 ## Step 5: Interpret accuracy
 
-```{r}
-collect_metrics(final_fit)
-```
-
-What did we get as output? Let's take a look at the metrics. This is
-critical to understanding how and why we use k-folds cross validation.
-Each of the rows below represents the accuracy (in the `.estimate`
-column) for each of the 20 folds that we used to train our model; our
-model was fit 20 times, and accuracy was calculated separately for each
-of these times. Next, we'll summarize these.
-
-Recall our definition of the Root Mean Squared Error (RMSE) - it is the
-*square root* of the mean of the squared error, or difference between
-the predicted and known *y* variables (here, students' final grade).
-Since this is the square root of a statistic that is squared, its
-interpretation can be considerably simplified: **RMSE can be interpreted
-as the average error, or difference between the predicted and known *y*
-variables (here, students' final grade)**. This, along with the Mean
-Squared Error (MSE), are the most common metrics of predictive accuracy
-for a numeric outcome such as students' final grade. See more about fit
-metrics for numeric/continuous outcomes (those utilized in a
-*regression* mode)
-[here](https://bradleyboehmke.github.io/HOML/process.html#regression-models).
-The goal is to minimize both the RMSE and MSE.
-
-Note that the common R-squared measure (`rsq` in the output) can also be
-interpreted. Though helpful descriptively, it has less useful as a
-measure of the predictive effectiveness of a trained model, and it
-should generally not be used to select between competing model
-specifications.
+Let's start with accuracy and a simple confusion matrix.
 
 ```{r}
-fitted_model_resamples %>% # **edit: this needs to be fitted_model_resamples** 
-    unnest(.metrics) %>% 
-    filter(.metric == "rmse") # we also get another metric, the RSQ; we focus just on RMSE for nwo
-```
+collect_predictions(final_fit) %>% View()
 
-Running the code below calculates the *mean* of the metrics we inspected
-in the previous chunk. Focus on the **mean** variable for the accuracy
-metric. This can be interpreted in the precise same was as our accuracy
-measure we calculated in learning lab 1 - this is the percentage of
-students the model correctly classified as passing or not passing the
-course.
-
-```{r}
-# fit stats
-fitted_model_resamples %>%
-    collect_metrics()
-```
-
-We can imagine trying out many different sets of features (engineered in
-different ways). So long as we evaluate the accuracy using the
-resampling method used above, we can repeat this process as needed.
-Then, we can carry out a process like that in the first learning lab -
-fitting the model not using the different *folds* obtained through the
-`kfcv` function, but rather using the **entire training data set**.
-
-```{r, warning = FALSE}
-fitted_model <- fit(my_wf, data_train)
-```
-
-Then, we can use the model to predict students passing (or not passing)
-using our testing data *that we have not used for any purpose until this
-point* --- and interpret that model. This output is suggestive to us of
-how the model would perform on new data, as this testing data set has
-not been used to make any decisions about the feature engineering.
-
-```{r}
-final_fit <- last_fit(fitted_model, train_test_split)
-```
-
-```{r}
-collect_metrics(final_fit)
-```
-
-Last, we can plot the predicted versus known *y* variables to gain a
-graphical sense for how the model performed:
-
-```{r}
 collect_predictions(final_fit) %>% 
-    ggplot(aes(x = .pred, y = final_grade)) +
-    geom_point()
+    conf_mat(.pred_class, withdrawn)
 ```
 
-Consider making a modification to the above plot (small or large) using
-ggplot2.
+```{r}
+collect_metrics(final_fit)
+```
+
+The table below elaborates on the meaning of these statistics:
+
+| Statistic           | Interpretation                                                                                   |
+|--------------------|----------------------------------------------------|
+| Accuracy            | Proportion of the population that is true positive *or* true negative                            |
+| True positive (TP)  | Proportion of the population that is affected by a condition and correctly tested positive       |
+| True negative (TN)  | Proportion of the population that is not affected by a condition and correctly tested negative   |
+| False positive (FP) | Proportion of the population that is not affected by a condition and incorrectly tested positive |
+| False negative (FN) | Proportion of the population that is affected by a condition and incorrectly tested positive.    |
+
+Here's where things get interesting: There are other statistics that
+have different denominators.
+
+Recall from the overview presentation that we can slice and dice the
+confusion matrix to calculate statistics that give us insights into the
+predictive utility of the model.
+
+|                                               |                |                                                                                                                                |                                                                                    |           |
+|---------------|---------------|---------------|---------------|---------------|
+| **Statistic**                                 | **Equation**   | **Interpretation**                                                                                                             | **Question Answered**                                                              | **Value** |
+| **Sensitivity** (AKA recall)                  | TP / (TP + FN) | Proportion of those who are affected by a condition and correctly tested positive                                              | Out of all the actual positives, how many did we correctly predict?                |           |
+| **Specificity**                               | TN / (FP + TN) | Proportion of those who are not affected by a condition and correctly tested negative;                                         | Out of all the actual negatives, how many did we correctly predict?                |           |
+| **Precision** (AKA Positive Predictive Value) | TP / (TP + FP) | Proportion of those who tested positive who are affected by a condition                                                        | Out of all the instances we predicted as positive, how many are actually positive? |           |
+| **Negative Predictive Value**                 | TN / (TN + FN) | Proportion of those who tested positive who are not affected by a condition; *the probability that a negative test is correct* | Out of all the instances we predicted as negative, how many are actually negative? |           |
+
+So, what does this hard-won by output tell us? Let's interpret each
+statistic carefully in the table below. Please add the value and provide
+a *substantive interpretation*. One is provided to get you started.
+
+|                                           |           |                                                                                                                            |
+|----------------------|----------------------|----------------------------|
+| **Statistic**                             | **Value** | **Substantive Interpretation**                                                                                             |
+| Accuracy                                  |           |                                                                                                                            |
+| Sensitivity (AKA recall)                  | .997      | The model is remarkably good at doing this; practically all of the students who withdrew were correctly predicted as such. |
+| Specificity                               |           |                                                                                                                            |
+| Precision (AKA Positive Predictive Value) |           |                                                                                                                            |
+| Negative Predictive Value                 |           |                                                                                                                            |
+| Cohen's Kappa                             |           |                                                                                                                            |
+
+This process might suggest to you how a "good" model isn't necessarily
+one that is the most accurate, but instead is one that has good values
+for statistics that matter given our particular question and context.
+
+In [Baker et al.
+(2020)](https://www.tandfonline.com/doi/full/10.1080/10824669.2019.1670065),
+the authors create a precision-recall graph - one that demonstrates the
+trade-off between optimizing these two statistics. Review their paper -
+especially the results section - to see the graph they present.
+
+> Baker, R. S., Berning, A. W., Gowda, S. M., Zhang, S., & Hawn, A.
+> (2020). Predicting K-12 dropout. Journal of Education for Students
+> Placed at Risk (JESPAR), 25(1), 28-54.
+
+We can create a comparable graph for our model, which can help us
+understand how we can consider the trade-off between a model that
+optimizes between correctly predicting actual students who will withdraw
+(recall, or sensitivity) and not falsely predicting as students who will
+withdraw those who do not (precision). We'll have to make the
+predictions and bind them to our data set.
+
+```{r}
+predictions <- fitted_model %>%
+  predict(new_data = data_test, type = "prob") # make predictions with our testing data using predict()
+
+data_for_pr_curve <- data_test %>% 
+    bind_cols(predictions) # combine the predictions with the data_test data, which includes the known withdrawal status
+
+pr_curve(data_for_pr_curve, withdrawn, .pred_1) %>% 
+  # filter(.threshold < 1.01) %>% 
+  ggplot(aes(x = recall, y = precision, color = .threshold)) +
+  geom_path() +
+  coord_equal() +
+  theme_bw() +
+    scale_color_gradient(low = "white", high = "black")
+```
+
+Let's focus on
 
 ### 🧶 Knit & Check ✅
 

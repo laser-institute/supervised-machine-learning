@@ -1,5 +1,5 @@
 ---
-title: 'Learning Lab 1 Case Study'
+title: 'Learning Lab 1 Case Study: Prediction'
 author: ""
 date: "`r format(Sys.Date(),'%B %e, %Y')`"
 output:
@@ -12,11 +12,8 @@ output:
 editor_options:
   markdown:
     wrap: 72
+bibliography: lit/references.bib
 ---
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
-```
 
 [First, please add your name above!]{.underline}
 
@@ -180,8 +177,9 @@ students <- students %>%
     mutate(withdrawn = as.factor(withdrawn)) # makes the variable a factor, helping later steps
 ```
 
-We'll create another predictor variable for students' self-reported disability status, 
-but we'll do this as sa part of our machine learning workflow (in Step 2, below).
+We'll create another predictor variable for students' self-reported
+disability status, but we'll do this as sa part of our machine learning
+workflow (in Step 2, below).
 
 We have one last step. Let's create one more predictor variable based on
 a measure of socioeconomic resources--the index of multiple depravity
@@ -261,9 +259,9 @@ train_test_split <- initial_split(students, prop = .80)
 data_train <- training(train_test_split)
 ```
 
-Go ahead and type `data_train` and `students` into the console (in steps) to
-check that this data set indeed has 80% of the number of observations as
-in the larger data. Do that in the chunk below:
+Go ahead and type `data_train` and `students` into the console (in
+steps) to check that this data set indeed has 80% of the number of
+observations as in the larger data. Do that in the chunk below:
 
 ```{r}
 data_train
@@ -304,7 +302,9 @@ we used it here has two arguments:
 
 Let's create a recipe where we predict `withdrawn` (the outcome
 variable) on the basis of the `disability` and `imd_band` (predictor)
-variables. We'll also add `step_dummy()`, which dummy codes the specified variable -- here, for students' self-reported disability status.
+variables. We'll also add `step_dummy()`, which dummy codes the
+specified variable -- here, for students' self-reported disability
+status.
 
 ```{r}
 my_rec <- recipe(withdrawn ~ disability + imd_band, data = data_train) %>% 
@@ -402,6 +402,9 @@ correspond one-one to the ID variables used in the presentation/Shiny.
 # collect test split predictions
 final_fit %>%
     collect_predictions()
+
+collect_predictions(final_fit) %>% 
+    conf_mat(.pred_class, withdrawn)
 ```
 
 This is our first set of real output! Note two things:

@@ -4,7 +4,7 @@
     <title>Machine Learning Learning Lab 1 Overview: Prediction</title>
     <meta charset="utf-8" />
     <meta name="author" content="Dr. Joshua Rosenberg" />
-    <meta name="date" content="2023-05-25" />
+    <meta name="date" content="2023-06-03" />
     <script src="libs/header-attrs-2.21/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
@@ -37,7 +37,38 @@ class: clear, title-slide, inverse, center, top, middle
 # Machine Learning Learning Lab 1 Overview: Prediction
 ----
 ### **Dr. Joshua Rosenberg**
-### May 25, 2023
+### June 03, 2023
+
+---
+
+# Agenda
+
+.panelset[
+
+.panel[.panel-name[Discussion]
+
+- 
+- 
+-
+    
+]
+
+.panel[.panel-name[Conceptual Overview]
+
+- 
+- 
+-
+
+]
+
+.panel[.panel-name[Coding Walkthrough]
+
+- 
+- 
+- 
+
+]
+]
 
 ---
 
@@ -146,10 +177,10 @@ These are joined together (see `oulad.R`) for this learning lab. You'll be doing
 
 ```
 ## Rows: 32593 Columns: 15
-## ── Column specification ────────────────────────────────────────────────────────
+## ── Column specification ──────────────────────────────────────────────────────────
 ## Delimiter: ","
-## chr (9): code_module, code_presentation, gender, region, highest_education, ...
-## dbl (6): id_student, num_of_prev_attempts, studied_credits, module_presentat...
+## chr (9): code_module, code_presentation, gender, region, highest_education, im...
+## dbl (6): id_student, num_of_prev_attempts, studied_credits, module_presentatio...
 ## 
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
@@ -157,15 +188,15 @@ These are joined together (see `oulad.R`) for this learning lab. You'll be doing
 
 ```
 ## # A tibble: 3 × 15
-##   code_module code_presentation id_student gender region       highest_education
-##   &lt;chr&gt;       &lt;chr&gt;                  &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;        &lt;chr&gt;            
-## 1 AAA         2013J                  11391 M      East Anglia… HE Qualification 
-## 2 AAA         2013J                  28400 F      Scotland     HE Qualification 
-## 3 AAA         2013J                  30268 F      North Weste… A Level or Equiv…
-## # ℹ 9 more variables: imd_band &lt;chr&gt;, age_band &lt;chr&gt;,
-## #   num_of_prev_attempts &lt;dbl&gt;, studied_credits &lt;dbl&gt;, disability &lt;chr&gt;,
-## #   final_result &lt;chr&gt;, module_presentation_length &lt;dbl&gt;,
-## #   date_registration &lt;dbl&gt;, date_unregistration &lt;dbl&gt;
+##   code_module code_presentation id_student gender region         highest_education
+##   &lt;chr&gt;       &lt;chr&gt;                  &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;          &lt;chr&gt;            
+## 1 AAA         2013J                  11391 M      East Anglian … HE Qualification 
+## 2 AAA         2013J                  28400 F      Scotland       HE Qualification 
+## 3 AAA         2013J                  30268 F      North Western… A Level or Equiv…
+## # ℹ 9 more variables: imd_band &lt;chr&gt;, age_band &lt;chr&gt;, num_of_prev_attempts &lt;dbl&gt;,
+## #   studied_credits &lt;dbl&gt;, disability &lt;chr&gt;, final_result &lt;chr&gt;,
+## #   module_presentation_length &lt;dbl&gt;, date_registration &lt;dbl&gt;,
+## #   date_unregistration &lt;dbl&gt;
 ```
 
 ---

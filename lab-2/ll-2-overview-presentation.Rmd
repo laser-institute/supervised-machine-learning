@@ -63,44 +63,38 @@ xaringanExtra::use_tile_view()
 
 ---
 
-# Trying to reflect on the big picture
+# Agenda
 
 .panelset[
 
-.panel[.panel-name[Recap]
+.panel[.panel-name[Discussion]
 
-- We have _four learning labs_ within the _machine learning topic area_
-    - Each is associated with ne badge
-- We began with _supervised machine learning_ and focused on its **predictive** emphasis
-    - We talked a bit about plans for using ML
-    - We worked through a presentation (reflection: the code-along took to long)
-    - We started on the case study
+- 
+- 
+-
     
 ]
 
-.panel[.panel-name[A few more thoughts]
+.panel[.panel-name[Conceptual Overview]
 
-- If you are still figuring out how you are planning to use ML . . . 
-    - Great! Let's make progress
-- If you have a _specific use of ML in mind_ . . . 
-    - Negin to look for _how_ you can achieve your goal
-        - R packages (recently updated, with good documentation, with active users, compatibility, papers)
-- Machine learning is _not_ magical
+- 
+- 
+-
 
 ]
 
-.panel[.panel-name[Today]
+.panel[.panel-name[Coding Walkthrough]
 
- - We'll recap ML LL #1
- - Then dive into the presentation for ML LL #2
- - We'll reserve at least one hour for discussion
-    
+- 
+- 
+- 
+
 ]
 ]
 
 ---
 
-# Brief (15-20 seconds each) reflection
+# Brief discussion (15-20 seconds each) reflection
 
 
 .pull-left[
@@ -119,6 +113,7 @@ knitr::include_graphics("img/joro-pointing.jpeg")
 ]
 
 ---
+
 # Background
 
 - In the last learning lab, we did a nice job of training a model that was _pretty good_
@@ -154,340 +149,226 @@ class: clear, inverse, center, middle
 
 # Core Concepts
 
----
+Let's start with accuracy and a simple confusion matrix.
 
-# Why feature engineering matters
+Let's start with some data from a model - imagine we have a test set with n = 10 values, as follows:
 
-- Let's consider a very simple data set, one with _time series_ (or longitudinal) data for a single student
+Outcome
 
-```{r, include = FALSE}
-d <- tibble(student_id = "janyia", time_point = 1:10, var_a = c(0.01, 0.32, 0.32, 0.34, 0.04, 0.54, 0.56, 0.75, 0.63, 0.78))
-```
+Prediction
 
-```{r}
-d
-```
+Correctness of Prediction
 
-- **How can we include a variable, `var_a`, in a machine learning model?**
+1
 
----
+1
 
-# How can we include a single variable?
+Correct
 
-Let's take a look at the variable
+0
 
-```{r}
-d %>% 
-    ggplot(aes(x = time_point, y = var_a)) +
-    geom_point()
-```
+0
 
----
+Correct
 
-# How can we include a single variables
+1
 
-- Well, what if we just add the values for these variables directly
-- But, that ignores that they are at different time points
-    - We could include the time point variable, but that is (about) the same for every student
+1
 
-*What are some other ideas?*
+Correct
 
----
+1
 
-# A few (other) options
+0
 
-- Raw data points
-- Their mean
-- Their maximum
-- Their variability (standard deviation)
-- Their linear slope
-- Their quadratic slope
+Incorrect
 
-**Each of these may derive from a single _variable_ but may offer predictive utility as distinct _features_**
+1
 
----
+1
 
-# Let's consider one more example
+Correct
 
-Here's a time stamp:
+0
 
-```{r, echo = FALSE}
-Sys.time()
-```
+1
 
-**How could this variable be used as a predictor variable?**
+Incorrect
 
----
+1
 
-# Discussion
+1
 
-.pull-left[
-### Turn to an elbow partner and discuss:
+Correct
 
-- What _variables_ might you use in your use of ML?
-- What _features_ could be created from these variables?
-- What is unclear or about what do you have a question (so far)?
-]
+0
 
-.pull-right[
+0
 
-```{r, out.width = "75%"}
-knitr::include_graphics("img/joro-pointing.jpeg", error = FALSE)
-```
-]
----
+Correct
 
-# What else should we consider?
+0
 
-## For all variables
+1
 
-- Removing those with "near-zero variance"
-- Removing ID variables and others that _should not be_ informative
-- Imputing missing values
-- Extract particular elements (i.e., particular _days_ or _times_) from time-related data 
+Incorrect
 
-## For specific types of variables
+1
 
-- Categorical variables
-    - Dummy coding 
-    - Combining categories
-- Numeric variables
-    - Normalizing ("standardizing")
+1
 
----
+Correct
 
-# How to do this?
+What's the accuracy of our model? Add your note below:
 
-- We can do all of these things manually
-- But, there are also helpful functions to do this
-- Any, the {recipes} package makes it practical to carry out feature engineering steps for not only single variables, but groups of variables (or all of the variables)
-- Examples, all of which start with `step()`:
-    - `step_dummy()`
-    - `step_normalize()`
-    - `step_nzv()`
-    - `step_impute_knn()`
+Now, let's create a confusion matrix based on this data:
 
-*We'll dive in deeper in the code examples*
+{r}
+data_for_confusion_matrix <- tibble(Outcome = c(1, 0, 1, 1, 1, 0, 1, 0, 0, 1),
+        Prediction = c(1, 0, 1, 0, 1, 1, 1, 0, 1, 1)) %>% 
+    mutate(`Correctness of Prediction` = ifelse(Outcome == Prediction, "Correct", "Incorrect"))
 
----
+data_for_confusion_matrix
 
-# The importance of training data
+Use the tabyl() function (from {janitor} to calculate the accuracy in the code chunk below.
 
-- Training data is what we use to "learn" from data
-- A "check" on your work is your predictions on _test_ set data
-  - *Train data*: Outcome data that you use to fit your model
-  - *Validation data<sup>1</sup>*: Data you use to select a particular algorithm
-  - *Test ("hold-out") data*: Data that you do not use in any way to train your model
+{r}
+data_for_confusion_matrix %>% 
+    tabyl(`Correctness of Prediction`)
 
-.footnote[
-[1] not always/often used in practice, for reasons we'll discuss momentarily
-]
+This should accord with your value above.
 
----
+Now, let's use another function from {tidymodels}, conf_mat(). Pass to that function data_for_confusion_matrix in the code chunk below. First, make Outcome and Prediction both into factors using the mutate() function. Then use conf_mat(), which takes as arguments the names of the outcome and the prediction, unquoted. Learn more here.
 
-# The problem introduced by feature engineering
+{r}
+data_for_confusion_matrix %>% 
+    mutate(Outcome = as.factor(Outcome),
+           Prediction = as.factor(Prediction)) %>% 
+    conf_mat(Outcome, Prediction)
 
-In LL1, we fit and interpreted a single model; let's think carefully through how we "spent" our training and testing data in that lab
+This table is super important for interpreting our model. We can associate each of the cells with a statistic. After the colon below, replace the x with the associated number from the confusion matrix.
 
---
+Row 1, Column 1 – True Positives: (TP) x
 
-*Training data*: Used this set (80%) of the data to train our model
-*Testing data*: Evaluated the performance of the model using this set (20%) of the data
+Row 1, Column 2 – False Negatives (FN): x
 
---
+Row 2, Column 1 – False Positives (FP): x
 
-What if we decided to _add new features_ or _change existing features_?
+Row 2, Column 2 – True Negatives (TN): x
 
-We'd need to use the same training data to tune a new model---and the same testing data to evaluate its performance
+The table below elaborates on the meaning of these statistics:
 
---
+Statistic
 
-**But, doing this could lead us to specifying a model based on how well we predict the data that happened to end up in the testing set. We could be optimizing our model for our testing data; when used with new data, that model could do poorly.**
+Interpretation
 
----
+Accuracy
 
-# The problem introduced by feature engineering
+Proportion of the population that is true positive or true negative
 
-- In short, a challenges arises when we wish to use our training data _more than once_
+True positive (TP)
 
-- Namely, if we repeatedly training an algorithm on the same data and then make changes, we may be tailoring our model to specific features of the testing data
+Proportion of the population that is affected by a condition and correctly tested positive
 
-- This is a _very common and pervasive problem_ in machine learning applications
+True negative (TN)
 
-- Resampling conserves our testing data; we don't have to spend it until we've finalized our model
+Proportion of the population that is not affected by a condition and correctly tested negative
 
----
+False positive (FP)
 
-# Resampling (and _k_-folds cross-validation)
+Proportion of the population that is not affected by a condition and incorrectly tested positive
 
-- Resampling involves blurring the boundaries between training and testing data, _but only for the training split of the data_
+False negative (FN)
 
---
+Proportion of the population that is affected by a condition and incorrectly tested positive.
 
-- Specifically, it involves combining these two portions of our data into one, iteratively considering:
-    - Some of the data to be for "training"
-    - Some for "testing"
+Here's where things get interesting: There are other statistics that have different denominators.
 
---
+You can think of the following statistics as slicing and dicing the confusion matrix you created above, revealing insights in the process. For the below, please add the values based on the above confusion matrix.
 
-- Then, fit measures are **averaged** across these different samples
+Statistic
 
---
+Equation
 
----
+Interpretation
 
-# *k*-folds cross validation
+Question Answered
 
-- One of the most common and useful forms of resampling is *k*-folds cross validation
-    - Here, some of the data is considered to be a part of the *training* set 
-    - The remaining data is a part of the *testing* set
+Value
 
---
+Sensitivity (AKA recall)
 
-- How many sets (samples taken through resampling)?
-    - This is determined by _k_, number of times the data is resampled
-    - When _k_ is equivalent to the number of rows in the data, this is often called "Leave One Out Cross-Validation" (LOOCV) 
+TP / (TP + FN)
 
----
+Proportion of those who are affected by a condition and correctly tested positive
 
-# Let's consider an example
+Out of all the actual positives, how many did we correctly predict?
 
-Say we have a data set, `d`, with 100 observations (rows or data points) with _k_ = 10.
+Specificity
 
-```{r, include = FALSE}
-d <- tibble(id = 1:100, var_a = runif(100), var_b = runif(100))
-```
+TN / (FP + TN)
 
-```{r}
-d
-```
+Proportion of those who are not affected by a condition and correctly tested negative;
 
-**Using _k_ = 10, how can we split this data into ten distinct training and testing sets?**
+Out of all the actual negatives, how many did we correctly predict?
 
----
+Precision (AKA Positive Predictive Value)
 
-# First resampling
+TP / (TP + FP)
 
-```{r}
-train <- d[1:90, ]
-test <- d[91:100, ]
+Proportion of those who tested positive who are affected by a condition
 
-train  %>% head(3)
-test %>% head(3)
-# then, train the model (using train) and calculate a fit measure (using test)
-```
+Out of all the instances we predicted as positive, how many are actually positive?
+
+Negative Predictive Value
+
+TN / (TN + FN)
+
+Proportion of those who tested positive who are not affected by a condition; the probability that a negative test is correct
+
+Out of all the instances we predicted as negative, how many are actually negative?
+
+We can also do this automatically. We use the class_metrics() function we creatd above by passing to it our outcome and the prediction, specifying which is the prediction with the estimate argument.
+
+{r}
+data_for_confusion_matrix %>% 
+    mutate(Outcome = as.factor(Outcome),
+           Prediction = as.factor(Prediction)) %>% 
+    class_metrics(Outcome, estimate = Prediction)
+
+Recall that the above output is for our data with only 10 rows; that was all a long build-up to be able to interpret our model. We can now calculate the metrics quite easily by running collect_metrics() on our fitted model, final_fit.
+
+{r}
+collect_metrics(final_fit)
+
+So, what does this hard-won by output tell us? Let's interpret each statistic carefully in the table below. Please add the value and provide a substantive interpretation. One is provided to get you started.
+
+Statistic
+
+Value
+
+Substantive Interpretation
+
+Accuracy
+
+Sensitivity (AKA recall)
+
+.997
+
+The model is remarkably good at doing this; practically all of the students who withdrew were correctly predicted as such.
+
+Specificity
+
+Precision (AKA Positive Predictive Value)
+
+Negative Predictive Value
+
+Cohen's Kappa
+
+
 
 ---
 
-# Second resampling
-
-```{r}
-train <- d[c(1:80, 91:100), ]
-test <- d[81:90, ]
-
-train  %>% head(3)
-test %>% head(3)
-# then, train the model (using train) and calculate a fit measure (using test)
-```
-
----
-
-# Third resampling
-
-```{r}
-train <- d[c(1:70, 81:100), ]
-test <- d[71:80, ]
-
-train  %>% head(3)
-test %>% head(3)
-# then, train the model (using train) and calculate a fit measure (using test)
-```
-
-... through the tenth resampling, after which the fit measures are simply summed
-
---
-
-That's it! Thankfully, we have automated tools to do this that we'll work on in the code examples
-
----
-
-# But how do you determine what _k_ should be?
-
-- A _historically common value_ for _k_ has been 10
-- But, as computers have grown in processing power, setting _k_ equal to the number of rows in the data has become more common
-
----
-
-class: clear, inverse, center, middle
-
-# Code Examples
-
----
-
-# Data from online science classes
-
-- This data comes from a study of ~700 secondary/high school-aged students in the United States
-- The data were collected _over multiple semesters_ from _multiple classes_
-- There are a number of types of variables
-
-
-.panelset[
-.panel[.panel-name[1]
-
- - Demographic/contextual variables, e.g. `subject` and `gender`
-
-]
-
-.panel[.panel-name[2]
-
-  - Self-report survey variables: `uv` (utility value), `percomp` (perceived competence), and `int` (interest)
-  
-]
-
-.panel[.panel-name[3]
-
-  - Gradebook variables: `overall_percent_earned`, `variability_percent_earned`, `n_with_100_pct` (based on the first 20 assignments)
-
-]
-
-.panel[.panel-name[4]
-
-  - Discussion variables: `sum_discussion_posts`, `sum_n_words` (for the first 3 discussions)
-
-]
-
-.panel[.panel-name[5]
-
-  - Outcomes: `final_grade`, `passing_grade`, `time_spent` (in minutes)
-
-]
-]
-
----
-
-# Sidebar
-
-This data is described further (and descriptively and inferentially analyzed using a regression and multi-level modeling approach) in *Data Science in Education Using R*:
-
-- Chapter 7: The Education Data Science Pipeline With Online Science Class Data: https://datascienceineducation.com/c07.html
-
-- Chapter 13: The Role (and Usefulness) of Multilevel Models: https://datascienceineducation.com/c13.html
-
-- Chapter 14: Predicting Students’ Final Grades Using Machine Learning Methods with Online Course Data: https://datascienceineducation.com/c14.html
-
----
-
-# Let's take a look at the data together
-
-```{r, message = FALSE}
-d <- read_csv("data/data-to-model.csv")
-d <- select(d, -time_spent) # this is another outcome, so we'll cut this here
-
-d %>% 
-    glimpse()
-```
-
----
 
 class: clear, inverse, center, middle
 

@@ -60,6 +60,35 @@ xaringanExtra::use_tile_view()
 ### `r rmarkdown::metadata$author`
 ### `r format(Sys.time(), "%B %d, %Y")`
 
+--
+
+.panelset[
+
+.panel[.panel-name[Discussion]
+
+- 
+- 
+-
+    
+]
+
+.panel[.panel-name[Conceptual Overview]
+
+- 
+- 
+-
+
+]
+
+.panel[.panel-name[Coding Walkthrough]
+
+- 
+- 
+- 
+
+]
+]
+
 ---
 
 # Background
@@ -118,206 +147,341 @@ knitr::include_graphics("img/IMG_8152.jpeg")
 ]
 ---
 
-# How do I select a "final" or "best" model?
 
-One general principle is to **start with the simplest useful model** and to _build toward
-more complex models as helpful_.
 
-This principle applies in multiple ways:
-
-- To choose an algorithm, start with simpler models that you can efficiently use and understand
-- To carry out feature engineering, understand your predictors well by starting with a subset
-- To tune an algorithm, start with a relatively simple set of tuning parameters
-
-This isn't just for beginners or those of us in education; [most spam filters use Support Vector Machines (and used Naive Bayes until recently)](https://vas3k.com/blog/machine_learning/) due to their combination of effectiveness and efficiency "in production."
 
 ---
 
-# The bias-variance tradeoff
+# Why feature engineering matters
 
-- The above consideration also matters in the context of the bias-variance trade-off.
+- Let's consider a very simple data set, one with _time series_ (or longitudinal) data for a single student
 
-- An important way to achieve good performance with test data is to balance between the inherent _bias_ in your algorithm and the _variance_ in the predictions of your algorithm; this is referred to as the **bias-variance** trade-off of _all_ models
+```{r, include = FALSE}
+d <- tibble(student_id = "janyia", time_point = 1:10, var_a = c(0.01, 0.32, 0.32, 0.34, 0.04, 0.54, 0.56, 0.75, 0.63, 0.78))
+```
+
+```{r}
+d
+```
+
+- **How can we include a variable, `var_a`, in a machine learning model?**
 
 ---
 
-# Illustrating the bias-variance tradeoff
+# How can we include a single variable?
 
-```{r, echo = FALSE, fig.align="center", message = FALSE}
-library(ggplot2)
+Let's take a look at the variable
 
-set.seed(5)
-dat = data.frame(x = runif(1000, 0, 12))
-dat$x = sort(dat$x)
-dat$y = with(dat, sin(x * 1.3) * 15 + 3 * (x - 4)^2)
-sigma = with(dat, (exp(x - 5)/(1 + exp(x - 5)) - exp(x - 7)/(1 + exp(x - 7)) * 
-    2) + 1.4) * 6
-dat$yobs = dat$y + rnorm(nrow(dat), mean = 0, sd = sigma)
-
-ggplot(dat, aes(x = x, y = yobs)) +
-  geom_point(color = "darkgray") +
-  ylab("pred")
-
-ggsave("img/bias-variance-data-1.png")
+```{r}
+d %>% 
+    ggplot(aes(x = time_point, y = var_a)) +
+    geom_point()
 ```
 
 ---
 
-# Strong bias
+# How can we include a single variables
 
-```{r, echo = FALSE, fig.align="center", message = FALSE}
-dat = data.frame(x = runif(1000, 0, 12))
-dat$x = sort(dat$x)
-dat$y = with(dat, sin(x * 1.3) * 15 + 3 * (x - 4)^2)
-sigma = with(dat, (exp(x - 5)/(1 + exp(x - 5)) - exp(x - 7)/(1 + exp(x - 7)) * 
-    2) + 1.4) * 6
-dat$yobs = dat$y + rnorm(nrow(dat), mean = 0, sd = sigma)
+- Well, what if we just add the values for these variables directly
+- But, that ignores that they are at different time points
+    - We could include the time point variable, but that is (about) the same for every student
 
-ggplot(dat, aes(x = x, y = yobs)) +
-  geom_point(color = "darkgray") +
-  geom_smooth(method = "lm") +
-  ylab("pred")
-
-ggsave("img/bias-variance-data-3.png")
-```
+*What are some other ideas?*
 
 ---
 
-# A much less-biased algorithm
+# A few (other) options
 
-```{r, echo = FALSE, fig.align="center", message = FALSE}
-set.seed(5)
-dat = data.frame(x = runif(1000, 0, 12))
-dat$x = sort(dat$x)
-dat$y = with(dat, sin(x * 1.3) * 15 + 3 * (x - 4)^2)
-sigma = with(dat, (exp(x - 5)/(1 + exp(x - 5)) - exp(x - 7)/(1 + exp(x - 7)) * 
-    2) + 1.4) * 6
-dat$yobs = dat$y + rnorm(nrow(dat), mean = 0, sd = sigma)
+- Raw data points
+- Their mean
+- Their maximum
+- Their variability (standard deviation)
+- Their linear slope
+- Their quadratic slope
 
-ggplot(dat, aes(x = x, y = yobs)) +
-  geom_point(color = "darkgray") +
-  geom_smooth(method = lm, formula = y ~ splines::bs(x, 10), se = FALSE) +
-  ylab("pred")
-
-ggsave("img/bias-variance-data-5.png")
-```
+**Each of these may derive from a single _variable_ but may offer predictive utility as distinct _features_**
 
 ---
 
-# Slightly different data (right pane)
+# Let's consider one more example
 
-```{r, echo = FALSE, echo = FALSE, message = FALSE, include = FALSE}
-dat = data.frame(x = runif(1000, 0, 12))
-dat$x = sort(dat$x)
-dat$y = with(dat, sin(x * 2.3) * 25 + 3 * (x - 3)^2)
-sigma = with(dat, (exp(x - 5)/(1 + exp(x - 5)) - exp(x - 7)/(1 + exp(x - 7)) * 
-    2) + 1.4) * 6
-dat$yobs = dat$y + rnorm(nrow(dat), mean = 0, sd = sigma)
+Here's a time stamp:
 
-ggplot(dat, aes(x = x, y = yobs)) +
-  geom_point(color = "darkgray") +
-  ylab("pred")
-
-ggsave("img/bias-variance-data-2.png")
+```{r, echo = FALSE}
+Sys.time()
 ```
+
+**How could this variable be used as a predictor variable?**
+
+---
+
+# Discussion
 
 .pull-left[
-<img src="img/bias-variance-data-1.png" width=400 height=400>
-]
+### Turn to an elbow partner and discuss:
 
-.pull-right[
-<img src="img/bias-variance-data-2.png" width=400 height=400>
-]
-
----
-
-# Still strong bias, but low variance
-
-```{r, echo = FALSE, fig.align="center", message = FALSE, include = FALSE}
-dat = data.frame(x = runif(1000, 0, 12))
-dat$x = sort(dat$x)
-dat$y = with(dat, sin(x * 2.3) * 25 + 3 * (x - 3)^2)
-sigma = with(dat, (exp(x - 5)/(1 + exp(x - 5)) - exp(x - 7)/(1 + exp(x - 7)) * 
-    2) + 1.4) * 6
-dat$yobs = dat$y + rnorm(nrow(dat), mean = 0, sd = sigma)
-
-ggplot(dat, aes(x = x, y = yobs)) +
-  geom_point(color = "darkgray") +
-  geom_smooth(method = "lm") +
-  ylab("pred")
-
-ggsave("img/bias-variance-data-4.png")
-```
-
-.pull-left[
-<img src="img/bias-variance-data-3.png" width=400 height=400>
-]
-
-.pull-right[
-<img src="img/bias-variance-data-4.png" width=400 height=400>
-]
-
----
-
-# Low bias, but very high variance
-
-```{r, echo = FALSE, fig.align="center", message = FALSE, include = FALSE}
-dat = data.frame(x = runif(1000, 0, 12))
-dat$x = sort(dat$x)
-dat$y = with(dat, sin(x * 2.3) * 25 + 3 * (x - 3)^2)
-sigma = with(dat, (exp(x - 5)/(1 + exp(x - 5)) - exp(x - 7)/(1 + exp(x - 7)) * 
-    2) + 1.4) * 6
-dat$yobs = dat$y + rnorm(nrow(dat), mean = 0, sd = sigma)
-
-ggplot(dat, aes(x = x, y = yobs)) +
-  geom_point(color = "darkgray") +
-  geom_smooth(method = lm, formula = y ~ splines::bs(x, 10), se = FALSE) +
-  ylab("pred")
-
-ggsave("img/bias-variance-data-6.png")
-```
-
-.pull-left[
-<img src="img/bias-variance-data-5.png" width=400 height=400>
-]
-
-.pull-right[
-<img src="img/bias-variance-data-6.png" width=400 height=400>
-]
-
----
-
-# The bias-variance tradeoff
-
-.pull-left[
-
-#### Bias
-
-- *Definition*: Difference between our known codes/outcomes and our predicted codes/outcomes; difference between $y$ and $\hat{y}$
-
-- How (in)correct our models' (algorithms') predictions are
-
-- Models with high bias can fail to capture important relationships--they can be *under-fit* to our data
-
-- In short, how well our model reflects the patterns in the data
-
+- What _variables_ might you use in your use of ML?
+- What _features_ could be created from these variables?
+- What is unclear or about what do you have a question (so far)?
 ]
 
 .pull-right[
 
-#### Variance
+```{r, out.width = "75%"}
+knitr::include_graphics("img/joro-pointing.jpeg", error = FALSE)
+```
+]
+---
 
-- *Definition*: Using a different sample of data, the difference in $\hat{y}$ values
+# What else should we consider?
 
-- How sensitive our predictions are to the specific sample on which we trained (and tested) the model 
+## For all variables
 
-- Models with high variance can fail to predict different data well--they can be *over-fit* to our data
+- Removing those with "near-zero variance"
+- Removing ID variables and others that _should not be_ informative
+- Imputing missing values
+- Extract particular elements (i.e., particular _days_ or _times_) from time-related data 
 
-- How stable the predictions of our model are
+## For specific types of variables
 
-<h4><center>Regardless of model, we often wish to balance between bias and variance</center></h4>
+- Categorical variables
+    - Dummy coding 
+    - Combining categories
+- Numeric variables
+    - Normalizing ("standardizing")
+
+---
+
+# How to do this?
+
+- We can do all of these things manually
+- But, there are also helpful functions to do this
+- Any, the {recipes} package makes it practical to carry out feature engineering steps for not only single variables, but groups of variables (or all of the variables)
+- Examples, all of which start with `step()`:
+    - `step_dummy()`
+    - `step_normalize()`
+    - `step_nzv()`
+    - `step_impute_knn()`
+
+*We'll dive in deeper in the code examples*
+
+---
+
+# The importance of training data
+
+- Training data is what we use to "learn" from data
+- A "check" on your work is your predictions on _test_ set data
+  - *Train data*: Outcome data that you use to fit your model
+  - *Validation data<sup>1</sup>*: Data you use to select a particular algorithm
+  - *Test ("hold-out") data*: Data that you do not use in any way to train your model
+
+.footnote[
+[1] not always/often used in practice, for reasons we'll discuss momentarily
+]
+
+---
+
+# The problem introduced by feature engineering
+
+In LL1, we fit and interpreted a single model; let's think carefully through how we "spent" our training and testing data in that lab
+
+--
+
+*Training data*: Used this set (80%) of the data to train our model
+*Testing data*: Evaluated the performance of the model using this set (20%) of the data
+
+--
+
+What if we decided to _add new features_ or _change existing features_?
+
+We'd need to use the same training data to tune a new model---and the same testing data to evaluate its performance
+
+--
+
+**But, doing this could lead us to specifying a model based on how well we predict the data that happened to end up in the testing set. We could be optimizing our model for our testing data; when used with new data, that model could do poorly.**
+
+---
+
+# The problem introduced by feature engineering
+
+- In short, a challenges arises when we wish to use our training data _more than once_
+
+- Namely, if we repeatedly training an algorithm on the same data and then make changes, we may be tailoring our model to specific features of the testing data
+
+- This is a _very common and pervasive problem_ in machine learning applications
+
+- Resampling conserves our testing data; we don't have to spend it until we've finalized our model
+
+---
+
+# Resampling (and _k_-folds cross-validation)
+
+- Resampling involves blurring the boundaries between training and testing data, _but only for the training split of the data_
+
+--
+
+- Specifically, it involves combining these two portions of our data into one, iteratively considering:
+    - Some of the data to be for "training"
+    - Some for "testing"
+
+--
+
+- Then, fit measures are **averaged** across these different samples
+
+--
+
+---
+
+# *k*-folds cross validation
+
+- One of the most common and useful forms of resampling is *k*-folds cross validation
+    - Here, some of the data is considered to be a part of the *training* set 
+    - The remaining data is a part of the *testing* set
+
+--
+
+- How many sets (samples taken through resampling)?
+    - This is determined by _k_, number of times the data is resampled
+    - When _k_ is equivalent to the number of rows in the data, this is often called "Leave One Out Cross-Validation" (LOOCV) 
+
+---
+
+# Let's consider an example
+
+Say we have a data set, `d`, with 100 observations (rows or data points) with _k_ = 10.
+
+```{r, include = FALSE}
+d <- tibble(id = 1:100, var_a = runif(100), var_b = runif(100))
+```
+
+```{r}
+d
+```
+
+**Using _k_ = 10, how can we split this data into ten distinct training and testing sets?**
+
+---
+
+# First resampling
+
+```{r}
+train <- d[1:90, ]
+test <- d[91:100, ]
+
+train  %>% head(3)
+test %>% head(3)
+# then, train the model (using train) and calculate a fit measure (using test)
+```
+
+---
+
+# Second resampling
+
+```{r}
+train <- d[c(1:80, 91:100), ]
+test <- d[81:90, ]
+
+train  %>% head(3)
+test %>% head(3)
+# then, train the model (using train) and calculate a fit measure (using test)
+```
+
+---
+
+# Third resampling
+
+```{r}
+train <- d[c(1:70, 81:100), ]
+test <- d[71:80, ]
+
+train  %>% head(3)
+test %>% head(3)
+# then, train the model (using train) and calculate a fit measure (using test)
+```
+
+... through the tenth resampling, after which the fit measures are simply summed
+
+--
+
+That's it! Thankfully, we have automated tools to do this that we'll work on in the code examples
+
+---
+
+# But how do you determine what _k_ should be?
+
+- A _historically common value_ for _k_ has been 10
+- But, as computers have grown in processing power, setting _k_ equal to the number of rows in the data has become more common
+
+---
+
+class: clear, inverse, center, middle
+
+# Code Examples
+
+---
+
+# Data from online science classes
+
+- This data comes from a study of ~700 secondary/high school-aged students in the United States
+- The data were collected _over multiple semesters_ from _multiple classes_
+- There are a number of types of variables
+
+
+.panelset[
+.panel[.panel-name[1]
+
+ - Demographic/contextual variables, e.g. `subject` and `gender`
 
 ]
+
+.panel[.panel-name[2]
+
+  - Self-report survey variables: `uv` (utility value), `percomp` (perceived competence), and `int` (interest)
+  
+]
+
+.panel[.panel-name[3]
+
+  - Gradebook variables: `overall_percent_earned`, `variability_percent_earned`, `n_with_100_pct` (based on the first 20 assignments)
+
+]
+
+.panel[.panel-name[4]
+
+  - Discussion variables: `sum_discussion_posts`, `sum_n_words` (for the first 3 discussions)
+
+]
+
+.panel[.panel-name[5]
+
+  - Outcomes: `final_grade`, `passing_grade`, `time_spent` (in minutes)
+
+]
+]
+
+---
+
+# Sidebar
+
+This data is described further (and descriptively and inferentially analyzed using a regression and multi-level modeling approach) in *Data Science in Education Using R*:
+
+- Chapter 7: The Education Data Science Pipeline With Online Science Class Data: https://datascienceineducation.com/c07.html
+
+- Chapter 13: The Role (and Usefulness) of Multilevel Models: https://datascienceineducation.com/c13.html
+
+- Chapter 14: Predicting Students’ Final Grades Using Machine Learning Methods with Online Course Data: https://datascienceineducation.com/c14.html
+
+---
+
+# Let's take a look at the data together
+
+```{r, message = FALSE}
+d <- read_csv("data/data-to-model.csv")
+d <- select(d, -time_spent) # this is another outcome, so we'll cut this here
+
+d %>% 
+    glimpse()
+```
 
 ---
 

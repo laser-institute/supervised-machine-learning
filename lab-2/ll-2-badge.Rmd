@@ -9,100 +9,55 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-![](img/ML_FE_Hx.jpg){width="30%"}
+![](img/ML_interpretation_Hx.jpg){width="30%"} \# need to create this one
 
-As a reminder, to earn a badge for each lab, you are required to respond to a set of prompts for two parts:
+As a reminder, to earn a badge for these learning labs, you will have to respond to a set of prompts for several parts:
 
--   In Part I, you will reflect on your understanding of key concepts and begin to think about potential next steps for your own study.
+-   In *Part I*, you will reflect on your understanding of key concepts
 
--   In Part II, you will create a simple data product in R that demonstrates your ability to apply an analytic technique introduced in this learning lab.
+-   In *Part II*, you will create a data product in R that demonstrates your ability to apply an analytic technique introduced in this learning lab.
 
-### Part I: Reflect and Plan
+### Part I: Data Product
 
-Part A:
+For the data product, you will interpret a different type of model -- a model in a *regression* mode.
 
-1.  Like we considered after LL1, how good was the machine learning model we developed in the case study? Stepping back, how successful is this as a predictive model of students' success in the class using data collected through roughly the first one month of the class? How might this model be used in practice?
+So far, we have specified and interpreted a *classification* model: one predicting a dichotomous outcome (i.e., whether students have withdrawn from a course). In many cases, however, we are interested in predicting a continuous outcome (e.g., students' number of points in a course or their score on a final exam).
+
+While many parts of the machine learning process are the same for a regression machine learning model, one key part that is relevant to this learning lab is different: their interpretation. The confusion matrix we created to parse the predictive strength of our classification model [does not pertain]{.underline} to regression machine learning models. Different metrics are used. For this badge activity, you will specify and interpret a regression machine learning model.
+
+The requirements are as follows:
+
+-   Change your outcome to **students' final exam performance**.
+
+-   Using the same data (and testing and training data sets), recipe, and workflow as you used in the case study, **change the mode** of your model from classification to regression and change the **engine** from a glm to an lm model.
+
+-   **Interpret your regression machine learning model** in terms of three regression machine learning model metrics: **MAE**, **MSE**, and **RMSE**. Read about these metrics [here](https://bradleyboehmke.github.io/HOML/process.html#model-eval). Similar to how we interpreted the classification machine learning metrics, focus on the substantive meaning of these statistics.
+
+Please use the code chunk below for your code:
+
+```{r}
+
+```
+
+Please add your interpretations here:
+
+-   MAE:
+
+-   MSE:
+
+-   RMSE:
+
+### Part II: Reflect and Plan
+
+1.  What is an example of an outcome related to your research interests that could be modeled using a *classification* machine learning model?
 
 -   
 
-3.  Would you be comfortable using this? What if you read about someone using such a model as a reviewer of research. Please add your thoughts and reflections following the bullet point below.
+3.  What is an example of an outcome related to your research interests that could be modeled using a *regression* machine learning model?
 
 -   
 
-3.  How might the model be improved? Share any ideas you have at this time below:
-
--   
-
-Part B: Again, use the institutional library (e.g. [NCSU Library](https://www.lib.ncsu.edu/#articles)), [Google Scholar](https://scholar.google.com/) or search engine to locate a research article, presentation, or resource that applies machine learning to an educational context aligned with your research interests. More specifically, **locate a machine learning study that involve making predictions -- and, ideally, one that involved in some way engineering features from data**.
-
-1.  Provide an APA citation for your selected study.
-
-    -   
-
-2.  What research questions were the authors of this study trying to address and why did they consider these questions important?
-
-    -   
-
-3.  What were the results of these analyses?
-
-    -   
-
-### Part II: Data Product
-
-For the data product, you are asked to investigate and add to our **recipe** a feature engineering step we did not carry out.
-
-Run the code below through the step in which you write down the recipe.
-
-```{r}
-library(tidyverse)
-library(tidymodels)
-
-set.seed(20220712)
-
-d <- read_csv("data/online-sci-data-joined.csv")
-# **edit: if your data has 10,000+ rows, d <- distinct(student_id, course_id, .keep_all = TRUE) **
-
-train_test_split <- initial_split(d, prop = .80)
-
-data_train <- training(train_test_split)
-
-kfcv <- vfold_cv(data_train, v = 10) # this differentiates this from what we did before
-```
-
-Here's where you can add a new feature engineering step. For the sake of this badge, choose from among those options here: <https://recipes.tidymodels.org/reference/index.html>. You can see more - if helpful - here: <https://www.tmwr.org/recipes.html>
-
-```{r}
-my_rec <- recipe(final_grade ~ ., data = data_train) %>% # **edit**: change t final grade
-    update_role(student_id, course_id, section, new_role = "ID variable") %>% # this can be any string; for ID variables
-    step_normalize(all_numeric_predictors()) %>% # standardizes numeric variables
-    step_nzv(all_predictors()) %>% # remove predictors with a "near-zero variance"
-    step_dummy(all_nominal_predictors()) %>%  # dummy code all factor variables
-    step_novel(all_nominal_predictors()) %>% # add a musing label for factors
-    step_impute_knn(all_predictors()) # impute missing data for all predictor variables
-```
-
-Run the remaining steps.
-
-```{r}
-my_mod <-
-    linear_reg() %>% 
-    set_engine("lm") %>%
-    set_mode("regression") # **edit**: change to regression
-
-my_wf <-
-    workflow() %>%
-    add_model(my_mod) %>% 
-    add_recipe(my_rec)
-
-# okay to ignore warnings here
-fitted_model_resamples <- fit_resamples(my_wf, resamples = kfcv, # **edit: this should be fitted_model_resamples**
-                              control = control_grid(save_pred = TRUE)) # this allows us to inspect the predictions
-
-fitted_model_resamples %>%
-    collect_metrics()
-```
-
-Did that feature engineering make any difference compared to the mean predictive accuracy you found in the case study? Add a few notes below:
+3.  Look back to the study you identified for the first machine learning learning lab badge activity. Was the outcome one that is modeled using a classification or a regression machine learning model? Identify which mode(s) the authors of that paper used and briefly discuss the appropriateness of their decision.
 
 -   
 

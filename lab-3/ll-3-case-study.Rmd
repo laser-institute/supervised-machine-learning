@@ -19,7 +19,6 @@ bibliography: lit/references.bib
 knitr::opts_chunk$set(echo = TRUE, eval = TRUE)
 ```
 
-
 1.  We use a very different data set, on from *online science classes*
     that involves a variety of variables types
 2.  We focus on *feature engineering*, a key step in which we prepare
@@ -197,7 +196,6 @@ kfcv <- vfold_cv(data_train) # this differentiates this from what we did before
 kfcv
 ```
 
-
 Here's a key difference! Pay careful attention to this next line of
 code, which sets the groundwork for *k*-folds cross-validation. Note
 that in the function below (run `?vfold_cv` to see more), the letter *v*
@@ -220,8 +218,6 @@ recipe.
 -   `step_novel(all_nominal_predictors())`
 -   `step_dummy(all_nominal_predictors())`
 -   `step_impute_knn(all_predictors(), all_outcomes())`
-
-
 
 In Step 0, we noted how we added three variables as potential features.
 Here, we carry out two feature engineering steps we have carried out
@@ -324,7 +320,6 @@ Now, we're ready to fit the model. Note - this can take some time, the
 longest of any function we've run so far, as we're estimating a) as many
 models as there are folds (*v =* 10 as default) and b) distinct
 combinations of hyperparameters (`size = 10` as default).
-
 
 ## Step 4: Fit model
 
