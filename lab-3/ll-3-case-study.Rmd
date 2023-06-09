@@ -19,6 +19,8 @@ bibliography: lit/references.bib
 knitr::opts_chunk$set(echo = TRUE, eval = TRUE)
 ```
 
+## Background
+
 1.  We use a very different data set, on from *online science classes*
     that involves a variety of variables types
 2.  We focus on *feature engineering*, a key step in which we prepare

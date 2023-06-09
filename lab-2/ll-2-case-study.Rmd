@@ -363,7 +363,7 @@ conditions, elaborated below. You'll fill in the last two columns in a
 few moments.
 
 |      Statistic      |       How to Find       |                                          Interpretation                                          | Value |  \%  |
-|:-------------------:|:-----------:|:------------------------:|:-----:|:-----:|
+|:-------------------:|:-----------------------:|:------------------------------------------------------------------------------------------------:|:-----:|:----:|
 | True positive (TP)  | Truth: 1, Prediction: 1 |    Proportion of the population that is affected by a condition and correctly tested positive    | 2443  | 19.8 |
 | True negative (TN)  | Truth: 0, Prediction: 0 |  Proportion of the population that is not affected by a condition and correctly tested negative  | 4536  | 36.8 |
 | False positive (FP) | Truth: 0, Prediction: 1 | Proportion of the population that is not affected by a condition and incorrectly tested positive | 2070  | 16.8 |
@@ -413,7 +413,7 @@ precision, and negative predictive value below to three decimal points.
 #### [Your Turn]{style="color: green;"} ⤵
 
 |                                               |                |                                                                                                                                |                                                                                    |                      |
-|:-------------:|:-------------:|:-------------:|:-------------:|:-------------:|
+|:---------------------------------------------:|:--------------:|:------------------------------------------------------------------------------------------------------------------------------:|:----------------------------------------------------------------------------------:|:--------------------:|
 |                 **Statistic**                 |  **Equation**  |                                                       **Interpretation**                                                       |                               **Question Answered**                                | **Statistic Values** |
 |         **Sensitivity** (AKA recall)          | TP / (TP + FN) |                       Proportion of those who are affected by a condition and correctly tested positive                        |        Out of all the actual positives, how many did we correctly predict?         |         .428         |
 |                **Specificity**                | TN / (FP + TN) |                     Proportion of those who are not affected by a condition and correctly tested negative;                     |        Out of all the actual negatives, how many did we correctly predict?         |         .687         |
@@ -427,7 +427,7 @@ a *substantive interpretation*. One is provided to get you started.
 #### [Your Turn]{style="color: green;"} ⤵
 
 |                                           |                                                                                                                                             |
-|----------------------|----------------------------|
+|-------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------|
 | **Statistic**                             | **Substantive Interpretation**                                                                                                              |
 | Accuracy                                  |                                                                                                                                             |
 | Sensitivity (AKA recall)                  | The model correctly predicts about 2/3 of students who do not pass correctly (as not passing). This is pretty good, but it could be better. |
