@@ -296,6 +296,10 @@ Question Answered
 
 Value
 
+Accuracy
+
+Proportion of the population that is true positive or true negative
+
 Sensitivity (AKA recall)
 
 TP / (TP + FN)

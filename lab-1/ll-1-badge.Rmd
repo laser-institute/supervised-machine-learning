@@ -35,8 +35,8 @@ students <- read_csv("data/oulad-students.csv")
 
 ```{r}
 students <- students %>% 
-    mutate(withdrawn = ifelse(final_result == "Withdrawn", 1, 0)) %>% # creates a dummy code
-    mutate(withdrawn = as.factor(withdrawn)) # makes the variable a factor, helping later steps
+    mutate(pass = ifelse(final_result == "Pass", 1, 0)) %>% # creates a dummy code
+    mutate(pass = as.factor(pass)) # makes the variable a factor, helping later steps
 
 students <- students %>% 
     mutate(imd_band = factor(imd_band, levels = c("0-10%",
@@ -61,7 +61,7 @@ set.seed(20230712)
 train_test_split <- initial_split(students, prop = .80)
 data_train <- training(train_test_split)
 
-my_rec <- recipe(withdrawn ~ disability + imd_band + date_registration, data = data_train) %>%  # this is the key change and addition!
+my_rec <- recipe(pass ~ disability + imd_band + date_registration, data = data_train) %>%  # this is the key change and addition!
     step_dummy(disability)
 
 # specify model
@@ -97,7 +97,7 @@ Part A: Please refer back to Breiman's (2001) article for these three questions.
 
 -   
 
-3. Breiman emphasized the importance of predictive accuracy over understanding why a method works. To what extent do you agree or disagree with this stance?
+3.  Breiman emphasized the importance of predictive accuracy over understanding why a method works. To what extent do you agree or disagree with this stance?
 
 -   
 

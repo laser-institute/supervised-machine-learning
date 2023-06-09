@@ -157,7 +157,7 @@ distinct) values for a specified variable. Learn more about `distinct()`
 [here](https://dplyr.tidyverse.org/reference/distinct.html). Below, find
 the distinct assessment IDs.
 
-```{r}
+```{r, eval = FALSE}
 assessments %>% 
     distinct(id_assessment) # this many unique assessments
 ```
@@ -307,8 +307,7 @@ specified variable -- here, for students' self-reported disability
 status.
 
 ```{r}
-my_rec <- recipe(withdrawn ~ disability + imd_band, data = data_train) %>% 
-    step_dummy(disability)
+my_rec <- recipe(withdrawn ~ 1, data = data_train)
 ```
 
 ## Step 3: Specify the model and workflow
@@ -454,6 +453,10 @@ forward**, having seen how accuracy is calculated.
 ```{r}
 final_fit %>% 
     collect_metrics()
+
+final_fit %>% 
+    collect_predictions() %>% 
+    count(.pred_class)
 ```
 
 How accurate was our predictive model? Consider how well our model would
