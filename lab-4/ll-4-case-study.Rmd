@@ -20,9 +20,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 While the past three case studies have focused on cases for which we
-have coded data (in case studies 1 and 3, from the #NGSSchat data; in
-case study 2, from having students' end of course grades), sometimes, we
-do not have something that we can consider to be coded data---or a
+have coded data, sometimes, we do not have something that we can consider to be coded data---or a
 dependent variable. Machine learning does offer us way forward in such
 cases, but not through the supervised machine learning methods we've
 been using until this point. Instead, we can use *unsupervised* methods.
@@ -57,9 +55,7 @@ with the information we have - as we often have to do in practice. If
 publishing a paper, we can present these issues in our manuscript in a
 transparent manner.
 
-You can see examples of the around 300 papers that have been published
-in journals in a wide range of fields on [Google
-Scholar](https://scholar.google.com/scholar?hl=en&as_sdt=0%2C34&q=tidylpa&btnG=).
+> Worsley, M., Martinez-Maldonado, R., & D'Angelo, C. (2021). A New Era in Multimodal Learning Analytics: Twelve Core Commitments to Ground and Grow MMLA. Journal of Learning Analytics, 8(3), 10-27.
 
 ## Step 0: Loading and setting up
 
@@ -69,20 +65,47 @@ the {tidyLPA package}.
 ```{r}
 library(tidyverse)
 library(tidyLPA)
+library(tidytext)
 ```
 
-Next, let's load the data.
-
 ```{r}
-liwc <- read_csv("data/LIWC-22 Results - r-processed-transcripts - LIWC Analysis.csv")
-```
+d <- read_csv("lab-4/data/r-processed-transcripts.csv")
 
+nrc <- get_sentiments("nrc")
 
-We'll next select the variables we'll use for this analysis.
+d <- d %>% 
+    select(group, index, start, end, duration, transcript)
 
-```{r}
-liwc_ss <- liwc %>%
-    select(certitude, cogproc, Social)
+d %>% 
+    unnest_tokens(word, transcript) %>%
+    left_join(nrc, relationship = "many-to-many") %>% # ignore warnings
+    count(sentiment)
+
+# Set the chunk size and the starting point
+chunk_size <- 15  # Chunk size in seconds
+start_point <- d$start %>% as.integer() %>% pluck(1)
+end_point <- d$end %>% as.integer() %>% pluck(nrow(d))
+
+d$start <- as.integer(d$start)
+d$end <- as.integer(d$end)
+
+# Create a new variable for the chunks
+d$segment_id <- cut(d$start, breaks = seq(from = start_point, to = end_point, by = chunk_size))
+
+data_for_lpa <- d %>% 
+    unnest_tokens(word, transcript) %>% 
+    left_join(nrc, relationship = "many-to-many") %>% # ignore warnings
+    count(segment_id, sentiment) %>% 
+    spread(sentiment, n) %>% 
+    janitor::clean_names() %>% 
+    reframe(pct_fear = fear / na,
+            pct_joy = joy / na,
+            pct_anticipation = anticipation / na,
+            pct_disgust = disgust / na,
+            pct_sadness = sadness / na,
+            pct_surprise = surprise / na,
+            pct_trust = trust / na) %>% 
+    mutate_if(is.numeric, replace_na, 0)
 ```
 
 ## Step 1: Explore a range of solutions
@@ -91,9 +114,14 @@ We *could* estimate a single solution, as in the following (run this
 code).
 
 ```{r}
-d %>%
-    estimate_profiles(3) %>% 
-    plot_profiles()
+
+data_for_lpa %>% 
+    tidyLPA::estimate_profiles(n_profiles = 3) %>% 
+    tidyLPA::plot_profiles(add_line = TRUE)
+
+data_for_lpa %>% 
+    tidyLPA::estimate_profiles(n_profiles = 4) %>% 
+    tidyLPA::plot_profiles(add_line = TRUE)
 ```
 
 Wait a minute - something's not right. Let's center and standardize all
@@ -141,9 +169,19 @@ Fortunately, there are tools to help us. Let's try the
 set of profiles at once --- here, those with 1 through 10 profiles.
 
 ```{r}
-d %>%
-    estimate_profiles(1:10) %>% 
+
+data_for_lpa %>%
+    estimate_profiles(3:7) %>% 
     compare_solutions()
+
+our_solution <- data_for_lpa %>%
+    estimate_profiles(4)
+
+our_solution %>% 
+    get_estimates()
+
+plot_profiles(our_solution, add_line = TRUE) +
+    theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1)) # this rotates the x-axis labels to make them easier to read
 ```
 
 Often, we wish to look for a *change in the rate* of the decrease of fit
@@ -188,6 +226,7 @@ the output from the first step as a guide. In this step, you as the
 human can interrogate and make sense of the output of the first step.
 
 ```{r}
+get_estimates(our_solution)
 get_data(our_solution)
 ```
 

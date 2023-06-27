@@ -66,13 +66,7 @@ tailoring to your particular context.
 > inquiry skills using educational data mining. Journal of the Learning
 > Sciences, 22(4), 521-563.
 > <https://github.com/laser-institute/essential-readings/blob/main/machine-learning/ml-lab-3/gobert-et-al-2013-jls.pdf>
-
-> Salmeron-Majadas, S., Baker, R. S., Santos, O. C., & Boticario, J. G.
-> (2018). A machine learning approach to leverage individual keyboard
-> and mouse interaction behavior from multiple users in real-world
-> learning scenarios. IEEE Access, 6, 39154-39179.
-> <https://ieeexplore.ieee.org/iel7/6287639/8274985/08416736.pdf>
-
+>
 > Bosch, N. (2021). AutoML Feature Engineering for Student Modeling
 > Yields High Accuracy, but Limited Interpretability. Journal of
 > Educational Data Mining, 13(2), 55-79.
@@ -85,11 +79,9 @@ here, we explore a considerably more sophisticated model, a random
 forest.
 
 Choosing a more sophisticated model adds some complexity to the
-modeling. Notably, more complex models have *tuning parameters* - parts
-of the model that are not estimated from the data. In addition to using
-feature engineering in a way akin to how we did in the last case study,
-Bertolini et al. (2021) use tuning parameters to improve the performance
-of their predictive model.
+modeling. In addition to using feature engineering in a way akin to how
+we did in the last case study, Bertolini et al. (2021) use tuning
+parameters to improve the performance of their predictive model.
 
 > Bertolini, R., Finch, S. J., & Nehm, R. H. (2021). Enhancing data
 > pipelines for forecasting student performance: integrating feature
@@ -99,14 +91,17 @@ of their predictive model.
 
 Our driving question is: **How much of a difference does a more complex
 model make?** Looking back to our predictive model from LL1, we can see
-that our accuracy was around 87%: 0.872, more specifically. Can we
-improve on that?
+that our accuracy was around xx. Can we improve on that?
 
 While answering this question, we focus not only on estimating, but also
 on tuning a complex model. The data we use is, again, from the #NGSSchat
 community on Twitter, as in doing so we can compare the performance of
 this tuned, complex model to the initial model we used in the first case
 study.
+
+> Baker, R. S., Esbenshade, L., Vitale, J., & Karumbaiah, S. (2023).
+> Using Demographic Data as Predictor Variables: a Questionable Choice.
+> *Journal of Educational Data Mining*, *15*(2), 22-52.
 
 ## Step 0: Loading and setting up
 
@@ -120,6 +115,7 @@ Please add to the chunk below code to load three packages we've used in
 both LL1 and LL2 - tidyverse, tidymodels, and here.
 
 ```{r}
+library(janitor)
 library(tidyverse)
 library(tidymodels)
 library(vip) # a new package we're adding for variable importance measures
@@ -129,49 +125,90 @@ library(ranger) # this is needed for the random forest algorithm
 Next, we'll load the processed data.
 
 ```{r}
-students <- read_csv("data/oulad-students.csv")
-assessments <- read_csv("data/oulad-assessments.csv")
+assessments <- read_csv("lab-3/data/oulad-assessments.csv")
 
-students <- students %>% 
-    mutate(withdrawn = ifelse(final_result == "Withdrawn", 1, 0)) %>% # creates a dummy code
-    mutate(withdrawn = as.factor(withdrawn)) # makes the variable a factor, helping later steps
-
-students <- students %>% 
-    mutate(imd_band = factor(imd_band, levels = c("0-10%",
-                                                  "10-20%",
-                                                  "20-30%",
-                                                  "30-40%",
-                                                  "40-50%",
-                                                  "50-60%",
-                                                  "60-70%",
-                                                  "70-80%",
-                                                  "80-90%",
-                                                  "90-100%"))) %>% # this creates a factor with ordered levels
-    mutate(imd_band = as.integer(imd_band)) # this changes the levels into integers based on the order of the factor levels
-
-students %>% 
-    select(date_registration) # just taking a look at this variable
-```
-
-```{r}
 code_module_dates <- assessments %>% 
     group_by(code_module, code_presentation) %>% 
     summarize(quantile_cutoff_date = quantile(date, probs = .25, na.rm = TRUE))
 
-assessments <- assessments %>% 
-    left_join(code_module_dates)
+# students and assessments 
+students_and_assessments <- read_csv("lab-3/data/oulad-students-and-assessments.csv")
 
-assessments_filtered <- assessments %>% 
-    filter(date < quantile_cutoff_date)
+```
 
-assessments_summarized <- assessments_filtered %>% 
-    mutate(weighted_score = score * weight) %>% 
-    group_by(id_student) %>% 
-    summarize(mean_weighted_score = mean(weighted_score)) %>% 
-    arrange(id_student)
+```{r}
+# log-data
+interactions <- read_csv("lab-3/data/oulad-interactions.csv")
+
+interactions %>% 
+    count(activity_type)
+
+interactions %>% 
+    ggplot(aes(x = log(sum_click))) +
+    geom_histogram()
+
+interactions %>% 
+    ggplot(aes(x = date)) +
+    geom_histogram()
+
+interactions %>% 
+    count(id_site, code_module, code_presentation)
+
+## ---
+
+code_module_dates <- assessments %>% 
+    group_by(code_module, code_presentation) %>% 
+    summarize(quantile_cutoff_date = quantile(date, probs = .25, na.rm = TRUE))
+
+interactions_joined <- interactions %>% 
+    left_join(code_module_dates) # join the data based on course_module and course_presentation
+
+interactions_filtered <- interactions_joined %>% 
+    filter(date < quantile_cutoff_date) # filter the data so only assignments before the cutoff date are included
+
+## ---------------------------------------------------------------------------------------------------
+
+interactions_summarized <- interactions_filtered %>% 
+    group_by(id_student, code_module, code_presentation) %>% 
+    summarize(sum_clicks = sum(sum_click),
+              sd_clicks = sd(sum_click), 
+              max_clicks = max(sum_click))
+
+interactions_summarized %>% 
+    ggplot(aes(x = sum_clicks)) +
+    geom_histogram()
+
+interactions_summarized_activity <- interactions_filtered %>% 
+    group_by(id_student, code_module, code_presentation, activity_type) %>% 
+    summarize(sum_clicks = sum(sum_click))
+
+interactions_summarized_activity %>% 
+    ggplot(aes(x = sum_clicks)) +
+    geom_histogram() +
+    facet_wrap(~activity_type)
+
+interactions_slopes <- interactions_filtered %>% 
+    group_by(id_student, code_module, code_presentation) %>% 
+    nest() %>% 
+    mutate(model = map(data, ~lm(sum_click ~ 1 + date, data = .x) %>% 
+                           tidy)) %>% 
+    unnest(model)
+
+interactions_slopes %>% 
+    filter(term == "date")
+
+students_assessments_and_interactions <- left_join(students_and_assessments, 
+                                                   interactions_summarized)
+```
+
+```{r}
+students_assessments_and_interactions <- students_assessments_and_interactions %>% 
+    mutate(pass = as.factor(pass))
 ```
 
 ## Step 1. Split data
+
+
 
 We treat this step relatively minimally as we have now carried out a
 step very similar to this in LL1 and LL2; return to the case study for
@@ -180,19 +217,43 @@ out the *k*-folds cross-validation process introduced in LL2. Consider -
 like there - setting a different value for *v* (*k*) as you think is
 appropriate.
 
+Here's a key difference! Pay careful attention to this next line of
+code, which sets the groundwork for *k*-folds cross-validation. Note
+that in the function below (run `?vfold_cv` to see more), the letter *v*
+is used instead of *k*, though they share a meaning, as the
+documentation notes).
+
+```{r}
+kfcv <- vfold_cv(data_train) # this differentiates this from what we did before
+# before, we simple used data_train to fit our model
+kfcv
+```
+
+#### [Your Turn]{style="color: green;"} ⤵
+
+Above, we split the data into 10 different folds. Change the number of
+folds from 10 to 20 by changing the value of v; 10 is simply the
+default. For help, run `?vfold_cv` to get a hint.
+
+```{r}
+kfcv <- vfold_cv(data_train) # this differentiates this from what we did before
+# before, we simple used data_train to fit our model
+kfcv
+```
+
 #### [Your Turn]{style="color: green;"} ⤵
 
 You do have one step that is your turn! Please add the code for setting
 up the k-folds cross-validation.
 
 ```{r}
-set.seed(20220712)
-train_test_split <- initial_split(students, prop = .80)
-data_train <- training(train_test_split)
+set.seed(20230712)
 
+train_test_split <- initial_split(students_assessments_and_interactions , prop = .50, strata = "pass")
+data_train <- training(train_test_split)
 kfcv <- vfold_cv(data_train) # this differentiates this from what we did before
 # before, we simple used data_train to fit our model
-kfcv
+data_test <- testing(train_test_split)
 ```
 
 Here's a key difference! Pay careful attention to this next line of
@@ -227,13 +288,18 @@ perhaps the step you carried out complete the badge requirements for
 LL2.
 
 ```{r,}
-my_rec <- recipe(withdrawn ~ disability + imd_band +
+my_rec <- recipe(pass ~ disability +
                      date_registration + 
-                     gender + highest_education + 
-                     mean_weighted_score, data = data_train) %>% 
+                     gender +
+                     code_module +
+                     mean_weighted_score +
+                     sum_clicks, 
+                 data = data_train) %>% 
     step_dummy(disability) %>% 
-    step_dummy(gender) %>% 
-    step_dummy(highest_education)
+    step_dummy(gender) %>%  
+    step_dummy(code_module) %>% 
+    step_impute_knn(sum_clicks) %>% 
+    step_impute_knn(date_registration)
 ```
 
 ## Step 3: Specify the model and workflow
@@ -265,60 +331,16 @@ here.
 ```{r panel-chunk-3, echo = TRUE, eval = TRUE}
 # specify model
 my_mod <-
-    rand_forest(mtry = tune(), # this specifies that we'll take steps later to tune the model
-                min_n = tune(),
-                trees = tune()) %>%
-    set_engine("ranger", importance = "impurity") %>%
-    set_mode("classification")
+    rand_forest() %>% 
+    set_engine("ranger", importance = "impurity") %>% # random
+    set_mode("classification") # since we are predicting a dichotomous outcome, specify classification; for a number, specify regression
 
 # specify workflow
 my_wf <-
-    workflow() %>%
-    add_model(my_mod) %>% 
-    add_recipe(my_rec)
+    workflow() %>% # create a workflow
+    add_model(my_mod) %>% # add the model we wrote above
+    add_recipe(my_rec) # add our recipe we wrote above
 ```
-
-## Step 4: Fit model
-
-Here, things become different once again. We'll follow a grid method to
-specify two tuning parameters, the number of predictor variables that
-are randomly sampled for each split in the tree (`mtry`) and the number
-of data points required to execute a split (`min_n`). `size` refers to
-how many distinct combinations of the tuning parameters will be
-returned. 10 is a relatively small number - we can imagine a much larger
-number of combinations of the `mtry` and `min_n` hyperparameters - but
-it should give us a sense of what parameters lead to the best
-performance.
-
-These next two functions are used to get a sense of what the values for
-`mtry` and `min_n` should be based on the dimensions or range of the
-values of the variables in the data.
-
-```{r panel-chunk-4, echo = TRUE, eval = TRUE}
-# specify tuning grid
-finalize(mtry(), data_train)
-finalize(min_n(), data_train)
-finalize(trees(), data_train)
-```
-
-#### [Your Turn]{style="color: green;"} ⤵
-
-We then use these values in the `grid_max_entropy()` function below;
-replace the `xx` values below with the *minimum* and *maximum* value
-provided by the `mtry` and `min_n` variables, above. You can see that
-`tree_grid` is simply a combination of values of the hyperparameters.
-
-```{r}
-tree_grid <- grid_max_entropy(mtry(range(1, 17)),
-                              min_n(range(2, 40)),
-                              trees(range(1, 2000)),
-                              size = 10)
-```
-
-Now, we're ready to fit the model. Note - this can take some time, the
-longest of any function we've run so far, as we're estimating a) as many
-models as there are folds (*v =* 10 as default) and b) distinct
-combinations of hyperparameters (`size = 10` as default).
 
 ## Step 4: Fit model
 
@@ -326,51 +348,22 @@ Note that here we use the `kfcv` data. We'll run that in the next chunk.
 
 We can ignore the warnings and messages we see.
 
-```{r, warning = FALSE}
+```{r}
 fitted_model_resamples <- fit_resamples(my_wf, resamples = kfcv,
                               control = control_grid(save_pred = TRUE)) # this allows us to inspect the predictions
+
+fitted_model_resamples %>%
+    collect_metrics()
 ```
 
 ```{r, warning = FALSE}
-# fit model with tune_grid()
+class_metrics <- metric_set(accuracy, sensitivity, specificity, ppv, npv, kap) # add probs?
 
-fitted_model <- my_wf %>% 
-    tune_grid(
-        resamples = kfcv,
-        grid = tree_grid,
-        metrics = metric_set(roc_auc, accuracy, kap, sensitivity, specificity, precision)
-    )
-```
+fitted_model <- fit(my_wf, data_train)
+final_fit <- last_fit(fitted_model, train_test_split, metrics = class_metrics)
 
-Here comes some further additional steps. This next step is key
-technically and conceptually - we're examining the best tuning
-parameters *ranked by their predictive accuracy*.
-
-```{r}
-# examine best set of tuning parameters; repeat?
-show_best(fitted_model, n = 10, metric = "accuracy")
-```
-
-This function simply indicates that you want to use the best of the sets
-of tuning parameters examined though the code in the above chunk -
-literally the first row.
-
-```{r}
-# select best set of tuning parameters
-best_tree <- fitted_model %>%
-    select_best(metric = "accuracy")
-```
-
-Next, we'll finalize workflow with best set of tuning parameters and
-then fit the model on the training data.
-
-```{r}
-final_wf <- my_wf %>% 
-    finalize_workflow(best_tree)
-
-final_fit <- final_wf %>% 
-    last_fit(train_test_split, metrics = metric_set(roc_auc, accuracy, kap, sensitivity, specificity, precision)
-             )
+final_fit %>% 
+    collect_metrics()
 ```
 
 We can see that `final_fit` is for a single fit: a random forest with
@@ -378,18 +371,17 @@ the best performing tuning parameters trained with the *entire* training
 set of data to predict the values in our (otherwise not used/"spent")
 testing set of data.
 
-```{r}
-final_fit
-```
-
 ## Step 5: Interpret accuracy
 
 Last, we can interpret the accuracy of our tuned model.
 
 ```{r fit-stats}
-# fit stats
-final_fit %>%
-    collect_metrics()
+collect_predictions(final_fit)
+
+collect_predictions(final_fit) %>% 
+    conf_mat(.pred_class, pass)
+
+collect_metrics(final_fit
 ```
 
 Interpreting these - apart from `accuracy` - may present some
