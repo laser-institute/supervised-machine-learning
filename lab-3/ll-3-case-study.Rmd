@@ -21,12 +21,9 @@ knitr::opts_chunk$set(echo = TRUE, eval = TRUE)
 
 ## Background
 
-1.  We use a very different data set, on from *online science classes*
-    that involves a variety of variables types
-2.  We focus on *feature engineering*, a key step in which we prepare
-    variables for inclusion in our machine learning models
-3.  We use resampling to evaluate the effectiveness of the feature
-    engineering steps
+After interpreting our last model, it is easy to think we can do better.
+How? In this learning lab, we will answer this question will building a
+better model.
 
 Feature engineering is a rich topic in machine learning research,
 including in the learning analytics and educational data mining

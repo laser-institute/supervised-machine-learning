@@ -289,12 +289,14 @@ badge). Note how we dummy code two variables using `step_dummy()`
 
 ```{r}
 my_rec <- recipe(pass ~ disability +
-                 date_registration + 
-                 gender +
-                 mean_weighted_score, 
-             data = data_train) %>% 
-step_dummy(disability) %>% 
-step_dummy(gender) %>% 
+                     date_registration + 
+                     gender +
+                     code_module +
+                     mean_weighted_score, 
+                 data = data_train) %>% 
+    step_dummy(disability) %>% 
+    step_dummy(gender) %>%  
+    step_dummy(code_module)
 
 ```
 
@@ -458,7 +460,7 @@ are also provided with the accuracy and Cohen's Kappa values.
 #### [Your Turn]{style="color: green;"} ⤵
 
 ```{r}
-
+collect_metrics(final_fit)
 ```
 
 Having invested in understanding the terminology of machine learning
