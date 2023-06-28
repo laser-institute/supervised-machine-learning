@@ -62,8 +62,8 @@ some degree of tailoring to your particular context. Review this paper
 on this topic
 
 > Bosch, N. (2021). AutoML Feature Engineering for Student Modeling
-> Yields High Accuracy, but Limited Interpretability. Journal of
-> Educational Data Mining, 13(2), 55-79.
+> Yields High Accuracy, but Limited Interpretability. *Journal of
+> Educational Data Mining, 13*(2), 55-79.
 > <https://github.com/laser-institute/essential-readings/blob/main/machine-learning/ml-lab-3/bosch-et-al-2021-jedm.pdf>
 
 Even after feature engineering, machine learning approaches can often
@@ -181,6 +181,8 @@ interactions %>%
 What does this tell you? Add one or more notes:
 
 -   
+
+#### [Your Turn]{style="color: green;"} ⤵
 
 *Third*, please conduct one other data exploration step of your
 choosing. Options include creating simple graphgs or calculating
@@ -383,10 +385,10 @@ recipe.
 -   [`step_normalize()`](https://recipes.tidymodels.org/reference/step_normalize.html):
     normalizes numeric data to have a standard deviation of one and a
     mean of zero
--   [\`step_dummy()](https://recipes.tidymodels.org/reference/step_dummy.html):
+-   [`step_dummy()`](https://recipes.tidymodels.org/reference/step_dummy.html):
     convert nominal data (e.g. character or factors) into one or more
     numeric binary model terms for the levels of the original data.
--   [`step_impute_knn()](https://recipes.tidymodels.org/reference/step_impute_knn.html)`
+-   [`step_impute_knn()`](https://recipes.tidymodels.org/reference/step_impute_knn.html):
     impute missing alues using the nearest neighbors method
 
 We will use all three of these. Please note that there are two ways to
@@ -401,10 +403,10 @@ step_normalize(minutes_of_videos_watched)
 
 Another way is to specify *for which types of variables* the feature
 engineering step applies. You can see all of the available types
-[here](<https://recipes.tidymodels.org/reference/has_role.html>. For
+[here](https://recipes.tidymodels.org/reference/has_role.html). For
 example, the code below would normalize all numeric variables:
 
-```{r}
+```{r, eval = FALSE}
 step_normalize(all_numeric_predictors())
 ```
 
@@ -419,8 +421,8 @@ my_rec <- recipe(pass ~ disability +
                    gender +
                    code_module +
                    mean_weighted_score +
-                   sum_clicks + sd_clicks + mean_clicks +
-                   intercept + date + date_2, 
+                   sum_clicks + sd_clicks + mean_clicks + # new
+                   intercept + date + date_2, # new
                  data = data_train)
 ```
 
@@ -429,9 +431,9 @@ my_rec <- recipe(pass ~ disability +
 Then, please *add to* the following code by completing three steps,
 building on the code that is started below:
 
-1.  Please normalize all numeric predictors.\
+1.  Please normalize all numeric predictors.
 2.  Please dummy code the following three variables: `disability`,
-    `gender`, and `code_module`.\
+    `gender`, and `code_module`.
 3.  Please impute missing values using the nearest neighbors method for
     the `sum_clicks` and `date_registration` variables.
 
@@ -513,7 +515,7 @@ accurate our model is.
 That is, we can be unconcerned about inadvertently introducing bias
 until we reach the last step - fitting our last model. We can do that
 using the familiar `fit()` function, followed by `last_fit`. It is
-important to not make further changes after this point/
+important to not make further changes after this point.
 
 ```{r}
 fitted_model <- fit(my_wf, data_train)
