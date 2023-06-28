@@ -19,6 +19,8 @@ As a reminder, to earn a badge for each lab, you are required to respond to a se
 
 ### Part I: Reflect and Plan
 
+> Baker, R. S., Esbenshade, L., Vitale, J., & Karumbaiah, S. (2023). Using Demographic Data as Predictor Variables: a Questionable Choice. Journal of Educational Data Mining, 15(2), 22-52.
+
 Part A:
 
 1.  Like after each of the previous two learning labs, please interpret the predictive accuracy of the model. How much better was it relative to the untuned model? Was tuning worth the investment.
