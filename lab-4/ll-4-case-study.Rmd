@@ -2,7 +2,7 @@
 title: 'Learning Lab 4 Case Study'
 author: ""
 date: "`r format(Sys.Date(),'%B %e, %Y')`"
-output:
+output: 
   html_document:
     toc: yes
     toc_depth: 4

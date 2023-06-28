@@ -62,8 +62,8 @@ some degree of tailoring to your particular context. Review this paper
 on this topic
 
 > Bosch, N. (2021). AutoML Feature Engineering for Student Modeling
-> Yields High Accuracy, but Limited Interpretability. Journal of
-> Educational Data Mining, 13(2), 55-79.
+> Yields High Accuracy, but Limited Interpretability. *Journal of
+> Educational Data Mining, 13*(2), 55-79.
 > <https://github.com/laser-institute/essential-readings/blob/main/machine-learning/ml-lab-3/bosch-et-al-2021-jedm.pdf>
 
 Even after feature engineering, machine learning approaches can often
@@ -150,20 +150,23 @@ read in the `oulad-interactions.csv` file.
 interactions <- read_csv("data/oulad-interactions.csv")
 ```
 
-Woah, this is a large file! Let's start to explore it a bit. Please take three steps to explore the data, as follows.
+Woah, this is a large file! Let's start to explore it a bit. Please take
+three steps to explore the data, as follows.
 
 #### [Your Turn]{style="color: green;"} ⤵
 
-*First*, `count()` the `activity_type` variable and *sort* the resulting output by frequency.
+*First*, `count()` the `activity_type` variable and *sort* the resulting
+output by frequency.
 
 ```{r}
 interactions %>% 
   count(activity_type)
 ```
 
-What does this tell you? Consulting the codebook and your output, please add at least two notes on what you are noticing:
+What does this tell you? Consulting the codebook and your output, please
+add at least two notes on what you are noticing:
 
--
+-   
 
 #### [Your Turn]{style="color: green;"} ⤵
 
@@ -177,17 +180,26 @@ interactions %>%
 
 What does this tell you? Add one or more notes:
 
-- 
+-   
 
-*Third*, please conduct one other data exploration step of your choosing. Options include creating simple graphgs or calculating descriptive, summary statistics.
+#### [Your Turn]{style="color: green;"} ⤵
+
+*Third*, please conduct one other data exploration step of your
+choosing. Options include creating simple graphgs or calculating
+descriptive, summary statistics.
 
 ```{r}
 
 ```
 
-We're ready to proceed to engineering some features with the interactions data. 
+We're ready to proceed to engineering some features with the
+interactions data.
 
-First, let's join together the `interactions` and the `code_module_dates` data frames. This is so we have the cut-offs (one-third through the semester), which will help us to only use data from that period in our model when we filter the data based upon those dates.
+First, let's join together the `interactions` and the
+`code_module_dates` data frames. This is so we have the cut-offs
+(one-third through the semester), which will help us to only use data
+from that period in our model when we filter the data based upon those
+dates.
 
 ```{r}
 interactions_joined <- interactions %>% 
@@ -197,7 +209,12 @@ interactions_filtered <- interactions_joined %>%
   filter(date < quantile_cutoff_date) # filter the data so only assignments before the cutoff date are included
 ```
 
-Then, let's engineer several features. For the present time, we'll focus on the `sum_click` variable, which tells us how many times students clicked on a resource for a given date. We'll use the `interactions_filtered` data set we just created. Let's start simple: please type the name of that data set (`interactions_filtered`) in the code chunk below.
+Then, let's engineer several features. For the present time, we'll focus
+on the `sum_click` variable, which tells us how many times students
+clicked on a resource for a given date. We'll use the
+`interactions_filtered` data set we just created. Let's start simple:
+please type the name of that data set (`interactions_filtered`) in the
+code chunk below.
 
 #### [Your Turn]{style="color: green;"} ⤵
 
@@ -205,8 +222,19 @@ Then, let's engineer several features. For the present time, we'll focus on the 
 interactions_filtered
 ```
 
-How can we create a feature with `sum_click`? Think back to our discussion in the presentation; we have 
-*many* options for working with such time series data. Perhaps the most simple is to count the clicks. Please summarize the number of clicks for each student (specific to a single course). This means you will need to group your data by `id_student`, `code_module`, and `code_presentation`, and then create a summary variable. Assign the resulting output the name `interactions_summarized`. You may find the documentation for `summarize()` to be helpful. That is available [here](https://dplyr.tidyverse.org/reference/summarise.html). [This chapter](https://r4ds.had.co.nz/transform.html) is also likely helpful (note that `summarise()` and `summarize()` are different spellings for the same function).
+How can we create a feature with `sum_click`? Think back to our
+discussion in the presentation; we have *many* options for working with
+such time series data. Perhaps the most simple is to count the clicks.
+Please summarize the number of clicks for each student (specific to a
+single course). This means you will need to group your data by
+`id_student`, `code_module`, and `code_presentation`, and then create a
+summary variable. Assign the resulting output the name
+`interactions_summarized`. You may find the documentation for
+`summarize()` to be helpful. That is available
+[here](https://dplyr.tidyverse.org/reference/summarise.html). [This
+chapter](https://r4ds.had.co.nz/transform.html) is also likely helpful
+(note that `summarise()` and `summarize()` are different spellings for
+the same function).
 
 #### [Your Turn]{style="color: green;"} ⤵
 
@@ -216,7 +244,13 @@ interactions_summarized <- interactions_filtered %>%
   summarize(sum_clicks = sum(sum_click))
 ```
 
-This is a good start - we've created our first feature based upon the clickstream data! What are some other features we can add? An affordance of using the `summarize()` function in R is we can create multiple summary statistics at once. Let's also calculate the standard deviation of the number of clicks as well as the mean. Please copy the code you wrote above into the code chunk below and then add these two additional summary statistics.
+This is a good start - we've created our first feature based upon the
+clickstream data! What are some other features we can add? An affordance
+of using the `summarize()` function in R is we can create multiple
+summary statistics at once. Let's also calculate the standard deviation
+of the number of clicks as well as the mean. Please copy the code you
+wrote above into the code chunk below and then add these two additional
+summary statistics.
 
 #### [Your Turn]{style="color: green;"} ⤵
 
@@ -228,7 +262,9 @@ interactions_summarized <- interactions_filtered %>%
             mean_clicks = mean(sum_click))
 ```
 
-We'll take one last step here -- creating individual *slopes* of students' clicks over time. This code is a bit more involved, and so is annotated for you below; feel free to modify and re-use this.
+We'll take one last step here -- creating individual *slopes* of
+students' clicks over time. This code is a bit more involved, and so is
+annotated for you below; feel free to modify and re-use this.
 
 ```{r}
 interactions_slopes <- interactions_filtered %>% # start with our interactions data
@@ -239,7 +275,8 @@ interactions_slopes <- interactions_filtered %>% # start with our interactions d
   unnest(model) # this returns the data to its original (non-nested structure), retaining the mutated model output
 ```
 
-Please mutate the resulting intercept, date, and data squared variables to be renamed: `intercept`, `date`, and `date_2`, respectively.
+Please mutate the resulting intercept, date, and data squared variables
+to be renamed: `intercept`, `date`, and `date_2`, respectively.
 
 #### [Your Turn]{style="color: green;"} ⤵
 
@@ -247,9 +284,14 @@ Please mutate the resulting intercept, date, and data squared variables to be re
 
 ```
 
-After running this code, we will have intercepts, linear slopes, and quadratic terms for each students' clickstream pattern over the semester. 
+After running this code, we will have intercepts, linear slopes, and
+quadratic terms for each students' clickstream pattern over the
+semester.
 
-Let's join together several files. First, let's join all our features into a single file. Please use `left_join()` to join `interactions_filtered` and `interactions_slopes`, assigning the resulting output the name `all_features`.
+Let's join together several files. First, let's join all our features
+into a single file. Please use `left_join()` to join
+`interactions_filtered` and `interactions_slopes`, assigning the
+resulting output the name `all_features`.
 
 #### [Your Turn]{style="color: green;"} ⤵
 
@@ -257,7 +299,10 @@ Let's join together several files. First, let's join all our features into a sin
 all_features <- left_join(interactions_filtered, interactions_slopes)
 ```
 
-Just one last step! Let's join together *all* of the data we'll use for our modeling: `students_and_assessments` and `all_features`. Use `left_join()` once more, assigning the resulting output the name `students_assessments_and_interactions`. 
+Just one last step! Let's join together *all* of the data we'll use for
+our modeling: `students_and_assessments` and `all_features`. Use
+`left_join()` once more, assigning the resulting output the name
+`students_assessments_and_interactions`.
 
 #### [Your Turn]{style="color: green;"} ⤵
 
@@ -266,7 +311,11 @@ students_assessments_and_interactions <- left_join(students_and_assessments,
                                                    interactions_summarized)
 ```
 
-One more small step. Let's ensure that our outcome variable -- `pass` -- is a factor. It was, but when saving to and reading from a CSV, it lots its factor characteristics, becoming instead a character string. It is necessary for the outcome of a classification model (like the one we are using) to be a factor. Please use `mutate()` to do just that.
+One more small step. Let's ensure that our outcome variable -- `pass` --
+is a factor. It was, but when saving to and reading from a CSV, it lots
+its factor characteristics, becoming instead a character string. It is
+necessary for the outcome of a classification model (like the one we are
+using) to be a factor. Please use `mutate()` to do just that.
 
 #### [Your Turn]{style="color: green;"} ⤵
 
@@ -279,11 +328,15 @@ We're now ready to model!
 
 ## Step 1. Split data
 
-We'll follow the same steps we followed in learning labs #1 and #2, here. One difference - we'll use `students_assessments_and_interactions` instead of the data frame we used in those learning labs. Please port over the code you used in those learning labs here, changing the name of the data frame to the one we are now using. 
+We'll follow the same steps we followed in learning labs #1 and #2,
+here. One difference - we'll use `students_assessments_and_interactions`
+instead of the data frame we used in those learning labs. Please port
+over the code you used in those learning labs here, changing the name of
+the data frame to the one we are now using.
 
-We discuss this first step minimally as we have now carried out a
-step very similar to this in LL1 and LL2; return to the case study for
-those (especially LL1) for more on data splitting. 
+We discuss this first step minimally as we have now carried out a step
+very similar to this in LL1 and LL2; return to the case study for those
+(especially LL1) for more on data splitting.
 
 #### [Your Turn]{style="color: green;"} ⤵
 
@@ -294,7 +347,9 @@ train_test_split <- initial_split(students_assessments_and_interactions , prop =
 data_train <- training(train_test_split)
 ```
 
-There is a key difference that is next. In this step. we'll further process `data_train`, creating different subsets of the data, or folds of the data, that we can use to fit our model multiple times.
+There is a key difference that is next. In this step. we'll further
+process `data_train`, creating different subsets of the data, or folds
+of the data, that we can use to fit our model multiple times.
 
 ```{r}
 vfcv <- vfold_cv(data_train) # this differentiates this from what we did before
@@ -302,12 +357,13 @@ vfcv <- vfold_cv(data_train) # this differentiates this from what we did before
 vfcv
 ```
 
-How does this work? `data_train` is sampled as many time as we se
-#### [Your Turn]{style="color: green;"} ⤵
+How does this work? `data_train` is sampled as many time as we se \####
+[Your Turn]{style="color: green;"} ⤵
 
 Above, we split the data into 10 different folds. Change the number of
 folds from 10 to 20 by changing the value of v; 10 is simply the
-default---not always the best one! For help, run `?vfold_cv` to get a hint.
+default---not always the best one! For help, run `?vfold_cv` to get a
+hint.
 
 ```{r}
 kfcv <- vfold_cv(data_train, v = 20) # this differentiates this from what we did before
@@ -326,25 +382,38 @@ more about how the following five feature engineering steps below work.
 Like in the first learning lab, this is the step in which we set the
 recipe.
 
--   [`step_normalize()`](https://recipes.tidymodels.org/reference/step_normalize.html): normalizes numeric data to have a standard deviation of one and a mean of zero
--   [`step_dummy()](https://recipes.tidymodels.org/reference/step_dummy.html): convert nominal data (e.g. character or factors) into one or more numeric binary model terms for the levels of the original data.
--   [`step_impute_knn()](https://recipes.tidymodels.org/reference/step_impute_knn.html)` impute missing alues using the nearest neighbors method
+-   [`step_normalize()`](https://recipes.tidymodels.org/reference/step_normalize.html):
+    normalizes numeric data to have a standard deviation of one and a
+    mean of zero
+-   [`step_dummy()`](https://recipes.tidymodels.org/reference/step_dummy.html):
+    convert nominal data (e.g. character or factors) into one or more
+    numeric binary model terms for the levels of the original data.
+-   [`step_impute_knn()`](https://recipes.tidymodels.org/reference/step_impute_knn.html):
+    impute missing alues using the nearest neighbors method
 
-We will use all three of these. Please note that there are two ways to use each of these. One of them is by _specifying the specific variable_ you want to use for the feature engineering step. For example, below, we would normalize a hypothetical variable, one called `minutes_of_videos_watched`:
+We will use all three of these. Please note that there are two ways to
+use each of these. One of them is by *specifying the specific variable*
+you want to use for the feature engineering step. For example, below, we
+would normalize a hypothetical variable, one called
+`minutes_of_videos_watched`:
 
 ```{r, eval = FALSE}
 step_normalize(minutes_of_videos_watched)
 ```
 
-Another way is to specify *for which types of variables* the feature engineering step applies. You can see all of the available types [here](https://recipes.tidymodels.org/reference/has_role.html. For example, the code below would normalize all numeric variables:
+Another way is to specify *for which types of variables* the feature
+engineering step applies. You can see all of the available types
+[here](https://recipes.tidymodels.org/reference/has_role.html). For
+example, the code below would normalize all numeric variables:
 
-```{r}
+```{r, eval = FALSE}
 step_normalize(all_numeric_predictors())
 ```
 
 #### [Your Turn]{style="color: green;"} ⤵
 
-Let's turn to our recipe. Please *add to* the code below to add the new variables---features---we created.
+Let's turn to our recipe. Please *add to* the code below to add the new
+variables---features---we created.
 
 ```{r}
 my_rec <- recipe(pass ~ disability +
@@ -352,18 +421,21 @@ my_rec <- recipe(pass ~ disability +
                    gender +
                    code_module +
                    mean_weighted_score +
-                   sum_clicks + sd_clicks + mean_clicks +
-                   intercept + date + date_2, 
+                   sum_clicks + sd_clicks + mean_clicks + # new
+                   intercept + date + date_2, # new
                  data = data_train)
 ```
 
 #### [Your Turn]{style="color: green;"} ⤵
 
-Then, please *add to* the following code by completing three steps, building on the code that is started below:
+Then, please *add to* the following code by completing three steps,
+building on the code that is started below:
 
-1. Please normalize all numeric predictors.  
-1. Please dummy code the following three variables: `disability`, `gender`, and `code_module`.  
-1. Please impute missing values using the nearest neighbors method for the `sum_clicks` and `date_registration` variables.  
+1.  Please normalize all numeric predictors.
+2.  Please dummy code the following three variables: `disability`,
+    `gender`, and `code_module`.
+3.  Please impute missing values using the nearest neighbors method for
+    the `sum_clicks` and `date_registration` variables.
 
 ```{r}
 my_rec <- my_rec %>% 
@@ -381,16 +453,16 @@ Next, we specify the model and workflow, using the same engine *but a
 different engine and mode*, here, regression for a *continuous outcome*.
 Specifically, we are:
 
-  - using the `random_forest()` function to set the *model* as a random
-forest
-  - using `set_engine("ranger", importance = "impurity")` to set the
-*engine* as that provided for random forests through the {ranger}
-package; we also add the `importance = "impurity"` line to be able
-to interpret a particular variable importance metric
-specific to random forest models
-  - finally, using `set_mode("classification"))` as we are again
-predicting categories (transactional and substantive conversations
-taking place through #NGSSchat)
+-   using the `random_forest()` function to set the *model* as a random
+    forest
+-   using `set_engine("ranger", importance = "impurity")` to set the
+    *engine* as that provided for random forests through the {ranger}
+    package; we also add the `importance = "impurity"` line to be able
+    to interpret a particular variable importance metric specific to
+    random forest models
+-   finally, using `set_mode("classification"))` as we are again
+    predicting categories (transactional and substantive conversations
+    taking place through #NGSSchat)
 
 ```{r panel-chunk-3, echo = TRUE, eval = TRUE}
 # specify model
@@ -408,16 +480,24 @@ my_wf <-
 
 ## Step 4: Fit model
 
-Note that here we use the `kfcv` data and a different function - `fit_resamples()`, instead of `fit()`. This function is required when we have multiple folds of our sample, as we created using the vfcv function above. See more about this function [here](https://tune.tidymodels.org/reference/fit_resamples.html).
+Note that here we use the `kfcv` data and a different function -
+`fit_resamples()`, instead of `fit()`. This function is required when we
+have multiple folds of our sample, as we created using the vfcv function
+above. See more about this function
+[here](https://tune.tidymodels.org/reference/fit_resamples.html).
 
 ```{r}
 class_metrics <- metric_set(accuracy, sensitivity, specificity, ppv, npv, kap) # specify the same metrics as earlier
 fitted_model_resamples <- fit_resamples(my_wf, resamples = vfcv, metrics = class_metrics) # specify the workflow, resampled data, and our metrics
 ```
 
-Note that you have fit as many models as the value for `v` that you specified earlier. So, this may take some time. Take a walk, grab a snack, or make a cup of tea!
+Note that you have fit as many models as the value for `v` that you
+specified earlier. So, this may take some time. Take a walk, grab a
+snack, or make a cup of tea!
 
-Then, we can use the same `collect_metrics()` function we have used to inspect the predictive strength of the model. Please do that for `fitted_model_resamples`.
+Then, we can use the same `collect_metrics()` function we have used to
+inspect the predictive strength of the model. Please do that for
+`fitted_model_resamples`.
 
 #### [Your Turn]{style="color: green;"} ⤵
 
@@ -425,20 +505,28 @@ Then, we can use the same `collect_metrics()` function we have used to inspect t
 
 ```
 
-We noted earlier that we may introduce bias when we evaluate different models against the same training data. The benefit of using the multiple folds - and fitting multiple models - is we can make changes to our features or model. Thus, if we decide to add a new feature, we can run the above steps, without concern about biasing our interpretation of how accurate our model is. 
+We noted earlier that we may introduce bias when we evaluate different
+models against the same training data. The benefit of using the multiple
+folds - and fitting multiple models - is we can make changes to our
+features or model. Thus, if we decide to add a new feature, we can run
+the above steps, without concern about biasing our interpretation of how
+accurate our model is.
 
-That is, we can be unconcerned about inadvertently introducing bias until we reach the last step - fitting our last model. We can do that using the familiar `fit()` function, followed by `last_fit`. It is important to not make further changes after this point/ 
+That is, we can be unconcerned about inadvertently introducing bias
+until we reach the last step - fitting our last model. We can do that
+using the familiar `fit()` function, followed by `last_fit`. It is
+important to not make further changes after this point.
 
 ```{r}
 fitted_model <- fit(my_wf, data_train)
 final_fit <- last_fit(fitted_model, train_test_split, metrics = class_metrics)
 ```
 
-
 ## Step 5: Interpret accuracy
-fa
-Finally, collect the metrics for our final fit. *These* are the values that you should report as final.
-#### [Your Turn]{style="color: green;"} ⤵
+
+fa Finally, collect the metrics for our final fit. *These* are the
+values that you should report as final. \#### [Your
+Turn]{style="color: green;"} ⤵
 
 ```{r}
 final_fit %>% 
@@ -457,8 +545,9 @@ collect_predictions(final_fit) %>%
   conf_mat(.pred_class, pass)
 
 ```
-                
-Another benefit of a random forest is we can interpret variable importance metrics. Do that here with the following code. 
+
+Another benefit of a random forest is we can interpret variable
+importance metrics. Do that here with the following code.
 
 ```{r}
 final_fit %>% 
@@ -467,12 +556,14 @@ final_fit %>%
   vip(num_features = 10)
 ```
 
-Please add two or more notes on what you notice about which variables (features) are important:
+Please add two or more notes on what you notice about which variables
+(features) are important:
 
-- 
-- 
+-   
+
+-   
 
 ### 🧶 Knit & Check ✅
-                
-Congratulations - you've completed this case study! Consider moving on to the badge activity next.
-                
+
+Congratulations - you've completed this case study! Consider moving on
+to the badge activity next.

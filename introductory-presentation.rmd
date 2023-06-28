@@ -121,7 +121,7 @@ class: clear, inverse, center, middle
 
 # Defining ML
 
-- *Artificial Intelligence (AI)* (i.e., [GPT-3](https://openai.com/api/))
+- *Artificial Intelligence (AI)* (i.e., [GPT-4](https://openai.com/api/))
 : Simulating human intelligence through the use of computers
 - *Machine learning (ML)*: A subset of AI focused on how computers acquire new information/knowledge
 
