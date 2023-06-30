@@ -102,55 +102,33 @@ library(vip) # a new package we're adding for variable importance measures
 library(ranger) # this is needed for the random forest algorithm
 ```
 
-Next, we'll load a few different files. First, please load the
-assessments data we used in the first two learning labs; look back at
-your code therein for a pointer, if needed. Save it the name
-`assessments`.
+Next, we'll load a new file --- one with *interactions* (or log-trace) data.
 
-#### [Your Turn]{style="color: green;"} ⤵
-
-```{r}
-assessments <- read_csv("data/oulad-assessments.csv")
-```
-
-Next, we'll do the same processing we did in the second learning lab, to
+We have to do the same processing we did in the second learning lab, to
 obtain cut-off dates. As a reminder, the purpose of this is to train the
 model on data from the first one-third of the class, with the reasoning
 being this is a good time to intervene--far enough into the class to
 make an appreciable impact, but not too late to have a limited chance of
 being able to change students' trajectory in the class.
 
-```{r}
-code_module_dates <- assessments %>% 
-  group_by(code_module, code_presentation) %>% 
-  summarize(quantile_cutoff_date = quantile(date, probs = .33, na.rm = TRUE)) # change this throughout
-```
+We'll repeat the procedure we carried out with the assessments data --- calculating a cut-off for each class and then filtering the data based upon this cut-off. But, since we've already done this for the assessment data, to allow us to focus more on some new feature engineering steps in this learning lab, we are providing you with the already-filtered interactions data. *Note*: you can find the code used to carry out these steps in the Lab 3 folder in `process-interactions-data.R`.
 
-Next, we'll load the data - already processed in learning lab #2, so we
-can focus on additional data processing steps here. You can run the next
-code chunk to load this data.
+Please load `oulad-interactions.csv` into R, assigning the resulting data frame the name `interactions`.
+
+#### [Your Turn]{style="color: green;"} ⤵
 
 ```{r}
-# students and assessments 
-students_and_assessments <- read_csv("data/oulad-students-and-assessments.csv")
+interactions <- read_csv("data/oulad-interactions.csv")
 ```
 
-Now, we will load a new file -- `interactions.csv` , with clickstream
-data from students. In the OULAD documentation, this is called the VLE
+In the OULAD documentation, this is called the VLE
 (virtual learning environment) data source. Please review the
 description of the variables in the *studentVLE* and *VLE* sources
 (which are joined together for this learning lab)
 [here](https://analyse.kmi.open.ac.uk/open_dataset#description). Then,
 read in the `oulad-interactions.csv` file.
 
-#### [Your Turn]{style="color: green;"} ⤵
-
-```{r}
-# log-data
-interactions <- read_csv("data/oulad-interactions.csv")
-```
-
-Woah, this is a large file! Let's start to explore it a bit. Please take
+Woah, even filtered, this is a large file! Let's start to explore it a bit. Please take
 three steps to explore the data, as follows.
 
 #### [Your Turn]{style="color: green;"} ⤵
@@ -219,7 +197,7 @@ code chunk below.
 #### [Your Turn]{style="color: green;"} ⤵
 
 ```{r}
-interactions_filtered
+interactions_filtered <- read_csv("data/oulad-interactions-filtered.csv")
 ```
 
 How can we create a feature with `sum_click`? Think back to our
@@ -242,6 +220,14 @@ the same function).
 interactions_summarized <- interactions_filtered %>% 
   group_by(id_student, code_module, code_presentation) %>% 
   summarize(sum_clicks = sum(sum_click))
+```
+
+#### [Your Turn]{style="color: green;"} ⤵
+
+How many times did students click? Let's create a histogram to see. Please use {ggplot} and `geom_histogram()` to visualize the distribution of the `sum_clicks` variable you just created. Turn to [the documentation](https://ggplot2.tidyverse.org/reference/geom_histogram.html) if you need a pointer!
+
+```{r}
+
 ```
 
 This is a good start - we've created our first feature based upon the
