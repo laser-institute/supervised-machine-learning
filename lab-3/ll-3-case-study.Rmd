@@ -30,7 +30,7 @@ including in the learning analytics and educational data mining
 communities.
 
 Consider research on online learning and the work of Rodriguez et al.
-(2021). In these two studies, digital *log-trace data*, data generated
+(2021). In these two studies, *digital trace data*, data generated
 through users' interactions with digital technologies. Review this paper
 -- specifically how they processed the "clickstream" data. As this paper
 illustrates, there is not one way to use such data.
@@ -308,6 +308,8 @@ using) to be a factor. Please use `mutate()` to do just that.
 ```{r}
 students_assessments_and_interactions <- students_assessments_and_interactions %>% 
   mutate(pass = as.factor(pass))
+
+# write_csv(students_assessments_and_interactions, "students-assessments-and-interactions.csv")
 ```
 
 We're now ready to model!
