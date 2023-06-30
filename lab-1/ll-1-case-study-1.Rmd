@@ -516,10 +516,6 @@ purposes, we'll use random sampling to select 20% for the test set and
 use the remainder for the training set, which are the defaults for the
 {[rsample](https://tidymodels.github.io/rsample/)} package.
 
-Why do we choose an 80% split (see `prop = .80` below). This is to
-reserve a sufficient number of cases for testing our fitted model later.
-You can change this number if you wish.
-
 #### Split Data Sets
 
 To split our data, we will be using our first {tidymodels} function -
