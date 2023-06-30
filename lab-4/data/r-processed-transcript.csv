@@ -1,4 +1,4 @@
-group,index,start,end,duration,transcript,question_mark,elipses,nwords,duration_seconds,words_per_second,word_present_maybe,word_present_sort_of,word_present_unsure,word_present_dont_know,word_present_confused,word_present_possibly,liwc_certitude
+group,index,start,end,duration,transcript_text,question_mark,elipses,nwords,duration_seconds,words_per_second,word_present_maybe,word_present_sort_of,word_present_unsure,word_present_dont_know,word_present_confused,word_present_possibly,liwc_certitude
 orange,1,00:03:18,00:03:20,00:00:02,"It's table 6, right?",TRUE,FALSE,4,2.3148148148148007,1.7280000000000106,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,0
 orange,2,00:03:20,00:03:21,00:00:01,I think so.,FALSE,FALSE,3,1.1574074074074003,2.5920000000000156,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,0
 orange,3,00:03:28,00:03:30,00:00:02,Always go with basic assumptions.,FALSE,FALSE,5,2.3148148148148007,2.160000000000013,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,0

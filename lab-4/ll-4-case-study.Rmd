@@ -17,19 +17,25 @@ bibliography: lit/references.bib
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
+set.seed(20230630) # so the results are readily reproducible
 ```
 
-While the past three case studies have focused on cases for which we
-have coded data, sometimes, we do not have something that we can consider to be coded data---or a
-dependent variable. Machine learning does offer us way forward in such
+While the past three case studies have involved *already-coded* data, sometimes, we do not have something that we can consider to be coded data---a dependent variable. But, machine learning does offer us way forward in such
 cases, but not through the supervised machine learning methods we've
 been using until this point. Instead, we can use *unsupervised* methods.
 
-Our driving question is: *What if we do not have training data?*
+The driving question for this learning lab is: *What if we do not have training data?*
 
-The goal is to estimate those groups, here through the process of Latent
-Profile Analysis. We follow the example of Commeford et al. (2022), who
-estimated profiles of college-levels instructors' teaching practices,
+We answer this question in the context of *multimodal* data, or data from multiple channels, including not only the kinds of digital trace data and survey data, but also data from audio and video channels. This kind of data is often rich, but hard to interpret at a granular level. 
+
+We'll be using audio data from mathematics classrooms collected as a part of Dyer's [*Learning Through Teaching* (LTT) project](https://www.proquest.com/openview/01af3361c531b12ea3caeda8b85b31fa/1?pq-origsite=gscholar&cbl=18750). In this project, hundres of hours of video and audio were collected from high school and middle school classrooms. The specific data set we are using is transcribed data (via [Whisper](https://github.com/bnosac/audio.whisper)) that is analyzed for the different affective or emotional sentiment it evidences. The goal of the study is to try to identify moments in the audio data that suggest negative affect on the part of students in the context of learning mathematics. 
+
+How can we do this? We'll use the process of Latent Profile Analysis to try to identify how students' affect is expressed. We'll interpret this output through a *Computational Grounded Theory* approach, one that takes the output of techniques like Latent Profile Analysis as a starting point for subsequent qualitative analyses. 
+
+Please consult two papers to get a good handle on the methodological background:
+
+First, Commeford et al. (2022) estimated profiles of college-levels instructors' teaching practices,
 specifically their teaching practices relating to active learning. They
 did so using Latent Profile Analysis -- and [the tidyLPA package in
 R](https://data-edu.github.io/tidyLPA/index.html) that we'll be using.
@@ -39,28 +45,23 @@ R](https://data-edu.github.io/tidyLPA/index.html) that we'll be using.
 > Physical Review Physics Education Research, 18(1), 010113.
 > <https://github.com/laser-institute/essential-readings/blob/main/machine-learning/ml-lab-4/commeford-et-al-2022-per.pdf>
 
-One other resource that may be helpful is the chapter by Pastor et al.
-(2007) on Latent Profile Analysis, or, as it is often abbreviated, LPA.
+Second, please read a paper that uses Computational Grounded Theory---here, in the context of students' written responses to in-class questions:
 
-> Pastor, D. A., Barron, K. E., Miller, B. J., & Davis, S. L. (2007). A
-> latent profile analysis of college students' achievement goal
-> orientation. Contemporary educational psychology, 32(1), 8-47.
-> <https://github.com/laser-institute/essential-readings/blob/main/machine-learning/ml-lab-4/pastor-et-al-2007-cep.pdf>
+> Rosenberg, J. M., & Krist, C. (2021). Combining machine learning and qualitative methods to elaborate students’ ideas about the generality of their model-based explanations. *Journal of Science Education and Technology, 30*, 255-267.
 
 One note for this learning lab. LPA can be a finnicky method; the best
 practices regarding model selection are often difficult to achieve in
-practice, and we'll see that with the data we use, which doesn't present
-a clear picture regarding which model is best. We'll do our best working
+practice. We'll do our best working
 with the information we have - as we often have to do in practice. If
 publishing a paper, we can present these issues in our manuscript in a
 transparent manner.
 
-> Worsley, M., Martinez-Maldonado, R., & D'Angelo, C. (2021). A New Era in Multimodal Learning Analytics: Twelve Core Commitments to Ground and Grow MMLA. Journal of Learning Analytics, 8(3), 10-27.
-
 ## Step 0: Loading and setting up
 
 First, let's load the packages we'll use---the familiar {tidyverse} and
-the {tidyLPA package}.
+the {tidyLPA package}, as well as {tidytext} to do some basic text analysis. 
+
+#### [Your Turn]{style="color: green;"} ⤵
 
 ```{r}
 library(tidyverse)
@@ -68,156 +69,167 @@ library(tidyLPA)
 library(tidytext)
 ```
 
+#### [Your Turn]{style="color: green;"} ⤵
+
+Next, please read in the `r-processed-transcript`.csv` file, naming it `transcript`.
+
 ```{r}
-d <- read_csv("lab-4/data/r-processed-transcripts.csv")
+transcript <- read_csv("data/r-processed-transcript.csv")
+```
 
-nrc <- get_sentiments("nrc")
+#### [Your Turn]{style="color: green;"} ⤵
 
-d <- d %>% 
-    select(group, index, start, end, duration, transcript)
+Please take a look at the data using a technique of your choice. Note the number of rows and the variables and their types.
 
-d %>% 
-    unnest_tokens(word, transcript) %>%
+```{r}
+transcript %>% 
+    glimpse()
+```
+
+Note how the `transcript_text` variable consists of transcripted _turns_ of speech (not individual words), corresponding roughly to what an individual says in a conversation.
+
+We'll next do some analyses over several chunks to create the variables for the emotional expression evidenced in the transcripted data. Given the focus of this learning lab on Latent Profile Analysis, we'll treat this aspect in a more limited way. Please consider joining the first text analysis learning lab to gain a lot more context and to see in far greater detail how we can work with textual data in R.
+
+```{r}
+nrc <- get_sentiments("nrc") # this access sentiment
+
+transcript <- transcript %>% 
+    select(group, index, start, end, duration, transcript_text) # select the variables we'll be using
+
+transcript %>% 
+    unnest_tokens(word, transcript_text) %>% # this changes the data to be in "long" form, with each row consisting of individual words in the transcript data
     left_join(nrc, relationship = "many-to-many") %>% # ignore warnings
     count(sentiment)
+```
 
-# Set the chunk size and the starting point
-chunk_size <- 15  # Chunk size in seconds
-start_point <- d$start %>% as.integer() %>% pluck(1)
-end_point <- d$end %>% as.integer() %>% pluck(nrow(d))
+Since each turn is of a different length, next, we'll create 30-second chunks in the data.
 
-d$start <- as.integer(d$start)
-d$end <- as.integer(d$end)
+```{r}
+chunk_size <- 45  # chunk duration in seconds
+start_point <- transcript$start %>% as.integer() %>% pluck(1) # find the starting point of the time stamps
+end_point <- transcript$end %>% as.integer() %>% pluck(nrow(transcript)) # find the ending point of the time stamps
+
+transcript$start <- as.integer(transcript$start)
+transcript$end <- as.integer(transcript$end)
 
 # Create a new variable for the chunks
-d$segment_id <- cut(d$start, breaks = seq(from = start_point, to = end_point, by = chunk_size))
+transcript$segment_id <- cut(transcript$start, breaks = seq(from = start_point, to = end_point, by = chunk_size))
+```
 
-data_for_lpa <- d %>% 
-    unnest_tokens(word, transcript) %>% 
-    left_join(nrc, relationship = "many-to-many") %>% # ignore warnings
-    count(segment_id, sentiment) %>% 
-    spread(sentiment, n) %>% 
-    janitor::clean_names() %>% 
-    reframe(pct_fear = fear / na,
-            pct_joy = joy / na,
-            pct_anticipation = anticipation / na,
-            pct_disgust = disgust / na,
-            pct_sadness = sadness / na,
-            pct_surprise = surprise / na,
-            pct_trust = trust / na) %>% 
+Finally
+```{r}
+number_of_words_per_segment <- transcript  %>% 
+    unnest_tokens(word, transcript_text) %>% 
+    count(segment_id) %>% 
+    rename(words_per_segment = n)
+
+data_for_lpa <- transcript  %>% 
+    unnest_tokens(word, transcript_text) %>% # create a one-word-per-row structure
+    left_join(nrc, relationship = "many-to-many") %>% # join the sentiment data
+    count(segment_id, sentiment) %>% # count the number of words assigned to each emotional expression
+    spread(sentiment, n) %>% # change the data to be in wide form
+    janitor::clean_names() %>% # make the names easier to type
+    left_join(number_of_words_per_segment) %>% # join the number of words per segment
+    reframe(pct_fear = fear / words_per_segment, # create summary variables, dividing each sentiment score by the nubmer of the words in each segment
+            pct_joy = joy / words_per_segment,
+            pct_anticipation = anticipation / words_per_segment,
+            pct_disgust = disgust / words_per_segment,
+            pct_sadness = sadness / words_per_segment,
+            pct_surprise = surprise / words_per_segment,
+            pct_trust = trust / words_per_segment) %>% 
     mutate_if(is.numeric, replace_na, 0)
 ```
 
+We're now ready to proceed to modeling.
+
 ## Step 1: Explore a range of solutions
 
-We *could* estimate a single solution, as in the following (run this
-code).
+We *could* estimate a single solution. Please use the `estimate_profiles()` function with the data in `data_for_lpa`, specifying the number of profiles as 3. For help, consult the [help](https://data-edu.github.io/tidyLPA/reference/estimate_profiles.html) file.
 
 ```{r}
-
 data_for_lpa %>% 
-    tidyLPA::estimate_profiles(n_profiles = 3) %>% 
-    tidyLPA::plot_profiles(add_line = TRUE)
+    estimate_profiles(n_profiles = 3)
+```
 
+We can see output for *a single model fit*. Let's take a look at what the estimates are. We can do so in several ways. In particular, we can pipe the output above to either `plot_profiles()` or `get_estimates()`. Let's add `plot_profiles(add_line = TRUE)` to the above code, copying all three lines into the code chunk below.
+
+```{r}
 data_for_lpa %>% 
-    tidyLPA::estimate_profiles(n_profiles = 4) %>% 
-    tidyLPA::plot_profiles(add_line = TRUE)
+    estimate_profiles(n_profiles = 3) %>% 
+    plot_profiles(add_line = TRUE)
 ```
 
-Wait a minute - something's not right. Let's center and standardize all
-of the variables, first, to make this graph more interpretable.
-
-This is a bit of a new technique, but we'll create a new function that
-we'll use to do this. There *is* a built-in function in R, `scale()`,
-but it often causes problems because it returns a data frame
-(technically a matrix) with a single column, rather than simply a single
-column. In short, it doesn't work well in many cases, so we'll write our
-own version of it.
-
-```{r}
-scale_data <- function(x) {
-    x = x - mean(x, na.rm = TRUE)
-    x = x / sd(x, na.rm = TRUE)
-    x
-}
-```
-
-Then, we'll use the function as follows with the `mutate_all()`
-function, creating a scaled version of all of our variables and saving
-the results back to our data frame.
-
-```{r}
-d <- d %>%
-    mutate_all(funs(scaled = scale_data)) %>% # using our function to scale all of the varialbves
-    select(contains("_scaled")) # selecting only the scaled version
-```
+What we are looking at are the estimates for the *means* of the three profiles (or, in LPA's terminology, classes). For instance, for the first class (represented with the color red), we can see how the profile mean is higher for some variables (relative to the means for the other classes), and lower for others. We'll go into much more depth on intepreting a profile solution shortly.
 
 ## Step 2: Select a solution
-
-```{r}
-d %>%
-    estimate_profiles(3) %>% 
-    plot_profiles()
-```
 
 Done, right? Not quite. Notice that above, we specified that the number
 of profiles was 3. How do we know that 3 is best? This is a key decision
 that we as the individual or group analyzing the data must make.
-Fortunately, there are tools to help us. Let's try the
+Fortunately, there are tools to help us.
+
+To do so, we'll examine a range of different profile solutions.
+
+ Let's try the
 `compare_solutions()` function, which does just that. The
 `estimate_profiles()` function can, helpfully, estimate more than one
-set of profiles at once --- here, those with 1 through 10 profiles.
+set of profiles at once --- here, those with 1 through 8 profiles.
+
+#### [Your Turn]{style="color: green;"} ⤵
+
+To do so, please run `estimate_profiles` like we have above, 
 
 ```{r}
-
 data_for_lpa %>%
-    estimate_profiles(3:7) %>% 
+    estimate_profiles(1:7) %>% 
     compare_solutions()
-
-our_solution <- data_for_lpa %>%
-    estimate_profiles(4)
-
-our_solution %>% 
-    get_estimates()
-
-plot_profiles(our_solution, add_line = TRUE) +
-    theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1)) # this rotates the x-axis labels to make them easier to read
 ```
 
-Often, we wish to look for a *change in the rate* of the decrease of fit
-indices, with the BIC fit index being arguably the most important.
-Above, we can see that the rate of change appears to level off after
-around 4 "Classes" - or, profiles. Let's consider that solution as one
-that fits best (even though the output suggests that the "best" model is
-one with 10 classes, as that may be over-fitting the data.
+We can interpret the fit statistic that is provided---the BIC, with more negative values indicating a better model fit---and see which model is best. In addition, we can use a process that considers several fit indices, the _analytic hierarchy process_. Sometimes, what the BIC and the analytic hierarchy process suggest diverge, as is the case here. In such a case, it can be helpful to interrogate several candidate solutions in a fine-grained way. 
 
-Let's interrogate that fourth solution next.
+#### [Your Turn]{style="color: green;"} ⤵
+
+We can examine many fit statistics for candidate models by replacing `compare_solutions()` with `get_fit()`. You can read about each fit index [here](https://data-edu.github.io/tidyLPA/articles/Introduction_to_tidyLPA.html). Please run that code, below.
 
 ```{r}
-our_solution <- d %>%
-    estimate_profiles(4)
-
-plot_profiles(our_solution, add_line = TRUE) +
-    theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1)) # this rotates the x-axis labels to make them easier to read
+data_for_lpa %>%
+    estimate_profiles(1:4) %>% 
+    get_fit()
 ```
 
-Typically, we'd name these solutions. Let's get started with one, the
-second:
+We can also plot several possible solutions; again, please replace `compare_solutions()`, this time with `plot_profiles(add_line = TRUE)`:
 
--   Profile 1:
--   Profile 2: Bored and off-task
--   Profile 3:
--   Profile 4:
+```{r}
+data_for_lpa %>%
+    estimate_profiles(1:4) %>% 
+    plot_profiles(add_line = TRUE)
+```
 
-You may wish to review the paper to interpret the other variables:
-<https://educationaldatamining.org/EDM2014/uploads/procs2014/short%20papers/276_EDM-2014-Short.pdf>
+How do we know which solution to be *the* solution we interpret and present? We need to consider several different factors, including a) the BIC and other individual fit indices, b) the analytic hierarchy output, c) considerations of parsimony, and d) considerations related to the interpretability of the profiles. 
+
+*Which solution do you thinks is best?* Given that the BIC indicates a three profile model, and given how the model with four profiles does not appear to yield a substantially distinct fourth profile, it seems reasonable to prefer three profiles over four. But, the analytic hierarchy process suggested a single profile model. Is a model with fewer profiles potentially merited? When comparing the three- and two-profile models, it seems that one profile is more distinguishable (based on the mean estimates) than the other two. For this reason, let's consider moving forward with a two-profile solution, recognizing that this data is somewhat messy, and the way forward is not wholly clear!
+
+#### [Your Turn]{style="color: green;"} ⤵
+
+To do so, run `estimate_profiles()`, specifying two profiles, and assigning the output the name `two_profile_solution`. 
+
+```{r}
+two_profile_solution <- estimate_profiles(data_for_lpa, n_profiles = 2)
+```
+
+Let's plot this solution using `plot_profiles(add_line = TRUE)`
+
+```{r}
+plot_profiles(two_profile_solution, add_line = TRUE)
+```
+
+Typically, we'd name these solutions. Let's try to interpret and name these based upon their mean values:
+
+- Profile 1:
+- Profile 2:
 
 We still aren't done! Recall from the presentation how we discussed
-computational grounded theory -- the work of Nelson (2020).
-
-> Nelson, L. K. (2020). Computational grounded theory: A methodological
-> framework. *Sociological Methods & Research, 49*(1), 3-42.
-> <https://github.com/laser-institute/essential-readings/blob/main/machine-learning/ml-lab-4/nelson-et-al-2020.pdf>
+Computational Grounded Theory.
 
 In this approach, an exploratory approach such as Latent Profile
 Analysis is carried out not as the end point, but as a first step in
@@ -225,13 +237,34 @@ understanding the data. The second step involves examining the data with
 the output from the first step as a guide. In this step, you as the
 human can interrogate and make sense of the output of the first step.
 
+Let's first get the profiles for each row of our data set.
+
 ```{r}
-get_estimates(our_solution)
-get_data(our_solution)
+data_for_two_profile_solution <- 
+    get_data(two_profile_solution) %>% # get the classes for each row of data
+    select(Class) %>% # let's select just the class (profile) variable
+    mutate(segment_id = unique(transcript$segment_id)) # this assigns the segment IDs back to the data, so we can join the transcript data later on
 ```
 
-What we do we notice about the solutions? What might the model have
-missed? We'll explore these questions further in the badge activity.
+#### [Your Turn]{style="color: green;"} ⤵
+
+Then, let's _bind_ together the profiles assigned to each chunk with the original data. Please use [`bind_rows()`](https://dplyr.tidyverse.org/reference/bind.html), providing both `data_for_lpa` and `data_for_two_profile_solution` together and assigning the output the name `combined_data`.
+
+```{r}
+combined_data <- bind_cols(data_for_lpa, data_for_two_profile_solution)
+```
+
+Now, let's take a look at the data using `View()` the data frame we create next, `data_to_view`. *Don't* write this in a code chunk; instead, just view the data frame you jsut created by typing the code into the console (as `View()` can cause issues when it comes time to knit --- unless it is commented!).
+
+```{r}
+data_to_view <- left_join(transcript, combined_data) # this joins the transcript and combined data, so we can see which segment is associated with which profile, or class
+# View(data_to_view)
+```
+
+For now, let's keep our task relatively straightforward. How well do our names seem to characterize what is going on in a particular segment? Add a few notes below.
+
+- 
+- 
 
 ### 🧶 Knit & Check ✅
 
