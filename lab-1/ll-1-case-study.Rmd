@@ -827,7 +827,7 @@ That's it for now; the core parts of machine learning are used in the
 above steps you took; what we'll do after this leaning lab only adds
 nuance and complexity to what we've already done.
 
-## 5. Communicate
+## 5. COMMUNICATE
 
 The final step in the workflow/process is sharing the results of your
 analysis with wider audience. Krumm et al. (2018) have outlined the

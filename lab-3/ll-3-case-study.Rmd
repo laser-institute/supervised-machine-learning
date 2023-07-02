@@ -19,7 +19,7 @@ bibliography: lit/references.bib
 knitr::opts_chunk$set(echo = TRUE, eval = TRUE)
 ```
 
-## Background
+## 1. PREPARE
 
 After interpreting our last model, it is easy to think we can do a
 little better. But, how? In this learning lab, we will answer this
@@ -80,6 +80,8 @@ Our driving question is: **How much can we improve our model?** Looking
 back to our predictive model from LL 2, we can see that our accuracy was
 okay. Can we improve on that? Let's dive in!
 
+## 2. WRANGLE
+
 ## Step 0: Loading and setting up
 
 First, let's load the packages we'll use---the familiar {tidyverse} and
@@ -102,7 +104,8 @@ library(vip) # a new package we're adding for variable importance measures
 library(ranger) # this is needed for the random forest algorithm
 ```
 
-Next, we'll load a new file --- one with *interactions* (or log-trace) data.
+Next, we'll load a new file --- one with *interactions* (or log-trace)
+data.
 
 We have to do the same processing we did in the second learning lab, to
 obtain cut-off dates. As a reminder, the purpose of this is to train the
@@ -111,9 +114,16 @@ being this is a good time to intervene--far enough into the class to
 make an appreciable impact, but not too late to have a limited chance of
 being able to change students' trajectory in the class.
 
-We'll repeat the procedure we carried out with the assessments data --- calculating a cut-off for each class and then filtering the data based upon this cut-off. But, since we've already done this for the assessment data, to allow us to focus more on some new feature engineering steps in this learning lab, we are providing you with the already-filtered interactions data. *Note*: you can find the code used to carry out these steps in the Lab 3 folder in `process-interactions-data.R`.
+We'll repeat the procedure we carried out with the assessments data ---
+calculating a cut-off for each class and then filtering the data based
+upon this cut-off. But, since we've already done this for the assessment
+data, to allow us to focus more on some new feature engineering steps in
+this learning lab, we are providing you with the already-filtered
+interactions data. *Note*: you can find the code used to carry out these
+steps in the Lab 3 folder in `process-interactions-data.R`.
 
-Please load `oulad-interactions.csv` into R, assigning the resulting data frame the name `interactions`.
+Please load `oulad-interactions.csv` into R, assigning the resulting
+data frame the name `interactions`.
 
 #### [Your Turn]{style="color: green;"} ⤵
 
@@ -121,15 +131,17 @@ Please load `oulad-interactions.csv` into R, assigning the resulting data frame 
 interactions <- read_csv("data/oulad-interactions.csv")
 ```
 
-In the OULAD documentation, this is called the VLE
-(virtual learning environment) data source. Please review the
-description of the variables in the *studentVLE* and *VLE* sources
-(which are joined together for this learning lab)
+In the OULAD documentation, this is called the VLE (virtual learning
+environment) data source. Please review the description of the variables
+in the *studentVLE* and *VLE* sources (which are joined together for
+this learning lab)
 [here](https://analyse.kmi.open.ac.uk/open_dataset#description). Then,
 read in the `oulad-interactions.csv` file.
 
-Woah, even filtered, this is a large file! Let's start to explore it a bit. Please take
-three steps to explore the data, as follows.
+Woah, even filtered, this is a large file! Let's start to explore it a
+bit. Please take three steps to explore the data, as follows.
+
+## 3. EXPLORE
 
 #### [Your Turn]{style="color: green;"} ⤵
 
@@ -224,7 +236,11 @@ interactions_summarized <- interactions_filtered %>%
 
 #### [Your Turn]{style="color: green;"} ⤵
 
-How many times did students click? Let's create a histogram to see. Please use {ggplot} and `geom_histogram()` to visualize the distribution of the `sum_clicks` variable you just created. Turn to [the documentation](https://ggplot2.tidyverse.org/reference/geom_histogram.html) if you need a pointer!
+How many times did students click? Let's create a histogram to see.
+Please use {ggplot} and `geom_histogram()` to visualize the distribution
+of the `sum_clicks` variable you just created. Turn to [the
+documentation](https://ggplot2.tidyverse.org/reference/geom_histogram.html)
+if you need a pointer!
 
 ```{r}
 
@@ -314,7 +330,9 @@ students_assessments_and_interactions <- students_assessments_and_interactions %
 
 We're now ready to model!
 
-## Step 1. Split data
+## 4. MODEL
+
+### Step 1. Split data
 
 We'll follow the same steps we followed in learning labs #1 and #2,
 here. One difference - we'll use `students_assessments_and_interactions`
@@ -359,7 +377,7 @@ kfcv <- vfold_cv(data_train, v = 20) # this differentiates this from what we did
 kfcv
 ```
 
-## Step 2: Engineer features and write down the recipe
+### Step 2: Engineer features and write down the recipe
 
 Here, we'll carry out several feature engineering steps.
 
@@ -435,7 +453,7 @@ my_rec <- my_rec %>%
   step_normalize(all_numeric_predictors())
 ```
 
-## Step 3: Specify the model and workflow
+### Step 3: Specify the model and workflow
 
 Next, we specify the model and workflow, using the same engine *but a
 different engine and mode*, here, regression for a *continuous outcome*.
@@ -466,7 +484,7 @@ my_wf <-
   add_recipe(my_rec) # add our recipe we wrote above
 ```
 
-## Step 4: Fit model
+### Step 4: Fit model
 
 Note that here we use the `kfcv` data and a different function -
 `fit_resamples()`, instead of `fit()`. This function is required when we
@@ -510,7 +528,7 @@ fitted_model <- fit(my_wf, data_train)
 final_fit <- last_fit(fitted_model, train_test_split, metrics = class_metrics)
 ```
 
-## Step 5: Interpret accuracy
+### Step 5: Interpret accuracy
 
 fa Finally, collect the metrics for our final fit. *These* are the
 values that you should report as final. \#### [Your
@@ -534,6 +552,8 @@ collect_predictions(final_fit) %>%
 
 ```
 
+## 5. COMMUNICATE
+
 Another benefit of a random forest is we can interpret variable
 importance metrics. Do that here with the following code.
 
@@ -545,7 +565,8 @@ final_fit %>%
 ```
 
 Please add two or more notes on what you notice about which variables
-(features) are important:
+(features) are important, focused on what you would say to someone in
+your audience about what the important variables in your model were.
 
 -   
 
