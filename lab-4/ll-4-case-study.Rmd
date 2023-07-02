@@ -21,6 +21,8 @@ knitr::opts_chunk$set(echo = TRUE)
 set.seed(20230630) # so the results are readily reproducible
 ```
 
+## 1. PREPARE
+
 While the past three case studies have involved *already-coded* data, sometimes, we do not have something that we can consider to be coded data---a dependent variable. But, machine learning does offer us way forward in such
 cases, but not through the supervised machine learning methods we've
 been using until this point. Instead, we can use *unsupervised* methods.
@@ -56,7 +58,7 @@ with the information we have - as we often have to do in practice. If
 publishing a paper, we can present these issues in our manuscript in a
 transparent manner.
 
-## Step 0: Loading and setting up
+## 2. WRANGLE
 
 First, let's load the packages we'll use---the familiar {tidyverse} and
 the {tidyLPA package}, as well as {tidytext} to do some basic text analysis. 
@@ -76,6 +78,8 @@ Next, please read in the `r-processed-transcript`.csv` file, naming it `transcri
 ```{r}
 transcript <- read_csv("data/r-processed-transcript.csv")
 ```
+
+## 3. EXPLORE
 
 #### [Your Turn]{style="color: green;"} ⤵
 
@@ -116,7 +120,8 @@ transcript$end <- as.integer(transcript$end)
 transcript$segment_id <- cut(transcript$start, breaks = seq(from = start_point, to = end_point, by = chunk_size))
 ```
 
-Finally
+Finally, we'll do some additional processing. A _lot_ of this is new, and not important to have a mastery of for this learning lab. To learn more, check out the text mining labs!
+
 ```{r}
 number_of_words_per_segment <- transcript  %>% 
     unnest_tokens(word, transcript_text) %>% 
@@ -137,12 +142,14 @@ data_for_lpa <- transcript  %>%
             pct_sadness = sadness / words_per_segment,
             pct_surprise = surprise / words_per_segment,
             pct_trust = trust / words_per_segment) %>% 
-    mutate_if(is.numeric, replace_na, 0)
+    mutate_if(is.numeric, replace_na, 0) # replace NA values with 0s
 ```
 
 We're now ready to proceed to modeling.
 
-## Step 1: Explore a range of solutions
+## 4. MODEL
+
+### Step 1: Explore a range of solutions
 
 We *could* estimate a single solution. Please use the `estimate_profiles()` function with the data in `data_for_lpa`, specifying the number of profiles as 3. For help, consult the [help](https://data-edu.github.io/tidyLPA/reference/estimate_profiles.html) file.
 
@@ -161,7 +168,7 @@ data_for_lpa %>%
 
 What we are looking at are the estimates for the *means* of the three profiles (or, in LPA's terminology, classes). For instance, for the first class (represented with the color red), we can see how the profile mean is higher for some variables (relative to the means for the other classes), and lower for others. We'll go into much more depth on intepreting a profile solution shortly.
 
-## Step 2: Select a solution
+### Step 2: Select a solution
 
 Done, right? Not quite. Notice that above, we specified that the number
 of profiles was 3. How do we know that 3 is best? This is a key decision
@@ -206,6 +213,8 @@ data_for_lpa %>%
 ```
 
 How do we know which solution to be *the* solution we interpret and present? We need to consider several different factors, including a) the BIC and other individual fit indices, b) the analytic hierarchy output, c) considerations of parsimony, and d) considerations related to the interpretability of the profiles. 
+
+### Step 3: Select and interpret a solution
 
 *Which solution do you thinks is best?* Given that the BIC indicates a three profile model, and given how the model with four profiles does not appear to yield a substantially distinct fourth profile, it seems reasonable to prefer three profiles over four. But, the analytic hierarchy process suggested a single profile model. Is a model with fewer profiles potentially merited? When comparing the three- and two-profile models, it seems that one profile is more distinguishable (based on the mean estimates) than the other two. For this reason, let's consider moving forward with a two-profile solution, recognizing that this data is somewhat messy, and the way forward is not wholly clear!
 
@@ -261,7 +270,9 @@ data_to_view <- left_join(transcript, combined_data) # this joins the transcript
 # View(data_to_view)
 ```
 
-For now, let's keep our task relatively straightforward. How well do our names seem to characterize what is going on in a particular segment? Add a few notes below.
+## 5. COMMUNICATE
+
+For now, let's keep our task relatively straightforward. How well do our names seem to characterize what is going on in a particular segment? Add a few notes below. Again, focus on what you would communicate about this analysis to a general audience. 
 
 - 
 - 

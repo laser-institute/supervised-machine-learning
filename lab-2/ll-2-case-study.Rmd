@@ -19,7 +19,7 @@ bibliography: lit/references.bib
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Background
+## 1. PREPARE
 
 When we left off the first case study, we saw that our model was *pretty
 accurate*. We can and will do better in terms of accuracy. But, the
@@ -45,8 +45,6 @@ We'll use the [Open University Learning Analytics Dataset
 (OULAD)](https://analyse.kmi.open.ac.uk/open_dataset) again--this time,
 adding another data source, one on students' performance on assessments.
 
-## Step 0: Loading and setting up
-
 Like in the first learning lab, we'll first load several packages --
 {tidyverse}, {tidymodels}, and {janitor}. Make sure these are installed
 (via `install.packages()`). Note that if they're already installed, you
@@ -58,8 +56,12 @@ library(tidymodels)
 library(janitor)
 ```
 
+## 2. WRANGLE
+
 Like in the code-along for the overview presentation, let's take a look
 at the data and do some processing of it.
+
+#### [Your Turn]{style="color: green;"} ⤵
 
 We'll load the students file together; you'll write code to read the
 assessments file, which is named "oulad-assessments.csv". Please assign
@@ -69,6 +71,8 @@ the name `assessments` to the loaded assessments file.
 students <- read_csv("data/oulad-students.csv")
 assessments <- read_csv("data/oulad-assessments.csv")
 ```
+
+## 3. EXPLORE
 
 #### [Your Turn]{style="color: green;"} ⤵
 
@@ -263,7 +267,9 @@ how they discuss these two statistics.
 Please review this paper before proceeding, focusing on how they
 describe
 
-## Step 1. Split data
+## 4. MODEL
+
+### Step 1. Split data
 
 This is identical to what we did in the first learning lab, using the
 `students_and_assessments` data. We'll also create a testing data set
@@ -280,7 +286,7 @@ data_train <- training(train_test_split)
 data_test <- testing(train_test_split)
 ```
 
-## Step 2: Engineer features and write down the recipe
+### Step 2: Engineer features and write down the recipe
 
 We'll also specify the recipe, adding our `mean_weighted_score` variable
 we calculated above as well as variables we used in LL1 (case study and
@@ -300,7 +306,7 @@ my_rec <- recipe(pass ~ disability +
 
 ```
 
-## Step 3: Specify the model and workflow
+### Step 3: Specify the model and workflow
 
 These steps are also the same as in LL1.
 
@@ -318,7 +324,7 @@ my_wf <-
     add_recipe(my_rec) # add our recipe we wrote above
 ```
 
-## Step 4: Fit model
+### Step 4: Fit model
 
 Finally, we'll fit our model.
 
@@ -355,7 +361,7 @@ final_fit <- last_fit(fitted_model, train_test_split, metrics = class_metrics)
 
 We're now ready to move on to interpreting the accuracy of our model.
 
-## Step 5: Interpret accuracy
+### Step 5: Interpret accuracy
 
 ### A confusion matrix and true and false positives and negatives
 
@@ -449,13 +455,17 @@ this; is it better suited to correctly identifying "positive" pass cases
 
 -   
 
-### Quickly calculating metric
+## 5. COMMUNICATE
+
+### Quickly calculating metrics
 
 After all of this work, we *can* calculate the above much more easily
-given how we setup our metrics (using `metric_set()` earlier. Below, use
-`collect_metrics()` with the `final_fit` object, noting that in addition
-to the four metrics we calculated manually just a few moments ago, we
-are also provided with the accuracy and Cohen's Kappa values.
+given how we setup our metrics (using `metric_set()` earlier, such as
+when we want to efficiently communicate the results of our analysis to
+our audience? Below, use `collect_metrics()` with the `final_fit`
+object, noting that in addition to the four metrics we calculated
+manually just a few moments ago, we are also provided with the accuracy
+and Cohen's Kappa values.
 
 #### [Your Turn]{style="color: green;"} ⤵
 
