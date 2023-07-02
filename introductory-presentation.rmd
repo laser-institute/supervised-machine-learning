@@ -286,8 +286,8 @@ We'll work to answer these four questions:
 
 - LL 1: Prediction: How is prediction different from explanation?
 - LL 2: Interpretation: How do we interpret the accuracy of a machine learning model?
-- LL 3: Improvement: How can we make a better model?
-- LL 4: Discovery: What if we do not have training data?
+- LL 3: Feature Engineering: How can we improve our better?
+- LL 4: Unsupervised methods: What if we do not have training data?
 
 ]
 
@@ -295,7 +295,7 @@ We'll work to answer these four questions:
 
 **Machine Learning Learning Lab 1: Prediction**
 
-We have some data and want to develop a preidction model. Supervised machine learning is suited to this aim. In particular, in this learning lab, we explore how we can train a computer to predict students' withdrawal from a course. We use a large data set, the Open University Learning Analytics Dataset (OULAD), focusing on student data at this point.
+We have some data and want to develop a preidction model. Supervised machine learning is suited to this aim. In particular, in this learning lab, we explore how we can train a computer to predict students' withdrawal from a course. We use a large data set, the Open University Learning Analytics Dataset (OULAD), focusing on student data at this point. Our model at this point is relatively simple, a generalized linear model.
 
 ]
 
@@ -309,17 +309,17 @@ How do we interpret a machine learning model? What else can we say, besides how 
 
 .panel[.panel-name[LL 3]
 
-**Machine Learning Learning Lab 3: Improvement**
+**Machine Learning Learning Lab 3: Feature Engineering**
 
-Once we have trained a computer in the context of using supervised machine learning methods, we may realize we can improve it by adding new variables or changing how the variables we are using were prepared. In this learning lab, we consider **feature engineering** with interaction data from the OULAD data set.
+Once we have trained a computer in the context of using supervised machine learning methods, we may realize we can improve it by adding new variables or changing how the variables we are using were prepared. We also use a random forest model, rather than the regression model we have been using. Also, we consider key **feature engineering** steps with interaction data from the OULAD data set.
 
 ]
 
 .panel[.panel-name[LL 4]
 
-**Machine Learning Learning Lab 4: Disovery*
+**Machine Learning Learning Lab 4: Unsupervised Methods**
 
-The previous three learning labs involved the use of data with known outcome variables in the first three learning labs. Accordingly, we explored different aspects of supervised machine learning. What if we have data without something that we can consider to be a dependent variable? **Unsupervised machine learning methods** can be used in such cases. 
+The previous three learning labs involved the use of data with known outcome variables in the first three learning labs. Accordingly, we explored different aspects of supervised machine learning. What if we have data without something that we can consider to be a dependent variable? **Unsupervised machine learning methods** can be used in such cases. Herein, we use Latent Profile Analysis with quantified, transcribed audio data from mathematics classrooms. We interpret the output of Latent Profile Analysis from a Computational Grounded Theory approach.
 ]
 ]
 
@@ -329,14 +329,7 @@ The previous three learning labs involved the use of data with known outcome var
 
 I hope to see you in the ML topic area learning labs!
 
-Slides [here](https://laser-institute.github.io/machine-learning/introductory-presentation.html#1)
-
-## .font130[.center[**Thank you!**]]
 <br/>
 .center[<img style="border-radius: 80%;" src="img/jr-cycling.jpeg" height="200px"/><br/>**Dr. Joshua Rosenberg**<br/><mailto:jmrosenberg@utk.edu>]
 
-Joshua Rosenberg  
-jmrosenberg@utk.edu  
-@jrosenberg6432    
-
-Slides created via the R package [xaringan](https://github.com/yihui/xaringan)
+[Slides](https://laser-institute.github.io/machine-learning/introductory-presentation.html#1) created via the R package [xaringan](https://github.com/yihui/xaringan)
