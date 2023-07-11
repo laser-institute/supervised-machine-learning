@@ -17,8 +17,8 @@ How do we interpret a machine learning model? What else can we say, besides how 
 
 **Machine Learning Learning Lab 3: Feature Engineering**
 
-Once we have trained a computer in the context of using supervised machine learning methods, we may realize we can improve it by adding new variables or changing how the variables we are using were prepared. We also use a random forest model, rather than the regression model we have been using. Also, we consider key **feature engineering** steps with interaction data from the OULAD data set.
+Once we have trained a computer in the context of using supervised machine learning methods, we may realize we can improve it by adding new variables or changing how the variables we are using were prepared. We also use a random forest model, rather than the regression model we have been using. Also, we consider key feature engineering steps with interaction data from the OULAD data set.
 
 **Machine Learning Learning Lab 4: Unsupervised Methods**
 
-The previous three learning labs involved the use of data with known outcome variables in the first three learning labs. Accordingly, we explored different aspects of supervised machine learning. What if we have data without something that we can consider to be a dependent variable? **Unsupervised machine learning methods** can be used in such cases. Herein, we use Latent Profile Analysis with quantified, transcribed audio data from mathematics classrooms. We interpret the output of Latent Profile Analysis from a Computational Grounded Theory approach.
+The previous three learning labs involved the use of data with known outcome variables in the first three learning labs. Accordingly, we explored different aspects of supervised machine learning. What if we have data without something that we can consider to be a dependent variable? Unsupervised machine learning methods can be used in such cases. Herein, we use Latent Profile Analysis with quantified, transcribed audio data from mathematics classrooms. We interpret the output of Latent Profile Analysis from a Computational Grounded Theory approach.
