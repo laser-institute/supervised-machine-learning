@@ -11,7 +11,6 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ![](img/ML_UM_Hx.jpg){width="30%"}
 
-
 As a reminder, to earn a badge for each lab, you are required to respond to a set of prompts for two parts:
 
 -   In Part I, you will reflect on your understanding of key concepts and begin to think about potential next steps for your own study.
@@ -22,7 +21,7 @@ As a reminder, to earn a badge for each lab, you are required to respond to a se
 
 Part A:
 
-1.  How interpretable or useful is the solution we estimated in the case study? 
+1.  How interpretable or useful is the solution we estimated in the case study?
 
 -   
 
@@ -30,7 +29,7 @@ Part A:
 
 -   
 
-Part B: Once last time, use the institutional library (e.g. [NCSU Library](https://www.lib.ncsu.edu/#articles)), [Google Scholar](https://scholar.google.com/) or search engine to locate a research article, presentation, or resource that applies unsupervised machine learning to an educational context aligned with your research interests. More specifically, **locate a study that involve using Latent Profile Analysis or a similar method**. You may find the published papers that have used LPA helpful in this respect; those can be browsed [here](https://scholar.google.com/scholar?hl=en&as_sdt=0%2C34&q=tidylpa&btnG=). 
+Part B: Once last time, use the institutional library (e.g. [NCSU Library](https://www.lib.ncsu.edu/#articles)), [Google Scholar](https://scholar.google.com/) or search engine to locate a research article, presentation, or resource that applies unsupervised machine learning to an educational context aligned with your research interests. More specifically, **locate a study that involve using Latent Profile Analysis or a similar method**. You may find the published papers that have used LPA helpful in this respect; those can be browsed [here](https://scholar.google.com/scholar?hl=en&as_sdt=0%2C34&q=tidylpa&btnG=).
 
 1.  Provide an APA citation for your selected study.
 
@@ -40,25 +39,23 @@ Part B: Once last time, use the institutional library (e.g. [NCSU Library](https
 
     -   
 
-3.  What were the results of these analyses? 
+3.  What were the results of these analyses?
 
     -   
 
 4.  Lastly, what value might a Computational Grounded Theory analysis have in the context of their analysis?
 
-    - 
-    
+    -   
+
 ### Part II: Data Product
 
-Like the last data product, this one may be a challenge, too. Here, estimate latent profiles using _your own data_. If you do not have ready access to appropriate data (for LPA, continuous/numeric data), choose any of the data sets in the `data` folder of this repository.
+Like the last data product, this one may be a challenge, too. Here, estimate latent profiles using *your own data*. If you do not have ready access to appropriate data (for LPA, continuous/numeric data), choose any of the data sets in the `data` folder of this repository.
 
 ```{r}
 
 ```
 
 Please interpret the results of your analysis below. What did you find? How interpretable and useful are the profiles? And, what next steps - including those involving qualitative analysis - might you take to deepen this analysis?
-git
--   
 
 ### Knit & Submit
 
