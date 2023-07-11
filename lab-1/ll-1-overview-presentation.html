@@ -4,8 +4,8 @@
     <title>Machine Learning Learning Lab 1 Overview: Prediction</title>
     <meta charset="utf-8" />
     <meta name="author" content="Dr. Joshua Rosenberg" />
-    <meta name="date" content="2023-06-03" />
-    <script src="libs/header-attrs-2.21/header-attrs.js"></script>
+    <meta name="date" content="2023-07-11" />
+    <script src="libs/header-attrs-2.22/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
     <script src="libs/panelset-0.2.6/panelset.js"></script>
@@ -37,11 +37,149 @@ class: clear, title-slide, inverse, center, top, middle
 # Machine Learning Learning Lab 1 Overview: Prediction
 ----
 ### **Dr. Joshua Rosenberg**
-### June 03, 2023
+### July 11, 2023
 
 ---
 
-# Agenda
+# Purpose and Agenda
+
+We have some data and want to develop a prediction model. Supervised machine learning is suited to this aim. In particular, in this learning lab, we explore how we can train a computer to predict students' withdrawal from a course. We use a large data set, the Open University Learning Analytics Dataset (OULAD), focusing on student data at this point. Our model at this point is relatively simple, a generalized linear model.
+
+## What we'll do in this presentation
+
+- Discussion 1
+- Key Concepts
+- Code-along
+- Discussion 2
+- Introduction to the other parts of this learning lab
+
+---
+
+# Discussion 1
+
+.panelset[
+
+.panel[.panel-name[Discussion]
+
+- 
+- 
+-
+    
+]
+
+.panel[.panel-name[Conceptual Overview]
+
+- 
+- 
+-
+
+]
+
+.panel[.panel-name[Coding Walkthrough]
+
+- 
+- 
+- 
+
+]
+]
+
+---
+
+# Key Concepts
+
+.panelset[
+
+.panel[.panel-name[Discussion]
+
+- 
+- 
+-
+    
+]
+
+.panel[.panel-name[Conceptual Overview]
+
+- 
+- 
+-
+
+]
+
+.panel[.panel-name[Coding Walkthrough]
+
+- 
+- 
+- 
+
+]
+]
+
+---
+
+# Code-along
+
+.panelset[
+
+.panel[.panel-name[Discussion]
+
+- 
+- 
+-
+    
+]
+
+.panel[.panel-name[Conceptual Overview]
+
+- 
+- 
+-
+
+]
+
+.panel[.panel-name[Coding Walkthrough]
+
+- 
+- 
+- 
+
+]
+]
+
+---
+
+# Discussion 2
+
+.panelset[
+
+.panel[.panel-name[Discussion]
+
+- 
+- 
+-
+    
+]
+
+.panel[.panel-name[Conceptual Overview]
+
+- 
+- 
+-
+
+]
+
+.panel[.panel-name[Coding Walkthrough]
+
+- 
+- 
+- 
+
+]
+]
+
+---
+
+# Introduction to the other parts of this learning lab
 
 .panelset[
 
@@ -162,7 +300,7 @@ Do you not yet have codes/outcomes -- and do you want to?
 
 # OULAD
 
-&lt;img src="img/oulad-data.png" width="1063" /&gt;
+![](img/oulad-data.png)&lt;!-- --&gt;
 
 ---
 
@@ -177,10 +315,10 @@ These are joined together (see `oulad.R`) for this learning lab. You'll be doing
 
 ```
 ## Rows: 32593 Columns: 15
-## ── Column specification ──────────────────────────────────────────────────────────
+## ── Column specification ─────────────────────────────────────
 ## Delimiter: ","
-## chr (9): code_module, code_presentation, gender, region, highest_education, im...
-## dbl (6): id_student, num_of_prev_attempts, studied_credits, module_presentatio...
+## chr (9): code_module, code_presentation, gender, region, ...
+## dbl (6): id_student, num_of_prev_attempts, studied_credit...
 ## 
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
@@ -188,15 +326,17 @@ These are joined together (see `oulad.R`) for this learning lab. You'll be doing
 
 ```
 ## # A tibble: 3 × 15
-##   code_module code_presentation id_student gender region         highest_education
-##   &lt;chr&gt;       &lt;chr&gt;                  &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;          &lt;chr&gt;            
-## 1 AAA         2013J                  11391 M      East Anglian … HE Qualification 
-## 2 AAA         2013J                  28400 F      Scotland       HE Qualification 
-## 3 AAA         2013J                  30268 F      North Western… A Level or Equiv…
-## # ℹ 9 more variables: imd_band &lt;chr&gt;, age_band &lt;chr&gt;, num_of_prev_attempts &lt;dbl&gt;,
-## #   studied_credits &lt;dbl&gt;, disability &lt;chr&gt;, final_result &lt;chr&gt;,
-## #   module_presentation_length &lt;dbl&gt;, date_registration &lt;dbl&gt;,
-## #   date_unregistration &lt;dbl&gt;
+##   code_module code_presentation id_student gender region     
+##   &lt;chr&gt;       &lt;chr&gt;                  &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;      
+## 1 AAA         2013J                  11391 M      East Angli…
+## 2 AAA         2013J                  28400 F      Scotland   
+## 3 AAA         2013J                  30268 F      North West…
+## # ℹ 10 more variables: highest_education &lt;chr&gt;,
+## #   imd_band &lt;chr&gt;, age_band &lt;chr&gt;,
+## #   num_of_prev_attempts &lt;dbl&gt;, studied_credits &lt;dbl&gt;,
+## #   disability &lt;chr&gt;, final_result &lt;chr&gt;,
+## #   module_presentation_length &lt;dbl&gt;,
+## #   date_registration &lt;dbl&gt;, date_unregistration &lt;dbl&gt;
 ```
 
 ---
@@ -264,8 +404,6 @@ We'll dive into each of these subsequently
 ```r
 library(tidyverse)
 library(tidymodels)
-
-students &lt;- read_csv("data/students-ss.csv")
 ```
 ]
 

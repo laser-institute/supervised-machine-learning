@@ -9,7 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-![](img/ML_I_Hx.jpg){width="30%"} \# need to create this one
+![](img/ML_I_Hx.png){width="30%"}
 
 As a reminder, to earn a badge for these learning labs, you will have to respond to a set of prompts for several parts:
 

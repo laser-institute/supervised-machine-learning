@@ -87,7 +87,7 @@ following research question as we explore this new:
 
 > How well can we predict students who are at risk of dropping a course?
 
-#### Reading 1: Statistical modeling: The two cultures
+#### Reading: Statistical modeling: The two cultures
 
 ![](img/breiman.png){width="50%"}
 
