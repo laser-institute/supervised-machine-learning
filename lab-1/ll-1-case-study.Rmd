@@ -27,7 +27,7 @@ learning methods and techniques can be applied to address a research
 question of interest, create useful data products, and conduct
 reproducible research. Each case study is structured around a basic
 analytics workflow modeled after the Data-Intensive Research Workflow
-from [Learning Analytics Goes to School](#0) (Krumm et al., 2018):
+from [Learning Analytics Goes to School](#0) (Krumm et al., 2018):
 
 ![](https://sbkellogg.github.io/eci-589/unit-1/img/workflow.png){alt=""
 width="80%"}
