@@ -1,5 +1,5 @@
 ---
-title: "Machine Learning Learning Lab 3: Model Tuning"
+title: "Machine Learning Learning Lab 3: Feature Engineering"
 subtitle: "Overview Presentation"
 author: "**Dr. Joshua Rosenberg**"
 institute: "LASER Institute"
@@ -68,7 +68,7 @@ How do we interpret a machine learning model? What else can we say, besides how 
 ## What we'll do in this presentation
 
 - Discussion 1
-- Key Concept: Feature Engineering
+- Key Concept: Feature Engineering (Part B)
 - Key Concept: Resampling and cross-validation
 - Key Concept: The Random Forest algorithm
 - Code-along
@@ -102,39 +102,17 @@ How do we interpret a machine learning model? What else can we say, besides how 
 
 ---
 
-# Key Concept: Features and Feature Engineering
+# Key Concept: Features and Feature Engineering (Part B)
 
 .panelset[
-
-.panel[.panel-name[Why?]
-
-Let's consider a very simple data set, `d`, one with _time_point_ data, `var_a`, for a single student. How do we add this to our model?
-
-```{r, include = FALSE}
-d <- tibble(student_id = "janyia", time_point = 1:10, var_a = c(0.01, 0.32, 0.32, 0.34, 0.04, 0.54, 0.56, 0.75, 0.63, 0.78))
-```
-
-```{r}
-d %>% head(3)
-```
-
-]
-
-.panel[.panel-name[Why?]
-
-```{r, out.width="30%"}
-d %>% 
-    ggplot(aes(x = time_point, y = var_a)) +
-    geom_point()
-```
-
-]
 
 .panel[.panel-name[How?]
 
 - Well, what if we just add the values for these variables directly
 - But, that ignores that they are at different time points
     - We could include the time point variable, but that is (about) the same for every student
+- OULAD interaction data is this way: the number of _clicks_ per day 
+- This data is sometimes called _log-trace_ or _clickstream_ data
     
 *What are some other ideas?*
 ]
@@ -165,16 +143,6 @@ Sys.time()
 **How could this variable be used as a predictor variable?**
 
 ]
-
-.panel[.panel-name[How?]
-
-- We can do all of these things **manually**
-- But, there are also helpful "**{recipes}**" functions to do this
-- Any, the {recipes} package makes it practical to carry out feature engineering steps for not only single variables, but groups of variables (or all of the variables)
-- Examples, all of which start with `step()`, e.g. `step_dummy()`
-
-]
-
 
 .panel[.panel-name[How?]
 
@@ -440,13 +408,13 @@ final_fit %>%
 
 .panelset[
 
-.panel[.panel-name[Getting Started]
+.panel[.panel-name[Reflecting]
 
 - Why is resampling (cross-validation) important?
 
 ]
 
-.panel[.panel-name[Digging Deeper]
+.panel[.panel-name[Applying]
 
 
 - Which feature engineering steps might you need to take with the data (or kind of data) you plan to use?

@@ -69,7 +69,8 @@ We have some data and want to develop a prediction model. Supervised machine lea
 ## What we'll do in this presentation
 
 - Discussion 1
-- Key Concepts
+- Key Concept: Learning analytics data & frameworks
+- Key Concept: Making predictions
 - Code-along
 - Discussion 2
 - Introduction to the other parts of this learning lab
@@ -94,6 +95,7 @@ Do you have coded data or data with a known outcome -- let's say about K-12 stud
 <bold><h4><center>Supervised methods may be your best bet</center></h4></bold>
 
 .panel[.panel-name[Background p2]
+]
 
 # What technique should I choose?
 
@@ -111,13 +113,13 @@ Do you not yet have codes/outcomes -- and do you want to?
 
 .panel[.panel-name[Getting Started]
 
-Provide an example of supervised machine learning in the context of educational research. Discuss why this counts as machine learning.
+- Provide an example of supervised machine learning in the context of educational research. Discuss why this counts as machine learning.
 
 ]
 
 .panel[.panel-name[Digging Deeper]
 
-What data or context are you interested in for your use of ML?
+- How might presenting the results of a machine learning model differ from presenting those from a more traditional ("explanatory") model? 
 
 ]
 ]
@@ -143,7 +145,7 @@ participation in one of several Massive Open Online Courses (called
 
 ]
 
-.panel[.panel-name[Driving Q.]
+.panel[.panel-name[OULAD]
 
 # Can we predict students' passing of OULAD courses?
 
@@ -202,8 +204,29 @@ transforming, and merging data.
 This is the basic process we'll follow for this and the next two learning labs focused on supervised ML
 
 ]
+]
 
-.panel[.panel-name[Algo.]
+---
+
+# Key Concept: Learning analytics data & frameworks
+
+.panelset[
+
+.panel[.panel-name[Algorithms]
+
+
+- Algorithms (or estimation procedures - or informally models) refer to the _structure_ and _process_ of estimating the _parameters_ of a model
+
+- This definition provides a wide range of options for what kinds of algorithms we use (from simple to very complex, as we discuss in a later learning lab)
+
+- For now, we focus on a familiar, easy to interpret algorithm (e.g., [1](https://dl.acm.org/doi/abs/10.1145/3448139.3448154?casa_token=skmk5XGbDOUAAAAA:Z0Kl4nyjpOGFA6RuFTiiLWaC_KxH1vkQ72Kr0hetXcumRdvu8tPYlCX12AgHr9aS0Fp3L-Uu0p4), also [this](https://linkinghub.elsevier.com/retrieve/pii/S0895435618310813)), _logistic regression_
+- This is a linear model with a binary (*"yes"* or *"no"*) outcome
+- It will be a _bad model_ to start us off!
+- We'll dive into a Random Forest in LL3, setting you up for more involved modeling efforts
+
+]
+
+.panel[.panel-name[Algorithms]
 
 
 - Algorithms (or estimation procedures - or informally models) refer to the _structure_ and _process_ of estimating the _parameters_ of a model
@@ -216,23 +239,11 @@ This is the basic process we'll follow for this and the next two learning labs f
 
 ]
 
-.panel[.panel-name[Algo.]
-
-
-- Algorithms (or estimation procedures - or informally models) refer to the _structure_ and _process_ of estimating the _parameters_ of a model
-
-- This definition provides a wide range of options for what kinds of algorithms we use (from simple to very complex, as we discuss in a later learning lab)
-
-- For now, we focus on a familiar, easy to interpret algorithm (e.g., [1](https://dl.acm.org/doi/abs/10.1145/3448139.3448154?casa_token=skmk5XGbDOUAAAAA:Z0Kl4nyjpOGFA6RuFTiiLWaC_KxH1vkQ72Kr0hetXcumRdvu8tPYlCX12AgHr9aS0Fp3L-Uu0p4), also [this](https://linkinghub.elsevier.com/retrieve/pii/S0895435618310813)), _logistic regression_
-- This is a linear model with a binary (*"yes"* or *"no"*) outcome
-- It will be a _bad model_ to start us off!
-
-]
-
-.panel[.panel-name[Prediction]
+.panel[.panel-name[Predictions]
 
 - When doing supervised ML, we focus on predicting an outcome: how well we do this overall and for particular cases (more on how in the next learning lab)
 - We _do not_ focus on inference or explanation (i.e., an "explanatory" model): model fit, statistical significance, effect sizes, etc.
+- **This is a really key difference -- we use different metrics to evaluate what makes for a good model**
 
 ]
 
@@ -350,15 +361,15 @@ final_fit %>%
 
 .panelset[
 
-.panel[.panel-name[Getting Started]
+.panel[.panel-name[Reflecting]
 
-How might presenting the results of a machine learning model differ from presenting those from a more traditional ("explanatory") model? 
+- Why not use our testing data to evaluate how good our model is?
 
 ]
 
-.panel[.panel-name[Digging Deeper]
+.panel[.panel-name[Applying]
 
-Why not use our testing data to evaluate how good our model is?
+- What data or context are you interested in for your use of ML?
 
 ]
 
@@ -370,9 +381,11 @@ Why not use our testing data to evaluate how good our model is?
 
 .panelset[
 
-.panel[.panel-name[Reading]
+.panel[.panel-name[Readings]
 
 Breiman, L. (2001). Statistical modeling: The two cultures (with comments and a rejoinder by the author). *Statistical Science, 16*(3), 199-231. https://projecteuclid.org/journals/statistical-science/volume-16/issue-3/Statistical-Modeling--The-Two-Cultures-with-comments-and-a/10.1214/ss/1009213726.pdf
+
+Estrellado, R. A., Freer, E. A., Mostipak, J., Rosenberg, J. M., & Velásquez, I. C. (2020). *Data science in education using R. Routledge* (c14), Predicting students’ final grades using machine learning methods with online course data. http://www.datascienceineducation.com/
 
 ]
 
