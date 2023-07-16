@@ -324,7 +324,7 @@ course. Here's a way we can do this, using `if_else()` and
 variable.
 
 ```{r}
-students <- students %>% 
+students <- students %>% tr
     mutate(withdrawn = ifelse(final_result == "Withdrawn", 1, 0)) %>% # creates a new variable named "withdrawn" and a dummy code of 1 if value of final_result equals "Withdrawn" and 0 if not
     mutate(withdrawn = as.factor(withdrawn)) # makes the variable a factor, helping later steps
 ```

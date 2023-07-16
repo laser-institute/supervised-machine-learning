@@ -4,7 +4,7 @@
     <title>Machine Learning Learning Lab 1 Overview: Prediction</title>
     <meta charset="utf-8" />
     <meta name="author" content="Dr. Joshua Rosenberg" />
-    <meta name="date" content="2023-07-11" />
+    <meta name="date" content="2023-07-16" />
     <script src="libs/header-attrs-2.22/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
@@ -34,16 +34,16 @@ class: clear, title-slide, inverse, center, top, middle
 
 
 
+
 # Machine Learning Learning Lab 1 Overview: Prediction
-----
 ### **Dr. Joshua Rosenberg**
-### July 11, 2023
+### July 16, 2023
 
 ---
 
 # Purpose and Agenda
 
-We have some data and want to develop a prediction model. Supervised machine learning is suited to this aim. In particular, in this learning lab, we explore how we can train a computer to predict students' withdrawal from a course. We use a large data set, the Open University Learning Analytics Dataset (OULAD), focusing on student data at this point. Our model at this point is relatively simple, a generalized linear model.
+We have some data and want to develop a prediction model. Supervised machine learning is suited to this aim. In particular, in this learning lab, we explore how we can train a computer to predict students' passing a course. We use a large data set, the Open University Learning Analytics Dataset (OULAD), focusing on student data at this point. Our model at this point is relatively simple, a generalized linear model.
 
 ## What we'll do in this presentation
 
@@ -59,27 +59,44 @@ We have some data and want to develop a prediction model. Supervised machine lea
 
 .panelset[
 
-.panel[.panel-name[Discussion]
+.panel[.panel-name[Background, p. 1]
 
-- 
-- 
--
-    
+
+# What technique should I choose?
+
+Do you have coded data or data with a known outcome -- let's say about K-12 students -- and, do you want to:
+
+- _Predict_ how other students with similar data (but without a known outcome) perform?
+- _Scale_ coding that you have done for a sample of data to a larger sample?
+- _Provide timely or instantaneous feedback_, like in many learning analytics systems?
+
+&lt;bold&gt;&lt;h4&gt;&lt;center&gt;Supervised methods may be your best bet&lt;/center&gt;&lt;/h4&gt;&lt;/bold&gt;
+
+.panel[.panel-name[Background, p. 1]
+
+# What technique should I choose?
+
+Do you not yet have codes/outcomes -- and do you want to?
+
+- _Achieve a starting point_ for qualitative coding, perhaps in a ["computational grounded theory"](https://journals.sagepub.com/doi/full/10.1177/0049124117729703) mode?
+- _Discover groups or patterns in your data_ that may be of interest?
+- _Reduce the number of variables in your dataset_ to a smaller, but perhaps nearly as explanatory/predictive - set of variables?
+
+&lt;bold&gt;&lt;h4&gt;&lt;center&gt;Unsupervised methods may be helpful&lt;/center&gt;&lt;/h4&gt;&lt;/bold&gt;
+
+
+]
 ]
 
-.panel[.panel-name[Conceptual Overview]
+.panel[.panel-name[Getting Started]
 
-- 
-- 
--
+Provide an example of supervised machine learning in the context of educational research. Discuss why this counts as machine learning.
 
 ]
 
-.panel[.panel-name[Coding Walkthrough]
+.panel[.panel-name[Digging Deeper]
 
-- 
-- 
-- 
+What data or context are you interested in for your use of ML?
 
 ]
 ]
@@ -90,127 +107,7 @@ We have some data and want to develop a prediction model. Supervised machine lea
 
 .panelset[
 
-.panel[.panel-name[Discussion]
-
-- 
-- 
--
-    
-]
-
-.panel[.panel-name[Conceptual Overview]
-
-- 
-- 
--
-
-]
-
-.panel[.panel-name[Coding Walkthrough]
-
-- 
-- 
-- 
-
-]
-]
-
----
-
-# Code-along
-
-.panelset[
-
-.panel[.panel-name[Discussion]
-
-- 
-- 
--
-    
-]
-
-.panel[.panel-name[Conceptual Overview]
-
-- 
-- 
--
-
-]
-
-.panel[.panel-name[Coding Walkthrough]
-
-- 
-- 
-- 
-
-]
-]
-
----
-
-# Discussion 2
-
-.panelset[
-
-.panel[.panel-name[Discussion]
-
-- 
-- 
--
-    
-]
-
-.panel[.panel-name[Conceptual Overview]
-
-- 
-- 
--
-
-]
-
-.panel[.panel-name[Coding Walkthrough]
-
-- 
-- 
-- 
-
-]
-]
-
----
-
-# Introduction to the other parts of this learning lab
-
-.panelset[
-
-.panel[.panel-name[Discussion]
-
-- 
-- 
--
-    
-]
-
-.panel[.panel-name[Conceptual Overview]
-
-- 
-- 
--
-
-]
-
-.panel[.panel-name[Coding Walkthrough]
-
-- 
-- 
-- 
-
-]
-]
-
----
-
-# Background
+.panel[.panel-name[Overview]
 
 - We want to make predictions about an outcome of interest based on predictor variables that we think are related to the outcome. 
 - We'll be using a widely-used data set in the learning analytics field:
@@ -223,88 +120,20 @@ Open University.
 participation in one of several Massive Open Online Courses (called
 *modules* in the OULAD).
 
----
-
-# Agenda
-
-.pull-left[
-## Part 1: Core Concepts
-### Prediction
-- Prediction versus explanation
-- Train and test set
 ]
 
-.pull-right[
+.panel[.panel-name[Driving Q.]
 
-## Part 2: R Code Examples
-### OULAD data
-- Estimating a logistic regression model
-- Interpreting the model in terms of its predictive accuracy
-]
+# Can we predict students' passing of OULAD courses?
 
----
-
-class: clear, inverse, center, middle
-
-# Core Concepts
-
----
-
-# What technique should I choose?
-
-Do you have coded data or data with a known outcome -- let's say about K-12 students -- and, do you want to:
-
-- _Predict_ how other students with similar data (but without a known outcome) perform?
-- _Scale_ coding that you have done for a sample of data to a larger sample?
-- _Provide timely or instantaneous feedback_, like in many learning analytics systems?
-
-&lt;bold&gt;&lt;h4&gt;&lt;center&gt;Supervised methods may be your best bet&lt;/center&gt;&lt;/h4&gt;&lt;/bold&gt;
-
----
-
-# What technique should I choose?
-
-Do you not yet have codes/outcomes -- and do you want to?
-
-- _Achieve a starting point_ for qualitative coding, perhaps in a ["computational grounded theory"](https://journals.sagepub.com/doi/full/10.1177/0049124117729703) mode?
-- _Discover groups or patterns in your data_ that may be of interest?
-- _Reduce the number of variables in your dataset_ to a smaller, but perhaps nearly as explanatory/predictive - set of variables?
-
-&lt;bold&gt;&lt;h4&gt;&lt;center&gt;Unsupervised methods may be helpful&lt;/center&gt;&lt;/h4&gt;&lt;/bold&gt;
-
----
-
-# Discussion
-
-.pull-left[
-### Turn to an elbow partner and discuss:
-
-- Which modality (supervised or unsupervised machine learning) are you interested in using?
-- What data or context are you interested in for your use of ML?
-]
-
-.pull-right[
-
-&lt;img src="img/joro-pointing.jpeg" width="75%" /&gt;
-]
-
----
-
-# Can we predict students' withdrawal from OULAD courses?
-
-- Many students withdraw from these courses
+- Many students pass these courses, but not all do
 - We have data on students' initial characteristics and their interactions in the course
 - If we could develop a good prediction model, we could provide additional supports to students--and maybe move the needle on some students succeeding who might not otherwise
 
----
+]
 
-# OULAD
+.panel[.panel-name[OULAD]
 
-![](img/oulad-data.png)&lt;!-- --&gt;
-
----
-
-# OULAD
 
 We'll be focusing on three files:
 
@@ -315,10 +144,10 @@ These are joined together (see `oulad.R`) for this learning lab. You'll be doing
 
 ```
 ## Rows: 32593 Columns: 15
-## ── Column specification ─────────────────────────────────────
+## ── Column specification ───────────────────────────────────────────────────────────────────
 ## Delimiter: ","
-## chr (9): code_module, code_presentation, gender, region, ...
-## dbl (6): id_student, num_of_prev_attempts, studied_credit...
+## chr (9): code_module, code_presentation, gender, region, highest_education, imd_band, a...
+## dbl (6): id_student, num_of_prev_attempts, studied_credits, module_presentation_length,...
 ## 
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
@@ -326,47 +155,41 @@ These are joined together (see `oulad.R`) for this learning lab. You'll be doing
 
 ```
 ## # A tibble: 3 × 15
-##   code_module code_presentation id_student gender region     
-##   &lt;chr&gt;       &lt;chr&gt;                  &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;      
-## 1 AAA         2013J                  11391 M      East Angli…
-## 2 AAA         2013J                  28400 F      Scotland   
-## 3 AAA         2013J                  30268 F      North West…
-## # ℹ 10 more variables: highest_education &lt;chr&gt;,
-## #   imd_band &lt;chr&gt;, age_band &lt;chr&gt;,
-## #   num_of_prev_attempts &lt;dbl&gt;, studied_credits &lt;dbl&gt;,
-## #   disability &lt;chr&gt;, final_result &lt;chr&gt;,
-## #   module_presentation_length &lt;dbl&gt;,
+##   code_module code_presentation id_student gender region         highest_education imd_band
+##   &lt;chr&gt;       &lt;chr&gt;                  &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;          &lt;chr&gt;             &lt;chr&gt;   
+## 1 AAA         2013J                  11391 M      East Anglian … HE Qualification  90-100% 
+## 2 AAA         2013J                  28400 F      Scotland       HE Qualification  20-30%  
+## 3 AAA         2013J                  30268 F      North Western… A Level or Equiv… 30-40%  
+## # ℹ 8 more variables: age_band &lt;chr&gt;, num_of_prev_attempts &lt;dbl&gt;, studied_credits &lt;dbl&gt;,
+## #   disability &lt;chr&gt;, final_result &lt;chr&gt;, module_presentation_length &lt;dbl&gt;,
 ## #   date_registration &lt;dbl&gt;, date_unregistration &lt;dbl&gt;
 ```
 
----
+]
 
-class: clear, inverse, center, middle
-
-# Code Examples
-
----
+.panel[.panel-name[LASER Frame]
 
 # Overview of classification modeling
 
 These align with the LASER Framework (used across topic areas):
 
 1.  **Prepare**: Prior to analysis, we'll take a look at the context
-    from which our data came, formulate some questions, and load R packages.
+from which our data came, formulate some questions, and load R packages.
 
 2.  **Wrangle**: In the wrangling section, we will
-    learn some basic techniques for manipulating, cleaning,
-    transforming, and merging data.
+learn some basic techniques for manipulating, cleaning,
+transforming, and merging data.
 
 3.  **Explore**: The processes of wrangling and exploring data often go hand in hand.
 
 4.  **Model**: In this step, we carry out the analysis - here, supervised machine learning.
 
 5.  **Communicate**: Interpreting and communicating the results of our findings is the last step
-    
----
 
-# Overview of classification modeling
+]
+
+
+.panel[.panel-name[Supervised ML Frame]
 
 1. **Split data** (Prepare)  
 1. **Engineer features and write down the recipe** (Wrangle and Explore)  
@@ -374,37 +197,80 @@ These align with the LASER Framework (used across topic areas):
 1. **Fit model** (Model)
 1. **Evaluate accuracy** (Communicate)  
 
-This is the basic process we'll follow for this and the next three learning labs focused on supervised ML
+This is the basic process we'll follow for this and the next two learning labs focused on supervised ML
 
-We'll dive into each of these subsequently
+]
 
----
+.panel[.panel-name[Algo.]
 
-# Algorithm talk
 
 - Algorithms (or estimation procedures - or informally models) refer to the _structure_ and _process_ of estimating the _parameters_ of a model
 
 - This definition provides a wide range of options for what kinds of algorithms we use (from simple to very complex, as we discuss in a later learning lab)
 
 - For now, we focus on a familiar, easy to interpret algorithm (e.g., [1](https://dl.acm.org/doi/abs/10.1145/3448139.3448154?casa_token=skmk5XGbDOUAAAAA:Z0Kl4nyjpOGFA6RuFTiiLWaC_KxH1vkQ72Kr0hetXcumRdvu8tPYlCX12AgHr9aS0Fp3L-Uu0p4), also [this](https://linkinghub.elsevier.com/retrieve/pii/S0895435618310813)), _logistic regression_
-    - This is a linear model with a binary (*"yes"* or *"no"*) outcome
+- This is a linear model with a binary (*"yes"* or *"no"*) outcome
 - It will be a _bad model_ to start us off!
+
+]
+
+.panel[.panel-name[Algo.]
+
+
+- Algorithms (or estimation procedures - or informally models) refer to the _structure_ and _process_ of estimating the _parameters_ of a model
+
+- This definition provides a wide range of options for what kinds of algorithms we use (from simple to very complex, as we discuss in a later learning lab)
+
+- For now, we focus on a familiar, easy to interpret algorithm (e.g., [1](https://dl.acm.org/doi/abs/10.1145/3448139.3448154?casa_token=skmk5XGbDOUAAAAA:Z0Kl4nyjpOGFA6RuFTiiLWaC_KxH1vkQ72Kr0hetXcumRdvu8tPYlCX12AgHr9aS0Fp3L-Uu0p4), also [this](https://linkinghub.elsevier.com/retrieve/pii/S0895435618310813)), _logistic regression_
+- This is a linear model with a binary (*"yes"* or *"no"*) outcome
+- It will be a _bad model_ to start us off!
+
+]
+
+.panel[.panel-name[Prediction]
+
+- When doing supervised ML, we focus on predicting an outcome: how well we do this overall and for particular cases (more on how in the next learning lab)
+- We _do not_ focus on inference or explanation (i.e., an "explanatory" model): model fit, statistical significance, effect sizes, etc.
+
+]
+
+.panel[.panel-name[Train vs. test]
+
+- A key concept in the context of supervised machine learning is training vs. testing data:
+- Training data: Data we use to **fit** (or train, AKA estimate) a supervised machine learning **model** (AKA algorithm)
+- Testing data: Data we use to see how well our model did---not used to fit the model
+- By splitting out data into training and testing _sets_, we can obtain valid metrics for how good our model is at predicting
+
+--
+
+- Increased bias, in the form of an over-fit model 
+
+]
+
+]
 
 ---
 
-# Classification modeling
+# Code-along
 
 .panelset[
 
 .panel[.panel-name[0]
 
-**Loading, setting up**
+**Loading, setting up: create a .R file in /lab-1 and run this code**
 
 
 ```r
 library(tidyverse)
 library(tidymodels)
+
+starwars_recoded &lt;- starwars %&gt;% # built-in data available just by typing
+    mutate(species = ifelse(species_human == "Human", 1, 0)) # recoding species to create a 0-1 outcome
+
+starwars_recoded %&gt;% 
+    count(species) # how many humans are there?
 ```
+
 ]
 
 .panel[.panel-name[1]
@@ -413,11 +279,12 @@ library(tidymodels)
 
 
 ```r
-train_test_split &lt;- initial_split(students, prop = .80)
+train_test_split &lt;- initial_split(starwars_recoded, prop = .80)
 
 data_train &lt;- training(train_test_split)
 data_test &lt;- testing(train_test_split)
 ```
+
 ]
 
 .panel[.panel-name[2]
@@ -426,14 +293,16 @@ data_test &lt;- testing(train_test_split)
 
 
 ```r
-my_rec &lt;- recipe(withdrawn ~ disability + imd_band, data = data_train) # this is the key change and addition
+# predicting humans based on the independent effects of height and mass
+my_rec &lt;- recipe(species_human ~ height + mass, data = data_train)
 ```
+
 ]
 
 .panel[.panel-name[3]
 
 **Specify recipe, model, and workflow**
- 
+
 
 ```r
 # specify model
@@ -448,6 +317,7 @@ my_wf &lt;-
     add_model(my_mod) %&gt;% 
     add_recipe(my_rec)
 ```
+
 ]
 
 .panel[.panel-name[4]
@@ -460,6 +330,7 @@ fitted_model &lt;- fit(my_wf, data = data_train)
 
 final_fit &lt;- last_fit(fitted_model, train_test_split)
 ```
+
 ]
 
 .panel[.panel-name[5]
@@ -471,22 +342,59 @@ final_fit &lt;- last_fit(fitted_model, train_test_split)
 final_fit %&gt;%
     collect_metrics()
 ```
+
 ]
+
+
 ]
 
 ---
 
-# In the remainder of this learning lab, you'll dive deeper
+# Discussion 2
 
-- **Case study**: You'll run all of this code, focusing on interpreting the predictions; walk through this slowly, as this is intended to be a gentle introduction to _all_ of the core parts of machine learning
-- **Badge**: In the independent practice, you'll extend the model and also reflect and plan.
+.panelset[
+
+.panel[.panel-name[Getting Started]
+
+How might presenting the results of a machine learning model differ from presenting those from a more traditional ("explanatory") model? 
+
+]
+
+.panel[.panel-name[Digging Deeper]
+
+Why not use our testing data to evaluate how good our model is?
+
+]
+
+]
 
 ---
-class: clear, center
 
-## .font130[.center[**Thank you!**]]
-&lt;br/&gt;
-.center[&lt;img style="border-radius: 80%;" src="img/jr-cycling.jpeg" height="200px"/&gt;&lt;br/&gt;**Dr. Joshua Rosenberg**&lt;br/&gt;&lt;mailto:jmrosenberg@utk.edu&gt;]
+# Introduction to the other parts of this learning lab
+
+.panelset[
+
+.panel[.panel-name[Reading]
+
+Breiman, L. (2001). Statistical modeling: The two cultures (with comments and a rejoinder by the author). *Statistical Science, 16*(3), 199-231. https://projecteuclid.org/journals/statistical-science/volume-16/issue-3/Statistical-Modeling--The-Two-Cultures-with-comments-and-a/10.1214/ss/1009213726.pdf
+
+]
+
+.panel[.panel-name[Case Study]
+
+- Building a prediction model for students passing the class---based just on student data.
+- Work with peers to complete this, reading the text, following links to resources (and the reading), and then completing the required 👉 Your Turn ⤵ tasks
+- A key is available, but we strongly encourage you to use it only at the end to check your work, or if you are completely stuck and have tried our recommended troubleshooting steps: https://docs.google.com/document/d/14Jc-KG3m5k1BvyKWqw7KmDD21IugU5nV5edfJkZyspY/edit
+
+]
+
+.panel[.panel-name[Badge]
+
+- Involves applying what you have done through this point in the learning lab to a) extending our model and b) reflecting and planning, after which you will knit and submit your work by publishing to Posit Cloud.
+
+]
+]
+
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
