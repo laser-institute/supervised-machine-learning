@@ -15,7 +15,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 Please read this article and then answer then response to the following three questions.
 
-> Baker, R. S., Esbenshade, L., Vitale, J., & Karumbaiah, S. (2023). Using Demographic Data as Predictor Variables: a Questionable Choice. Journal of Educational Data Mining, 15(2), 22-52.
+> Baker, R. S., Esbenshade, L., Vitale, J., & Karumbaiah, S. (2023). Using Demographic Data as Predictor Variables: a Questionable Choice. *Journal of Educational Data Mining, 15*(2), 22-52.
 
 Part A:
 

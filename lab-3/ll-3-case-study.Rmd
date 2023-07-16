@@ -1,7 +1,7 @@
 ---
 title: 'Learning Lab 3 Case Study'
 author: ""
-date: "`r format(Sys.Date(),'%B %e, %Y')`"
+date: "`r format(Sys.Date(),'%B %e, kf%Y')`"
 output:
   html_document:
     toc: yes
@@ -38,8 +38,8 @@ illustrates, there is not one way to use such data.
 > Rodriguez, F., Lee, H. R., Rutherford, T., Fischer, C., Potma, E., &
 > Warschauer, M. (2021, April). Using clickstream data mining techniques
 > to understand and support first-generation college students in an
-> online chemistry course. In LAK21: 11th International Learning
-> Analytics and Knowledge Conference (pp. 313-322).
+> online chemistry course. In *LAK21: 11th International Learning
+> Analytics and Knowledge Conference* (pp. 313-322).
 > <https://github.com/laser-institute/essential-readings/blob/main/machine-learning/ml-lab-2/rodriguez-et-al-2021-lak.pdf>
 
 Notably, the authors took several steps to prepare the data so that it
@@ -51,20 +51,9 @@ called *replay tagging* to conduct feature engineering.
 
 > Gobert, J. D., Sao Pedro, M., Raziuddin, J., & Baker, R. S. (2013).
 > From log files to assessment metrics: Measuring students' science
-> inquiry skills using educational data mining. Journal of the Learning
-> Sciences, 22(4), 521-563.
+> inquiry skills using educational data mining. *Journal of the Learning
+> Sciences, 22*(4), 521-563.
 > <https://github.com/laser-institute/essential-readings/blob/main/machine-learning/ml-lab-3/gobert-et-al-2013-jls.pdf>
-
-Last, we note that there are methods that intended to automated the
-process of feature engineering (Bosch et al., 2021), though such
-processes are not necessarily interpretable and they usually require
-some degree of tailoring to your particular context. Review this paper
-on this topic
-
-> Bosch, N. (2021). AutoML Feature Engineering for Student Modeling
-> Yields High Accuracy, but Limited Interpretability. *Journal of
-> Educational Data Mining, 13*(2), 55-79.
-> <https://github.com/laser-institute/essential-readings/blob/main/machine-learning/ml-lab-3/bosch-et-al-2021-jedm.pdf>
 
 Even after feature engineering, machine learning approaches can often
 (but not always) be improved by choosing a more sophisticated model
