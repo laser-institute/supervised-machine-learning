@@ -80,7 +80,7 @@ We have some data and want to develop a prediction model. Supervised machine lea
 
 .panelset[
 
-.panel[.panel-name[Background, p. 1]
+.panel[.panel-name[Background p1]
 
 
 # What technique should I choose?
@@ -93,7 +93,7 @@ Do you have coded data or data with a known outcome -- let's say about K-12 stud
 
 <bold><h4><center>Supervised methods may be your best bet</center></h4></bold>
 
-.panel[.panel-name[Background, p. 1]
+.panel[.panel-name[Background p2]
 
 # What technique should I choose?
 
@@ -266,7 +266,7 @@ library(tidyverse)
 library(tidymodels)
 
 starwars_recoded <- starwars %>% # built-in data available just by typing
-    mutate(species = ifelse(species_human == "Human", 1, 0)) # recoding species to create a 0-1 outcome
+    mutate(species_human = ifelse(species == "Human", 1, 0)) # recoding species to create a 0-1 outcome
 
 starwars_recoded %>% 
     count(species) # how many humans are there?

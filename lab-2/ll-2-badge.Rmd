@@ -150,21 +150,7 @@ How does the accuracy of this new model compare? Add a few reflections below:
 
 ### Part II: Reflect and Plan
 
-Part A: Please refer back to Breiman's (2001) article for these three questions.
-
-1.  Can you summarize the primary difference between the two cultures of statistical modeling that Breiman outlines in his paper?
-
--   
-
-2.  How has the advent of big data and machine learning affected or reinforced Breiman's argument since the article was published?
-
--   
-
-3.  Breiman emphasized the importance of predictive accuracy over understanding why a method works. To what extent do you agree or disagree with this stance?
-
--   
-
-Part B:
+Part A:
 
 1.  How good was the machine learning model we developed in the badge activity? What if you read about someone using such a model as a reviewer of research? Please add your thoughts and reflections following the bullet point below.
 
@@ -174,7 +160,7 @@ Part B:
 
 -   
 
-Part C: Use the institutional library (e.g. [NCSU Library](https://www.lib.ncsu.edu/#articles)), [Google Scholar](https://scholar.google.com/) or search engine to locate a research article, presentation, or resource that applies machine learning to an educational context aligned with your research interests. More specifically, **locate a machine learning study that involves making predictions**.
+Part B: Use the institutional library (e.g. [NCSU Library](https://www.lib.ncsu.edu/#articles)), [Google Scholar](https://scholar.google.com/) or search engine to locate a research article, presentation, or resource that applies machine learning to an educational context aligned with your research interests. More specifically, **try to find a study like the one by Baker that interpets a statistic other than accuracy**. In gneeral, though, the goal is to find another relevant study (in the context of your research interests).
 
 1.  Provide an APA citation for your selected study.
 
@@ -202,7 +188,7 @@ Complete the following steps to knit and publish your work:
 
 ### Receiving Your Machine Learning Badge
 
-To receive credit for this assignment and earn your first official LASER Badge, share the link to published webpage under the next incomplete badge artifact column on the 2023 LASER Scholar Information and Documents spreadsheet: <https://go.ncsu.edu/laser-sheet>. 
+To receive credit for this assignment and earn your second ML Badge, share the link to published webpage under the next incomplete badge artifact column on the 2023 LASER Scholar Information and Documents spreadsheet: <https://go.ncsu.edu/laser-sheet>. 
 
 Once your instructor has checked your link, you will be provided a physical version of the badge below!
 
