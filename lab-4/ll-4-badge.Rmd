@@ -71,7 +71,7 @@ Complete the following steps to knit and publish your work:
 
 ### Receiving Your Machine Learning Badge
 
-To receive credit for this assignment and earn your first official LASER Badge, share the link to published webpage under the next incomplete badge artifact column on the 2023 LASER Scholar Information and Documents spreadsheet: <https://go.ncsu.edu/laser-sheet>. 
+To receive credit for this assignment and earn your fourth ML badge, share the link to published webpage under the next incomplete badge artifact column on the 2023 LASER Scholar Information and Documents spreadsheet: <https://go.ncsu.edu/laser-sheet>. 
 
 Once your instructor has checked your link, you will be provided a physical version of the badge below!
 
