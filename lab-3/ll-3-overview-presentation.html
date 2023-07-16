@@ -139,7 +139,7 @@ Here's a time stamp:
 
 
 ```
-## [1] "2023-07-16 14:04:43 EDT"
+## [1] "2023-07-16 14:06:23 EDT"
 ```
 
 **How could this variable be used as a predictor variable?**
@@ -242,11 +242,11 @@ We could be optimizing our model for our testing data; when used with new data, 
 
 ```
 ## # A tibble: 3 × 3
-##      id  var_a var_b
-##   &lt;int&gt;  &lt;dbl&gt; &lt;dbl&gt;
-## 1     1 0.279  0.625
-## 2     2 0.266  0.575
-## 3     3 0.0458 0.575
+##      id var_a var_b
+##   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1     1 0.811 0.445
+## 2     2 0.935 0.360
+## 3     3 0.239 0.847
 ```
 
 Using _k_ = 10, how can we split *n* = 100 cases into ten distinct training and testing sets?
@@ -447,13 +447,10 @@ final_fit %&gt;%
 .panelset[
 
 .panel[.panel-name[Readings]
-
-Rodriguez, F., Lee, H. R., Rutherford, T., Fischer, C., Potma, E., &amp; Warschauer, M. (2021, April). Using clickstream data mining techniques to understand and support first-generation college students in an online chemistry course. In *LAK21: 11th International Learning Analytics and Knowledge Conference* (pp. 313-322). https://github.com/laser-institute/essential-readings/blob/main/machine-learning/ml-lab-2/rodriguez-et-al-2021-lak.pdf
-
-Gobert, J. D., Sao Pedro, M., Raziuddin, J., &amp; Baker, R. S. (2013). From log files to assessment metrics: Measuring students' science inquiry skills using educational data mining. *Journal of the Learning Sciences, 22*(4), 521-563. https://github.com/laser-institute/essential-readings/blob/main/machine-learning/ml-lab-3/gobert-et-al-2013-jls.pdf
     
 Baker, R. S., Esbenshade, L., Vitale, J., &amp; Karumbaiah, S. (2023). Using Demographic Data as Predictor Variables: a Questionable Choice. *Journal of Educational Data Mining, 15*(2), 22-52.
 
+And Rodriguez et al. (2021) and Gobert et al. (2013) (*optional*)
 ]
 
 .panel[.panel-name[Case Study]
