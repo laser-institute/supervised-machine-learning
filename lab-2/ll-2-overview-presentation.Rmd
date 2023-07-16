@@ -70,7 +70,8 @@ How do we interpret a machine learning model? What else can we say, besides how 
 ## What we'll do in this presentation
 
 - Discussion 1
-- Key Concepts
+- Key Concept: Accuracy
+- Key Concept: Feature Engineering (part A)
 - Code-along
 - Discussion 2
 - Introduction to the other parts of this learning lab
@@ -98,14 +99,16 @@ Think broadly and not formally (yet): What makes a prediction model a good one?
 
 .panel[.panel-name[Digging Deeper]
 
-After having worked through the first learning lab, have your thoughts on what data you might use for a machine learning study evolved? If so, in what ways? If not, please elaborate on your initial thoughts and plans.
+- After having worked through the first learning lab, have your thoughts on what data you might use for a machine learning study evolved? If so, in what ways? If not, please elaborate on your initial thoughts and plans.
 
 ]
 ]
 
 ---
 
-# Key Concepts
+
+
+# Key Concept: Accuracy
 
 .panelset[
 
@@ -127,6 +130,13 @@ Use the `tabyl()` function (from {janitor} to calculate the accuracy in the code
 
 ```{r}
 library(janitor)
+
+data_for_conf_mat <- tibble(Outcome = c(1, 0, 0, 1, 1),
+                            Prediction = c(1, 0, 1, 0, 1)) %>% 
+    mutate_all(as.factor)
+```
+
+```{r, eval = TRUE, echo = TRUE}
 data_for_conf_mat %>% 
     mutate(correct = Outcome == Prediction) %>% 
     tabyl(correct)
@@ -143,10 +153,6 @@ Now, let's create a confusion matrix based on this data:
 .code80.remark-code[
 ```{r}
 library(tidymodels)
-
-data_for_conf_mat <- tibble(Outcome = c(1, 0, 0, 1, 1),
-                            Prediction = c(1, 0, 1, 0, 1)) %>% 
-    mutate_all(as.factor)
 
 data_for_conf_mat %>% 
     conf_mat(Outcome, Prediction)
@@ -184,6 +190,46 @@ False negative (FN): Proportion of the population that is affected by a conditio
 
 ![](img/interpretation-of-metrics.png)
 
+
+]
+]
+
+---
+
+# Key Concept: Feature Engineering (Part A)
+.panelset[
+
+.panel[.panel-name[Why?]
+
+Let's consider a very simple data set, `d`, one with _time_point_ data, `var_a`, for a single student. How do we add this to our model?
+
+```{r, include = FALSE}
+d <- tibble(student_id = "janyia", time_point = 1:10, var_a = c(0.01, 0.32, 0.32, 0.34, 0.04, 0.54, 0.56, 0.75, 0.63, 0.78))
+```
+
+```{r}
+d %>% head(3)
+```
+
+]
+
+.panel[.panel-name[Why?]
+
+```{r, out.width="30%"}
+d %>% 
+    ggplot(aes(x = time_point, y = var_a)) +
+    geom_point()
+```
+
+]
+
+
+.panel[.panel-name[How?]
+
+- We can do all of these things **manually**
+- But, there are also helpful "**{recipes}**" functions to do this
+- Any, the {recipes} package makes it practical to carry out feature engineering steps for not only single variables, but groups of variables (or all of the variables)
+- Examples, all of which start with `step()`, e.g. `step_dummy()`
 
 ]
 ]
@@ -301,15 +347,15 @@ band_members %>% inner_join(band_instruments)
 
 .panelset[
 
-.panel[.panel-name[Getting Started]
+.panel[.panel-name[Reflecting]
 
-
+- Which metrics for supervised machine learning models (in classification "mode") are important to interpret? Why?
 
 ]
 
-.panel[.panel-name[Digging Deeper]
+.panel[.panel-name[Applying]
 
-Why not use our testing data to evaluate how good our model is?
+- Thinking broadly about your research interest, what would you need to consider before using a supervised machine learning model? Consider not only model metrics but also the data collection process and how the predictions may be used.
 
 ]
 

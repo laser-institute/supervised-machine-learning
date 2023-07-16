@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="" xml:lang="">
   <head>
-    <title>Machine Learning Learning Lab 3: Model Tuning</title>
+    <title>Machine Learning Learning Lab 3: Feature Engineering</title>
     <meta charset="utf-8" />
     <meta name="author" content="Dr. Joshua Rosenberg" />
     <meta name="date" content="2023-07-16" />
@@ -34,7 +34,7 @@ class: clear, title-slide, inverse, center, top, middle
 
 
 
-# Machine Learning Learning Lab 3: Model Tuning
+# Machine Learning Learning Lab 3: Feature Engineering
 ----
 ### **Dr. Joshua Rosenberg**
 ### July 16, 2023
@@ -47,7 +47,7 @@ How do we interpret a machine learning model? What else can we say, besides how 
 ## What we'll do in this presentation
 
 - Discussion 1
-- Key Concept: Feature Engineering
+- Key Concept: Feature Engineering (Part B)
 - Key Concept: Resampling and cross-validation
 - Key Concept: The Random Forest algorithm
 - Code-along
@@ -81,39 +81,17 @@ How do we interpret a machine learning model? What else can we say, besides how 
 
 ---
 
-# Key Concept: Features and Feature Engineering
+# Key Concept: Features and Feature Engineering (Part B)
 
 .panelset[
-
-.panel[.panel-name[Why?]
-
-Let's consider a very simple data set, `d`, one with _time_point_ data, `var_a`, for a single student. How do we add this to our model?
-
-
-
-
-```
-## # A tibble: 3 × 3
-##   student_id time_point var_a
-##   &lt;chr&gt;           &lt;int&gt; &lt;dbl&gt;
-## 1 janyia              1  0.01
-## 2 janyia              2  0.32
-## 3 janyia              3  0.32
-```
-
-]
-
-.panel[.panel-name[Why?]
-
-&lt;img src="ll-3-overview-presentation_files/figure-html/unnamed-chunk-4-1.png" width="30%" /&gt;
-
-]
 
 .panel[.panel-name[How?]
 
 - Well, what if we just add the values for these variables directly
 - But, that ignores that they are at different time points
     - We could include the time point variable, but that is (about) the same for every student
+- OULAD interaction data is this way: the number of _clicks_ per day 
+- This data is sometimes called _log-trace_ or _clickstream_ data
     
 *What are some other ideas?*
 ]
@@ -139,22 +117,12 @@ Here's a time stamp:
 
 
 ```
-## [1] "2023-07-16 14:06:23 EDT"
+## [1] "2023-07-16 14:51:54 EDT"
 ```
 
 **How could this variable be used as a predictor variable?**
 
 ]
-
-.panel[.panel-name[How?]
-
-- We can do all of these things **manually**
-- But, there are also helpful "**{recipes}**" functions to do this
-- Any, the {recipes} package makes it practical to carry out feature engineering steps for not only single variables, but groups of variables (or all of the variables)
-- Examples, all of which start with `step()`, e.g. `step_dummy()`
-
-]
-
 
 .panel[.panel-name[How?]
 
@@ -244,9 +212,9 @@ We could be optimizing our model for our testing data; when used with new data, 
 ## # A tibble: 3 × 3
 ##      id var_a var_b
 ##   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1     1 0.811 0.445
-## 2     2 0.935 0.360
-## 3     3 0.239 0.847
+## 1     1 0.784 0.790
+## 2     2 0.929 0.414
+## 3     3 0.923 0.146
 ```
 
 Using _k_ = 10, how can we split *n* = 100 cases into ten distinct training and testing sets?
@@ -426,13 +394,13 @@ final_fit %&gt;%
 
 .panelset[
 
-.panel[.panel-name[Getting Started]
+.panel[.panel-name[Reflecting]
 
 - Why is resampling (cross-validation) important?
 
 ]
 
-.panel[.panel-name[Digging Deeper]
+.panel[.panel-name[Applying]
 
 
 - Which feature engineering steps might you need to take with the data (or kind of data) you plan to use?
