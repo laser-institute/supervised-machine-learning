@@ -329,7 +329,7 @@ The previous three learning labs involved the use of data with known outcome var
 
 I hope to see you in the ML topic area learning labs!
 
-<br/>
-.center[<img style="border-radius: 80%;" src="img/jr-cycling.jpeg" height="200px"/><br/>**Dr. Joshua Rosenberg**<br/><mailto:jmrosenberg@utk.edu>]
+*Dr. Joshua Rosenberg* (jmrosenberg@utk.edu)
+*Dr. Peng  Xu* (hepeng1@msu.edu)
 
-[Slides](https://laser-institute.github.io/machine-learning/introductory-presentation.html#1) created via the R package [xaringan](https://github.com/yihui/xaringan)
+[Slides](https://laser-institute.github.io/machine-learning/introductory-presentation.html#1)
