@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="" xml:lang="">
   <head>
-    <title>Machine Learning Learning Lab 2: Feature Engineering</title>
+    <title>Machine Learning Learning Lab 2: Interpretation</title>
     <meta charset="utf-8" />
     <meta name="author" content="Dr. Joshua Rosenberg" />
-    <meta name="date" content="2022-11-21" />
-    <script src="libs/header-attrs-2.18/header-attrs.js"></script>
+    <meta name="date" content="2023-07-16" />
+    <script src="libs/header-attrs-2.22/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
     <script src="libs/panelset-0.2.6/panelset.js"></script>
@@ -13,8 +13,8 @@
     <link href="libs/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.css" rel="stylesheet" />
     <script src="libs/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.js"></script>
     <script>window.xaringanExtraClipboard(null, {"button":"<i class=\"fa fa-clipboard\"><\/i>","success":"<i class=\"fa fa-check\" style=\"color: #90BE6D\"><\/i>","error":"Press Ctrl+C to Copy"})</script>
-    <link href="libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
-    <link href="libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+    <link href="libs/font-awesome-6.4.0/css/all.min.css" rel="stylesheet" />
+    <link href="libs/font-awesome-6.4.0/css/v4-shims.min.css" rel="stylesheet" />
     <link href="libs/tile-view-0.2.6/tile-view.css" rel="stylesheet" />
     <script src="libs/tile-view-0.2.6/tile-view.js"></script>
     <link rel="stylesheet" href="css/laser.css" type="text/css" />
@@ -35,520 +35,211 @@ class: clear, title-slide, inverse, center, top, middle
 
 
 
-# Machine Learning Learning Lab 2: Feature Engineering
+# Machine Learning Learning Lab 2: Interpretation
 ----
 ### **Dr. Joshua Rosenberg**
-### November 21, 2022
+### July 16, 2023
 
 ---
 
-# Trying to reflect on the big picture
+# Purpose and Agenda
+
+How do we interpret a machine learning model? What else can we say, besides how accurate a model this? This learning lab is intended to help you to answer these questions by examining output from a classification and a regression model. We again use the OULAD, but add an assessment file.
+
+## What we'll do in this presentation
+
+- Discussion 1
+- Key Concept: Accuracy
+- Key Concept: Feature Engineering (part A)
+- Code-along
+- Discussion 2
+- Introduction to the other parts of this learning lab
+
+---
+
+# Discussion 1
 
 .panelset[
 
-.panel[.panel-name[Recap]
+.panel[.panel-name[Background]
 
-- We have _four learning labs_ within the _machine learning topic area_
-    - Each is associated with ne badge
-- We began with _supervised machine learning_ and focused on its **predictive** emphasis
-    - We talked a bit about plans for using ML
-    - We worked through a presentation (reflection: the code-along took to long)
-    - We started on the case study
-    
+- We are likely familiar with _accuracy_ and maybe another measure, _Cohen's Kappa_
+- But, you may have heard of other means of determining how good a model is at making predictions: confusion matrices, specificity, sensitivity, recall, AUC-ROC, and others
+- Broadly, these help us to understand _for which cases and types of cases a model is predictively better than others_ in a finer-grained way than accuracy
+
+]
 ]
 
-.panel[.panel-name[A few more thoughts]
+.panel[.panel-name[Getting Started]
 
-- If you are still figuring out how you are planning to use ML . . . 
-    - Great! Let's make progress
-- If you have a _specific use of ML in mind_ . . . 
-    - Negin to look for _how_ you can achieve your goal
-        - R packages (recently updated, with good documentation, with active users, compatibility, papers)
-- Machine learning is _not_ magical
+Think broadly and not formally (yet): What makes a prediction model a good one?
 
 ]
 
-.panel[.panel-name[Today]
+.panel[.panel-name[Digging Deeper]
 
- - We'll recap ML LL #1
- - Then dive into the presentation for ML LL #2
- - We'll reserve at least one hour for discussion
-    
+- After having worked through the first learning lab, have your thoughts on what data you might use for a machine learning study evolved? If so, in what ways? If not, please elaborate on your initial thoughts and plans.
+
 ]
 ]
 
 ---
 
-# Brief (15-20 seconds each) reflection
 
 
-.pull-left[
-### Eiscuss:
+# Key Concept: Accuracy
 
-  - Which modality (supervised or unsupervised machine learning) are you interested in using?
-  - What data or context are you interested in for your use of ML?
+.panelset[
+
+.panel[.panel-name[Accuracy]
+
+Let's start with accuracy and a simple confusion matrix; what is the **Accuracy**?
+
+
+| Outcome| Prediction|Correct? |
+|-------:|----------:|:--------|
+|       1|          1|Yes      |
+|       0|          0|Yes      |
+|       0|          1|No       |
+|       1|          0|No       |
+|       1|          1|Yes      |
+
 ]
 
-.pull-right[
+.panel[.panel-name[Accuracy]
 
-&lt;img src="img/joro-pointing.jpeg" width="75%" /&gt;
+Use the `tabyl()` function (from {janitor} to calculate the accuracy in the code chunk below.
 
+
+
+
+```r
+data_for_conf_mat %&gt;% 
+    mutate(correct = Outcome == Prediction) %&gt;% 
+    tabyl(correct)
+```
+
+```
+##  correct n percent
+##    FALSE 2     0.4
+##     TRUE 3     0.6
+```
+
+]
+
+
+
+.panel[.panel-name[Conf Mat]
+
+Now, let's create a confusion matrix based on this data:
+
+.code80.remark-code[
+
+```
+##           Truth
+## Prediction 0 1
+##          0 1 1
+##          1 1 2
+```
+]
+]
+
+
+.panel[.panel-name[Conf Mat]
+
+You can think of the following statistics as slicing and dicing the confusion matrix you created above, revealing insights in the process. For the below, please add the values based on the above confusion matrix.
+
+Accuracy: Proportion of the population that is true positive or true negative
+
+True positive (TP): Proportion of the population that is affected by a condition and correctly tested positive
+
+True negative (TN): Proportion of the population that is not affected by a condition and correctly tested negative
+
+False positive (FP): Proportion of the population that is not affected by a condition and incorrectly tested positive
+
+False negative (FN): Proportion of the population that is affected by a condition and incorrectly tested positive.
+
+]
+
+
+.panel[.panel-name[Conf Mat]
+
+
+![](img/conf-mat-descriptor.png)
+
+]
+
+
+.panel[.panel-name[Metrics]
+
+![](img/interpretation-of-metrics.png)
+
+
+]
 ]
 
 ---
-# Background
 
-- In the last learning lab, we did a nice job of training a model that was _pretty good_
-- But, can we do better?
-- This question motivates this learning lab, specifically:
-    - Answering it
-    - And, developing a _means_ to answer it in a way that does not introduce bias into our analysis
-- Feature engineering is a key way we can improve our model
-- Feature engineering refers to the part of machine learning wherein we decide which variables to include in which forms
+# Key Concept: Feature Engineering (Part A)
+.panelset[
 
----
+.panel[.panel-name[Why?]
 
-# Agenda
-
-.pull-left[
-## Part 1: Core Concepts
-### Feature engineering
-- Selecting and preparing variables for inclusion as features
-- k-folds cross-validation
-]
-
-.pull-right[
-
-## Part 2: R Code Examples
-### Online science classes
-- Daa from online science classes
-- Interpreting changes in fit measures
-]
-
----
-
-class: clear, inverse, center, middle
-
-# Core Concepts
-
----
-
-# Why feature engineering matters
-
-- Let's consider a very simple data set, one with _time series_ (or longitudinal) data for a single student
+Let's consider a very simple data set, `d`, one with _time_point_ data, `var_a`, for a single student. How do we add this to our model?
 
 
 
 
 ```
-## # A tibble: 10 × 3
-##    student_id time_point var_a
-##    &lt;chr&gt;           &lt;int&gt; &lt;dbl&gt;
-##  1 janyia              1  0.01
-##  2 janyia              2  0.32
-##  3 janyia              3  0.32
-##  4 janyia              4  0.34
-##  5 janyia              5  0.04
-##  6 janyia              6  0.54
-##  7 janyia              7  0.56
-##  8 janyia              8  0.75
-##  9 janyia              9  0.63
-## 10 janyia             10  0.78
+## # A tibble: 3 × 3
+##   student_id time_point var_a
+##   &lt;chr&gt;           &lt;int&gt; &lt;dbl&gt;
+## 1 janyia              1  0.01
+## 2 janyia              2  0.32
+## 3 janyia              3  0.32
 ```
 
-- **How can we include a variable, `var_a`, in a machine learning model?**
-
----
-
-# How can we include a single variable?
-
-Let's take a look at the variable
-
-![](ll-2-overview-presentation_files/figure-html/unnamed-chunk-5-1.png)&lt;!-- --&gt;
-
----
-
-# How can we include a single variables
-
-- Well, what if we just add the values for these variables directly
-- But, that ignores that they are at different time points
-    - We could include the time point variable, but that is (about) the same for every student
-
-*What are some other ideas?*
-
----
-
-# A few (other) options
-
-- Raw data points
-- Their mean
-- Their maximum
-- Their variability (standard deviation)
-- Their linear slope
-- Their quadratic slope
-
-**Each of these may derive from a single _variable_ but may offer predictive utility as distinct _features_**
-
----
-
-# Let's consider one more example
-
-Here's a time stamp:
-
-
-```
-## [1] "2022-11-21 09:05:26 EST"
-```
-
-**How could this variable be used as a predictor variable?**
-
----
-
-# Discussion
-
-.pull-left[
-### Turn to an elbow partner and discuss:
-
-- What _variables_ might you use in your use of ML?
-- What _features_ could be created from these variables?
-- What is unclear or about what do you have a question (so far)?
 ]
 
-.pull-right[
+.panel[.panel-name[Why?]
 
-&lt;img src="img/joro-pointing.jpeg" width="75%" /&gt;
+&lt;img src="ll-2-overview-presentation_files/figure-html/unnamed-chunk-7-1.png" width="30%" /&gt;
+
 ]
----
 
-# What else should we consider?
 
-## For all variables
+.panel[.panel-name[How?]
 
-- Removing those with "near-zero variance"
-- Removing ID variables and others that _should not be_ informative
-- Imputing missing values
-- Extract particular elements (i.e., particular _days_ or _times_) from time-related data 
-
-## For specific types of variables
-
-- Categorical variables
-    - Dummy coding 
-    - Combining categories
-- Numeric variables
-    - Normalizing ("standardizing")
-
----
-
-# How to do this?
-
-- We can do all of these things manually
-- But, there are also helpful functions to do this
+- We can do all of these things **manually**
+- But, there are also helpful "**{recipes}**" functions to do this
 - Any, the {recipes} package makes it practical to carry out feature engineering steps for not only single variables, but groups of variables (or all of the variables)
-- Examples, all of which start with `step()`:
-    - `step_dummy()`
-    - `step_normalize()`
-    - `step_nzv()`
-    - `step_impute_knn()`
-
-*We'll dive in deeper in the code examples*
-
----
-
-# The importance of training data
-
-- Training data is what we use to "learn" from data
-- A "check" on your work is your predictions on _test_ set data
-  - *Train data*: Outcome data that you use to fit your model
-  - *Validation data&lt;sup&gt;1&lt;/sup&gt;*: Data you use to select a particular algorithm
-  - *Test ("hold-out") data*: Data that you do not use in any way to train your model
-
-.footnote[
-[1] not always/often used in practice, for reasons we'll discuss momentarily
-]
-
----
-
-# The problem introduced by feature engineering
-
-In LL1, we fit and interpreted a single model; let's think carefully through how we "spent" our training and testing data in that lab
-
---
-
-*Training data*: Used this set (80%) of the data to train our model
-*Testing data*: Evaluated the performance of the model using this set (20%) of the data
-
---
-
-What if we decided to _add new features_ or _change existing features_?
-
-We'd need to use the same training data to tune a new model---and the same testing data to evaluate its performance
-
---
-
-**But, doing this could lead us to specifying a model based on how well we predict the data that happened to end up in the testing set. We could be optimizing our model for our testing data; when used with new data, that model could do poorly.**
-
----
-
-# The problem introduced by feature engineering
-
-- In short, a challenges arises when we wish to use our training data _more than once_
-
-- Namely, if we repeatedly training an algorithm on the same data and then make changes, we may be tailoring our model to specific features of the testing data
-
-- This is a _very common and pervasive problem_ in machine learning applications
-
-- Resampling conserves our testing data; we don't have to spend it until we've finalized our model
-
----
-
-# Resampling (and _k_-folds cross-validation)
-
-- Resampling involves blurring the boundaries between training and testing data, _but only for the training split of the data_
-
---
-
-- Specifically, it involves combining these two portions of our data into one, iteratively considering:
-    - Some of the data to be for "training"
-    - Some for "testing"
-
---
-
-- Then, fit measures are **averaged** across these different samples
-
---
-
----
-
-# *k*-folds cross validation
-
-- One of the most common and useful forms of resampling is *k*-folds cross validation
-    - Here, some of the data is considered to be a part of the *training* set 
-    - The remaining data is a part of the *testing* set
-
---
-
-- How many sets (samples taken through resampling)?
-    - This is determined by _k_, number of times the data is resampled
-    - When _k_ is equivalent to the number of rows in the data, this is often called "Leave One Out Cross-Validation" (LOOCV) 
-
----
-
-# Let's consider an example
-
-Say we have a data set, `d`, with 100 observations (rows or data points) with _k_ = 10.
-
-
-
-
-```
-## # A tibble: 100 × 3
-##       id  var_a  var_b
-##    &lt;int&gt;  &lt;dbl&gt;  &lt;dbl&gt;
-##  1     1 0.0914 0.0515
-##  2     2 0.792  0.833 
-##  3     3 0.359  0.118 
-##  4     4 0.265  0.0981
-##  5     5 0.768  0.280 
-##  6     6 0.864  0.687 
-##  7     7 0.345  0.138 
-##  8     8 0.174  0.926 
-##  9     9 0.0624 0.0620
-## 10    10 0.552  0.847 
-## # … with 90 more rows
-```
-
-**Using _k_ = 10, how can we split this data into ten distinct training and testing sets?**
-
----
-
-# First resampling
-
-
-```
-## # A tibble: 3 × 3
-##      id  var_a  var_b
-##   &lt;int&gt;  &lt;dbl&gt;  &lt;dbl&gt;
-## 1     1 0.0914 0.0515
-## 2     2 0.792  0.833 
-## 3     3 0.359  0.118
-```
-
-```
-## # A tibble: 3 × 3
-##      id  var_a var_b
-##   &lt;int&gt;  &lt;dbl&gt; &lt;dbl&gt;
-## 1    91 0.418  0.561
-## 2    92 0.959  0.661
-## 3    93 0.0581 0.194
-```
-
----
-
-# Second resampling
-
-
-```
-## # A tibble: 3 × 3
-##      id  var_a  var_b
-##   &lt;int&gt;  &lt;dbl&gt;  &lt;dbl&gt;
-## 1     1 0.0914 0.0515
-## 2     2 0.792  0.833 
-## 3     3 0.359  0.118
-```
-
-```
-## # A tibble: 3 × 3
-##      id var_a var_b
-##   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1    81 0.985 0.694
-## 2    82 0.811 0.804
-## 3    83 0.773 0.804
-```
-
----
-
-# Third resampling
-
-
-```
-## # A tibble: 3 × 3
-##      id  var_a  var_b
-##   &lt;int&gt;  &lt;dbl&gt;  &lt;dbl&gt;
-## 1     1 0.0914 0.0515
-## 2     2 0.792  0.833 
-## 3     3 0.359  0.118
-```
-
-```
-## # A tibble: 3 × 3
-##      id  var_a  var_b
-##   &lt;int&gt;  &lt;dbl&gt;  &lt;dbl&gt;
-## 1    71 0.789  0.0572
-## 2    72 0.332  0.999 
-## 3    73 0.0152 0.628
-```
-
-... through the tenth resampling, after which the fit measures are simply summed
-
---
-
-That's it! Thankfully, we have automated tools to do this that we'll work on in the code examples
-
----
-
-# But how do you determine what _k_ should be?
-
-- A _historically common value_ for _k_ has been 10
-- But, as computers have grown in processing power, setting _k_ equal to the number of rows in the data has become more common
-
----
-
-class: clear, inverse, center, middle
-
-# Code Examples
-
----
-
-# Data from online science classes
-
-- This data comes from a study of ~700 secondary/high school-aged students in the United States
-- The data were collected _over multiple semesters_ from _multiple classes_
-- There are a number of types of variables
-
-
-.panelset[
-.panel[.panel-name[1]
-
- - Demographic/contextual variables, e.g. `subject` and `gender`
-
-]
-
-.panel[.panel-name[2]
-
-  - Self-report survey variables: `uv` (utility value), `percomp` (perceived competence), and `int` (interest)
-  
-]
-
-.panel[.panel-name[3]
-
-  - Gradebook variables: `overall_percent_earned`, `variability_percent_earned`, `n_with_100_pct` (based on the first 20 assignments)
-
-]
-
-.panel[.panel-name[4]
-
-  - Discussion variables: `sum_discussion_posts`, `sum_n_words` (for the first 3 discussions)
-
-]
-
-.panel[.panel-name[5]
-
-  - Outcomes: `final_grade`, `passing_grade`, `time_spent` (in minutes)
+- Examples, all of which start with `step()`, e.g. `step_dummy()`
 
 ]
 ]
 
----
-
-# Sidebar
-
-This data is described further (and descriptively and inferentially analyzed using a regression and multi-level modeling approach) in *Data Science in Education Using R*:
-
-- Chapter 7: The Education Data Science Pipeline With Online Science Class Data: https://datascienceineducation.com/c07.html
-
-- Chapter 13: The Role (and Usefulness) of Multilevel Models: https://datascienceineducation.com/c13.html
-
-- Chapter 14: Predicting Students’ Final Grades Using Machine Learning Methods with Online Course Data: https://datascienceineducation.com/c14.html
 
 ---
 
-# Let's take a look at the data together
-
-
-```
-## Rows: 546
-## Columns: 15
-## $ student_id           &lt;dbl&gt; 60186, 66693, 66811, 70532, 77010, 85249, 85411, …
-## $ course_id            &lt;chr&gt; "AnPhA-S116-01", "AnPhA-S116-01", "AnPhA-S116-01"…
-## $ gender               &lt;chr&gt; "M", "M", "F", "F", "F", "F", "F", "F", "F", "F",…
-## $ enrollment_reason    &lt;chr&gt; "Course Unavailable at Local School", "Course Una…
-## $ enrollment_status    &lt;chr&gt; "Approved/Enrolled", "Approved/Enrolled", "Approv…
-## $ final_grade          &lt;dbl&gt; 86.27200, 93.75360, 91.20160, 93.64000, 73.17067,…
-## $ subject              &lt;chr&gt; "AnPhA", "AnPhA", "AnPhA", "AnPhA", "AnPhA", "AnP…
-## $ semester             &lt;chr&gt; "S116", "S116", "S116", "S116", "S116", "S116", "…
-## $ section              &lt;chr&gt; "01", "01", "01", "01", "01", "01", "01", "01", "…
-## $ int                  &lt;dbl&gt; 4.2, 5.0, 4.0, 4.6, NA, 4.0, 4.4, 5.0, 5.0, 4.2, …
-## $ uv                   &lt;dbl&gt; 4.333333, 5.000000, 4.000000, 4.666667, 3.666667,…
-## $ percomp              &lt;dbl&gt; 4.5, 5.0, NA, 4.0, 3.5, 4.5, 3.5, 3.5, 4.0, 3.5, …
-## $ percentage_earned    &lt;dbl&gt; 0.9602941, 0.9764706, 0.9452353, 0.9485294, 0.737…
-## $ sum_discussion_posts &lt;dbl&gt; 9, 6, 9, 11, 9, 9, 12, 8, 7, 9, 9, 9, NA, 12, 9, …
-## $ sum_n_words          &lt;dbl&gt; 939, 311, 474, 578, 496, 284, 452, 382, 138, 239,…
-```
-
----
-
-class: clear, inverse, center, middle
-
-# Code Examples
-
-*Note how these steps are the same as in the classification example for LL 1*
-
----
-
-# Let's walk through a few steps
+# Code-along
 
 .panelset[
 
 .panel[.panel-name[0]
 
-**Prepare**
+**Loading, setting up: create a .R file in /lab-1 and run this code**
 
 
 ```r
 library(tidyverse)
 library(tidymodels)
 
-d &lt;- read_csv("data/online-sci-data-joined.csv")
+starwars_recoded &lt;- starwars %&gt;% # built-in data available just by typing
+    mutate(species_human = ifelse(species == "Human", 1, 0), # recoding species to create a 0-1 outcome 
+           species_human = as.factor(species_human)) # changing to a factor
+
+starwars_recoded %&gt;% 
+    count(species) # how many humans are there?
 ```
 
 ]
@@ -559,15 +250,12 @@ d &lt;- read_csv("data/online-sci-data-joined.csv")
 
 
 ```r
-set.seed(20220712)
-
-train_test_split &lt;- initial_split(d, prop = .80)
+train_test_split &lt;- initial_split(starwars_recoded, prop = .80)
 
 data_train &lt;- training(train_test_split)
-
-kfcv &lt;- vfold_cv(data_train, v = 10) # this differentiates this from what we did before
-# before, we simple used data_train to fit our model
+data_test &lt;- testing(train_test_split)
 ```
+
 ]
 
 .panel[.panel-name[2]
@@ -576,33 +264,32 @@ kfcv &lt;- vfold_cv(data_train, v = 10) # this differentiates this from what we 
 
 
 ```r
-recipe(final_grade ~ ., data = data_train) %&gt;% # **edit**: change t final grade
-    update_role(student_id, course_id, section, new_role = "ID variable") %&gt;% # this can be any string; for ID variables
-    step_normalize(all_numeric_predictors()) %&gt;% # standardizes numeric variables
-    step_nzv(all_predictors()) %&gt;% # remove predictors with a "near-zero variance"
-    step_dummy(all_nominal_predictors()) %&gt;%  # dummy code all factor variables
-    step_novel(all_nominal_predictors()) %&gt;% # add a musing label for factors
-    step_impute_knn(all_predictors()) # impute missing data for all predictor variables
+# predicting humans based on the variables we used in LL1 + birth_year and homeworld
+my_rec &lt;- recipe(species_human ~ height + mass + birth_year + eye_color, data = data_train)
 ```
+
 ]
 
 .panel[.panel-name[3]
 
-**Specify the model and workflow**
- 
+**Specify recipe, model, and workflow**
+
 
 ```r
+# specify model
 my_mod &lt;-
-    linear_reg() %&gt;% # note the difference here
-    set_engine("lm") %&gt;% 
-    set_mode("regression") # and here
+    logistic_reg() %&gt;% 
+    set_engine("glm") %&gt;%
+    set_mode("classification")
 
 # specify workflow
 my_wf &lt;-
     workflow() %&gt;%
     add_model(my_mod) %&gt;% 
-    add_recipe(my_rec)
+    add_recipe(my_rec) %&gt;% 
+    step_dummy(eye_color) # we need to dummy code this
 ```
+
 ]
 
 .panel[.panel-name[4]
@@ -611,9 +298,11 @@ my_wf &lt;-
 
 
 ```r
-fitted_model &lt;- fit_resamples(my_wf, resamples = kfcv,
-                              control = control_grid(save_pred = TRUE)) # this allows us to inspect the predictions
+fitted_model &lt;- fit(my_wf, data = data_train) # ignore warning for this example
+class_metrics &lt;- metric_set(accuracy, sensitivity, specificity, ppv, npv, kap) # this is new
+final_fit &lt;- last_fit(fitted_model, train_test_split)
 ```
+
 ]
 
 .panel[.panel-name[5]
@@ -622,28 +311,76 @@ fitted_model &lt;- fit_resamples(my_wf, resamples = kfcv,
 
 
 ```r
-fitted_model %&gt;% 
-    unnest(.metrics) %&gt;% 
-    filter(.metric == "rmse") # we also get another metric, the ROC; we focus just on accuracy for now
+final_fit %&gt;%
+    collect_metrics()
 ```
+
 ]
+
+.panel[.panel-name[6]
+
+**Aside: joining data**
+
+
+```r
+band_members %&gt;% left_join(band_instruments)
+band_members %&gt;% inner_join(band_instruments)
+```
+
+]
+
+
 ]
 
 ---
 
-# What's next?
+# Discussion 2
 
-- **Case study**: You'll run all of this code, focusing on feature engineering and working with resamples
-- **Independent practice**: In the independent practice, you'll focus on adding a new (not yet used!) feature engineering step
+.panelset[
+
+.panel[.panel-name[Reflecting]
+
+- Which metrics for supervised machine learning models (in classification "mode") are important to interpret? Why?
+
+]
+
+.panel[.panel-name[Applying]
+
+- Thinking broadly about your research interest, what would you need to consider before using a supervised machine learning model? Consider not only model metrics but also the data collection process and how the predictions may be used.
+
+]
+
+]
 
 ---
 
-class: clear, center
+# Introduction to the other parts of this learning lab
 
-## .font130[.center[**Thank you!**]]
+.panelset[
 
-&lt;br/&gt;
-.center[&lt;img style="border-radius: 80%;" src="img/jr-cycling.jpeg" height="200px"/&gt;&lt;br/&gt;**Dr. Joshua Rosenberg**&lt;br/&gt;&lt;mailto:jmrosenberg@utk.edu&gt;]
+.panel[.panel-name[Reading]
+
+Baker, R. S., Berning, A. W., Gowda, S. M., Zhang, S., &amp; Hawn, A. (2020). Predicting K-12 dropout. *Journal of Education for Students Placed at Risk, 25*(1), 28-54.
+
+]
+
+.panel[.panel-name[Case Study]
+
+- Adding another data source from the [OULAD](https://analyse.kmi.open.ac.uk/open_dataset), assessments data
+- Interpreting each of the metrics in greater detail
+- Using `metric_set`
+
+]
+
+.panel[.panel-name[Badge]
+
+- Adding still another variable
+- Stepping back and interpreting the model as a whole
+- Finding another relevant study 
+
+]
+]
+
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>

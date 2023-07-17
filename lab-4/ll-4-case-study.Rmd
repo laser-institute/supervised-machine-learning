@@ -41,7 +41,7 @@ kind of data is often rich, but hard to interpret at a granular level.
 We'll be using audio data from mathematics classrooms collected as a
 part of Dyer's [*Learning Through Teaching* (LTT)
 project](https://www.proquest.com/openview/01af3361c531b12ea3caeda8b85b31fa/1?pq-origsite=gscholar&cbl=18750).
-In this project, hundres of hours of video and audio were collected from
+In this project, hundreds of hours of video and audio were collected from
 high school and middle school classrooms. The specific data set we are
 using is transcribed data (via
 [Whisper](https://github.com/bnosac/audio.whisper)) that is analyzed for
@@ -84,6 +84,10 @@ practices regarding model selection are often difficult to achieve in
 practice. We'll do our best working with the information we have - as we
 often have to do in practice. If publishing a paper, we can present
 these issues in our manuscript in a transparent manner.
+
+Optionally, read this very brief overview of tidyLPA:
+
+> Rosenberg, J. M., Beymer, P. N., Anderson, D. J., Van Lissa, C. J., & Schmidt, J. A. (2019). tidyLPA: An R package to easily carry out latent profile analysis (LPA) using open-source or commercial software. Journal of Open Source Software, 3(30), 978. https://joss.theoj.org/papers/10.21105/joss.00978.pdf
 
 ## 2. WRANGLE
 

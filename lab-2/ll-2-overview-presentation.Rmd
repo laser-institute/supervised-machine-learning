@@ -1,5 +1,5 @@
 ---
-title: "Machine Learning Learning Lab 2: Feature Engineering"
+title: "Machine Learning Learning Lab 2: Interpretation"
 subtitle: "Overview Presentation"
 author: "**Dr. Joshua Rosenberg**"
 institute: "LASER Institute"
@@ -43,11 +43,11 @@ xaringanExtra::use_panelset()
 # these allow any code snippets to be copied to the clipboard so they 
 # can be pasted easily
 htmltools::tagList(
-  xaringanExtra::use_clipboard(
-    button_text = "<i class=\"fa fa-clipboard\"></i>",
-    success_text = "<i class=\"fa fa-check\" style=\"color: #90BE6D\"></i>",
-  ),
-  rmarkdown::html_dependency_font_awesome()
+    xaringanExtra::use_clipboard(
+        button_text = "<i class=\"fa fa-clipboard\"></i>",
+        success_text = "<i class=\"fa fa-check\" style=\"color: #90BE6D\"></i>",
+    ),
+    rmarkdown::html_dependency_font_awesome()
 )
 ```
 
@@ -63,338 +63,198 @@ xaringanExtra::use_tile_view()
 
 ---
 
-# Agenda
+# Purpose and Agenda
+
+How do we interpret a machine learning model? What else can we say, besides how accurate a model this? This learning lab is intended to help you to answer these questions by examining output from a classification and a regression model. We again use the OULAD, but add an assessment file.
+
+## What we'll do in this presentation
+
+- Discussion 1
+- Key Concept: Accuracy
+- Key Concept: Feature Engineering (part A)
+- Code-along
+- Discussion 2
+- Introduction to the other parts of this learning lab
+
+---
+
+# Discussion 1
 
 .panelset[
 
-.panel[.panel-name[Discussion]
+.panel[.panel-name[Background]
 
-- 
-- 
--
-    
-]
-
-.panel[.panel-name[Conceptual Overview]
-
-- 
-- 
--
+- We are likely familiar with _accuracy_ and maybe another measure, _Cohen's Kappa_
+- But, you may have heard of other means of determining how good a model is at making predictions: confusion matrices, specificity, sensitivity, recall, AUC-ROC, and others
+- Broadly, these help us to understand _for which cases and types of cases a model is predictively better than others_ in a finer-grained way than accuracy
 
 ]
+]
 
-.panel[.panel-name[Coding Walkthrough]
+.panel[.panel-name[Getting Started]
 
-- 
-- 
-- 
+Think broadly and not formally (yet): What makes a prediction model a good one?
+
+]
+
+.panel[.panel-name[Digging Deeper]
+
+- After having worked through the first learning lab, have your thoughts on what data you might use for a machine learning study evolved? If so, in what ways? If not, please elaborate on your initial thoughts and plans.
 
 ]
 ]
 
 ---
 
-# Brief discussion (15-20 seconds each) reflection
 
 
-.pull-left[
-### Eiscuss:
+# Key Concept: Accuracy
 
-  - Which modality (supervised or unsupervised machine learning) are you interested in using?
-  - What data or context are you interested in for your use of ML?
-]
+.panelset[
 
-.pull-right[
+.panel[.panel-name[Accuracy]
 
-```{r, echo = FALSE, out.width = "75%"}
-knitr::include_graphics("img/joro-pointing.jpeg")
+Let's start with accuracy and a simple confusion matrix; what is the **Accuracy**?
+
+```{r, echo = FALSE, message = FALSE, out.}
+readr::read_csv("data/sample-table.csv") %>% 
+    slice(1:5) %>% 
+    knitr::kable()
 ```
 
 ]
 
----
+.panel[.panel-name[Accuracy]
 
-# Background
+Use the `tabyl()` function (from {janitor} to calculate the accuracy in the code chunk below.
 
-- In the last learning lab, we did a nice job of training a model that was _pretty good_
-- But, can we do better?
-- This question motivates this learning lab, specifically:
-    - Answering it
-    - And, developing a _means_ to answer it in a way that does not introduce bias into our analysis
-- Feature engineering is a key way we can improve our model
-- Feature engineering refers to the part of machine learning wherein we decide which variables to include in which forms
+```{r}
+library(janitor)
 
----
+data_for_conf_mat <- tibble(Outcome = c(1, 0, 0, 1, 1),
+                            Prediction = c(1, 0, 1, 0, 1)) %>% 
+    mutate_all(as.factor)
+```
 
-# Agenda
+```{r, eval = TRUE, echo = TRUE}
+data_for_conf_mat %>% 
+    mutate(correct = Outcome == Prediction) %>% 
+    tabyl(correct)
+```
 
-.pull-left[
-## Part 1: Core Concepts
-### Feature engineering
-- Selecting and preparing variables for inclusion as features
-- k-folds cross-validation
 ]
 
-.pull-right[
 
-## Part 2: R Code Examples
-### Online science classes
-- Daa from online science classes
-- Interpreting changes in fit measures
-]
 
----
-
-class: clear, inverse, center, middle
-
-# Core Concepts
-
-Let's start with accuracy and a simple confusion matrix.
-
-Let's start with some data from a model - imagine we have a test set with n = 10 values, as follows:
-
-Outcome
-
-Prediction
-
-Correctness of Prediction
-
-1
-
-1
-
-Correct
-
-0
-
-0
-
-Correct
-
-1
-
-1
-
-Correct
-
-1
-
-0
-
-Incorrect
-
-1
-
-1
-
-Correct
-
-0
-
-1
-
-Incorrect
-
-1
-
-1
-
-Correct
-
-0
-
-0
-
-Correct
-
-0
-
-1
-
-Incorrect
-
-1
-
-1
-
-Correct
-
-What's the accuracy of our model? Add your note below:
+.panel[.panel-name[Conf Mat]
 
 Now, let's create a confusion matrix based on this data:
 
-{r}
-data_for_confusion_matrix <- tibble(Outcome = c(1, 0, 1, 1, 1, 0, 1, 0, 0, 1),
-        Prediction = c(1, 0, 1, 0, 1, 1, 1, 0, 1, 1)) %>% 
-    mutate(`Correctness of Prediction` = ifelse(Outcome == Prediction, "Correct", "Incorrect"))
+.code80.remark-code[
+```{r}
+library(tidymodels)
 
-data_for_confusion_matrix
-
-Use the tabyl() function (from {janitor} to calculate the accuracy in the code chunk below.
-
-{r}
-data_for_confusion_matrix %>% 
-    tabyl(`Correctness of Prediction`)
-
-This should accord with your value above.
-
-Now, let's use another function from {tidymodels}, conf_mat(). Pass to that function data_for_confusion_matrix in the code chunk below. First, make Outcome and Prediction both into factors using the mutate() function. Then use conf_mat(), which takes as arguments the names of the outcome and the prediction, unquoted. Learn more here.
-
-{r}
-data_for_confusion_matrix %>% 
-    mutate(Outcome = as.factor(Outcome),
-           Prediction = as.factor(Prediction)) %>% 
+data_for_conf_mat %>% 
     conf_mat(Outcome, Prediction)
+```
+]
+]
 
-This table is super important for interpreting our model. We can associate each of the cells with a statistic. After the colon below, replace the x with the associated number from the confusion matrix.
 
-Row 1, Column 1 – True Positives: (TP) x
-
-Row 1, Column 2 – False Negatives (FN): x
-
-Row 2, Column 1 – False Positives (FP): x
-
-Row 2, Column 2 – True Negatives (TN): x
-
-The table below elaborates on the meaning of these statistics:
-
-Statistic
-
-Interpretation
-
-Accuracy
-
-Proportion of the population that is true positive or true negative
-
-True positive (TP)
-
-Proportion of the population that is affected by a condition and correctly tested positive
-
-True negative (TN)
-
-Proportion of the population that is not affected by a condition and correctly tested negative
-
-False positive (FP)
-
-Proportion of the population that is not affected by a condition and incorrectly tested positive
-
-False negative (FN)
-
-Proportion of the population that is affected by a condition and incorrectly tested positive.
-
-Here's where things get interesting: There are other statistics that have different denominators.
+.panel[.panel-name[Conf Mat]
 
 You can think of the following statistics as slicing and dicing the confusion matrix you created above, revealing insights in the process. For the below, please add the values based on the above confusion matrix.
 
-Statistic
+Accuracy: Proportion of the population that is true positive or true negative
 
-Equation
+True positive (TP): Proportion of the population that is affected by a condition and correctly tested positive
 
-Interpretation
+True negative (TN): Proportion of the population that is not affected by a condition and correctly tested negative
 
-Question Answered
+False positive (FP): Proportion of the population that is not affected by a condition and incorrectly tested positive
 
-Value
+False negative (FN): Proportion of the population that is affected by a condition and incorrectly tested positive.
 
-Accuracy
+]
 
-Proportion of the population that is true positive or true negative
 
-Sensitivity (AKA recall)
+.panel[.panel-name[Conf Mat]
 
-TP / (TP + FN)
 
-Proportion of those who are affected by a condition and correctly tested positive
+![](img/conf-mat-descriptor.png)
 
-Out of all the actual positives, how many did we correctly predict?
+]
 
-Specificity
 
-TN / (FP + TN)
+.panel[.panel-name[Metrics]
 
-Proportion of those who are not affected by a condition and correctly tested negative;
+![](img/interpretation-of-metrics.png)
 
-Out of all the actual negatives, how many did we correctly predict?
 
-Precision (AKA Positive Predictive Value)
+]
+]
 
-TP / (TP + FP)
+---
 
-Proportion of those who tested positive who are affected by a condition
+# Key Concept: Feature Engineering (Part A)
+.panelset[
 
-Out of all the instances we predicted as positive, how many are actually positive?
+.panel[.panel-name[Why?]
 
-Negative Predictive Value
+Let's consider a very simple data set, `d`, one with _time_point_ data, `var_a`, for a single student. How do we add this to our model?
 
-TN / (TN + FN)
+```{r, include = FALSE}
+d <- tibble(student_id = "janyia", time_point = 1:10, var_a = c(0.01, 0.32, 0.32, 0.34, 0.04, 0.54, 0.56, 0.75, 0.63, 0.78))
+```
 
-Proportion of those who tested positive who are not affected by a condition; the probability that a negative test is correct
+```{r}
+d %>% head(3)
+```
 
-Out of all the instances we predicted as negative, how many are actually negative?
+]
 
-We can also do this automatically. We use the class_metrics() function we creatd above by passing to it our outcome and the prediction, specifying which is the prediction with the estimate argument.
+.panel[.panel-name[Why?]
 
-{r}
-data_for_confusion_matrix %>% 
-    mutate(Outcome = as.factor(Outcome),
-           Prediction = as.factor(Prediction)) %>% 
-    class_metrics(Outcome, estimate = Prediction)
+```{r, out.width="30%"}
+d %>% 
+    ggplot(aes(x = time_point, y = var_a)) +
+    geom_point()
+```
 
-Recall that the above output is for our data with only 10 rows; that was all a long build-up to be able to interpret our model. We can now calculate the metrics quite easily by running collect_metrics() on our fitted model, final_fit.
+]
 
-{r}
-collect_metrics(final_fit)
 
-So, what does this hard-won by output tell us? Let's interpret each statistic carefully in the table below. Please add the value and provide a substantive interpretation. One is provided to get you started.
+.panel[.panel-name[How?]
 
-Statistic
+- We can do all of these things **manually**
+- But, there are also helpful "**{recipes}**" functions to do this
+- Any, the {recipes} package makes it practical to carry out feature engineering steps for not only single variables, but groups of variables (or all of the variables)
+- Examples, all of which start with `step()`, e.g. `step_dummy()`
 
-Value
-
-Substantive Interpretation
-
-Accuracy
-
-Sensitivity (AKA recall)
-
-.997
-
-The model is remarkably good at doing this; practically all of the students who withdrew were correctly predicted as such.
-
-Specificity
-
-Precision (AKA Positive Predictive Value)
-
-Negative Predictive Value
-
-Cohen's Kappa
-
+]
+]
 
 
 ---
 
-
-class: clear, inverse, center, middle
-
-# Code Examples
-
-*Note how these steps are the same as in the classification example for LL 1*
-
----
-
-# Let's walk through a few steps
+# Code-along
 
 .panelset[
 
 .panel[.panel-name[0]
 
-**Prepare**
+**Loading, setting up: create a .R file in /lab-1 and run this code**
 
-```{r, message = FALSE, warning = FALSE, echo = TRUE}
+```{r, eval = FALSE, echo = TRUE}
 library(tidyverse)
 library(tidymodels)
 
-d <- read_csv("data/online-sci-data-joined.csv")
+starwars_recoded <- starwars %>% # built-in data available just by typing
+    mutate(species_human = ifelse(species == "Human", 1, 0), # recoding species to create a 0-1 outcome 
+           species_human = as.factor(species_human)) # changing to a factor
+
+starwars_recoded %>% 
+    count(species) # how many humans are there?
 ```
 
 ]
@@ -403,16 +263,13 @@ d <- read_csv("data/online-sci-data-joined.csv")
 
 **Split data**
 
-```{r panel-chunk-1, echo = TRUE, eval = FALSE}
-set.seed(20220712)
-
-train_test_split <- initial_split(d, prop = .80)
+```{r, echo = TRUE, eval = FALSE}
+train_test_split <- initial_split(starwars_recoded, prop = .80)
 
 data_train <- training(train_test_split)
-
-kfcv <- vfold_cv(data_train, v = 10) # this differentiates this from what we did before
-# before, we simple used data_train to fit our model
+data_test <- testing(train_test_split)
 ```
+
 ]
 
 .panel[.panel-name[2]
@@ -420,68 +277,116 @@ kfcv <- vfold_cv(data_train, v = 10) # this differentiates this from what we did
 **Engineer features**
 
 ```{r, echo = TRUE, eval = FALSE}
-recipe(final_grade ~ ., data = data_train) %>% # **edit**: change t final grade
-    update_role(student_id, course_id, section, new_role = "ID variable") %>% # this can be any string; for ID variables
-    step_normalize(all_numeric_predictors()) %>% # standardizes numeric variables
-    step_nzv(all_predictors()) %>% # remove predictors with a "near-zero variance"
-    step_dummy(all_nominal_predictors()) %>%  # dummy code all factor variables
-    step_novel(all_nominal_predictors()) %>% # add a musing label for factors
-    step_impute_knn(all_predictors()) # impute missing data for all predictor variables
+# predicting humans based on the variables we used in LL1 + birth_year and homeworld
+my_rec <- recipe(species_human ~ height + mass + birth_year + eye_color, data = data_train)
 ```
+
 ]
 
 .panel[.panel-name[3]
 
-**Specify the model and workflow**
- 
-```{r panel-chunk-3, echo = TRUE, eval = FALSE}
+**Specify recipe, model, and workflow**
+
+```{r, echo = TRUE, eval = FALSE}
+# specify model
 my_mod <-
-    linear_reg() %>% # note the difference here
-    set_engine("lm") %>% 
-    set_mode("regression") # and here
+    logistic_reg() %>% 
+    set_engine("glm") %>%
+    set_mode("classification")
 
 # specify workflow
 my_wf <-
     workflow() %>%
     add_model(my_mod) %>% 
-    add_recipe(my_rec)
+    add_recipe(my_rec) %>% 
+    step_dummy(eye_color) # we need to dummy code this
 ```
+
 ]
 
 .panel[.panel-name[4]
 
 **Fit model**
 
-```{r panel-chunk-4, echo = TRUE, eval = FALSE}
-fitted_model <- fit_resamples(my_wf, resamples = kfcv,
-                              control = control_grid(save_pred = TRUE)) # this allows us to inspect the predictions
+```{r, echo = TRUE, eval = FALSE}
+fitted_model <- fit(my_wf, data = data_train) # ignore warning for this example
+class_metrics <- metric_set(accuracy, sensitivity, specificity, ppv, npv, kap) # this is new
+final_fit <- last_fit(fitted_model, train_test_split)
 ```
+
 ]
 
 .panel[.panel-name[5]
 
 **Evaluate accuracy**
 
-```{r panel-chunk-5, echo = TRUE, eval = FALSE}
-fitted_model %>% 
-    unnest(.metrics) %>% 
-    filter(.metric == "rmse") # we also get another metric, the ROC; we focus just on accuracy for now
+```{r, echo = TRUE, eval = FALSE}
+final_fit %>%
+    collect_metrics()
 ```
+
 ]
+
+.panel[.panel-name[6]
+
+**Aside: joining data**
+
+```{r, echo = TRUE, eval = FALSE}
+band_members %>% left_join(band_instruments)
+band_members %>% inner_join(band_instruments)
+```
+
+]
+
+
 ]
 
 ---
 
-# What's next?
+# Discussion 2
 
-- **Case study**: You'll run all of this code, focusing on feature engineering and working with resamples
-- **Independent practice**: In the independent practice, you'll focus on adding a new (not yet used!) feature engineering step
+.panelset[
+
+.panel[.panel-name[Reflecting]
+
+- Which metrics for supervised machine learning models (in classification "mode") are important to interpret? Why?
+
+]
+
+.panel[.panel-name[Applying]
+
+- Thinking broadly about your research interest, what would you need to consider before using a supervised machine learning model? Consider not only model metrics but also the data collection process and how the predictions may be used.
+
+]
+
+]
 
 ---
 
-class: clear, center
+# Introduction to the other parts of this learning lab
 
-## .font130[.center[**Thank you!**]]
+.panelset[
 
-<br/>
-.center[<img style="border-radius: 80%;" src="img/jr-cycling.jpeg" height="200px"/><br/>**Dr. Joshua Rosenberg**<br/><mailto:jmrosenberg@utk.edu>]
+.panel[.panel-name[Reading]
+
+Baker, R. S., Berning, A. W., Gowda, S. M., Zhang, S., & Hawn, A. (2020). Predicting K-12 dropout. *Journal of Education for Students Placed at Risk, 25*(1), 28-54.
+
+]
+
+.panel[.panel-name[Case Study]
+
+- Adding another data source from the [OULAD](https://analyse.kmi.open.ac.uk/open_dataset), assessments data
+- Interpreting each of the metrics in greater detail
+- Using `metric_set`
+
+]
+
+.panel[.panel-name[Badge]
+
+- Adding still another variable
+- Stepping back and interpreting the model as a whole
+- Finding another relevant study 
+
+]
+]
+

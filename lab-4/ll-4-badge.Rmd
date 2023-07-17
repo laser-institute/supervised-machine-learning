@@ -11,7 +11,6 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ![](img/ML_UM_Hx.jpg){width="30%"}
 
-
 As a reminder, to earn a badge for each lab, you are required to respond to a set of prompts for two parts:
 
 -   In Part I, you will reflect on your understanding of key concepts and begin to think about potential next steps for your own study.
@@ -22,7 +21,7 @@ As a reminder, to earn a badge for each lab, you are required to respond to a se
 
 Part A:
 
-1.  How interpretable or useful is the solution we estimated in the case study? 
+1.  How interpretable or useful is the solution we estimated in the case study?
 
 -   
 
@@ -30,7 +29,7 @@ Part A:
 
 -   
 
-Part B: Once last time, use the institutional library (e.g. [NCSU Library](https://www.lib.ncsu.edu/#articles)), [Google Scholar](https://scholar.google.com/) or search engine to locate a research article, presentation, or resource that applies unsupervised machine learning to an educational context aligned with your research interests. More specifically, **locate a study that involve using Latent Profile Analysis or a similar method**. You may find the published papers that have used LPA helpful in this respect; those can be browsed [here](https://scholar.google.com/scholar?hl=en&as_sdt=0%2C34&q=tidylpa&btnG=). 
+Part B: Once last time, use the institutional library (e.g. [NCSU Library](https://www.lib.ncsu.edu/#articles)), [Google Scholar](https://scholar.google.com/) or search engine to locate a research article, presentation, or resource that applies unsupervised machine learning to an educational context aligned with your research interests. More specifically, **locate a study that involve using Latent Profile Analysis or a similar method**. You may find the published papers that have used LPA helpful in this respect; those can be browsed [here](https://scholar.google.com/scholar?hl=en&as_sdt=0%2C34&q=tidylpa&btnG=).
 
 1.  Provide an APA citation for your selected study.
 
@@ -40,40 +39,40 @@ Part B: Once last time, use the institutional library (e.g. [NCSU Library](https
 
     -   
 
-3.  What were the results of these analyses? 
+3.  What were the results of these analyses?
 
     -   
 
 4.  Lastly, what value might a Computational Grounded Theory analysis have in the context of their analysis?
 
-    - 
-    
+    -   
+
 ### Part II: Data Product
 
-Like the last data product, this one may be a challenge, too. Here, estimate latent profiles using _your own data_. If you do not have ready access to appropriate data (for LPA, continuous/numeric data), choose any of the data sets in the `data` folder of this repository.
+Like the last data product, this one may be a challenge, too. Here, estimate latent profiles using *your own data*. If you do not have ready access to appropriate data (for LPA, continuous/numeric data), choose any of the data sets in the `data` folder of this repository.
 
 ```{r}
 
 ```
 
 Please interpret the results of your analysis below. What did you find? How interpretable and useful are the profiles? And, what next steps - including those involving qualitative analysis - might you take to deepen this analysis?
-git
--   
 
-### Knit & Submit
+### Knit and Publish
 
-Congratulations, you've completed your Prediction badge! Complete the following steps to submit your work for review:
+Complete the following steps to knit and publish your work:
 
-1.  Change the name of the `author:` in the [YAML header](https://monashdatafluency.github.io/r-rep-res/yaml-header.html) at the very top of this document to your name. As noted in [Reproducible Research in R](https://monashdatafluency.github.io/r-rep-res/index.html), The YAML header controls the style and feel for knitted document but doesn't actually display in the final output.
+1.  First, change the name of the `author:` in the [YAML header](https://bookdown.org/yihui/rmarkdown-cookbook/rmarkdown-anatomy.html#yaml-metadata) at the very top of this document to your name. The YAML header controls the style and feel for knitted document but doesn't actually display in the final output.
 
-2.  Click the yarn icon above to "knit" your data product to a [HTML](https://bookdown.org/yihui/rmarkdown/html-document.html) file that will be saved in your R Project folder.
+2.  Next, click the knit button in the toolbar above to "knit" your R Markdown document to a [HTML](https://bookdown.org/yihui/rmarkdown/html-document.html) file that will be saved in your R Project folder. You should see a formatted webpage appear in your Viewer tab in the lower right pan or in a new browser window. Let's us know if you run into any issues with knitting.
 
-3.  Commit your changes in GitHub Desktop and push them to your online GitHub repository.
+3.  Finally, publish your webpage on Posit Cloud by clicking the "Publish" button located in the Viewer Pane after you knit your document. See screenshot below.
 
-4.  Publish your HTML page the web using one of the following [publishing methods](https://rpubs.com/cathydatascience/518692):
+![](img/knit-publish.png){width="80%"}
 
-    -   Publish on [RPubs](https://rpubs.com) by clicking the "Publish" button located in the Viewer Pane when you knit your document. Note, you will need to quickly create a RPubs account.
+### Receiving Your Machine Learning Badge
 
-    -   Publishing on GitHub using either [GitHub Pages](https://pages.github.com) or the [HTML previewer](http://htmlpreview.github.io).
+To receive credit for this assignment and earn your fourth ML badge, share the link to published webpage under the next incomplete badge artifact column on the 2023 LASER Scholar Information and Documents spreadsheet: <https://go.ncsu.edu/laser-sheet>. 
 
-5.  Post a new discussion on GitHub to our [ML badges forum](https://github.com/orgs/laser-institute/teams/machine-learning/discussions/2). In your post, include a link to your published web page and a short reflection highlighting one thing you learned from this lab and one thing you'd like to explore further.
+Once your instructor has checked your link, you will be provided a physical version of the badge below!
+
+![](img/ML_UM_Hx.jpg){width="30%"}
