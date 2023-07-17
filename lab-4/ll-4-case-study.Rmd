@@ -91,26 +91,24 @@ First, let's load the packages we'll use---the familiar {tidyverse} and
 the {tidyLPA package}, as well as {tidytext} to do some basic text
 analysis.
 
-#### [Your Turn]{style="color: green;"} ⤵
+#### **👉 Your Turn** **⤵**
 
 ```{r}
-library(tidyverse)
-library(tidyLPA)
-library(tidytext)
+
 ```
 
-#### [Your Turn]{style="color: green;"} ⤵
+#### **👉 Your Turn** **⤵**
 
 Next, please read in the
 `r-processed-transcript`.csv`file, naming it`transcript\`.
 
 ```{r}
-transcript <- read_csv("data/r-processed-transcript.csv")
+
 ```
 
 ## 3. EXPLORE
 
-#### [Your Turn]{style="color: green;"} ⤵
+#### **👉 Your Turn** **⤵**
 
 Please take a look at the data using a technique of your choice. Note
 the number of rows and the variables and their types.
@@ -234,14 +232,12 @@ Let's try the `compare_solutions()` function, which does just that. The
 `estimate_profiles()` function can, helpfully, estimate more than one
 set of profiles at once --- here, those with 1 through 8 profiles.
 
-#### [Your Turn]{style="color: green;"} ⤵
+#### **👉 Your Turn** **⤵**
 
 To do so, please run `estimate_profiles` like we have above,
 
 ```{r}
-data_for_lpa %>%
-    estimate_profiles(1:7) %>% 
-    compare_solutions()
+
 ```
 
 We can interpret the fit statistic that is provided---the BIC, with more
@@ -252,7 +248,7 @@ the analytic hierarchy process suggest diverge, as is the case here. In
 such a case, it can be helpful to interrogate several candidate
 solutions in a fine-grained way.
 
-#### [Your Turn]{style="color: green;"} ⤵
+#### **👉 Your Turn** **⤵**
 
 We can examine many fit statistics for candidate models by replacing
 `compare_solutions()` with `get_fit()`. You can read about each fit
@@ -261,9 +257,7 @@ index
 Please run that code, below.
 
 ```{r}
-data_for_lpa %>%
-    estimate_profiles(1:4) %>% 
-    get_fit()
+
 ```
 
 We can also plot several possible solutions; again, please replace
@@ -294,13 +288,13 @@ two-profile models, it seems that one profile is more distinguishable
 consider moving forward with a two-profile solution, recognizing that
 this data is somewhat messy, and the way forward is not wholly clear!
 
-#### [Your Turn]{style="color: green;"} ⤵
+#### **👉 Your Turn** **⤵**
 
 To do so, run `estimate_profiles()`, specifying two profiles, and
 assigning the output the name `two_profile_solution`.
 
 ```{r}
-two_profile_solution <- estimate_profiles(data_for_lpa, n_profiles = 2)
+
 ```
 
 Let's plot this solution using `plot_profiles(add_line = TRUE)`
@@ -333,7 +327,7 @@ data_for_two_profile_solution <-
     mutate(segment_id = unique(transcript$segment_id)) # this assigns the segment IDs back to the data, so we can join the transcript data later on
 ```
 
-#### [Your Turn]{style="color: green;"} ⤵
+#### **👉 Your Turn** **⤵**
 
 Then, let's *bind* together the profiles assigned to each chunk with the
 original data. Please use
@@ -342,7 +336,7 @@ providing both `data_for_lpa` and `data_for_two_profile_solution`
 together and assigning the output the name `combined_data`.
 
 ```{r}
-combined_data <- bind_cols(data_for_lpa, data_for_two_profile_solution)
+
 ```
 
 Now, let's take a look at the data using `View()` the data frame we
@@ -363,9 +357,9 @@ names seem to characterize what is going on in a particular segment? Add
 a few notes below. Again, focus on what you would communicate about this
 analysis to a general audience.
 
--   
+-   ADD YOUR RESPONSE HERE
 
--   
+-   ADD YOUR RESPONSE HERE
 
 ### 🧶 Knit & Check ✅
 

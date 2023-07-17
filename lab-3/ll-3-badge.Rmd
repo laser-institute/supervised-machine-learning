@@ -1,5 +1,5 @@
 ---
-title: 'Machine Learning - Learning Lab 4 Badge'
+title: 'Machine Learning - Learning Lab 3 Badge'
 author: ""
 date: "`r format(Sys.Date(),'%B %e, %Y')`"
 output: html_document

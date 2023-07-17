@@ -87,7 +87,7 @@ okay. Can we improve on that? Let's dive in!
 First, let's load the packages we'll use---the familiar {tidyverse} and
 several others focused on modeling.
 
-#### [Your Turn]{style="color: green;"} ⤵
+#### **👉 Your Turn** **⤵**
 
 Please add to the chunk below code to load three packages we've used
 before -- tidyverse, janitor, and tidymodels.
@@ -97,11 +97,7 @@ implementation of random forest modeling, and {vip}, for variable
 importance metrics.
 
 ```{r}
-library(janitor)
-library(tidyverse)
-library(tidymodels)
-library(vip) # a new package we're adding for variable importance measures
-library(ranger) # this is needed for the random forest algorithm
+
 ```
 
 Next, we'll load a new file --- one with *interactions* (or log-trace)
@@ -122,13 +118,13 @@ this learning lab, we are providing you with the already-filtered
 interactions data. *Note*: you can find the code used to carry out these
 steps in the Lab 3 folder in `process-interactions-data.R`.
 
-Please load `oulad-interactions.csv` into R, assigning the resulting
-data frame the name `interactions`.
+Please load `oulad-interactions-filtered.csv` into R, assigning the
+resulting data frame the name `interactions`.
 
-#### [Your Turn]{style="color: green;"} ⤵
+#### **👉 Your Turn** **⤵**
 
 ```{r}
-interactions <- read_csv("data/oulad-interactions.csv")
+
 ```
 
 In the OULAD documentation, this is called the VLE (virtual learning
@@ -143,36 +139,33 @@ bit. Please take three steps to explore the data, as follows.
 
 ## 3. EXPLORE
 
-#### [Your Turn]{style="color: green;"} ⤵
+#### **👉 Your Turn** **⤵**
 
 *First*, `count()` the `activity_type` variable and *sort* the resulting
 output by frequency.
 
 ```{r}
-interactions %>% 
-  count(activity_type)
+
 ```
 
 What does this tell you? Consulting the codebook and your output, please
 add at least two notes on what you are noticing:
 
--   
+-   ADD YOUR RESPONSE HERE
 
-#### [Your Turn]{style="color: green;"} ⤵
+#### **👉 Your Turn** **⤵**
 
 *Second*, please create a histogram of the `date` variable.
 
 ```{r}
-interactions %>% 
-  ggplot(aes(x = date)) +
-  geom_histogram()
+
 ```
 
 What does this tell you? Add one or more notes:
 
--   
+-   ADD YOUR RESPONSE HERE
 
-#### [Your Turn]{style="color: green;"} ⤵
+#### **👉 Your Turn** **⤵**
 
 *Third*, please conduct one other data exploration step of your
 choosing. Options include creating simple graphgs or calculating
@@ -186,10 +179,22 @@ We're ready to proceed to engineering some features with the
 interactions data.
 
 First, let's join together the `interactions` and the
-`code_module_dates` data frames. This is so we have the cut-offs
-(one-third through the semester), which will help us to only use data
-from that period in our model when we filter the data based upon those
-dates.
+`code_module_dates` data frames.
+
+We'll use the same code to create the `code_module_dates` we used in
+LL2.
+
+```{r}
+assessments <- read_csv("data/oulad-assessments.csv")
+
+code_module_dates <- assessments %>% 
+    group_by(code_module, code_presentation) %>% 
+    summarize(quantile_cutoff_date = quantile(date, probs = .25, na.rm = TRUE))
+```
+
+This is so we have the cut-offs (one-third through the semester), which
+will help us to only use data from that period in our model when we
+filter the data based upon those dates.
 
 ```{r}
 interactions_joined <- interactions %>% 
@@ -206,10 +211,10 @@ clicked on a resource for a given date. We'll use the
 please type the name of that data set (`interactions_filtered`) in the
 code chunk below.
 
-#### [Your Turn]{style="color: green;"} ⤵
+#### **👉 Your Turn** **⤵**
 
 ```{r}
-interactions_filtered <- read_csv("data/oulad-interactions-filtered.csv")
+
 ```
 
 How can we create a feature with `sum_click`? Think back to our
@@ -226,15 +231,13 @@ chapter](https://r4ds.had.co.nz/transform.html) is also likely helpful
 (note that `summarise()` and `summarize()` are different spellings for
 the same function).
 
-#### [Your Turn]{style="color: green;"} ⤵
+#### **👉 Your Turn** **⤵**
 
 ```{r}
-interactions_summarized <- interactions_filtered %>% 
-  group_by(id_student, code_module, code_presentation) %>% 
-  summarize(sum_clicks = sum(sum_click))
+
 ```
 
-#### [Your Turn]{style="color: green;"} ⤵
+#### **👉 Your Turn** **⤵**
 
 How many times did students click? Let's create a histogram to see.
 Please use {ggplot} and `geom_histogram()` to visualize the distribution
@@ -247,26 +250,25 @@ if you need a pointer!
 ```
 
 This is a good start - we've created our first feature based upon the
-clickstream data! What are some other features we can add? An affordance
-of using the `summarize()` function in R is we can create multiple
-summary statistics at once. Let's also calculate the standard deviation
-of the number of clicks as well as the mean. Please copy the code you
-wrote above into the code chunk below and then add these two additional
-summary statistics.
+log data, `sum_clicks`! What are some other features we can add? An
+affordance of using the `summarize()` function in R is we can create
+multiple summary statistics at once. Let's also calculate the standard
+deviation of the number of clicks as well as the mean. Please copy the
+code you wrote above into the code chunk below and then add these two
+additional summary statistics.
 
-#### [Your Turn]{style="color: green;"} ⤵
+#### **👉 Your Turn** **⤵**
 
 ```{r}
-interactions_summarized <- interactions_filtered %>% 
-  group_by(id_student, code_module, code_presentation) %>% 
-  summarize(sum_clicks = sum(sum_click),
-            sd_clicks = sd(sum_click), 
-            mean_clicks = mean(sum_click))
+
 ```
 
 We'll take one last step here -- creating individual *slopes* of
 students' clicks over time. This code is a bit more involved, and so is
 annotated for you below; feel free to modify and re-use this.
+
+**Note: this may take up to a minute or two to run! Please feel free to
+relax!**
 
 ```{r}
 interactions_slopes <- interactions_filtered %>% # start with our interactions data
@@ -277,10 +279,10 @@ interactions_slopes <- interactions_filtered %>% # start with our interactions d
   unnest(model) # this returns the data to its original (non-nested structure), retaining the mutated model output
 ```
 
-Please mutate the resulting intercept, date, and data squared variables
+Please rename the resulting intercept, date, and data squared variables
 to be renamed: `intercept`, `date`, and `date_2`, respectively.
 
-#### [Your Turn]{style="color: green;"} ⤵
+#### **👉 Your Turn** **⤵**
 
 ```{r}
 
@@ -295,10 +297,10 @@ into a single file. Please use `left_join()` to join
 `interactions_filtered` and `interactions_slopes`, assigning the
 resulting output the name `all_features`.
 
-#### [Your Turn]{style="color: green;"} ⤵
+#### **👉 Your Turn** **⤵**
 
 ```{r}
-all_features <- left_join(interactions_filtered, interactions_slopes)
+
 ```
 
 Just one last step! Let's join together *all* of the data we'll use for
@@ -306,11 +308,10 @@ our modeling: `students_and_assessments` and `all_features`. Use
 `left_join()` once more, assigning the resulting output the name
 `students_assessments_and_interactions`.
 
-#### [Your Turn]{style="color: green;"} ⤵
+#### **👉 Your Turn** **⤵**
 
 ```{r}
-students_assessments_and_interactions <- left_join(students_and_assessments, 
-                                                   interactions_summarized)
+
 ```
 
 One more small step. Let's ensure that our outcome variable -- `pass` --
@@ -319,13 +320,10 @@ its factor characteristics, becoming instead a character string. It is
 necessary for the outcome of a classification model (like the one we are
 using) to be a factor. Please use `mutate()` to do just that.
 
-#### [Your Turn]{style="color: green;"} ⤵
+#### **👉 Your Turn** **⤵**
 
 ```{r}
-students_assessments_and_interactions <- students_assessments_and_interactions %>% 
-  mutate(pass = as.factor(pass))
 
-# write_csv(students_assessments_and_interactions, "students-assessments-and-interactions.csv")
 ```
 
 We're now ready to model!
@@ -344,13 +342,10 @@ We discuss this first step minimally as we have now carried out a step
 very similar to this in LL1 and LL2; return to the case study for those
 (especially LL1) for more on data splitting.
 
-#### [Your Turn]{style="color: green;"} ⤵
+#### **👉 Your Turn** **⤵**
 
 ```{r}
-set.seed(20230712)
 
-train_test_split <- initial_split(students_assessments_and_interactions , prop = .33, strata = "pass")
-data_train <- training(train_test_split)
 ```
 
 There is a key difference that is next. In this step. we'll further
@@ -380,8 +375,6 @@ kfcv
 ### Step 2: Engineer features and write down the recipe
 
 Here, we'll carry out several feature engineering steps.
-
-#### [Your Turn]{style="color: green;"} ⤵
 
 Read about [possible steps](https://www.tmwr.org/recipes.html) and see
 more about how the following five feature engineering steps below work.
@@ -416,10 +409,12 @@ example, the code below would normalize all numeric variables:
 step_normalize(all_numeric_predictors())
 ```
 
-#### [Your Turn]{style="color: green;"} ⤵
+#### **👉 Your Turn** **⤵**
 
 Let's turn to our recipe. Please *add to* the code below to add the new
-variables---features---we created.
+variables---features---we created. We've started you off with \_\_\_
+code below (where you can add the new variables -- be sure to add all of
+them!).
 
 ```{r}
 my_rec <- recipe(pass ~ disability +
@@ -427,12 +422,11 @@ my_rec <- recipe(pass ~ disability +
                    gender +
                    code_module +
                    mean_weighted_score +
-                   sum_clicks + sd_clicks + mean_clicks + # new
-                   intercept + date + date_2, # new
-                 data = data_train)
+                   ___ + ___ + ___,
+                 data = data_train) 
 ```
 
-#### [Your Turn]{style="color: green;"} ⤵
+#### **👉 Your Turn** **⤵**
 
 Then, please *add to* the following code by completing three steps,
 building on the code that is started below:
@@ -444,13 +438,7 @@ building on the code that is started below:
     the `sum_clicks` and `date_registration` variables.
 
 ```{r}
-my_rec <- my_rec %>% 
-  step_dummy(disability) %>% 
-  step_dummy(gender) %>%  
-  step_dummy(code_module) %>% 
-  step_impute_knn(sum_clicks) %>% 
-  step_impute_knn(date_registration) %>% 
-  step_normalize(all_numeric_predictors())
+
 ```
 
 ### Step 3: Specify the model and workflow
@@ -505,7 +493,7 @@ Then, we can use the same `collect_metrics()` function we have used to
 inspect the predictive strength of the model. Please do that for
 `fitted_model_resamples`.
 
-#### [Your Turn]{style="color: green;"} ⤵
+#### **👉 Your Turn** **⤵**
 
 ```{r}
 
@@ -544,11 +532,10 @@ the best performing tuning parameters trained with the *entire* training
 set of data to predict the values in our (otherwise not used/"spent")
 testing set of data.
 
-#### [Your Turn]{style="color: green;"} ⤵
+#### **👉 Your Turn** **⤵**
 
 ```{r}
-collect_predictions(final_fit) %>% 
-  conf_mat(.pred_class, pass)
+
 
 ```
 
@@ -568,9 +555,9 @@ Please add two or more notes on what you notice about which variables
 (features) are important, focused on what you would say to someone in
 your audience about what the important variables in your model were.
 
--   
+-   ADD YOUR RESPONSE HERE
 
--   
+-   ADD YOUR RESPONSE HERE
 
 ### 🧶 Knit & Check ✅
 

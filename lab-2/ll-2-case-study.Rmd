@@ -68,8 +68,7 @@ assessments file, which is named "oulad-assessments.csv". Please assign
 the name `assessments` to the loaded assessments file.
 
 ```{r}
-students <- read_csv("data/oulad-students.csv")
-assessments <- read_csv("data/oulad-assessments.csv")
+
 ```
 
 ## 3. EXPLORE
@@ -83,11 +82,10 @@ If you need, recall that the data dictionary is
 different types of assessments mean.
 
 ```{r}
-assessments %>% 
-    count(assessment_type)
+
 ```
 
--   
+-   ADD YOUR RESPONSE HERE
 
 #### [Your Turn]{style="color: green;"} ⤵
 
@@ -99,8 +97,7 @@ unique (or distinct) values for a specified variable. Learn more about
 the distinct assessment IDs.
 
 ```{r}
-assessments %>% 
-    distinct(id_assessment) # this many unique assessments
+
 ```
 
 Let's explore the assessments data a bit.
@@ -163,10 +160,11 @@ code_module_dates <- assessments %>%
 
 #### [Your Turn]{style="color: green;"} ⤵
 
-Let's take a look at what we just created; type `code_module_dates()`
+Let's take a look at what we just created; type `code_module_dates`
 below:
 
 ```{r}
+
 ```
 
 What have we created? We found the date that is one-quarter of the way
@@ -182,8 +180,7 @@ being the "left" data frame, and `code_module_dates` the right. Save the
 output of the join the name `assessments_joined`.
 
 ```{r}
-assessments_joined <- assessments %>% 
-    left_join(code_module_dates) # join the data based on course_module and course_presentation
+
 ```
 
 We're almost there! The next few lines filter the assessments data so it
@@ -237,8 +234,7 @@ Finally, let's join together `students` and `assessments_summarized`,
 assigning the joined the name `students_and_assessments`.
 
 ```{r}
-students_and_assessments <- students %>% 
-    left_join(assessments_summarized)
+
 ```
 
 Big picture, we've added another measure -- another feature -- that we
@@ -346,7 +342,7 @@ function.
 #### [Your Turn]{style="color: green;"} ⤵
 
 ```{r}
-class_metrics <- metric_set(accuracy, sensitivity, specificity, ppv, npv, kap) # add probs?
+
 ```
 
 Then, please use `last_fit`, looking to how we did this in the last
@@ -369,7 +365,7 @@ conditions, elaborated below. You'll fill in the last two columns in a
 few moments.
 
 |      Statistic      |       How to Find       |                                          Interpretation                                          | Value |  \%  |
-|:--------:|:--------:|:--------------------------------:|:--------:|:--------:|
+|:-------------------:|:-----------------------:|:------------------------------------------------------------------------------------------------:|:-----:|:----:|
 | True positive (TP)  | Truth: 1, Prediction: 1 |    Proportion of the population that is affected by a condition and correctly tested positive    | 2443  | 19.8 |
 | True negative (TN)  | Truth: 0, Prediction: 0 |  Proportion of the population that is not affected by a condition and correctly tested negative  | 4536  | 36.8 |
 | False positive (FP) | Truth: 0, Prediction: 1 | Proportion of the population that is not affected by a condition and incorrectly tested positive | 2070  | 16.8 |
@@ -382,7 +378,7 @@ Pass the `last_fit` object to this function below.
 #### [Your Turn]{style="color: green;"} ⤵
 
 ```{r}
-collect_predictions(final_fit)
+
 ```
 
 Take a look at the columns. You'll need to provide the predictions
@@ -419,12 +415,12 @@ precision, and negative predictive value below to three decimal points.
 #### [Your Turn]{style="color: green;"} ⤵
 
 |                                               |                |                                                                                                                                |                                                                                    |                      |
-|:----------:|:----------:|:----------------------:|:------------:|:----------:|
+|:---------------------------------------------:|:--------------:|:------------------------------------------------------------------------------------------------------------------------------:|:----------------------------------------------------------------------------------:|:--------------------:|
 |                 **Statistic**                 |  **Equation**  |                                                       **Interpretation**                                                       |                               **Question Answered**                                | **Statistic Values** |
-|         **Sensitivity** (AKA recall)          | TP / (TP + FN) |                       Proportion of those who are affected by a condition and correctly tested positive                        |        Out of all the actual positives, how many did we correctly predict?         |         .428         |
-|                **Specificity**                | TN / (FP + TN) |                     Proportion of those who are not affected by a condition and correctly tested negative;                     |        Out of all the actual negatives, how many did we correctly predict?         |         .687         |
-| **Precision** (AKA Positive Predictive Value) | TP / (TP + FP) |                            Proportion of those who tested positive who are affected by a condition                             | Out of all the instances we predicted as positive, how many are actually positive? |         .581         |
-|         **Negative Predictive Value**         | TN / (TN + FN) | Proportion of those who tested positive who are not affected by a condition; *the probability that a negative test is correct* | Out of all the instances we predicted as negative, how many are actually negative? |         .541         |
+|         **Sensitivity** (AKA recall)          | TP / (TP + FN) |                       Proportion of those who are affected by a condition and correctly tested positive                        |        Out of all the actual positives, how many did we correctly predict?         |                      |
+|                **Specificity**                | TN / (FP + TN) |                     Proportion of those who are not affected by a condition and correctly tested negative;                     |        Out of all the actual negatives, how many did we correctly predict?         |                      |
+| **Precision** (AKA Positive Predictive Value) | TP / (TP + FP) |                            Proportion of those who tested positive who are affected by a condition                             | Out of all the instances we predicted as positive, how many are actually positive? |                      |
+|         **Negative Predictive Value**         | TN / (TN + FN) | Proportion of those who tested positive who are not affected by a condition; *the probability that a negative test is correct* | Out of all the instances we predicted as negative, how many are actually negative? |                      |
 
 So, what does this hard-won by output tell us? Let's interpret each
 statistic carefully in the table below. Please add the value and provide
@@ -433,7 +429,7 @@ a *substantive interpretation*. One is provided to get you started.
 #### [Your Turn]{style="color: green;"} ⤵
 
 |                                           |                                                                                                                                             |
-|------------------|------------------------------------------------------|
+|-------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------|
 | **Statistic**                             | **Substantive Interpretation**                                                                                                              |
 | Accuracy                                  |                                                                                                                                             |
 | Sensitivity (AKA recall)                  | The model correctly predicts about 2/3 of students who do not pass correctly (as not passing). This is pretty good, but it could be better. |
@@ -468,7 +464,7 @@ and Cohen's Kappa values.
 #### [Your Turn]{style="color: green;"} ⤵
 
 ```{r}
-collect_metrics(final_fit)
+
 ```
 
 Having invested in understanding the terminology of machine learning
