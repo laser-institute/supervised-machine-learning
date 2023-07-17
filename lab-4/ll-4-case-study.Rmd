@@ -41,10 +41,11 @@ kind of data is often rich, but hard to interpret at a granular level.
 We'll be using audio data from mathematics classrooms collected as a
 part of Dyer's [*Learning Through Teaching* (LTT)
 project](https://www.proquest.com/openview/01af3361c531b12ea3caeda8b85b31fa/1?pq-origsite=gscholar&cbl=18750).
-In this project, hundreds of hours of video and audio were collected
-from high school and middle school classrooms. The specific data set we
-are using is transcribed data (via
-[Whisper](https://github.com/bnosac/audio.whisper)) that is analyzed for
+
+In this project, hundreds of hours of video and audio were collected from
+high school and middle school classrooms. The specific data set we are
+using is transcribed data (via
+[Whisper](https://github.com/bnosac/audio.whisper) that is analyzed for
 the different affective or emotional sentiment it evidences. The goal of
 the study is to try to identify moments in the audio data that suggest
 negative affect on the part of students in the context of learning
@@ -87,11 +88,7 @@ these issues in our manuscript in a transparent manner.
 
 Optionally, read this very brief overview of tidyLPA:
 
-> Rosenberg, J. M., Beymer, P. N., Anderson, D. J., Van Lissa, C. J., &
-> Schmidt, J. A. (2019). tidyLPA: An R package to easily carry out
-> latent profile analysis (LPA) using open-source or commercial
-> software. Journal of Open Source Software, 3(30), 978.
-> <https://joss.theoj.org/papers/10.21105/joss.00978.pdf>
+> Rosenberg, J. M., Beymer, P. N., Anderson, D. J., Van Lissa, C. J., & Schmidt, J. A. (2019). tidyLPA: An R package to easily carry out latent profile analysis (LPA) using open-source or commercial software. Journal of Open Source Software, 3(30), 978. https://joss.theoj.org/papers/10.21105/joss.00978.pdf
 
 ## 2. WRANGLE
 
@@ -117,6 +114,66 @@ Next, please read in the
 ## 3. EXPLORE
 
 #### **👉 Your Turn** **⤵**
+
+Please take a look at the data using a technique of your choice. Note
+the number of rows and the variables and their types.
+
+```{r}
+transcript %>% 
+    glimpse()
+```
+
+Note how the `transcript_text` variable consists of transcripted *turns*
+of speech (not individual words), corresponding roughly to what an
+individual says in a conversation.
+
+We'll next do some analyses over several chunks to create the variables
+for the emotional expression evidenced in the transcripted data. Given
+the focus of this learning lab on Latent Profile Analysis, we'll treat
+this aspect in a more limited way. Please consider joining the first
+text analysis learning lab to gain a lot more context and to see in far
+greater detail how we can work with textual data in R.
+
+```{r}
+nrc <- get_sentiments("nrc") # this access sentiment
+
+transcript <- transcript %>% 
+    select(group, index, start, end, duration, transcript_text) # select the variables we'll be using
+
+transcript %>% 
+    unnest_tokens(word, transcript_text) %>% # this changes the data to be in "long" form, with each row consisting of individual words in the transcript data
+    left_join(nrc, relationship = "many-to-many") %>% # ignore warnings
+    count(sentiment)
+```
+
+Since each turn is of a different length, next, we'll create 30-second
+chunks in the data.
+
+```{r}
+chunk_size <- 45  # chunk duration in seconds
+start_point <- transcript$start %>% as.integer() %>% pluck(1) # find the starting point of the time stamps
+end_point <- transcript$end %>% as.integer() %>% pluck(nrow(transcript)) # find the ending point of the time stamps
+
+transcript$start <- as.integer(transcript$start)
+transcript$end <- as.integer(transcript$end)
+
+# Create a new variable for the chunks
+transcript$segment_id <- cut(transcript$start, breaks = seq(from = start_point, to = end_point, by = chunk_size))
+```
+
+=======
+#### [Your Turn]{style="color: green;"} ⤵
+
+Next, please read in the
+`r-processed-transcript`.csv`file, naming it`transcript\`.
+
+```{r}
+transcript <- read_csv("data/r-processed-transcript.csv")
+```
+
+## 3. EXPLORE
+
+#### [Your Turn]{style="color: green;"} ⤵
 
 Please take a look at the data using a technique of your choice. Note
 the number of rows and the variables and their types.
@@ -246,6 +303,8 @@ To do so, please run `estimate_profiles` like we have above,
 
 ```{r}
 
+
+
 ```
 
 We can interpret the fit statistic that is provided---the BIC, with more
@@ -285,6 +344,54 @@ interpretability of the profiles.
 
 ### Step 3: Select and interpret a solution
 
+=======
+To do so, please run `estimate_profiles` like we have above,
+
+```{r}
+data_for_lpa %>%
+    estimate_profiles(1:7) %>% 
+    compare_solutions()
+```
+
+We can interpret the fit statistic that is provided---the BIC, with more
+negative values indicating a better model fit---and see which model is
+best. In addition, we can use a process that considers several fit
+indices, the *analytic hierarchy process*. Sometimes, what the BIC and
+the analytic hierarchy process suggest diverge, as is the case here. In
+such a case, it can be helpful to interrogate several candidate
+solutions in a fine-grained way.
+
+#### [Your Turn]{style="color: green;"} ⤵
+
+We can examine many fit statistics for candidate models by replacing
+`compare_solutions()` with `get_fit()`. You can read about each fit
+index
+[here](https://data-edu.github.io/tidyLPA/articles/Introduction_to_tidyLPA.html).
+Please run that code, below.
+
+```{r}
+data_for_lpa %>%
+    estimate_profiles(1:4) %>% 
+    get_fit()
+```
+
+We can also plot several possible solutions; again, please replace
+`compare_solutions()`, this time with `plot_profiles(add_line = TRUE)`:
+
+```{r}
+data_for_lpa %>%
+    estimate_profiles(1:4) %>% 
+    plot_profiles(add_line = TRUE)
+```
+
+How do we know which solution to be *the* solution we interpret and
+present? We need to consider several different factors, including a) the
+BIC and other individual fit indices, b) the analytic hierarchy output,
+c) considerations of parsimony, and d) considerations related to the
+interpretability of the profiles.
+
+### Step 3: Select and interpret a solution
+
 *Which solution do you thinks is best?* Given that the BIC indicates a
 three profile model, and given how the model with four profiles does not
 appear to yield a substantially distinct fourth profile, it seems
@@ -296,13 +403,29 @@ two-profile models, it seems that one profile is more distinguishable
 consider moving forward with a two-profile solution, recognizing that
 this data is somewhat messy, and the way forward is not wholly clear!
 
-#### **👉 Your Turn** **⤵**
-
 To do so, run `estimate_profiles()`, specifying two profiles, and
 assigning the output the name `two_profile_solution`.
 
+#### **👉 Your Turn** **⤵**
+
 ```{r}
 
+```
+
+Let's plot this solution using `plot_profiles(add_line = TRUE)`
+
+```{r}
+plot_profiles(two_profile_solution, add_line = TRUE)
+```
+
+Typically, we'd name these solutions. Let's try to interpret and name
+these based upon their mean values:
+
+-   Profile 1:
+-   Profile 2:
+
+```{r}
+two_profile_solution <- estimate_profiles(data_for_lpa, n_profiles = 2)
 ```
 
 Let's plot this solution using `plot_profiles(add_line = TRUE)`
@@ -345,6 +468,36 @@ together and assigning the output the name `combined_data`.
 
 ```{r}
 
+```
+
+Now, let's take a look at the data using `View()` the data frame we
+create next, `data_to_view`. *Don't* write this in a code chunk;
+instead, just view the data frame you jsut created by typing the code
+into the console (as `View()` can cause issues when it comes time to
+knit --- unless it is commented!).
+
+```{r}
+data_to_view <- left_join(transcript, combined_data) # this joins the transcript and combined data, so we can see which segment is associated with which profile, or class
+# View(data_to_view)
+```
+
+```{r}
+data_for_two_profile_solution <- 
+    get_data(two_profile_solution) %>% # get the classes for each row of data
+    select(Class) %>% # let's select just the class (profile) variable
+    mutate(segment_id = unique(transcript$segment_id)) # this assigns the segment IDs back to the data, so we can join the transcript data later on
+```
+
+#### [Your Turn]{style="color: green;"} ⤵
+
+Then, let's *bind* together the profiles assigned to each chunk with the
+original data. Please use
+[`bind_rows()`](https://dplyr.tidyverse.org/reference/bind.html),
+providing both `data_for_lpa` and `data_for_two_profile_solution`
+together and assigning the output the name `combined_data`.
+
+```{r}
+combined_data <- bind_cols(data_for_lpa, data_for_two_profile_solution)
 ```
 
 Now, let's take a look at the data using `View()` the data frame we

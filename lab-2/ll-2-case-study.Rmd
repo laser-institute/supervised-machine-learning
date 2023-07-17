@@ -343,7 +343,6 @@ function.
 
 ```{r}
 
-
 ```
 
 Then, please use `last_fit`, looking to how we did this in the last
@@ -365,44 +364,12 @@ x 2 table with values (cells in the table) representing one of four
 conditions, elaborated below. You'll fill in the last two columns in a
 few moments.
 
-<<<<<<< HEAD
 |      Statistic      |       How to Find       |                                          Interpretation                                          | Value |  \%  |
 |:-------------------:|:-----------------------:|:------------------------------------------------------------------------------------------------:|:-----:|:----:|
 | True positive (TP)  | Truth: 1, Prediction: 1 |    Proportion of the population that is affected by a condition and correctly tested positive    | 2443  | 19.8 |
 | True negative (TN)  | Truth: 0, Prediction: 0 |  Proportion of the population that is not affected by a condition and correctly tested negative  | 4536  | 36.8 |
 | False positive (FP) | Truth: 0, Prediction: 1 | Proportion of the population that is not affected by a condition and incorrectly tested positive | 2070  | 16.8 |
 | False negative (FN) | Truth: 1, Prediction: 0 |  Proportion of the population that is affected by a condition and incorrectly tested positive.   | 3269  | 26.5 |
-=======
-+--------+--------+----------------------------------+--------+--------+
-| S      | How to | Interpretation                   | Value  | \%     |
-| ta     | Find   |                                  |        |        |
-| tistic |        |                                  |        |        |
-+:======:+:======:+:================================:+:======:+:======:+
-| True   | Truth: | Proportion of the population     | 2443   | 19.8   |
-| po     | 1, Pre | that is affected by a condition  |        |        |
-| sitive | di     | and correctly tested positive    |        |        |
-| (TP)   | ction: |                                  |        |        |
-|        | 1      |                                  |        |        |
-+--------+--------+----------------------------------+--------+--------+
-| True   | Truth: | Proportion of the population     | 4536   | 36.8   |
-| ne     | 0, Pre | that is not affected by a        |        |        |
-| gative | di     | condition and correctly tested   |        |        |
-| (TN)   | ction: | negative                         |        |        |
-|        | 0      |                                  |        |        |
-+--------+--------+----------------------------------+--------+--------+
-| False  | Truth: | Proportion of the population     | 2070   | 16.8   |
-| po     | 0, Pre | that is not affected by a        |        |        |
-| sitive | di     | condition and incorrectly tested |        |        |
-| (FP)   | ction: | positive                         |        |        |
-|        | 1      |                                  |        |        |
-+--------+--------+----------------------------------+--------+--------+
-| False  | Truth: | Proportion of the population     | 3269   | 26.5   |
-| ne     | 1, Pre | that is affected by a condition  |        |        |
-| gative | di     | and incorrectly tested positive. |        |        |
-| (FN)   | ction: |                                  |        |        |
-|        | 0      |                                  |        |        |
-+--------+--------+----------------------------------+--------+--------+
->>>>>>> bd1f9a70dcd4505d0230db09b2684f47ffc233de
 
 To create a confusion matrix, run `collect_predictions()`, which does
 what it suggests - it gathers together the model's test set predictions.
@@ -447,7 +414,6 @@ precision, and negative predictive value below to three decimal points.
 
 #### [Your Turn]{style="color: green;"} ⤵
 
-<<<<<<< HEAD
 |                                               |                |                                                                                                                                |                                                                                    |                      |
 |:---------------------------------------------:|:--------------:|:------------------------------------------------------------------------------------------------------------------------------:|:----------------------------------------------------------------------------------:|:--------------------:|
 |                 **Statistic**                 |  **Equation**  |                                                       **Interpretation**                                                       |                               **Question Answered**                                | **Statistic Values** |
@@ -455,65 +421,6 @@ precision, and negative predictive value below to three decimal points.
 |                **Specificity**                | TN / (FP + TN) |                     Proportion of those who are not affected by a condition and correctly tested negative;                     |        Out of all the actual negatives, how many did we correctly predict?         |                      |
 | **Precision** (AKA Positive Predictive Value) | TP / (TP + FP) |                            Proportion of those who tested positive who are affected by a condition                             | Out of all the instances we predicted as positive, how many are actually positive? |                      |
 |         **Negative Predictive Value**         | TN / (TN + FN) | Proportion of those who tested positive who are not affected by a condition; *the probability that a negative test is correct* | Out of all the instances we predicted as negative, how many are actually negative? |                      |
-=======
-+:----------:+:----------:+:----------:+:----------:+:----------:+
-| **S        | -   \*Eq   | **Interp   | **Question | **S        |
-| tatistic** | uation\*\* | retation** | Answered** | tatistic** |
-|            |            |            |            |            |
-|            |            |            |            | **Values** |
-+------------+------------+------------+------------+------------+
-| **Sen      | TP / (TP + | Proportion | Out of all | .428       |
-| sitivity** | FN)        | of those   | the actual |            |
-| (AKA       |            | who are    | positives, |            |
-| recall)    |            | affected   | how many   |            |
-|            |            | by a       | did we     |            |
-|            |            | condition  | correctly  |            |
-|            |            | and        | predict?   |            |
-|            |            | correctly  |            |            |
-|            |            | tested     |            |            |
-|            |            | positive   |            |            |
-+------------+------------+------------+------------+------------+
-| **Spe      | TN / (FP + | Proportion | Out of all | .687       |
-| cificity** | TN)        | of those   | the actual |            |
-|            |            | who are    | negatives, |            |
-|            |            | not        | how many   |            |
-|            |            | affected   | did we     |            |
-|            |            | by a       | correctly  |            |
-|            |            | condition  | predict?   |            |
-|            |            | and        |            |            |
-|            |            | correctly  |            |            |
-|            |            | tested     |            |            |
-|            |            | negative;  |            |            |
-+------------+------------+------------+------------+------------+
-| **P        | TP / (TP + | Proportion | Out of all | .581       |
-| recision** | FP)        | of those   | the        |            |
-| (AKA       |            | who tested | instances  |            |
-| Positive   |            | positive   | we         |            |
-| Predictive |            | who are    | predicted  |            |
-| Value)     |            | affected   | as         |            |
-|            |            | by a       | positive,  |            |
-|            |            | condition  | how many   |            |
-|            |            |            | are        |            |
-|            |            |            | actually   |            |
-|            |            |            | positive?  |            |
-+------------+------------+------------+------------+------------+
-| **Negative | TN / (TN + | Proportion | Out of all | .541       |
-| Predictive | FN)        | of those   | the        |            |
-| Value**    |            | who tested | instances  |            |
-|            |            | positive   | we         |            |
-|            |            | who are    | predicted  |            |
-|            |            | not        | as         |            |
-|            |            | affected   | negative,  |            |
-|            |            | by a       | how many   |            |
-|            |            | condition; | are        |            |
-|            |            | *the p     | actually   |            |
-|            |            | robability | negative?  |            |
-|            |            | that a     |            |            |
-|            |            | negative   |            |            |
-|            |            | test is    |            |            |
-|            |            | correct*   |            |            |
-+------------+------------+------------+------------+------------+
->>>>>>> bd1f9a70dcd4505d0230db09b2684f47ffc233de
 
 So, what does this hard-won by output tell us? Let's interpret each
 statistic carefully in the table below. Please add the value and provide
@@ -521,7 +428,6 @@ a *substantive interpretation*. One is provided to get you started.
 
 #### [Your Turn]{style="color: green;"} ⤵
 
-<<<<<<< HEAD
 |                                           |                                                                                                                                             |
 |-------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------|
 | **Statistic**                             | **Substantive Interpretation**                                                                                                              |
@@ -530,7 +436,6 @@ a *substantive interpretation*. One is provided to get you started.
 | Specificity                               |                                                                                                                                             |
 | Precision (AKA Positive Predictive Value) |                                                                                                                                             |
 | Negative Predictive Value                 |                                                                                                                                             |
-=======
 +----------------+-----------------------------------------------------+
 | **Statistic**  | **Substantive Interpretation**                      |
 +----------------+-----------------------------------------------------+
@@ -551,7 +456,6 @@ a *substantive interpretation*. One is provided to get you started.
 | Predictive     |                                                     |
 | Value          |                                                     |
 +----------------+-----------------------------------------------------+
->>>>>>> bd1f9a70dcd4505d0230db09b2684f47ffc233de
 
 This process might suggest to you how a "good" model isn't necessarily
 one that is the most accurate, but instead is one that has good values
@@ -563,7 +467,7 @@ this; is it better suited to correctly identifying "positive" pass cases
 (sensitivity) or "negatively" identifying students who do not pass
 (specificity)?
 
--   
+-   YOUR RESPONSE HERE 
 
 ## 5. COMMUNICATE
 

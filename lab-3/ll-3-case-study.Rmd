@@ -86,12 +86,25 @@ implementation of random forest modeling, and {vip}, for variable
 importance metrics.
 
 ```{r}
+<<<<<<< HEAD
 
 ```
 
 Next, we'll load a new file --- one with *interactions* (or log-trace)
 data.
 
+=======
+library(janitor)
+library(tidyverse)
+library(tidymodels)
+library(vip) # a new package we're adding for variable importance measures
+library(ranger) # this is needed for the random forest algorithm
+```
+
+Next, we'll load a new file --- one with *interactions* (or log-trace)
+data.
+
+>>>>>>> bd1f9a70dcd4505d0230db09b2684f47ffc233de
 We have to do the same processing we did in the second learning lab, to
 obtain cut-off dates. As a reminder, the purpose of this is to train the
 model on data from the first one-third of the class, with the reasoning
@@ -107,6 +120,7 @@ this learning lab, we are providing you with the already-filtered
 interactions data. *Note*: you can find the code used to carry out these
 steps in the Lab 3 folder in `process-interactions-data.R`.
 
+<<<<<<< HEAD
 Please load `oulad-interactions-filtered.csv` into R, assigning the
 resulting data frame the name `interactions`.
 
@@ -114,6 +128,15 @@ resulting data frame the name `interactions`.
 
 ```{r}
 
+=======
+Please load `oulad-interactions.csv` into R, assigning the resulting
+data frame the name `interactions`.
+
+#### [Your Turn]{style="color: green;"} ⤵
+
+```{r}
+interactions <- read_csv("data/oulad-interactions.csv")
+>>>>>>> bd1f9a70dcd4505d0230db09b2684f47ffc233de
 ```
 
 In the OULAD documentation, this is called the VLE (virtual learning
@@ -238,6 +261,18 @@ if you need a pointer!
 
 ```
 
+#### [Your Turn]{style="color: green;"} ⤵
+
+How many times did students click? Let's create a histogram to see.
+Please use {ggplot} and `geom_histogram()` to visualize the distribution
+of the `sum_clicks` variable you just created. Turn to [the
+documentation](https://ggplot2.tidyverse.org/reference/geom_histogram.html)
+if you need a pointer!
+
+```{r}
+
+```
+
 This is a good start - we've created our first feature based upon the
 log data, `sum_clicks`! What are some other features we can add? An
 affordance of using the `summarize()` function in R is we can create
@@ -312,6 +347,8 @@ using) to be a factor. Please use `mutate()` to do just that.
 #### **👉 Your Turn** **⤵**
 
 ```{r}
+
+
 
 ```
 

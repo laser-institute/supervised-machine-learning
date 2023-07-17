@@ -26,8 +26,7 @@ Each machine learning "case study" is designed to illustrate how machine
 learning methods and techniques can be applied to address a research
 question of interest, create useful data products, and conduct
 reproducible research. Each case study is structured around a basic
-analytics workflow modeled after the Data-Intensive Research Workflow
-from [Learning Analytics Goes to School](#0) (Krumm et al., 2018):
+analytics workflow modeled after the Data-Intensive Research Workflow from [Learning Analytics Goes to School](#0) (Krumm et al., 2018):
 
 ![](https://sbkellogg.github.io/eci-589/unit-1/img/workflow.png){alt=""
 width="80%"}
@@ -187,6 +186,7 @@ lightweight but highly useful {janitor} package to help with some data
 cleaning tasks. Use the code chunk below to load these two packages:
 
 ```{r load-tidymodels}
+
 
 
 ```
@@ -365,6 +365,80 @@ Specifically, in Part 3 we will:
     based on a measure of socioeconomic resources--the index of multiple
     depravity variable.
 
+=======
+Write down a few observations after inspecting the data:
+
+-   YOUR RESPONSE HERE
+-   YOUR RESPONSE HERE
+-   YOUR RESPONSE HERE
+
+### 2b. "Mutate" Variables
+
+We're going to do a few more steps related to data wrangling here,
+noting we could also do these at later stages of our process (namely, in
+the feature engineering stage).
+
+First, since we are interested in developing a model that can predict
+whether a student is at risk of dropping a course, and so we can
+intervene before that happens, we need an outcome variable that let's us
+know if they have withdrawn.
+
+To create this variable, let's use the `mutate()` function to create a
+dichotomous variable for whether or not the student withdrew from the
+course. Here's a way we can do this, using `if_else()` and
+`as.factor()`. This will be our *outcome* variable, or the predicted
+variable.
+
+```{r}
+students <- students %>% tr
+    mutate(withdrawn = ifelse(final_result == "Withdrawn", 1, 0)) %>% # creates a new variable named "withdrawn" and a dummy code of 1 if value of final_result equals "Withdrawn" and 0 if not
+    mutate(withdrawn = as.factor(withdrawn)) # makes the variable a factor, helping later steps
+```
+
+**Note**: The [`mutate()`
+function](https://dplyr.tidyverse.org/reference/mutate.html#:~:text=mutate()%20creates%20new%20columns,setting%20their%20value%20to%20NULL%20).)
+is a critical function to learn and is used to create new columns that
+are functions of existing variables. It can also modify (if the name is
+the same as an existing column) and delete columns (by setting their
+value to `NULL`).
+
+Next, let's do something similar for whether a student identifies as
+having a disability. In this case, there are only two values for the
+disability variable, so we can simply convert it directly to a factor.
+Look at the code you used above, *modifying* it for the disability
+variable. This will be an *independent variable*, or a predictor
+variable.
+
+```{r}
+students <- students %>% 
+    mutate(disability = as.factor(disability))
+```
+
+#### **👉 Your Turn** **⤵**
+
+In the chunk below, use the `view()` function to manually check and see
+if our new variable has indeed been added to our data frame.
+
+```{r, eval=FALSE}
+view(students)
+```
+
+## 3. EXPLORE
+
+As noted by Krumm et al. (2018), exploratory data analysis often
+involves some combination of data visualization and *feature
+engineering*. In Part 3, we will create a quick visualization to help us
+spot any potential issues with our data and engineer new predictive
+variables or "features" that we will use in our predictive models.
+Specifically, in Part 3 we will:
+
+1.  **Examine Outcomes** by taking a quick `count()` of the number of
+    students and the number of specific offerings of each course module.
+
+2.  **Engineer Predictors** by creating one more predictor variable
+    based on a measure of socioeconomic resources--the index of multiple
+    depravity variable.
+
 ### 3a. Examine Variables
 
 A useful function for exploring data is `count()`; it does what it
@@ -404,6 +478,13 @@ Though not often discussed, feature engineering is an important element
 of data-intensive research that can generate new insights and improve
 predictive models. You can read more about feature engineering
 [here](https://www.tmwr.org/recipes.html).
+
+#### Student Socioeconomic Index
+
+For our first lab, we'll engage in a very basic feature engineering
+step, though we'll do this *much* more in the next learning lab.
+
+=======
 
 #### Student Socioeconomic Index
 
@@ -472,6 +553,19 @@ Specifically, in Part 4 we will learn how to:
 
 The authors of Data Science in Education Using R (Estrellado et
 al.,2020) remind us that:
+
+> At its core, machine learning is the process of "showing" your
+> statistical model only some of the data at once and training the model
+> to predict accurately on that training dataset (this is the "learning"
+> part of machine learning). Then, the model as developed on the
+> training data is shown new data - data you had all along, but hid from
+> your computer initially - and you see how well the model that you
+> developed on the training data performs on this new testing data.
+> Eventually, you might use the model on entirely new data.
+
+#### Training and Testing Sets
+
+=======
 
 > At its core, machine learning is the process of "showing" your
 > statistical model only some of the data at once and training the model
@@ -850,8 +944,7 @@ that can be taken to act upon your findings.
 
 For now, we will wrap up this case study by converting our work into a
 webpage that can be used to communicate your learning and demonstrate
-some of your new R skills. To do so, you will need to "knit" your
-document by clicking the button in the menu bar at the the top of this
+some of your new R skills. To do so, you will need to "knit" your document by clicking the button in the menu bar at the the top of this
 file. This will do two things; it will:
 
 1.  check through all your code for any errors; and,
