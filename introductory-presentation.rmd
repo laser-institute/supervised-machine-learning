@@ -1,6 +1,6 @@
 ---
 title: "Machine Learning (ML) Module: Intro. Presentation" 
-subtitle: "https://laser-institute.github.io/machine-learning/introductory-presentation.html#1"
+subtitle: "https://tiny.utk.edu/ml-intro"
 author: "Joshua Rosenberg"
 institute: "The LASER Institute"
 date: "`r Sys.Date()`"
