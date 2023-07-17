@@ -60,6 +60,7 @@ xaringanExtra::use_tile_view()
 ### `r rmarkdown::metadata$author`
 ### `r format(Sys.time(), "%B %d, %Y")`
 
+---
 
 # Purpose and Agenda
 

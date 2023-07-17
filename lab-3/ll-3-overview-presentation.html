@@ -4,7 +4,7 @@
     <title>Machine Learning Learning Lab 3: Feature Engineering</title>
     <meta charset="utf-8" />
     <meta name="author" content="Dr. Joshua Rosenberg" />
-    <meta name="date" content="2023-07-16" />
+    <meta name="date" content="2023-07-17" />
     <script src="libs/header-attrs-2.22/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
@@ -37,8 +37,9 @@ class: clear, title-slide, inverse, center, top, middle
 # Machine Learning Learning Lab 3: Feature Engineering
 ----
 ### **Dr. Joshua Rosenberg**
-### July 16, 2023
+### July 17, 2023
 
+---
 
 # Purpose and Agenda
 
@@ -117,7 +118,7 @@ Here's a time stamp:
 
 
 ```
-## [1] "2023-07-16 14:51:54 EDT"
+## [1] "2023-07-17 09:36:41 EDT"
 ```
 
 **How could this variable be used as a predictor variable?**
@@ -210,11 +211,11 @@ We could be optimizing our model for our testing data; when used with new data, 
 
 ```
 ## # A tibble: 3 × 3
-##      id var_a var_b
-##   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1     1 0.784 0.790
-## 2     2 0.929 0.414
-## 3     3 0.923 0.146
+##      id var_a  var_b
+##   &lt;int&gt; &lt;dbl&gt;  &lt;dbl&gt;
+## 1     1 0.959 0.0192
+## 2     2 0.780 0.476 
+## 3     3 0.736 0.137
 ```
 
 Using _k_ = 10, how can we split *n* = 100 cases into ten distinct training and testing sets?

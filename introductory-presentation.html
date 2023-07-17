@@ -46,15 +46,6 @@ class: clear, title-slide, inverse, center, top, middle
 class: clear, inverse, center, middle
 
 # Front Matter
-
----
-
-class: clear, inverse, center, middle
-
-background-image: url(https://imgs.xkcd.com/comics/machine_learning.png)
-background-position: center
-background-size: contain
-
 ---
 
 # Goals for this module
@@ -65,16 +56,16 @@ background-size: contain
 
 ### Specific aims are to learn about:
 
-- A small but important set of ideas about machine learning
+- A small but important set of ideas --- predictions, interpretation. feature engineering, and supervised and unsupervised methods-- about machine learning
 - How these ideas are instantiated through the *tidymodels* R package
 
 ---
 
 # One example of ML . . .
 
-&lt;img src="lab-1/img/gpt-3.png" width="62%" style="display: block; margin: auto;" /&gt;
+&lt;img src="lab-1/img/gpt-4.png" width="30%" style="display: block; margin: auto;" /&gt;
 
-https://beta.openai.com/playground
+*Builds upon supervised machine learning models--namely, deep neural networks, the likes of which can be estimated within R; the big advance has to do with the transformer architecture that allows for the fitting of more complex models. It is still important (maybe necessary) to learn about the foundational techniques and methodologies underlying GPT-4.*
 
 ---
 
@@ -82,12 +73,12 @@ https://beta.openai.com/playground
 
 **A magical moment**
 - Learned about supervised machine learning from a colleague
-- Used these methods to discover patterns in students' embedded assessments, Rosenberg et al. (2021), *Journal of Science Education and Technology*, https://link.springer.com/article/10.1007/s10956-020-09862-4
+- Used these methods to discover patterns in students' embedded assessments (here)[https://link.springer.com/article/10.1007/s10956-020-09862-4]
 
 **Using Twitter users profile descriptions to predict whether or not they were teachers**
-- Manually coded &gt; 500 profiles for whether they were teachers or non-teachers and then trained a ML model to predict 1000s of teachers' roles as teachers or non-teachers (with an accuracy of 85%), [Rosenberg et al., *AERA Open* (2021)](https://journals.sagepub.com/doi/full/10.1177/23328584211024261)
+- Manually coded &gt; 500 profiles for whether they were teachers or non-teachers and then trained a ML model to predict 1000s of teachers' roles as teachers or non-teachers (with an accuracy of 85%) [here](https://journals.sagepub.com/doi/full/10.1177/23328584211024261)
 
-**Using audio data, prosodic features, automatic speech recognition, and send related methods** (in progress!)
+**Using audio data, prosodic features, automatic speech recognition, and send related methods**
 
 ---
 
@@ -118,8 +109,8 @@ This definition leaves a lot of space for a range of approaches to ML
 - Algorithms include:
   - [Linear regression (really!)](https://web.stanford.edu/~hastie/ElemStatLearn/)
   - Logistic regression
-  - Decision tree
-  - Support Vector Machine
+  - Random forest
+  - Neural network
 
 ---
 
@@ -217,7 +208,7 @@ Do you not yet have codes/outcomes -- and do you want to?
 
 **Using digital log-trace data and supervised ML**
 
-Gobert, J. D., Sao Pedro, M., Raziuddin, J., &amp; Baker, R. S. (2013). From log files to assessment metrics: Measuring students' science inquiry skills using educational data mining. *Journal of the Learning Sciences, 22*(4), 521-563.
+&gt; Gobert, J. D., Sao Pedro, M., Raziuddin, J., &amp; Baker, R. S. (2013). From log files to assessment metrics: Measuring students' science inquiry skills using educational data mining. *Journal of the Learning Sciences, 22*(4), 521-563.
 
 - Utilized *replay tagging* to code sequences of students' activity within digital *log-trace* data
 - Then trained a supervised ML algorithm to **automate** the prediction the presence or absence of students' engagement in inquiry
@@ -227,7 +218,7 @@ Gobert, J. D., Sao Pedro, M., Raziuddin, J., &amp; Baker, R. S. (2013). From log
 
 **Combining best practices in assessment with supervised ML**
 
-Maestrales, S., Zhai, X., Touitou, I., Baker, Q., Schneider, B., &amp; Krajcik, J. (2021). Using machine learning to score multi-dimensional assessments of chemistry and physics. Journal of Science Education and Technology, 30(2), 239-254.
+&gt; Maestrales, S., Zhai, X., Touitou, I., Baker, Q., Schneider, B., &amp; Krajcik, J. (2021). Using machine learning to score multi-dimensional assessments of chemistry and physics. Journal of Science Education and Technology, 30(2), 239-254.
 
 - Carrying out a careful process of qualitative coding (and the establishment of validity and interrater reliability) of students' written constructed responses
 - Training a supervised ML algorithm in advance of being able to **scale up** their coding to a larger number of responses
@@ -237,7 +228,10 @@ Maestrales, S., Zhai, X., Touitou, I., Baker, Q., Schneider, B., &amp; Krajcik, 
 
 **Combining qualitative methods with unsupervised ML**
 
-Sherin, B. (2013). A computational study of commonsense science: An exploration in the automated analysis of clinical interview data. *Journal of the Learning Sciences, 22*(4), 600-638.
+&gt; Rosenberg, J. M., &amp; Krist, C. (2021). Combining machine learning and
+&gt; qualitative methods to elaborate students' ideas about the generality
+&gt; of their model-based explanations. *Journal of Science Education and
+&gt; Technology, 30*, 255-267.
 
 - Used unsupervised machine learning methods to identify topics within students' interviews **from patterns in the data alone**
 - Interpreted those topics in light of rigorous qualitative coding with the aim of boosting the validity of the use of both the machine learning and qualitative approaches
@@ -262,9 +256,9 @@ class: clear, inverse, center, middle
 
 We'll work to answer these four questions:
 
-- LL 1: Prediction: How is prediction different from explanation?
-- LL 2: Interpretation: How do we interpret the accuracy of a machine learning model?
-- LL 3: Feature Engineering: How can we improve our better?
+- LL 1: Prediction: How do predictive models differ from other models?
+- LL 2: Interpretation: How do we interpret the accuracy of a prediction model?
+- LL 3: Feature Engineering: How can we make our model better?
 - LL 4: Unsupervised methods: What if we do not have training data?
 
 ]
@@ -273,7 +267,7 @@ We'll work to answer these four questions:
 
 **Machine Learning Learning Lab 1: Prediction**
 
-We have some data and want to develop a preidction model. Supervised machine learning is suited to this aim. In particular, in this learning lab, we explore how we can train a computer to predict students' passing a course. We use a large data set, the Open University Learning Analytics Dataset (OULAD), focusing on student data at this point. Our model at this point is relatively simple, a generalized linear model.
+We have some data and want to develop a prediction model. Supervised machine learning is suited to this aim. In particular, in this learning lab, we explore how we can train a computer to predict students' passing a course. We use a large data set, the Open University Learning Analytics Dataset (OULAD), focusing on student data at this point. Our model at this point is relatively simple, a generalized linear model.
 
 ]
 
@@ -289,7 +283,7 @@ How do we interpret a machine learning model? What else can we say, besides how 
 
 **Machine Learning Learning Lab 3: Feature Engineering**
 
-Once we have trained a computer in the context of using supervised machine learning methods, we may realize we can improve it by adding new variables or changing how the variables we are using were prepared. We also use a random forest model, rather than the regression model we have been using. Also, we consider key **feature engineering** steps with interaction data from the OULAD data set.
+How do we interpret a machine learning model? What else can we say, besides how accurate a model this? This learning lab is intended to help you to answer these questions by examining output from a classification and a regression model. We again use the OULAD, but add an assessment file.
 
 ]
 
@@ -297,7 +291,7 @@ Once we have trained a computer in the context of using supervised machine learn
 
 **Machine Learning Learning Lab 4: Unsupervised Methods**
 
-The previous three learning labs involved the use of data with known outcome variables in the first three learning labs. Accordingly, we explored different aspects of supervised machine learning. What if we have data without something that we can consider to be a dependent variable? **Unsupervised machine learning methods** can be used in such cases. Herein, we use Latent Profile Analysis with quantified, transcribed audio data from mathematics classrooms. We interpret the output of Latent Profile Analysis from a Computational Grounded Theory approach.
+The previous three learning labs involved the use of data with known outcome variables in the first three learning labs. Accordingly, we explored different aspects of supervised machine learning. What if we have data without something that we can consider to be a dependent variable? Unsupervised machine learning methods can be used in such cases. Herein, we use Latent Profile Analysis with quantified, transcribed audio data from mathematics classrooms. We interpret the output of Latent Profile Analysis from a Computational Grounded Theory approach.
 ]
 ]
 
@@ -307,10 +301,10 @@ The previous three learning labs involved the use of data with known outcome var
 
 I hope to see you in the ML topic area learning labs!
 
-&lt;br/&gt;
-.center[&lt;img style="border-radius: 80%;" src="img/jr-cycling.jpeg" height="200px"/&gt;&lt;br/&gt;**Dr. Joshua Rosenberg**&lt;br/&gt;&lt;mailto:jmrosenberg@utk.edu&gt;]
+*Dr. Joshua Rosenberg* (jmrosenberg@utk.edu)
+*Dr. Peng  Xu* (hepeng1@msu.edu)
 
-[Slides](https://laser-institute.github.io/machine-learning/introductory-presentation.html#1) created via the R package [xaringan](https://github.com/yihui/xaringan)
+[Slides](https://laser-institute.github.io/machine-learning/introductory-presentation.html#1)
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
