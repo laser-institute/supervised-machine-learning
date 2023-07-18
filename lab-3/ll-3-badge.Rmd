@@ -43,6 +43,14 @@ Part B: Once again, use the institutional library (e.g. [NCSU Library](https://w
 
 For this data product, please add a feature (or several features) *specific to one or more of the activity types* in the OULAD interactions data, and then add these features to your model and evaluate the accuracy. How did the accuracy appreciably change--if at all? Please copy all of your code in one or more code chunks below.
 
+```{r}
+
+```
+
+```{r}
+
+```
+
 ### Knit and Publish
 
 Complete the following steps to knit and publish your work:

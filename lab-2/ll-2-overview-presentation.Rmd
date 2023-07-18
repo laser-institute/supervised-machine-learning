@@ -27,7 +27,7 @@ output:
 class: clear, title-slide, inverse, center, top, middle
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 ```
 
 ```{r, echo=FALSE}
@@ -88,7 +88,6 @@ How do we interpret a machine learning model? What else can we say, besides how 
 - But, you may have heard of other means of determining how good a model is at making predictions: confusion matrices, specificity, sensitivity, recall, AUC-ROC, and others
 - Broadly, these help us to understand _for which cases and types of cases a model is predictively better than others_ in a finer-grained way than accuracy
 
-]
 ]
 
 .panel[.panel-name[Getting Started]
@@ -163,17 +162,17 @@ data_for_conf_mat %>%
 
 .panel[.panel-name[Conf Mat]
 
-You can think of the following statistics as slicing and dicing the confusion matrix you created above, revealing insights in the process. For the below, please add the values based on the above confusion matrix.
+You can think of the following statistics as slicing and dicing the confusion matrix you created above, revealing insights in the process.
 
-Accuracy: Proportion of the population that is true positive or true negative
+**Accuracy**: Proportion of the population that is true positive or true negative
 
-True positive (TP): Proportion of the population that is affected by a condition and correctly tested positive
+**True positive (TP)**: Proportion of the population that is affected by a condition and correctly tested positive
 
-True negative (TN): Proportion of the population that is not affected by a condition and correctly tested negative
+**True negative (TN)**: Proportion of the population that is not affected by a condition and correctly tested negative
 
-False positive (FP): Proportion of the population that is not affected by a condition and incorrectly tested positive
+**False positive (FP)**: Proportion of the population that is not affected by a condition and incorrectly tested positive
 
-False negative (FN): Proportion of the population that is affected by a condition and incorrectly tested positive.
+**False negative (FN)**: Proportion of the population that is affected by a condition and incorrectly tested positive.
 
 ]
 
@@ -288,18 +287,16 @@ my_rec <- recipe(species_human ~ height + mass + birth_year + eye_color, data = 
 **Specify recipe, model, and workflow**
 
 ```{r, echo = TRUE, eval = FALSE}
-# specify model
 my_mod <-
     logistic_reg() %>% 
     set_engine("glm") %>%
     set_mode("classification")
 
-# specify workflow
 my_wf <-
     workflow() %>%
     add_model(my_mod) %>% 
     add_recipe(my_rec) %>% 
-    step_dummy(eye_color) # we need to dummy code this
+    step_dummy(eye_color) # need to dummy code
 ```
 
 ]
@@ -329,7 +326,7 @@ final_fit %>%
 
 .panel[.panel-name[6]
 
-**Aside: joining data**
+**Aside**: Joins!
 
 ```{r, echo = TRUE, eval = FALSE}
 band_members %>% left_join(band_instruments)
@@ -390,3 +387,15 @@ Baker, R. S., Berning, A. W., Gowda, S. M., Zhang, S., & Hawn, A. (2020). Predic
 ]
 ]
 
+---
+
+# *fin*
+
+We hope to see you in the ML topic area learning labs!
+
+- *Dr. Joshua Rosenberg* (jmrosenberg@utk.edu; https://joshuamrosenberg.com)
+- *Dr. Peng  He* (hepeng1@msu.edu)
+
+[These slides (Introductory Presentation)](https://laser-institute.github.io/machine-learning/introductory-presentation.html#1)
+
+[General troubleshooting tips for R and RStudio](https://docs.google.com/document/d/14Jc-KG3m5k1BvyKWqw7KmDD21IugU5nV5edfJkZyspY/edit)

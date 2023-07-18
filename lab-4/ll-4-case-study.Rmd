@@ -42,9 +42,9 @@ We'll be using audio data from mathematics classrooms collected as a
 part of Dyer's [*Learning Through Teaching* (LTT)
 project](https://www.proquest.com/openview/01af3361c531b12ea3caeda8b85b31fa/1?pq-origsite=gscholar&cbl=18750).
 
-In this project, hundreds of hours of video and audio were collected from
-high school and middle school classrooms. The specific data set we are
-using is transcribed data (via
+In this project, hundreds of hours of video and audio were collected
+from high school and middle school classrooms. The specific data set we
+are using is transcribed data (via
 [Whisper](https://github.com/bnosac/audio.whisper) that is analyzed for
 the different affective or emotional sentiment it evidences. The goal of
 the study is to try to identify moments in the audio data that suggest
@@ -88,7 +88,11 @@ these issues in our manuscript in a transparent manner.
 
 Optionally, read this very brief overview of tidyLPA:
 
-> Rosenberg, J. M., Beymer, P. N., Anderson, D. J., Van Lissa, C. J., & Schmidt, J. A. (2019). tidyLPA: An R package to easily carry out latent profile analysis (LPA) using open-source or commercial software. Journal of Open Source Software, 3(30), 978. https://joss.theoj.org/papers/10.21105/joss.00978.pdf
+> Rosenberg, J. M., Beymer, P. N., Anderson, D. J., Van Lissa, C. J., &
+> Schmidt, J. A. (2019). tidyLPA: An R package to easily carry out
+> latent profile analysis (LPA) using open-source or commercial
+> software. Journal of Open Source Software, 3(30), 978.
+> <https://joss.theoj.org/papers/10.21105/joss.00978.pdf>
 
 ## 2. WRANGLE
 
@@ -113,74 +117,13 @@ Next, please read in the
 
 ## 3. EXPLORE
 
-#### **👉 Your Turn** **⤵**
-
-Please take a look at the data using a technique of your choice. Note
-the number of rows and the variables and their types.
-
-```{r}
-transcript %>% 
-    glimpse()
-```
-
-Note how the `transcript_text` variable consists of transcripted *turns*
-of speech (not individual words), corresponding roughly to what an
-individual says in a conversation.
-
-We'll next do some analyses over several chunks to create the variables
-for the emotional expression evidenced in the transcripted data. Given
-the focus of this learning lab on Latent Profile Analysis, we'll treat
-this aspect in a more limited way. Please consider joining the first
-text analysis learning lab to gain a lot more context and to see in far
-greater detail how we can work with textual data in R.
-
-```{r}
-nrc <- get_sentiments("nrc") # this access sentiment
-
-transcript <- transcript %>% 
-    select(group, index, start, end, duration, transcript_text) # select the variables we'll be using
-
-transcript %>% 
-    unnest_tokens(word, transcript_text) %>% # this changes the data to be in "long" form, with each row consisting of individual words in the transcript data
-    left_join(nrc, relationship = "many-to-many") %>% # ignore warnings
-    count(sentiment)
-```
-
-Since each turn is of a different length, next, we'll create 30-second
-chunks in the data.
-
-```{r}
-chunk_size <- 45  # chunk duration in seconds
-start_point <- transcript$start %>% as.integer() %>% pluck(1) # find the starting point of the time stamps
-end_point <- transcript$end %>% as.integer() %>% pluck(nrow(transcript)) # find the ending point of the time stamps
-
-transcript$start <- as.integer(transcript$start)
-transcript$end <- as.integer(transcript$end)
-
-# Create a new variable for the chunks
-transcript$segment_id <- cut(transcript$start, breaks = seq(from = start_point, to = end_point, by = chunk_size))
-```
-
-=======
-#### [Your Turn]{style="color: green;"} ⤵
-
-Next, please read in the
-`r-processed-transcript`.csv`file, naming it`transcript\`.
-
-```{r}
-transcript <- read_csv("data/r-processed-transcript.csv")
-```
-
-## 3. EXPLORE
-
 #### [Your Turn]{style="color: green;"} ⤵
 
 Please take a look at the data using a technique of your choice. Note
 the number of rows and the variables and their types.
 
 ```{r}
-transcript %>% 
-    glimpse()
+
 ```
 
 Note how the `transcript_text` variable consists of transcripted *turns*
@@ -344,7 +287,6 @@ interpretability of the profiles.
 
 ### Step 3: Select and interpret a solution
 
-=======
 To do so, please run `estimate_profiles` like we have above,
 
 ```{r}
@@ -370,18 +312,17 @@ index
 Please run that code, below.
 
 ```{r}
-data_for_lpa %>%
-    estimate_profiles(1:4) %>% 
-    get_fit()
+
 ```
 
 We can also plot several possible solutions; again, please replace
-`compare_solutions()`, this time with `plot_profiles(add_line = TRUE)`:
+`compare_solutions()`, this time with `plot_profiles(add_line = TRUE)`,
+adding the varying number of profiles you wish to plot.
+
+#### [Your Turn]{style="color: green;"} ⤵
 
 ```{r}
-data_for_lpa %>%
-    estimate_profiles(1:4) %>% 
-    plot_profiles(add_line = TRUE)
+
 ```
 
 How do we know which solution to be *the* solution we interpret and
@@ -497,12 +438,12 @@ providing both `data_for_lpa` and `data_for_two_profile_solution`
 together and assigning the output the name `combined_data`.
 
 ```{r}
-combined_data <- bind_cols(data_for_lpa, data_for_two_profile_solution)
+
 ```
 
 Now, let's take a look at the data using `View()` the data frame we
 create next, `data_to_view`. *Don't* write this in a code chunk;
-instead, just view the data frame you jsut created by typing the code
+instead, just view the data frame you just created by typing the code
 into the console (as `View()` can cause issues when it comes time to
 knit --- unless it is commented!).
 

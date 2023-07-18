@@ -120,7 +120,7 @@ How do we interpret a machine learning model? What else can we say, besides how 
 
 .panel[.panel-name[How?]
 
-# A few (other) options
+**A few (other) options**
 
 - Raw data points
 - Their mean
@@ -363,7 +363,7 @@ kfcv
 
 .panel[.panel-name[vfcv]
 
-```{r, eval=FALSE}
+```{r, eval=FALSE, echo = TRUE}
 # during step 3
 my_mod <- rand_forest(mtry = tune(), # this specifies that we'll take steps later to tune the model
                 min_n = tune(),
@@ -375,6 +375,7 @@ my_mod <- rand_forest(mtry = tune(), # this specifies that we'll take steps late
 ]
 
 .panel[.panel-name[vfcv]
+
 ```{r, eval = FALSE, echo = TRUE}
 # during Step 4
 fitted_model_resamples <- fit_resamples(my_wf, resamples = vfcv, metrics = class_metrics) # instead of fit()
@@ -452,3 +453,16 @@ And Rodriguez et al. (2021) and Gobert et al. (2013) (*optional*)
 ]
 ]
 
+
+---
+
+# *fin*
+
+We hope to see you in the ML topic area learning labs!
+
+- *Dr. Joshua Rosenberg* (jmrosenberg@utk.edu; https://joshuamrosenberg.com)
+- *Dr. Peng  He* (hepeng1@msu.edu)
+
+[These slides (Introductory Presentation)](https://laser-institute.github.io/machine-learning/introductory-presentation.html#1)
+
+[General troubleshooting tips for R and RStudio](https://docs.google.com/document/d/14Jc-KG3m5k1BvyKWqw7KmDD21IugU5nV5edfJkZyspY/edit)
