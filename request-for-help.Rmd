@@ -8,3 +8,6 @@ date: "2023-06-09"
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+Check out this document! 
+
+Google Doc: https://docs.google.com/document/d/14Jc-KG3m5k1BvyKWqw7KmDD21IugU5nV5edfJkZyspY/edit

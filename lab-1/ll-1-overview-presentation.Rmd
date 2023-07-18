@@ -395,6 +395,15 @@ Estrellado, R. A., Freer, E. A., Mostipak, J., Rosenberg, J. M., & Velásquez, I
 
 ---
 
+# Troubleshooting and setup
+
+- Please view [this Google doc](https://docs.google.com/document/d/14Jc-KG3m5k1BvyKWqw7KmDD21IugU5nV5edfJkZyspY/edit)
+- Change default settings: Tools -> Global Settings -> Workspace -> DO NOT restore workspace 
+- Change default settings: Tools -> Global Settings -> Workspace -> Save workspace to .RData NEVER
+- Session -> Restart R and Clear Output is a good place to start
+
+---
+
 # *fin*
 
 We hope to see you in the ML topic area learning labs!
