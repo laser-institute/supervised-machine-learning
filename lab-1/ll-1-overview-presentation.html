@@ -158,13 +158,13 @@ These are joined together (see `oulad.R`) for this learning lab. You'll be doing
 
 ```
 ## # A tibble: 3 × 15
-##   code_module code_presentation id_student gender region         highest_education imd_band age_band num_of_prev_attempts
-##   &lt;chr&gt;       &lt;chr&gt;                  &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;          &lt;chr&gt;             &lt;chr&gt;    &lt;chr&gt;                   &lt;dbl&gt;
-## 1 AAA         2013J                  11391 M      East Anglian … HE Qualification  90-100%  55&lt;=                        0
-## 2 AAA         2013J                  28400 F      Scotland       HE Qualification  20-30%   35-55                       0
-## 3 AAA         2013J                  30268 F      North Western… A Level or Equiv… 30-40%   35-55                       0
-## # ℹ 6 more variables: studied_credits &lt;dbl&gt;, disability &lt;chr&gt;, final_result &lt;chr&gt;, module_presentation_length &lt;dbl&gt;,
-## #   date_registration &lt;dbl&gt;, date_unregistration &lt;dbl&gt;
+##   code_module code_presentation id_student gender region  highest_education imd_band age_band num_of_prev_attempts studied_credits
+##   &lt;chr&gt;       &lt;chr&gt;                  &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;   &lt;chr&gt;             &lt;chr&gt;    &lt;chr&gt;                   &lt;dbl&gt;           &lt;dbl&gt;
+## 1 AAA         2013J                  11391 M      East A… HE Qualification  90-100%  55&lt;=                        0             240
+## 2 AAA         2013J                  28400 F      Scotla… HE Qualification  20-30%   35-55                       0              60
+## 3 AAA         2013J                  30268 F      North … A Level or Equiv… 30-40%   35-55                       0              60
+## # ℹ 5 more variables: disability &lt;chr&gt;, final_result &lt;chr&gt;, module_presentation_length &lt;dbl&gt;, date_registration &lt;dbl&gt;,
+## #   date_unregistration &lt;dbl&gt;
 ```
 
 ]
@@ -230,9 +230,7 @@ transforming, and merging data.
 - A key concept in the context of supervised machine learning is training vs. testing data:
 - Training data: Data we use to **fit** (or train, AKA estimate) a supervised machine learning **model** (AKA algorithm)
 - Testing data: Data we use to see how well our model did---not used to fit the model
-- By splitting out data into training and testing _sets_, we can obtain valid metrics for how good our model is at predicting
-- Increased bias, in the form of an over-fit model 
-
+- By splitting out data into training and testing _sets_, we can obtain unbiased metrics for how good our model is at predicting
 ]
 
 ]
@@ -253,7 +251,7 @@ library(tidyverse)
 library(tidymodels)
 
 starwars_recoded &lt;- starwars %&gt;% # built-in data available just by typing
-    mutate(species_human = ifelse(species == "Human", 1, 0)) # recoding species to create a 0-1 outcome
+    mutate(species_human = ifelse(species == "Human", "Human", "Not human")) # recoding species to create a categorical variable
 
 starwars_recoded %&gt;% 
     count(species) # how many humans are there?
@@ -294,14 +292,12 @@ my_rec &lt;- recipe(species_human ~ height + mass, data = data_train)
 
 ```r
 # specify model
-my_mod &lt;-
-    logistic_reg() %&gt;% 
+my_mod &lt;- logistic_reg() %&gt;% 
     set_engine("glm") %&gt;%
     set_mode("classification")
 
 # specify workflow
-my_wf &lt;-
-    workflow() %&gt;%
+my_wf &lt;- workflow() %&gt;%
     add_model(my_mod) %&gt;% 
     add_recipe(my_rec)
 ```
@@ -344,7 +340,7 @@ final_fit %&gt;%
 
 .panel[.panel-name[Reflecting]
 
-- Why not use our testing data to evaluate how good our model is?
+- Why not use our training data to evaluate how good our model is?
 
 ]
 
