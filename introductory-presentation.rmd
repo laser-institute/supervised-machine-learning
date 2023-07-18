@@ -66,18 +66,7 @@ xaringanExtra::use_tile_view()
 class: clear, inverse, center, middle
 
 # Front Matter
----
 
-## Joshua (Josh) Rosenberg  
-Associate Professor of STEM Education at the University of Tennessee, Knoxville
-
-```{r, echo = FALSE, out.width="20%", fig.align='center'}
-knitr::include_graphics("img/jr-fam.jpeg")
-```
-
-- https://datascienceineducation.com/
-- [Project CREDIBLE](https://cehhs.utk.edu/2023/05/12/data-in-biology-teaching-environments/)
-- *And*: methodological privacy, computational grounded theory, CS education, data science education
 ---
 
 # Goals for this module
@@ -101,18 +90,6 @@ knitr::include_graphics("lab-1/img/gpt-4.png")
 
 *Builds upon supervised machine learning models--namely, deep neural networks, the likes of which can be estimated within R; the big advance has to do with the transformer architecture that allows for the fitting of more complex models. It is still important (maybe necessary) to learn about the foundational techniques and methodologies underlying GPT-4.*
 
----
-
-# How I came to ML
-
-**A magical moment**
-- Learned about supervised machine learning from a colleague
-- Used these methods to discover patterns in students' embedded assessments (here)[https://link.springer.com/article/10.1007/s10956-020-09862-4]
-
-**Using Twitter users profile descriptions to predict whether or not they were teachers**
-- Manually coded > 500 profiles for whether they were teachers or non-teachers and then trained a ML model to predict 1000s of teachers' roles as teachers or non-teachers (with an accuracy of 85%) [here](https://journals.sagepub.com/doi/full/10.1177/23328584211024261)
-
-**Using audio data, prosodic features, automatic speech recognition, and send related methods**
 
 ---
 
