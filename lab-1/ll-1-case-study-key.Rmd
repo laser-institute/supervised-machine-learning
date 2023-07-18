@@ -315,7 +315,7 @@ the feature engineering stage).
 First, since we are interested in developing a model that can predict
 whether a student is at risk of dropping a course, and so we can
 intervene before that happens, we need an outcome variable that let's us
-know if they have withdrawn.
+know if they have passed.
 
 To create this variable, let's use the `mutate()` function to create a
 dichotomous variable for whether or not the student withdrew from the
@@ -325,8 +325,8 @@ variable.
 
 ```{r}
 students <- students %>% 
-    mutate(withdrawn = ifelse(final_result == "Withdrawn", 1, 0)) %>% # creates a new variable named "withdrawn" and a dummy code of 1 if value of final_result equals "Withdrawn" and 0 if not
-    mutate(withdrawn = as.factor(withdrawn)) # makes the variable a factor, helping later steps
+    mutate(pass = ifelse(final_result == "Pass", 1, 0)) %>% # creates a new variable named "pass" and a dummy code of 1 if value of final_result equals "pass" and 0 if not
+    mutate(pass = as.factor(pass)) # makes the variable a factor, helping later steps
 ```
 
 **Note**: The [`mutate()`
@@ -601,12 +601,12 @@ as we used it here has two arguments:
     the data itself; it is only used to catalog the names of the
     variables and their types, like factors, integers, dates, etc.
 
-Let's create a recipe where we predict `withdrawn` (the outcome
+Let's create a recipe where we predict `pass` (the outcome
 variable) on the basis of the `disability` and `imd_band` (predictor)
 variables.
 
 ```{r}
-my_rec <- recipe(withdrawn ~ disability + imd_band, data = data_train)
+my_rec <- recipe(pass ~ disability + imd_band, data = data_train)
 
 my_rec
 ```
@@ -750,7 +750,7 @@ final_fit %>%
 This is our first set of real output! Note two things:
 
 1.  `.pres_class`: This is the *predicted* code\
-2.  `withdrawn`: This is the known *code*
+2.  `pass`: This is the known *code*
 
 When these are **the same**, the model predicted the code *correctly*;
 when they aren't the same, the model was incorrect.
@@ -762,8 +762,8 @@ following chunk of code:
 ```{r}
 final_fit %>% 
     collect_predictions() %>% # see test set predictions
-    select(.pred_class, withdrawn) %>% # just to make the output easier to view 
-    mutate(correct = .pred_class == withdrawn) # create a new variable, correct, telling us when the model was and was not correct
+    select(.pred_class, pass) %>% # just to make the output easier to view 
+    mutate(correct = .pred_class == pass) # create a new variable, correct, telling us when the model was and was not correct
 ```
 
 You may notice some of the rows may be missing values. This is because
@@ -777,8 +777,8 @@ values of `correct`:
 ```{r}
 final_fit %>% 
     collect_predictions() %>% # see test set predictions
-    select(.pred_class, withdrawn) %>% # just to make the output easier to view 
-    mutate(correct = .pred_class == withdrawn) %>% # create a new variable, correct, telling us when the model was and was not correct
+    select(.pred_class, pass) %>% # just to make the output easier to view 
+    mutate(correct = .pred_class == pass) %>% # create a new variable, correct, telling us when the model was and was not correct
     tabyl(correct)
 ```
 
@@ -800,20 +800,20 @@ final_fit %>%
 
 How accurate was our predictive model? Consider how well our model would
 have done by chance alone -- what would the accuracy be in that case
-(with the model predicting withdrawn one-half of the time)?
+(with the model predicting pass one-half of the time)?
 
 ```{r}
 students %>% 
-    count(withdrawn)
+    count(pass)
 
 students %>% 
     mutate(prediction = sample(c(0, 1), nrow(students), replace = TRUE)) %>% 
-    mutate(correct = if_else(prediction == 1 & withdrawn == 1 |
-               prediction == 0 & withdrawn == 0, 1, 0)) %>% 
+    mutate(correct = if_else(prediction == 1 & pass == 1 |
+               prediction == 0 & pass == 0, 1, 0)) %>% 
     tabyl(correct)
 ```
 
-Curiously, randomly picking a 0 (did not withdraw) or a 1 (withdrawn)
+Curiously, randomly picking a 0 (did not withdraw) or a 1 (pass)
 will *always* lead to around a 50% accuracy, regardless of how many
 observations are actually associated with a 0 or a 1.
 
