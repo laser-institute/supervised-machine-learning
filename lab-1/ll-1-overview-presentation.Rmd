@@ -244,9 +244,7 @@ transforming, and merging data.
 - A key concept in the context of supervised machine learning is training vs. testing data:
 - Training data: Data we use to **fit** (or train, AKA estimate) a supervised machine learning **model** (AKA algorithm)
 - Testing data: Data we use to see how well our model did---not used to fit the model
-- By splitting out data into training and testing _sets_, we can obtain valid metrics for how good our model is at predicting
-- Increased bias, in the form of an over-fit model 
-
+- By splitting out data into training and testing _sets_, we can obtain unbiased metrics for how good our model is at predicting
 ]
 
 ]
@@ -266,7 +264,7 @@ library(tidyverse)
 library(tidymodels)
 
 starwars_recoded <- starwars %>% # built-in data available just by typing
-    mutate(species_human = ifelse(species == "Human", 1, 0)) # recoding species to create a 0-1 outcome
+    mutate(species_human = ifelse(species == "Human", "Human", "Not human")) # recoding species to create a categorical variable
 
 starwars_recoded %>% 
     count(species) # how many humans are there?
@@ -304,14 +302,12 @@ my_rec <- recipe(species_human ~ height + mass, data = data_train)
 
 ```{r, echo = TRUE, eval = FALSE}
 # specify model
-my_mod <-
-    logistic_reg() %>% 
+my_mod <- logistic_reg() %>% 
     set_engine("glm") %>%
     set_mode("classification")
 
 # specify workflow
-my_wf <-
-    workflow() %>%
+my_wf <- workflow() %>%
     add_model(my_mod) %>% 
     add_recipe(my_rec)
 ```
@@ -352,7 +348,7 @@ final_fit %>%
 
 .panel[.panel-name[Reflecting]
 
-- Why not use our testing data to evaluate how good our model is?
+- Why not use our training data to evaluate how good our model is?
 
 ]
 

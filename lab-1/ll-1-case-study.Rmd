@@ -320,6 +320,7 @@ variable.
 students <- students %>%
     mutate(pass = ifelse(final_result == "Pass", 1, 0)) %>% # creates a new variable named "pass" and a dummy code of 1 if value of final_result equals "pass" and 0 if not
     mutate(pass = as.factor(pass)) # makes the variable a factor, helping later steps
+
 ```
 
 **Note**: The [`mutate()`
