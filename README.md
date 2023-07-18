@@ -13,7 +13,7 @@ We have some data and want to develop a prediction model. Supervised machine lea
 
 **Machine Learning Learning Lab 2: Interpretation**
 
-How do we interpret a machine learning model? What else can we say, besides how accurate a model this? This learning lab is intended to help you to answer these questions by examining output from a classification and a regression model. We again use the OULAD, but add an assessment file.
+How do we interpret a machine learning model? What else can we say, besides how accurate a model is? This learning lab is intended to help you to answer these questions by examining output from a classification and a regression model. We again use the OULAD, but add an assessment file.
 
 **Machine Learning Learning Lab 3: Feature Engineering**
 
