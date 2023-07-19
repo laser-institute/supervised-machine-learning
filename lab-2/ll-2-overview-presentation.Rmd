@@ -191,6 +191,8 @@ You can think of the following statistics as slicing and dicing the confusion ma
 
 
 ]
+
+
 ]
 
 ---
@@ -233,6 +235,14 @@ d %>%
 ]
 ]
 
+
+---
+
+# AUC-ROC
+
+- Informs us as to how the True Positive rate changes given a different classification threshhold
+- Classification threshhold: the probability above which a model makes a positive prediction
+- Higher is better
 
 ---
 
