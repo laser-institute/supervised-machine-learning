@@ -4,7 +4,7 @@
     <title>Machine Learning Learning Lab 3: Feature Engineering</title>
     <meta charset="utf-8" />
     <meta name="author" content="Dr. Joshua Rosenberg" />
-    <meta name="date" content="2023-07-18" />
+    <meta name="date" content="2023-07-20" />
     <script src="libs/header-attrs-2.22/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
@@ -37,7 +37,7 @@ class: clear, title-slide, inverse, center, top, middle
 # Machine Learning Learning Lab 3: Feature Engineering
 ----
 ### **Dr. Joshua Rosenberg**
-### July 18, 2023
+### July 20, 2023
 
 ---
 
@@ -82,7 +82,7 @@ How do we interpret a machine learning model? What else can we say, besides how 
 
 ---
 
-# Key Concept: Features and Feature Engineering (Part B)
+# Key Concept: Feature Engineering (Part B)
 
 .panelset[
 
@@ -118,7 +118,7 @@ Here's a time stamp:
 
 
 ```
-## [1] "2023-07-18 09:14:33 EDT"
+## [1] "2023-07-20 07:19:00 EDT"
 ```
 
 **How could this variable be used as a predictor variable?**
@@ -213,9 +213,9 @@ We could be optimizing our model for our testing data; when used with new data, 
 ## # A tibble: 3 × 3
 ##      id var_a var_b
 ##   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1     1 0.834 0.194
-## 2     2 0.238 0.385
-## 3     3 0.903 0.845
+## 1     1 0.753 0.445
+## 2     2 0.404 0.989
+## 3     3 0.983 0.953
 ```
 
 Using _k_ = 10, how can we split *n* = 100 cases into ten distinct training and testing sets?
@@ -287,9 +287,9 @@ As you can imagine, with many variables, these trees can become very complex
 
 ]
 
-.panel[.panel-name[Takeaways]
+.panel[.panel-name[Key points]
 
-- Random forest is an extension of decision tree modeling whereby a collection of decision trees are sequentially **estimated using training data** - and **validated/tested using testing data**
+- A Random forest is an extension of decision tree modeling whereby a collection of decision trees are sequentially **estimated using training data** - and **validated/tested using testing data**
 - Different _samples_ of predictors are sampled for inclusion in each individual tree
 - Highly complex and non-linear relationships between variables can be estimated
 - Each tree is independent of every other tree  
@@ -297,7 +297,7 @@ As you can imagine, with many variables, these trees can become very complex
 - For regression ML, the mean or average prediction of the individual trees is returned
 ]
 
-.panel[.panel-name[For later]
+.panel[.panel-name[And more...]
 
 - There are several important tuning parameters for these models:
     - the number of predictor variables that are randomly sampled for each split (`mtry`)
@@ -356,10 +356,8 @@ kfcv
 
 ```r
 # during step 3
-my_mod &lt;- rand_forest(mtry = tune(), # this specifies that we'll take steps later to tune the model
-                min_n = tune(),
-                trees = tune()) %&gt;%
-    set_engine("ranger", importance = "impurity") %&gt;%
+my_mod &lt;- rand_forest() %&gt;% # different
+    set_engine("ranger", importance = "impurity") %&gt;% # different and with importance
     set_mode("classification")
 ```
 
@@ -369,8 +367,9 @@ my_mod &lt;- rand_forest(mtry = tune(), # this specifies that we'll take steps l
 
 
 ```r
-# during Step 4
-fitted_model_resamples &lt;- fit_resamples(my_wf, resamples = vfcv, metrics = class_metrics) # instead of fit()
+fitted_model_resamples &lt;- fit_resamples(my_wf, 
+                                        resamples = vfcv, # different
+                                        metrics = class_metrics) # instead of fit()
 ```
 ]
 
@@ -378,7 +377,6 @@ fitted_model_resamples &lt;- fit_resamples(my_wf, resamples = vfcv, metrics = cl
 
 
 ```r
-# during Step 5
 collect_metrics(fitted_model_resamples)
 ```
 ]
@@ -433,9 +431,10 @@ And Rodriguez et al. (2021) and Gobert et al. (2013) (*optional*)
 
 .panel[.panel-name[Case Study]
 
-- Using interaction data
-- Adding features 
-- Interpreting the change in our predictions
+- Using (filtered) interaction data (whole data [here](https://analyse.kmi.open.ac.uk/open_dataset))
+- Adding features related to _activity type_
+- Once again interpreting the change in our predictions
+(a bit more on the bias-variance trade-off [here](https://jrosen48.github.io/ML-in-Science-Education-Workshop-Materials/#23)) (through slide 30)
 
 ]
 
