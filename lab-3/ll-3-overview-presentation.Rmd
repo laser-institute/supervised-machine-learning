@@ -103,7 +103,7 @@ How do we interpret a machine learning model? What else can we say, besides how 
 
 ---
 
-# Key Concept: Features and Feature Engineering (Part B)
+# Key Concept: Feature Engineering (Part B)
 
 .panelset[
 
@@ -300,9 +300,9 @@ As you can imagine, with many variables, these trees can become very complex
 
 ]
 
-.panel[.panel-name[Takeaways]
+.panel[.panel-name[Key points]
 
-- Random forest is an extension of decision tree modeling whereby a collection of decision trees are sequentially **estimated using training data** - and **validated/tested using testing data**
+- A Random forest is an extension of decision tree modeling whereby a collection of decision trees are sequentially **estimated using training data** - and **validated/tested using testing data**
 - Different _samples_ of predictors are sampled for inclusion in each individual tree
 - Highly complex and non-linear relationships between variables can be estimated
 - Each tree is independent of every other tree  
@@ -310,7 +310,7 @@ As you can imagine, with many variables, these trees can become very complex
 - For regression ML, the mean or average prediction of the individual trees is returned
 ]
 
-.panel[.panel-name[For later]
+.panel[.panel-name[And more...]
 
 - There are several important tuning parameters for these models:
     - the number of predictor variables that are randomly sampled for each split (`mtry`)
@@ -365,10 +365,8 @@ kfcv
 
 ```{r, eval=FALSE, echo = TRUE}
 # during step 3
-my_mod <- rand_forest(mtry = tune(), # this specifies that we'll take steps later to tune the model
-                min_n = tune(),
-                trees = tune()) %>%
-    set_engine("ranger", importance = "impurity") %>%
+my_mod <- rand_forest() %>% # different
+    set_engine("ranger", importance = "impurity") %>% # different and with importance
     set_mode("classification")
 ```
 
@@ -377,15 +375,15 @@ my_mod <- rand_forest(mtry = tune(), # this specifies that we'll take steps late
 .panel[.panel-name[vfcv]
 
 ```{r, eval = FALSE, echo = TRUE}
-# during Step 4
-fitted_model_resamples <- fit_resamples(my_wf, resamples = vfcv, metrics = class_metrics) # instead of fit()
+fitted_model_resamples <- fit_resamples(my_wf, 
+                                        resamples = vfcv, # different
+                                        metrics = class_metrics) # instead of fit()
 ```
 ]
 
 .panel[.panel-name[vfcv]
 
 ```{r, eval = FALSE, echo = TRUE}
-# during Step 5
 collect_metrics(fitted_model_resamples)
 ```
 ]
@@ -439,9 +437,10 @@ And Rodriguez et al. (2021) and Gobert et al. (2013) (*optional*)
 
 .panel[.panel-name[Case Study]
 
-- Using interaction data
-- Adding features 
-- Interpreting the change in our predictions
+- Using (filtered) interaction data (whole data [here](https://analyse.kmi.open.ac.uk/open_dataset))
+- Adding features related to _activity type_
+- Once again interpreting the change in our predictions
+(a bit more on the bias-variance trade-off [here](https://jrosen48.github.io/ML-in-Science-Education-Workshop-Materials/#23)) (through slide 30)
 
 ]
 

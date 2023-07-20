@@ -162,17 +162,15 @@ data_for_conf_mat %>%
 
 .panel[.panel-name[Conf Mat]
 
-You can think of the following statistics as slicing and dicing the confusion matrix you created above, revealing insights in the process.
+**Accuracy**: Prop. of the sample that is true positive or true negative
 
-**Accuracy**: Proportion of the population that is true positive or true negative
+**True positive (TP)**: Prop. of the sample that is affected by a condition and correctly tested positive
 
-**True positive (TP)**: Proportion of the population that is affected by a condition and correctly tested positive
+**True negative (TN)**: Prop. of the sample that is not affected by a condition and correctly tested negative
 
-**True negative (TN)**: Proportion of the population that is not affected by a condition and correctly tested negative
+**False positive (FP)**: Prop. of the sample that is not affected by a condition and incorrectly tested positive
 
-**False positive (FP)**: Proportion of the population that is not affected by a condition and incorrectly tested positive
-
-**False negative (FN)**: Proportion of the population that is affected by a condition and incorrectly tested positive.
+**False negative (FN)**: Prop. of the sample that is affected by a condition and incorrectly tested positive.
 
 ]
 
@@ -191,6 +189,8 @@ You can think of the following statistics as slicing and dicing the confusion ma
 
 
 ]
+
+
 ]
 
 ---
@@ -212,17 +212,6 @@ d %>% head(3)
 
 ]
 
-.panel[.panel-name[Why?]
-
-```{r, out.width="30%"}
-d %>% 
-    ggplot(aes(x = time_point, y = var_a)) +
-    geom_point()
-```
-
-]
-
-
 .panel[.panel-name[How?]
 
 - We can do all of these things **manually**
@@ -233,6 +222,14 @@ d %>%
 ]
 ]
 
+
+---
+
+# AUC-ROC
+
+- Informs us as to how the True Positive rate changes given a different classification threshhold
+- Classification threshhold: the probability above which a model makes a positive prediction
+- Higher is better
 
 ---
 
@@ -249,11 +246,10 @@ library(tidyverse)
 library(tidymodels)
 
 starwars_recoded <- starwars %>% # built-in data available just by typing
-    mutate(species_human = ifelse(species == "Human", 1, 0), # recoding species to create a 0-1 outcome 
-           species_human = as.factor(species_human)) # changing to a factor
+    mutate(species_human = ifelse(species == "Human", "human", "not human"))
 
 starwars_recoded %>% 
-    count(species) # how many humans are there?
+    count(species_human) # how many humans are there?
 ```
 
 ]
@@ -263,10 +259,9 @@ starwars_recoded %>%
 **Split data**
 
 ```{r, echo = TRUE, eval = FALSE}
-train_test_split <- initial_split(starwars_recoded, prop = .80)
+train_test_split <- initial_split(starwars_recoded, prop = .70)
 
 data_train <- training(train_test_split)
-data_test <- testing(train_test_split)
 ```
 
 ]
@@ -277,7 +272,8 @@ data_test <- testing(train_test_split)
 
 ```{r, echo = TRUE, eval = FALSE}
 # predicting humans based on the variables we used in LL1 + birth_year and homeworld
-my_rec <- recipe(species_human ~ height + mass + birth_year + eye_color, data = data_train)
+my_rec <- recipe(species_human ~ height + mass + birth_year + eye_color, data = data_train) %>% 
+    step_dummy(eye_color) # need to dummy code
 ```
 
 ]
@@ -295,8 +291,7 @@ my_mod <-
 my_wf <-
     workflow() %>%
     add_model(my_mod) %>% 
-    add_recipe(my_rec) %>% 
-    step_dummy(eye_color) # need to dummy code
+    add_recipe(my_rec)
 ```
 
 ]
