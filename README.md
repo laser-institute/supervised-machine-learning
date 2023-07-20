@@ -26,6 +26,7 @@ How do we interpret a machine learning model? What else can we say, besides how 
 Once we have trained a computer in the context of using supervised machine learning methods, we may realize we can improve it by adding new variables or changing how the variables we are using were prepared. We also use a random forest model, rather than the regression model we have been using. Also, we consider key feature engineering steps with interaction data from the OULAD data set.
 
 *Slides*: https://laser-institute.github.io/machine-learning/lab-3/ll-3-overview-presentation.html
+*Code-along*: https://github.com/laser-institute/machine-learning/blob/main/lab-3/lab-3-code-along.R
 
 **Machine Learning Learning Lab 4: Unsupervised Methods**
 
