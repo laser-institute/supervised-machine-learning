@@ -70,10 +70,10 @@ The previous three learning labs involved the use of data with known outcome var
 
 .panelset[
 
-panel[.panel-name[Background p1]
+.panel[.panel-name[Background  p1]
 
 
-### What technique should I choose?
+### Which technique should I choose?
 
 Do you have coded data or data with a known outcome -- let's say about K-12 students -- and, do you want to:
 
@@ -84,7 +84,7 @@ Do you have coded data or data with a known outcome -- let's say about K-12 stud
 <bold><h4><center>Supervised methods may be your best bet</center></h4></bold>
 ]
 
-.panel[.panel-name[Background p2]
+.panel[.panel-name[Background]
 
 ### What technique should I choose?
 
@@ -101,7 +101,7 @@ Do you not yet have codes/outcomes -- and do you want to?
 
 .panel[.panel-name[Getting Started]
 
-- For what kinds of specific studies or use cases might unsupervised methods be helpful?
+- For what kinds of specific studies or use cases might unsupervised methods be helpful in your research?
 
 ]
 
