@@ -15,6 +15,12 @@ The final activity for each learning lab provides space to work with data and to
 
 To earn a badge for each lab, you are required to respond to a set of prompts for two parts:
 
+```{r}
+
+```
+
+
+
 -   In Part I, you will extend our model by adding another variable.
 
 -   In Part II, you will reflect on your understanding of key concepts and begin to think about potential next steps for your own study.

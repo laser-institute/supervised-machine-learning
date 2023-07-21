@@ -618,9 +618,8 @@ as we used it here has two arguments:
     the data itself; it is only used to catalog the names of the
     variables and their types, like factors, integers, dates, etc.
 
-Let's create a recipe where we predict `pass` (the outcome
-variable) on the basis of the `disability` and `imd_band` (predictor)
-variables.
+Let's create a recipe where we predict `pass` (the outcome variable) on
+the basis of the `disability` and `imd_band` (predictor) variables.
 
 ```{r}
 my_rec <- recipe(pass ~ disability + imd_band, data = data_train)
@@ -830,8 +829,8 @@ students %>%
     tabyl(correct)
 ```
 
-Curiously, randomly picking a 0 (did not pass) or a 1 (passed)
-will *always* lead to around a 50% accuracy, regardless of how many
+Curiously, randomly picking a 0 (did not pass) or a 1 (passed) will
+*always* lead to around a 50% accuracy, regardless of how many
 observations are actually associated with a 0 or a 1.
 
 **Observation**
