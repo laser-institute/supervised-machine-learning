@@ -33,3 +33,11 @@ Once we have trained a computer in the context of using supervised machine learn
 The previous three learning labs involved the use of data with known outcome variables in the first three learning labs. Accordingly, we explored different aspects of supervised machine learning. What if we have data without something that we can consider to be a dependent variable? Unsupervised machine learning methods can be used in such cases. Herein, we use Latent Profile Analysis with quantified, transcribed audio data from mathematics classrooms. We interpret the output of Latent Profile Analysis from a Computational Grounded Theory approach.
 
 *Slides*: https://laser-institute.github.io/machine-learning/lab-4/ll-4-overview-presentation.html
+
+**Resources**
+
+- [R4DS](https://r4ds.had.co.nz/)
+- [HMLR](https://bradleyboehmke.github.io/HOML/)
+- [DSIEUR](https://datascienceineducation.com/)
+- [SMLTAR](https://smltar.com/)
+- [TMWR](https://www.tmwr.org/)
