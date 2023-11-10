@@ -4,8 +4,8 @@
     <title>Machine Learning Learning Lab 2: Interpretation</title>
     <meta charset="utf-8" />
     <meta name="author" content="Dr. Joshua Rosenberg" />
-    <meta name="date" content="2023-07-19" />
-    <script src="libs/header-attrs-2.22/header-attrs.js"></script>
+    <meta name="date" content="2023-11-10" />
+    <script src="libs/header-attrs-2.24/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
     <script src="libs/panelset-0.2.6/panelset.js"></script>
@@ -13,8 +13,8 @@
     <link href="libs/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.css" rel="stylesheet" />
     <script src="libs/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.js"></script>
     <script>window.xaringanExtraClipboard(null, {"button":"<i class=\"fa fa-clipboard\"><\/i>","success":"<i class=\"fa fa-check\" style=\"color: #90BE6D\"><\/i>","error":"Press Ctrl+C to Copy"})</script>
-    <link href="libs/font-awesome-6.4.0/css/all.min.css" rel="stylesheet" />
-    <link href="libs/font-awesome-6.4.0/css/v4-shims.min.css" rel="stylesheet" />
+    <link href="libs/font-awesome-6.4.2/css/all.min.css" rel="stylesheet" />
+    <link href="libs/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet" />
     <link href="libs/tile-view-0.2.6/tile-view.css" rel="stylesheet" />
     <script src="libs/tile-view-0.2.6/tile-view.js"></script>
     <link rel="stylesheet" href="css/laser.css" type="text/css" />
@@ -38,7 +38,7 @@ class: clear, title-slide, inverse, center, top, middle
 # Machine Learning Learning Lab 2: Interpretation
 ----
 ### **Dr. Joshua Rosenberg**
-### July 19, 2023
+### November 10, 2023
 
 ---
 
@@ -296,7 +296,7 @@ my_wf &lt;-
 ```r
 fitted_model &lt;- fit(my_wf, data = data_train) # ignore warning for this example
 class_metrics &lt;- metric_set(accuracy, sensitivity, specificity, ppv, npv, kap) # this is new
-final_fit &lt;- last_fit(fitted_model, train_test_split)
+final_fit &lt;- last_fit(fitted_model, train_test_split, metrics = class_metrics)
 ```
 
 ]
