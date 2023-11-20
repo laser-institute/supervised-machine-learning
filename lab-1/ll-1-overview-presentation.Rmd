@@ -1,5 +1,5 @@
 ---
-title: "Machine Learning Learning Lab 1 Overview: Prediction"
+title: "Machine Learning Learning Lab 1: Prediction"
 subtitle: "Overview Presentation"
 author: "**Dr. Joshua Rosenberg**"
 institute: "LASER Institute"

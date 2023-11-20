@@ -64,7 +64,7 @@ xaringanExtra::use_tile_view()
 
 # Purpose and Agenda
 
-How do we interpret a machine learning model? What else can we say, besides how accurate a model this? This learning lab is intended to help you to answer these questions by examining output from a classification and a regression model. We again use the OULAD, but add an assessment file.
+Having fit and interpreted our machine learning model, how do we make our model better? That's the focus of this learning lab. There are three core ideas, pertaining to feature engineering, resampling, and the random forest algorithm. We again use the OULAD data.
 
 ## What we'll do in this presentation
 
@@ -231,7 +231,7 @@ d <- tibble(id = 1:100, var_a = runif(100), var_b = runif(100))
 ```
 
 ```{r}
-d %>% head(3)
+d %>% head(2)
 ```
 
 Using _k_ = 10, how can we split *n* = 100 cases into ten distinct training and testing sets?
@@ -323,7 +323,6 @@ As you can imagine, with many variables, these trees can become very complex
 
 ---
 
-
 # Coding Walkthrough
 
 .panelset[
@@ -332,6 +331,7 @@ As you can imagine, with many variables, these trees can become very complex
 
 ```{r, eval = FALSE, echo = TRUE}
 library(ggrepel)
+library(tidyverse)
 
 ggplot(starwars, aes(x = height, label = name)) +
     geom_histogram()
@@ -354,6 +354,8 @@ ggplot(starwars, aes(x = height, y = mass, label = name)) +
 .panel[.panel-name[vfcv]
 
 ```{r, eval = FALSE, echo = TRUE}
+library(tidymodels)
+
 # during Step 1
 kfcv <- vfold_cv(data_train, v = 20) # this differentiates this from what we did before
 # before, we simple used data_train to fit our model

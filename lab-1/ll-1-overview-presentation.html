@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="" xml:lang="">
   <head>
-    <title>Machine Learning Learning Lab 1 Overview: Prediction</title>
+    <title>Machine Learning Learning Lab 1: Prediction</title>
     <meta charset="utf-8" />
     <meta name="author" content="Dr. Joshua Rosenberg" />
-    <meta name="date" content="2023-07-26" />
-    <script src="libs/header-attrs-2.22/header-attrs.js"></script>
+    <meta name="date" content="2023-11-20" />
+    <script src="libs/header-attrs-2.24/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
     <script src="libs/panelset-0.2.6/panelset.js"></script>
@@ -13,8 +13,8 @@
     <link href="libs/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.css" rel="stylesheet" />
     <script src="libs/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.js"></script>
     <script>window.xaringanExtraClipboard(null, {"button":"<i class=\"fa fa-clipboard\"><\/i>","success":"<i class=\"fa fa-check\" style=\"color: #90BE6D\"><\/i>","error":"Press Ctrl+C to Copy"})</script>
-    <link href="libs/font-awesome-6.4.0/css/all.min.css" rel="stylesheet" />
-    <link href="libs/font-awesome-6.4.0/css/v4-shims.min.css" rel="stylesheet" />
+    <link href="libs/font-awesome-6.4.2/css/all.min.css" rel="stylesheet" />
+    <link href="libs/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet" />
     <link href="libs/tile-view-0.2.6/tile-view.css" rel="stylesheet" />
     <script src="libs/tile-view-0.2.6/tile-view.js"></script>
     <link rel="stylesheet" href="css/laser.css" type="text/css" />
@@ -35,9 +35,9 @@ class: clear, title-slide, inverse, center, top, middle
 
 
 
-# Machine Learning Learning Lab 1 Overview: Prediction
+# Machine Learning Learning Lab 1: Prediction
 ### **Dr. Joshua Rosenberg**
-### July 26, 2023
+### November 20, 2023
 
 ---
 
@@ -158,17 +158,15 @@ These are joined together (see `oulad.R`) for this learning lab. You'll be doing
 
 ```
 ## # A tibble: 3 × 15
-##   code_module code_presentation id_student gender region
-##   &lt;chr&gt;       &lt;chr&gt;                  &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt; 
-## 1 AAA         2013J                  11391 M      East …
-## 2 AAA         2013J                  28400 F      Scotl…
-## 3 AAA         2013J                  30268 F      North…
-## # ℹ 10 more variables: highest_education &lt;chr&gt;,
-## #   imd_band &lt;chr&gt;, age_band &lt;chr&gt;,
-## #   num_of_prev_attempts &lt;dbl&gt;, studied_credits &lt;dbl&gt;,
-## #   disability &lt;chr&gt;, final_result &lt;chr&gt;,
-## #   module_presentation_length &lt;dbl&gt;,
-## #   date_registration &lt;dbl&gt;, date_unregistration &lt;dbl&gt;
+##   code_module code_presentation id_student gender region    highest_education imd_band
+##   &lt;chr&gt;       &lt;chr&gt;                  &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;     &lt;chr&gt;             &lt;chr&gt;   
+## 1 AAA         2013J                  11391 M      East Ang… HE Qualification  90-100% 
+## 2 AAA         2013J                  28400 F      Scotland  HE Qualification  20-30%  
+## 3 AAA         2013J                  30268 F      North We… A Level or Equiv… 30-40%  
+## # ℹ 8 more variables: age_band &lt;chr&gt;, num_of_prev_attempts &lt;dbl&gt;,
+## #   studied_credits &lt;dbl&gt;, disability &lt;chr&gt;, final_result &lt;chr&gt;,
+## #   module_presentation_length &lt;dbl&gt;, date_registration &lt;dbl&gt;,
+## #   date_unregistration &lt;dbl&gt;
 ```
 
 ]

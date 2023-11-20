@@ -4,8 +4,8 @@
     <title>Machine Learning Learning Lab 3: Feature Engineering</title>
     <meta charset="utf-8" />
     <meta name="author" content="Dr. Joshua Rosenberg" />
-    <meta name="date" content="2023-07-20" />
-    <script src="libs/header-attrs-2.22/header-attrs.js"></script>
+    <meta name="date" content="2023-11-20" />
+    <script src="libs/header-attrs-2.24/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
     <script src="libs/panelset-0.2.6/panelset.js"></script>
@@ -13,8 +13,8 @@
     <link href="libs/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.css" rel="stylesheet" />
     <script src="libs/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.js"></script>
     <script>window.xaringanExtraClipboard(null, {"button":"<i class=\"fa fa-clipboard\"><\/i>","success":"<i class=\"fa fa-check\" style=\"color: #90BE6D\"><\/i>","error":"Press Ctrl+C to Copy"})</script>
-    <link href="libs/font-awesome-6.4.0/css/all.min.css" rel="stylesheet" />
-    <link href="libs/font-awesome-6.4.0/css/v4-shims.min.css" rel="stylesheet" />
+    <link href="libs/font-awesome-6.4.2/css/all.min.css" rel="stylesheet" />
+    <link href="libs/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet" />
     <link href="libs/tile-view-0.2.6/tile-view.css" rel="stylesheet" />
     <script src="libs/tile-view-0.2.6/tile-view.js"></script>
     <link rel="stylesheet" href="css/laser.css" type="text/css" />
@@ -37,13 +37,13 @@ class: clear, title-slide, inverse, center, top, middle
 # Machine Learning Learning Lab 3: Feature Engineering
 ----
 ### **Dr. Joshua Rosenberg**
-### July 20, 2023
+### November 20, 2023
 
 ---
 
 # Purpose and Agenda
 
-How do we interpret a machine learning model? What else can we say, besides how accurate a model this? This learning lab is intended to help you to answer these questions by examining output from a classification and a regression model. We again use the OULAD, but add an assessment file.
+Having fit and interpreted our machine learning model, how do we make our model better? That's the focus of this learning lab. There are three core ideas, pertaining to feature engineering, resampling, and the random forest algorithm. We again use the OULAD data.
 
 ## What we'll do in this presentation
 
@@ -118,7 +118,7 @@ Here's a time stamp:
 
 
 ```
-## [1] "2023-07-20 07:19:00 EDT"
+## [1] "2023-11-20 15:57:53 EST"
 ```
 
 **How could this variable be used as a predictor variable?**
@@ -210,12 +210,11 @@ We could be optimizing our model for our testing data; when used with new data, 
 
 
 ```
-## # A tibble: 3 × 3
-##      id var_a var_b
-##   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1     1 0.753 0.445
-## 2     2 0.404 0.989
-## 3     3 0.983 0.953
+## # A tibble: 2 × 3
+##      id var_a  var_b
+##   &lt;int&gt; &lt;dbl&gt;  &lt;dbl&gt;
+## 1     1 0.488 0.0255
+## 2     2 0.316 0.799
 ```
 
 Using _k_ = 10, how can we split *n* = 100 cases into ten distinct training and testing sets?
@@ -310,7 +309,6 @@ As you can imagine, with many variables, these trees can become very complex
 
 ---
 
-
 # Coding Walkthrough
 
 .panelset[
@@ -320,6 +318,7 @@ As you can imagine, with many variables, these trees can become very complex
 
 ```r
 library(ggrepel)
+library(tidyverse)
 
 ggplot(starwars, aes(x = height, label = name)) +
     geom_histogram()
@@ -344,6 +343,8 @@ ggplot(starwars, aes(x = height, y = mass, label = name)) +
 
 
 ```r
+library(tidymodels)
+
 # during Step 1
 kfcv &lt;- vfold_cv(data_train, v = 20) # this differentiates this from what we did before
 # before, we simple used data_train to fit our model
