@@ -13,7 +13,7 @@ Machine learning is used in overt and covert ways throughout our lives, includin
 
 We have some data and want to develop a prediction model. Supervised machine learning is suited to this aim. In particular, in this learning lab, we explore how we can train a computer to predict students' withdrawal from a course. We use a large data set, the Open University Learning Analytics Dataset (OULAD), focusing on student data at this point. Our model at this point is relatively simple, a generalized linear model.
 
-*Slides and code-along*: https://laser-institute.github.io/machine-learning/lab-1/ll-1-overview-presentation.htm
+*Slides and code-along*: https://laser-institute.github.io/machine-learning/lab-1/ll-1-overview-presentation.html
 *Case study*: https://laser-institute.github.io/machine-learning/lab-1/ll-1-case-study.Rmd
 
 **Machine Learning Learning Lab 2: Interpretation**
