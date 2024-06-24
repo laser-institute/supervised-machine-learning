@@ -1,4 +1,4 @@
-# Machine Learning Learning Labs
+# Machine Learning
 
 Machine learning is increasingly prevalent in our lives---and in educational contexts. Its role in educational research and practice is growing, albeit with some challenges and even controversy. These learning labs are designed to familiarize you with machine learning and its applications in STEM education research. Throughout the module, we'll explore four key questions that correspond to the focus of each of the four learning labs. By the end, you will have a deep understanding of the key characteristics of machine learning and how to implement machine learning workflows in R and Python.
 
