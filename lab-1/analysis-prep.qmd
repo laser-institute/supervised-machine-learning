@@ -1,0 +1,12 @@
+---
+title: "Your Document Title"
+format: html
+jupyter: 
+  path: "~/.virtualenvs/r-reticulate/bin/python"
+---
+
+```{python}
+import pandas as pd
+
+1 + 1
+```

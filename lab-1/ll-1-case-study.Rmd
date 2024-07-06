@@ -1,5 +1,5 @@
 ---
-title: 'Learning Lab 4 Case Study'
+title: 'Learning Lab 1 Case Study'
 author: ""
 date: "`r format(Sys.Date(),'%B %e, %Y')`"
 output: 
@@ -18,98 +18,16 @@ bibliography: lit/references.bib
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
-set.seed(20230630) # so the results are readily reproducible
+set.seed(20240706) # so the results are readily reproducible
 ```
 
 ## 1. PREPARE
 
-While the past three case studies have involved *already-coded* data,
-sometimes, we do not have something that we can consider to be coded
-data---a dependent variable. But, machine learning does offer us way
-forward in such cases, but not through the supervised machine learning
-methods we've been using until this point. Instead, we can use
-*unsupervised* methods.
-
-The driving question for this learning lab is: *What if we do not have
-training data?*
-
-We answer this question in the context of *multimodal* data, or data
-from multiple channels, including not only the kinds of digital trace
-data and survey data, but also data from audio and video channels. This
-kind of data is often rich, but hard to interpret at a granular level.
-
-We'll be using audio data from mathematics classrooms collected as a
-part of Dyer's [*Learning Through Teaching* (LTT)
-project](https://www.proquest.com/openview/01af3361c531b12ea3caeda8b85b31fa/1?pq-origsite=gscholar&cbl=18750).
-
-In this project, hundreds of hours of video and audio were collected
-from high school and middle school classrooms. The specific data set we
-are using is transcribed data (via
-[Whisper](https://github.com/bnosac/audio.whisper) that is analyzed for
-the different affective or emotional sentiment it evidences. The goal of
-the study is to try to identify moments in the audio data that suggest
-negative affect on the part of students in the context of learning
-mathematics.
-
-How can we do this? We'll use the process of Latent Profile Analysis to
-try to identify how students' affect is expressed. We'll interpret this
-output through a *Computational Grounded Theory* approach, one that
-takes the output of techniques like Latent Profile Analysis as a
-starting point for subsequent qualitative analyses.
-
-Please consult two papers to get a good handle on the methodological
-background:
-
-First, Commeford et al. (2022) estimated profiles of college-levels
-instructors' teaching practices, specifically their teaching practices
-relating to active learning. They did so using Latent Profile Analysis
--- and [the tidyLPA package in
-R](https://data-edu.github.io/tidyLPA/index.html) that we'll be using.
-
-> Commeford, K., Brewe, E., & Traxler, A. (2022). Characterizing active
-> learning environments in physics using latent profile analysis.
-> Physical Review Physics Education Research, 18(1), 010113.
-> <https://github.com/laser-institute/essential-readings/blob/main/machine-learning/ml-lab-4/commeford-et-al-2022-per.pdf>
-
-Second, please read a paper that uses Computational Grounded
-Theory---here, in the context of students' written responses to in-class
-questions:
-
-> Rosenberg, J. M., & Krist, C. (2021). Combining machine learning and
-> qualitative methods to elaborate students' ideas about the generality
-> of their model-based explanations. *Journal of Science Education and
-> Technology, 30*, 255-267.
-
-One note for this learning lab. LPA can be a finnicky method; the best
-practices regarding model selection are often difficult to achieve in
-practice. We'll do our best working with the information we have - as we
-often have to do in practice. If publishing a paper, we can present
-these issues in our manuscript in a transparent manner.
-
-Optionally, read this very brief overview of tidyLPA:
-
-> Rosenberg, J. M., Beymer, P. N., Anderson, D. J., Van Lissa, C. J., &
-> Schmidt, J. A. (2019). tidyLPA: An R package to easily carry out
-> latent profile analysis (LPA) using open-source or commercial
-> software. Journal of Open Source Software, 3(30), 978.
-> <https://joss.theoj.org/papers/10.21105/joss.00978.pdf>
+We will be using data from the IPEDS.
 
 ## 2. WRANGLE
 
-First, let's load the packages we'll use---the familiar {tidyverse} and
-the {tidyLPA package}, as well as {tidytext} to do some basic text
-analysis.
-
 #### **👉 Your Turn** **⤵**
-
-```{r}
-
-```
-
-#### **👉 Your Turn** **⤵**
-
-Next, please read in the
-`r-processed-transcript`.csv`file, naming it`transcript\`.
 
 ```{r}
 
@@ -117,81 +35,9 @@ Next, please read in the
 
 ## 3. EXPLORE
 
-#### [Your Turn]{style="color: green;"} ⤵
-
-Please take a look at the data using a technique of your choice. Note
-the number of rows and the variables and their types.
-
 ```{r}
 
 ```
-
-Note how the `transcript_text` variable consists of transcripted *turns*
-of speech (not individual words), corresponding roughly to what an
-individual says in a conversation.
-
-We'll next do some analyses over several chunks to create the variables
-for the emotional expression evidenced in the transcripted data. Given
-the focus of this learning lab on Latent Profile Analysis, we'll treat
-this aspect in a more limited way. Please consider joining the first
-text analysis learning lab to gain a lot more context and to see in far
-greater detail how we can work with textual data in R.
-
-```{r}
-nrc <- get_sentiments("nrc") # this access sentiment
-
-transcript <- transcript %>% 
-    select(group, index, start, end, duration, transcript_text) # select the variables we'll be using
-
-transcript %>% 
-    unnest_tokens(word, transcript_text) %>% # this changes the data to be in "long" form, with each row consisting of individual words in the transcript data
-    left_join(nrc, relationship = "many-to-many") %>% # ignore warnings
-    count(sentiment)
-```
-
-Since each turn is of a different length, next, we'll create 30-second
-chunks in the data.
-
-```{r}
-chunk_size <- 45  # chunk duration in seconds
-start_point <- transcript$start %>% as.integer() %>% pluck(1) # find the starting point of the time stamps
-end_point <- transcript$end %>% as.integer() %>% pluck(nrow(transcript)) # find the ending point of the time stamps
-
-transcript$start <- as.integer(transcript$start)
-transcript$end <- as.integer(transcript$end)
-
-# Create a new variable for the chunks
-transcript$segment_id <- cut(transcript$start, breaks = seq(from = start_point, to = end_point, by = chunk_size))
-```
-
-Finally, we'll do some additional processing. A *lot* of this is new,
-and not important to have a mastery of for this learning lab. To learn
-more, check out the text mining labs!
-
-```{r}
-number_of_words_per_segment <- transcript  %>% 
-    unnest_tokens(word, transcript_text) %>% 
-    count(segment_id) %>% 
-    rename(words_per_segment = n)
-
-data_for_lpa <- transcript  %>% 
-    unnest_tokens(word, transcript_text) %>% # create a one-word-per-row structure
-    left_join(nrc, relationship = "many-to-many") %>% # join the sentiment data
-    count(segment_id, sentiment) %>% # count the number of words assigned to each emotional expression
-    spread(sentiment, n) %>% # change the data to be in wide form
-    janitor::clean_names() %>% # make the names easier to type
-    left_join(number_of_words_per_segment) %>% # join the number of words per segment
-    reframe(pct_fear = fear / words_per_segment, # create summary variables, dividing each sentiment score by the nubmer of the words in each segment
-            pct_joy = joy / words_per_segment,
-            pct_anticipation = anticipation / words_per_segment,
-            pct_disgust = disgust / words_per_segment,
-            pct_sadness = sadness / words_per_segment,
-            pct_surprise = surprise / words_per_segment,
-            pct_trust = trust / words_per_segment) %>% 
-    mutate_if(is.numeric, replace_na, 0) # replace NA values with 0s
-```
-
-We're now ready to proceed to modeling.
 
 ## 4. MODEL
 
