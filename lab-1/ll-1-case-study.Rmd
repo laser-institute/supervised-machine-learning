@@ -25,7 +25,57 @@ set.seed(20240706) # so the results are readily reproducible
 
 We will be using data from the IPEDS.
 
+```{r}
+library(tidyverse)
+library(janitor)
+
+ipeds <- read_csv("data/ipeds-all-title-9-2022-data.csv")
+
+ipeds <- janitor::clean_names(ipeds)
+
+glimpse(ipeds)
+```
+
 ## 2. WRANGLE
+
+```{r}
+
+ipeds <- ipeds %>% 
+    select(name = institution_name, 
+           title_iv = hd2022_postsecondary_and_title_iv_institution_indicator, 
+           carnegie_class = hd2022_carnegie_classification_2021_basic, 
+           state = hd2022_state_abbreviation, 
+           total_enroll = drvef2022_total_enrollment,
+           pct_admitted = drvadm2022_percent_admitted_total,
+           n_bach = drvc2022_bachelors_degree,
+           n_mast = drvc2022_masters_degree,
+           n_doc = drvc2022_doctors_degree_research_scholarship,
+           tuition_fees = drvic2022_tuition_and_fees_2021_22,
+           grad_rate = drvgr2022_graduation_rate_total_cohort,
+           percent_fin_aid = sfa2122_percent_of_full_time_first_time_undergraduates_awarded_any_financial_aid,
+           avg_salary = drvhr2022_average_salary_equated_to_9_months_of_full_time_instructional_staff_all_ranks)
+
+ipeds %>% 
+    count(title_iv)
+
+ipeds <- ipeds %>% 
+    filter(title_iv == "Title IV postsecondary institution")
+
+ipeds %>% 
+    count(carnegie_class)
+
+ipeds <- ipeds %>% 
+    filter(carnegie_class != "Not applicable, not in Carnegie universe (not accredited or nondegree-granting)")
+
+ipeds %>% 
+    skimr::skim()
+
+ipeds %>% 
+    glimpse()
+
+ipeds <- ipeds %>% 
+    select(-title_iv, -state)
+```
 
 #### **👉 Your Turn** **⤵**
 
@@ -36,266 +86,66 @@ We will be using data from the IPEDS.
 ## 3. EXPLORE
 
 ```{r}
-
+ipeds
 ```
 
 ## 4. MODEL
 
-### Step 1: Explore a range of solutions
-
-We *could* estimate a single solution. Please use the
-`estimate_profiles()` function with the data in `data_for_lpa`,
-specifying the number of profiles as 3. For help, consult the
-[help](https://data-edu.github.io/tidyLPA/reference/estimate_profiles.html)
-file.
-
 ```{r}
-data_for_lpa %>% 
-    estimate_profiles(n_profiles = 3)
-```
+library(tidyverse)
+library(tidymodels)
 
-We can see output for *a single model fit*. Let's take a look at what
-the estimates are. We can do so in several ways. In particular, we can
-pipe the output above to either `plot_profiles()` or `get_estimates()`.
-Let's add `plot_profiles(add_line = TRUE)` to the above code, copying
-all three lines into the code chunk below.
+ipeds %>% glimpse()
 
-```{r}
-data_for_lpa %>% 
-    estimate_profiles(n_profiles = 3) %>% 
-    plot_profiles(add_line = TRUE)
-```
+ipeds <- ipeds %>% select(grad_rate, everything())
 
-What we are looking at are the estimates for the *means* of the three
-profiles (or, in LPA's terminology, classes). For instance, for the
-first class (represented with the color red), we can see how the profile
-mean is higher for some variables (relative to the means for the other
-classes), and lower for others. We'll go into much more depth on
-intepreting a profile solution shortly.
+ipeds %>% glimpse()
 
-### Step 2: Select a solution
+ipeds <- ipeds %>% 
+    mutate(n_grad = n_mast + n_doc)
 
-Done, right? Not quite. Notice that above, we specified that the number
-of profiles was 3. How do we know that 3 is best? This is a key decision
-that we as the individual or group analyzing the data must make.
-Fortunately, there are tools to help us.
 
-To do so, we'll examine a range of different profile solutions.
+ipeds %>% 
+    skimr::skim()
 
-Let's try the `compare_solutions()` function, which does just that. The
-`estimate_profiles()` function can, helpfully, estimate more than one
-set of profiles at once --- here, those with 1 through 8 profiles.
+ipeds <- ipeds %>% 
+    mutate(good_grad_rate = if_else(grad_rate > 65, 1, 0),
+           good_grad_rate = as.factor(good_grad_rate))
 
-#### **👉 Your Turn** **⤵**
+train_test_split <- initial_split(ipeds, prop = .80)
+data_train <- training(train_test_split)
 
-To do so, please run `estimate_profiles` like we have above,
+ipeds %>% 
+    write_csv("data/ipeds-processed.csv")
 
-```{r}
+my_rec <- recipe(good_grad_rate ~ total_enroll + pct_admitted + n_bach + n_grad + tuition_fees + percent_fin_aid + avg_salary, data = data_train) %>% 
+    step_normalize(all_numeric_predictors())
 
+# specify model
+my_mod <-
+    logistic_reg() %>% 
+    set_engine("glm") %>%
+    set_mode("classification")
 
+my_wf <-
+    workflow() %>%
+    add_model(my_mod) %>% 
+    add_recipe(my_rec)
 
-```
+class_metrics <- metric_set(accuracy, sensitivity, specificity, ppv, npv, kap) # this is new
 
-We can interpret the fit statistic that is provided---the BIC, with more
-negative values indicating a better model fit---and see which model is
-best. In addition, we can use a process that considers several fit
-indices, the *analytic hierarchy process*. Sometimes, what the BIC and
-the analytic hierarchy process suggest diverge, as is the case here. In
-such a case, it can be helpful to interrogate several candidate
-solutions in a fine-grained way.
+final_fit <- last_fit(my_wf, train_test_split, metrics = class_metrics)
 
-#### **👉 Your Turn** **⤵**
+final_fit
 
-We can examine many fit statistics for candidate models by replacing
-`compare_solutions()` with `get_fit()`. You can read about each fit
-index
-[here](https://data-edu.github.io/tidyLPA/articles/Introduction_to_tidyLPA.html).
-Please run that code, below.
+extract_fit_parsnip(final_fit) %>% 
+    tidy() %>% 
+    arrange(desc(estimate))
 
-```{r}
+final_fit %>%
+    collect_metrics()
 
-```
 
-We can also plot several possible solutions; again, please replace
-`compare_solutions()`, this time with `plot_profiles(add_line = TRUE)`:
-
-```{r}
-data_for_lpa %>%
-    estimate_profiles(1:4) %>% 
-    plot_profiles(add_line = TRUE)
-```
-
-How do we know which solution to be *the* solution we interpret and
-present? We need to consider several different factors, including a) the
-BIC and other individual fit indices, b) the analytic hierarchy output,
-c) considerations of parsimony, and d) considerations related to the
-interpretability of the profiles.
-
-### Step 3: Select and interpret a solution
-
-To do so, please run `estimate_profiles` like we have above,
-
-```{r}
-data_for_lpa %>%
-    estimate_profiles(1:7) %>% 
-    compare_solutions()
-```
-
-We can interpret the fit statistic that is provided---the BIC, with more
-negative values indicating a better model fit---and see which model is
-best. In addition, we can use a process that considers several fit
-indices, the *analytic hierarchy process*. Sometimes, what the BIC and
-the analytic hierarchy process suggest diverge, as is the case here. In
-such a case, it can be helpful to interrogate several candidate
-solutions in a fine-grained way.
-
-#### [Your Turn]{style="color: green;"} ⤵
-
-We can examine many fit statistics for candidate models by replacing
-`compare_solutions()` with `get_fit()`. You can read about each fit
-index
-[here](https://data-edu.github.io/tidyLPA/articles/Introduction_to_tidyLPA.html).
-Please run that code, below.
-
-```{r}
-
-```
-
-We can also plot several possible solutions; again, please replace
-`compare_solutions()`, this time with `plot_profiles(add_line = TRUE)`,
-adding the varying number of profiles you wish to plot.
-
-#### [Your Turn]{style="color: green;"} ⤵
-
-```{r}
-
-```
-
-How do we know which solution to be *the* solution we interpret and
-present? We need to consider several different factors, including a) the
-BIC and other individual fit indices, b) the analytic hierarchy output,
-c) considerations of parsimony, and d) considerations related to the
-interpretability of the profiles.
-
-### Step 3: Select and interpret a solution
-
-*Which solution do you thinks is best?* Given that the BIC indicates a
-three profile model, and given how the model with four profiles does not
-appear to yield a substantially distinct fourth profile, it seems
-reasonable to prefer three profiles over four. But, the analytic
-hierarchy process suggested a single profile model. Is a model with
-fewer profiles potentially merited? When comparing the three- and
-two-profile models, it seems that one profile is more distinguishable
-(based on the mean estimates) than the other two. For this reason, let's
-consider moving forward with a two-profile solution, recognizing that
-this data is somewhat messy, and the way forward is not wholly clear!
-
-To do so, run `estimate_profiles()`, specifying two profiles, and
-assigning the output the name `two_profile_solution`.
-
-#### **👉 Your Turn** **⤵**
-
-```{r}
-
-```
-
-Let's plot this solution using `plot_profiles(add_line = TRUE)`
-
-```{r}
-plot_profiles(two_profile_solution, add_line = TRUE)
-```
-
-Typically, we'd name these solutions. Let's try to interpret and name
-these based upon their mean values:
-
--   Profile 1:
--   Profile 2:
-
-```{r}
-two_profile_solution <- estimate_profiles(data_for_lpa, n_profiles = 2)
-```
-
-Let's plot this solution using `plot_profiles(add_line = TRUE)`
-
-```{r}
-plot_profiles(two_profile_solution, add_line = TRUE)
-```
-
-Typically, we'd name these solutions. Let's try to interpret and name
-these based upon their mean values:
-
--   Profile 1:
--   Profile 2:
-
-We still aren't done! Recall from the presentation how we discussed
-Computational Grounded Theory.
-
-In this approach, an exploratory approach such as Latent Profile
-Analysis is carried out not as the end point, but as a first step in
-understanding the data. The second step involves examining the data with
-the output from the first step as a guide. In this step, you as the
-human can interrogate and make sense of the output of the first step.
-
-Let's first get the profiles for each row of our data set.
-
-```{r}
-data_for_two_profile_solution <- 
-    get_data(two_profile_solution) %>% # get the classes for each row of data
-    select(Class) %>% # let's select just the class (profile) variable
-    mutate(segment_id = unique(transcript$segment_id)) # this assigns the segment IDs back to the data, so we can join the transcript data later on
-```
-
-#### **👉 Your Turn** **⤵**
-
-Then, let's *bind* together the profiles assigned to each chunk with the
-original data. Please use
-[`bind_rows()`](https://dplyr.tidyverse.org/reference/bind.html),
-providing both `data_for_lpa` and `data_for_two_profile_solution`
-together and assigning the output the name `combined_data`.
-
-```{r}
-
-```
-
-Now, let's take a look at the data using `View()` the data frame we
-create next, `data_to_view`. *Don't* write this in a code chunk;
-instead, just view the data frame you jsut created by typing the code
-into the console (as `View()` can cause issues when it comes time to
-knit --- unless it is commented!).
-
-```{r}
-data_to_view <- left_join(transcript, combined_data) # this joins the transcript and combined data, so we can see which segment is associated with which profile, or class
-# View(data_to_view)
-```
-
-```{r}
-data_for_two_profile_solution <- 
-    get_data(two_profile_solution) %>% # get the classes for each row of data
-    select(Class) %>% # let's select just the class (profile) variable
-    mutate(segment_id = unique(transcript$segment_id)) # this assigns the segment IDs back to the data, so we can join the transcript data later on
-```
-
-#### [Your Turn]{style="color: green;"} ⤵
-
-Then, let's *bind* together the profiles assigned to each chunk with the
-original data. Please use
-[`bind_rows()`](https://dplyr.tidyverse.org/reference/bind.html),
-providing both `data_for_lpa` and `data_for_two_profile_solution`
-together and assigning the output the name `combined_data`.
-
-```{r}
-
-```
-
-Now, let's take a look at the data using `View()` the data frame we
-create next, `data_to_view`. *Don't* write this in a code chunk;
-instead, just view the data frame you just created by typing the code
-into the console (as `View()` can cause issues when it comes time to
-knit --- unless it is commented!).
-
-```{r}
-data_to_view <- left_join(transcript, combined_data) # this joins the transcript and combined data, so we can see which segment is associated with which profile, or class
-# View(data_to_view)
 ```
 
 ## 5. COMMUNICATE

@@ -2,7 +2,6 @@
 title: "Your Document Title"
 format: html
 jupyter: 
-  path: "~/.virtualenvs/r-reticulate/bin/python"
 ---
 
 ```{python}

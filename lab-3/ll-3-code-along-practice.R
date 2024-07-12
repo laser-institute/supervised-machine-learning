@@ -33,9 +33,7 @@ my_wf <-
     add_recipe(my_rec)
 
 fitted_model <- fit(my_wf, data = data_train) # ignore warning for this example
-class_metrics <- metric_set(accuracy, sensitivity, specificity, ppv, npv, kap) # this is new
-final_fit <- last_fit(fitted_model, train_test_split, metrics = class_metrics)
-
+It
 final_fit %>%
     collect_metrics()
 
