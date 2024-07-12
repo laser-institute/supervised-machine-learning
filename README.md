@@ -1,4 +1,4 @@
-# Machine Learning
+# Machine Learning Learning Labs
 
 Machine learning is increasingly prevalent in our lives---and in educational contexts. Its role in educational research and practice is growing, albeit with some challenges and even controversy. These learning labs are designed to familiarize you with machine learning and its applications in STEM education research. Throughout the module, we'll explore four key questions that correspond to the focus of each of the four learning labs. By the end, you will have a deep understanding of the key characteristics of machine learning and how to implement machine learning workflows in R and Python.
 
@@ -21,4 +21,3 @@ How can we improve our predictions? This lab introduces the concept of feature e
 ## Microcredential
 
 To earn the SML micro-credential, you will carry out an SML analysis using data of your choosing and report the results in a Quarto document. Emphasize *why* you are using SML (relative to regression or another approach) and use feature engineering and cross-validation to refine your model. Lastly, interpret your model carefully by going beyond reporting accuracy to report the specific metrics for the strength of your SML model's predictions, given the particular aims of your analysis. 
-![image](https://github.com/laser-institute/machine-learning/assets/4596214/b4340cd0-061b-4038-bfe7-3e3aca388568)
