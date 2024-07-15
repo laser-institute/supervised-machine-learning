@@ -1,5 +1,5 @@
 ---
-title: "Predicting Student Success"
+title: "Who Drops Online Courses?"
 subtitle: "ML Module 2: Case Study Key"
 author: "LASER Institute"
 date: today 
