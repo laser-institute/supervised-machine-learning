@@ -1,0 +1,1289 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.550">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="LASER Institute">
+<meta name="dcterms.date" content="2024-07-15">
+
+<title>Model Interpretation</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="ml-3-case-study-key_files/libs/clipboard/clipboard.min.js"></script>
+<script src="ml-3-case-study-key_files/libs/quarto-html/quarto.js"></script>
+<script src="ml-3-case-study-key_files/libs/quarto-html/popper.min.js"></script>
+<script src="ml-3-case-study-key_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="ml-3-case-study-key_files/libs/quarto-html/anchor.min.js"></script>
+<link href="ml-3-case-study-key_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="ml-3-case-study-key_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="ml-3-case-study-key_files/libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="ml-3-case-study-key_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="ml-3-case-study-key_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="ml-3-case-study-key_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="ml-3-case-study-key_files/libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+
+
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#prepare" id="toc-prepare" class="nav-link active" data-scroll-target="#prepare">1. PREPARE</a></li>
+  <li><a href="#wrangle" id="toc-wrangle" class="nav-link" data-scroll-target="#wrangle">2. WRANGLE</a>
+  <ul>
+  <li><a href="#your-turn" id="toc-your-turn" class="nav-link" data-scroll-target="#your-turn"><strong>👉 Your Turn</strong> <strong>⤵</strong></a></li>
+  </ul></li>
+  <li><a href="#explore" id="toc-explore" class="nav-link" data-scroll-target="#explore">3. EXPLORE</a>
+  <ul>
+  <li><a href="#your-turn-1" id="toc-your-turn-1" class="nav-link" data-scroll-target="#your-turn-1"><strong>👉 Your Turn</strong> <strong>⤵</strong></a></li>
+  <li><a href="#your-turn-2" id="toc-your-turn-2" class="nav-link" data-scroll-target="#your-turn-2"><strong>👉 Your Turn</strong> <strong>⤵</strong></a></li>
+  <li><a href="#your-turn-3" id="toc-your-turn-3" class="nav-link" data-scroll-target="#your-turn-3"><strong>👉 Your Turn</strong> <strong>⤵</strong></a></li>
+  <li><a href="#your-turn-4" id="toc-your-turn-4" class="nav-link" data-scroll-target="#your-turn-4"><strong>👉 Your Turn</strong> <strong>⤵</strong></a></li>
+  <li><a href="#your-turn-5" id="toc-your-turn-5" class="nav-link" data-scroll-target="#your-turn-5"><strong>👉 Your Turn</strong> <strong>⤵</strong></a></li>
+  </ul></li>
+  <li><a href="#model" id="toc-model" class="nav-link" data-scroll-target="#model">4. MODEL</a>
+  <ul>
+  <li><a href="#step-1.-split-data" id="toc-step-1.-split-data" class="nav-link" data-scroll-target="#step-1.-split-data">Step 1. Split data</a></li>
+  <li><a href="#step-2-engineer-features-and-write-down-the-recipe" id="toc-step-2-engineer-features-and-write-down-the-recipe" class="nav-link" data-scroll-target="#step-2-engineer-features-and-write-down-the-recipe">Step 2: Engineer features and write down the recipe</a></li>
+  <li><a href="#step-3-specify-the-model-and-workflow" id="toc-step-3-specify-the-model-and-workflow" class="nav-link" data-scroll-target="#step-3-specify-the-model-and-workflow">Step 3: Specify the model and workflow</a></li>
+  <li><a href="#step-4-fit-model" id="toc-step-4-fit-model" class="nav-link" data-scroll-target="#step-4-fit-model">Step 4: Fit model</a>
+  <ul class="collapse">
+  <li><a href="#your-turn-6" id="toc-your-turn-6" class="nav-link" data-scroll-target="#your-turn-6"><strong>👉 Your Turn</strong> <strong>⤵</strong></a></li>
+  </ul></li>
+  <li><a href="#step-5-interpret-accuracy" id="toc-step-5-interpret-accuracy" class="nav-link" data-scroll-target="#step-5-interpret-accuracy">Step 5: Interpret accuracy</a></li>
+  <li><a href="#a-confusion-matrix-and-true-and-false-positives-and-negatives" id="toc-a-confusion-matrix-and-true-and-false-positives-and-negatives" class="nav-link" data-scroll-target="#a-confusion-matrix-and-true-and-false-positives-and-negatives">A confusion matrix and true and false positives and negatives</a>
+  <ul class="collapse">
+  <li><a href="#your-turn-7" id="toc-your-turn-7" class="nav-link" data-scroll-target="#your-turn-7"><strong>👉 Your Turn</strong> <strong>⤵</strong></a></li>
+  </ul></li>
+  <li><a href="#other-measures-of-predictive-accuracy" id="toc-other-measures-of-predictive-accuracy" class="nav-link" data-scroll-target="#other-measures-of-predictive-accuracy">Other measures of predictive accuracy</a>
+  <ul class="collapse">
+  <li><a href="#your-turn-8" id="toc-your-turn-8" class="nav-link" data-scroll-target="#your-turn-8"><strong>👉 Your Turn</strong> <strong>⤵</strong></a></li>
+  <li><a href="#your-turn-9" id="toc-your-turn-9" class="nav-link" data-scroll-target="#your-turn-9"><strong>👉 Your Turn</strong> <strong>⤵</strong></a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#communicate" id="toc-communicate" class="nav-link" data-scroll-target="#communicate">5. COMMUNICATE</a>
+  <ul>
+  <li><a href="#quickly-calculating-metrics" id="toc-quickly-calculating-metrics" class="nav-link" data-scroll-target="#quickly-calculating-metrics">Quickly calculating metrics</a>
+  <ul class="collapse">
+  <li><a href="#your-turn-10" id="toc-your-turn-10" class="nav-link" data-scroll-target="#your-turn-10"><strong>👉 Your Turn</strong> <strong>⤵</strong></a></li>
+  </ul></li>
+  <li><a href="#knit-check" id="toc-knit-check" class="nav-link" data-scroll-target="#knit-check">🧶 Knit &amp; Check ✅</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Model Interpretation</h1>
+<p class="subtitle lead">ML Module 3: Case Study Key</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>LASER Institute </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">July 15, 2024</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="prepare" class="level2">
+<h2 class="anchored" data-anchor-id="prepare">1. PREPARE</h2>
+<p>When we left off the first case study, we saw that our model was <em>pretty accurate</em>. We can and will do better in terms of accuracy. But, the accuracy value we found also raises a broader question: How good was our model in terms of making predictions?</p>
+<p>While accuracy is an easy to understand and interpret value, it provides a limited answer to the above question about how good our model was in terms of making predictions.</p>
+<p>In this learning and case study, we explore a variety of ways to understand how good of a predictive model ours is. We do this through a variety of means:</p>
+<ul>
+<li><p>Other <strong>statistics</strong>, such as sensitivity and specificity</p></li>
+<li><p><strong>Tables</strong>–particularly, a confusion matrix</p></li>
+</ul>
+<p>Our driving question for this case study, then, is: <em>How good is our model at making predictions?</em></p>
+<p>We’ll use the <a href="https://analyse.kmi.open.ac.uk/open_dataset">Open University Learning Analytics Dataset (OULAD)</a> again–this time, adding another data source, one on students’ performance on assessments.</p>
+<p>Like in the first learning lab, we’ll first load several packages – {tidyverse}, {tidymodels}, and {janitor}. Make sure these are installed (via <code>install.packages()</code>). Note that if they’re already installed, you don’t need to install them again.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.4     ✔ readr     2.1.5
+✔ forcats   1.0.0     ✔ stringr   1.5.1
+✔ ggplot2   3.5.1     ✔ tibble    3.2.1
+✔ lubridate 1.9.3     ✔ tidyr     1.3.1
+✔ purrr     1.0.2     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidymodels)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching packages ────────────────────────────────────── tidymodels 1.2.0 ──
+✔ broom        1.0.6     ✔ rsample      1.2.1
+✔ dials        1.2.1     ✔ tune         1.2.1
+✔ infer        1.0.7     ✔ workflows    1.1.4
+✔ modeldata    1.4.0     ✔ workflowsets 1.1.0
+✔ parsnip      1.2.1     ✔ yardstick    1.3.1
+✔ recipes      1.1.0     
+── Conflicts ───────────────────────────────────────── tidymodels_conflicts() ──
+✖ scales::discard() masks purrr::discard()
+✖ dplyr::filter()   masks stats::filter()
+✖ recipes::fixed()  masks stringr::fixed()
+✖ dplyr::lag()      masks stats::lag()
+✖ yardstick::spec() masks readr::spec()
+✖ recipes::step()   masks stats::step()
+• Search for functions across packages at https://www.tidymodels.org/find/</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(janitor)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'janitor'
+
+The following objects are masked from 'package:stats':
+
+    chisq.test, fisher.test</code></pre>
+</div>
+</div>
+</section>
+<section id="wrangle" class="level2">
+<h2 class="anchored" data-anchor-id="wrangle">2. WRANGLE</h2>
+<p>Like in the code-along for the overview presentation, let’s take a look at the data and do some processing of it.</p>
+<section id="your-turn" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
+<p>We’ll load the students file together; you’ll write code to read the assessments file, which is named “oulad-assessments.csv”. Please assign the name <code>assessments</code> to the loaded assessments file.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>students <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/oulad-students.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 32593 Columns: 15
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr (9): code_module, code_presentation, gender, region, highest_education, ...
+dbl (6): id_student, num_of_prev_attempts, studied_credits, module_presentat...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>assessments <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/oulad-assessments.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 173912 Columns: 10
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr (3): code_module, code_presentation, assessment_type
+dbl (7): id_assessment, id_student, date_submitted, is_banked, score, date, ...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="explore" class="level2">
+<h2 class="anchored" data-anchor-id="explore">3. EXPLORE</h2>
+<section id="your-turn-1" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-1"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
+<p>In the last learning lab, we used the <code>count()</code> function. Let’s practice that again, by counting the number of of assessments of different types. If you need, recall that the data dictionary is <a href="https://analyse.kmi.open.ac.uk/open_dataset">here</a>. Note what the different types of assessments mean.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>assessments <span class="sc">%&gt;%</span> </span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">count</span>(assessment_type)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 2
+  assessment_type     n
+  &lt;chr&gt;           &lt;int&gt;
+1 CMA             70527
+2 Exam             4959
+3 TMA             98426</code></pre>
+</div>
+</div>
+<ul>
+<li></li>
+</ul>
+</section>
+<section id="your-turn-2" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-2"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
+<p>We’ll now use another function–like <code>count()</code>, from the {tidyverse}. Specifically, we’ll use the <code>distinct()</code> function. This returns the unique (or distinct) values for a specified variable. Learn more about <code>distinct()</code> <a href="https://dplyr.tidyverse.org/reference/distinct.html">here</a>. Below, find the distinct assessment IDs.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>assessments <span class="sc">%&gt;%</span> </span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">distinct</span>(id_assessment) <span class="co"># this many unique assessments</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 188 × 1
+   id_assessment
+           &lt;dbl&gt;
+ 1          1752
+ 2          1753
+ 3          1754
+ 4          1755
+ 5          1756
+ 6          1758
+ 7          1759
+ 8          1760
+ 9          1761
+10          1762
+# ℹ 178 more rows</code></pre>
+</div>
+</div>
+<p>Let’s explore the assessments data a bit.</p>
+<p>We might be interested in how many assessments there are per course. To calculate that, we need to <code>count()</code> several variables at once; when doing this, <code>count()</code> tabulates the number of unique combinations of the variables passed to it.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>assessments <span class="sc">%&gt;%</span> </span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">count</span>(assessment_type, code_module, code_presentation)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 41 × 4
+   assessment_type code_module code_presentation     n
+   &lt;chr&gt;           &lt;chr&gt;       &lt;chr&gt;             &lt;int&gt;
+ 1 CMA             BBB         2013B              5049
+ 2 CMA             BBB         2013J              6416
+ 3 CMA             BBB         2014B              4493
+ 4 CMA             CCC         2014B              3920
+ 5 CMA             CCC         2014J              5846
+ 6 CMA             DDD         2013B              5252
+ 7 CMA             FFF         2013B              6681
+ 8 CMA             FFF         2013J              8847
+ 9 CMA             FFF         2014B              5549
+10 CMA             FFF         2014J              8915
+# ℹ 31 more rows</code></pre>
+</div>
+</div>
+<p>Let’s explore the dates assignments were submitted a bit – using the <code>summarize()</code> function:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>assessments <span class="sc">%&gt;%</span> </span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(<span class="at">mean_date =</span> <span class="fu">mean</span>(date, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="co"># find the mean date for assignments</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">median_date =</span> <span class="fu">median</span>(date, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="co"># find the median</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">sd_date =</span> <span class="fu">sd</span>(date, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="co"># find the sd</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>              <span class="at">min_date =</span> <span class="fu">min</span>(date, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="co"># find the min</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>              <span class="at">max_date =</span> <span class="fu">max</span>(date, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="co"># find the mad</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 5
+  mean_date median_date sd_date min_date max_date
+      &lt;dbl&gt;       &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
+1      131.         129    78.0       12      261</code></pre>
+</div>
+</div>
+<p>What can we take from this? It looks like, on average, the average (mean and median) date assignments were due was around 130 – 130 days after the start of the course. The first assignment seems to have been due 12 days into the course, and the last 261 days after.</p>
+<p>Crucially, though, these dates vary by course. Thus, we need to first group the data by course. Let’s use a different function this time – <code>quantile()</code>, and calculate the first quantile value. Our reasoning is that we want to be able to act to support students, and if we wait until after the average assignment is due, then that might be too late. Whereas the first quantile comes approximately one-quarter through the semester — with, therefore, more time to intervene.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>assessments <span class="sc">%&gt;%</span> </span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(code_module, code_presentation) <span class="sc">%&gt;%</span> <span class="co"># first, group by course (module: course; presentation: semester)</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(<span class="at">mean_date =</span> <span class="fu">mean</span>(date, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">median_date =</span> <span class="fu">median</span>(date, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>              <span class="at">sd_date =</span> <span class="fu">sd</span>(date, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>              <span class="at">min_date =</span> <span class="fu">min</span>(date, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>              <span class="at">max_date =</span> <span class="fu">max</span>(date, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>              <span class="at">first_quantile =</span> <span class="fu">quantile</span>(date, <span class="at">probs =</span> .<span class="dv">25</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="co"># find the first (25%) quantile</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`summarise()` has grouped output by 'code_module'. You can override using the
+`.groups` argument.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 22 × 8
+# Groups:   code_module [7]
+   code_module code_presentation mean_date median_date sd_date min_date max_date
+   &lt;chr&gt;       &lt;chr&gt;                 &lt;dbl&gt;       &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
+ 1 AAA         2013J                 109.          117    71.3       19      215
+ 2 AAA         2014J                 109.          117    71.5       19      215
+ 3 BBB         2013B                 104.           89    55.5       19      187
+ 4 BBB         2013J                 112.           96    61.6       19      208
+ 5 BBB         2014B                  98.9          82    58.6       12      194
+ 6 BBB         2014J                  99.1         110    65.2       19      201
+ 7 CCC         2014B                  98.4         102    68.0       18      207
+ 8 CCC         2014J                 104.          109    70.8       18      214
+ 9 DDD         2013B                 104.           81    66.0       23      240
+10 DDD         2013J                 118.           88    77.9       25      261
+# ℹ 12 more rows
+# ℹ 1 more variable: first_quantile &lt;dbl&gt;</code></pre>
+</div>
+</div>
+<p>Alright, this is a bit complicated, but we can actually work with this data. Let’s use just a portion of the above code, assigning it the name <code>code_module_dates</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>code_module_dates <span class="ot">&lt;-</span> assessments <span class="sc">%&gt;%</span> </span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(code_module, code_presentation) <span class="sc">%&gt;%</span> </span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(<span class="at">quantile_cutoff_date =</span> <span class="fu">quantile</span>(date, <span class="at">probs =</span> .<span class="dv">25</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`summarise()` has grouped output by 'code_module'. You can override using the
+`.groups` argument.</code></pre>
+</div>
+</div>
+</section>
+<section id="your-turn-3" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-3"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
+<p>Let’s take a look at what we just created; type <code>code_module_dates</code> below:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>code_module_dates</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 22 × 3
+# Groups:   code_module [7]
+   code_module code_presentation quantile_cutoff_date
+   &lt;chr&gt;       &lt;chr&gt;                            &lt;dbl&gt;
+ 1 AAA         2013J                               54
+ 2 AAA         2014J                               54
+ 3 BBB         2013B                               54
+ 4 BBB         2013J                               54
+ 5 BBB         2014B                               47
+ 6 BBB         2014J                               54
+ 7 CCC         2014B                               32
+ 8 CCC         2014J                               32
+ 9 DDD         2013B                               51
+10 DDD         2013J                               53
+# ℹ 12 more rows</code></pre>
+</div>
+</div>
+<p>What have we created? We found the date that is one-quarter of the way through the semester (in terms of the dates assignments are due).</p>
+</section>
+<section id="your-turn-4" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-4"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
+<p>We can thus use this to group and calculate students’ performance on assignments through this point. To do this, we need to use a join function — <code>left_join()</code>, in particular. Please use <code>left_join()</code> to join together <code>assessments</code> and <code>code_module_dates</code>, with <code>assessments</code> being the “left” data frame, and <code>code_module_dates</code> the right. Save the output of the join the name <code>assessments_joined</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>assessments_joined <span class="ot">&lt;-</span> assessments <span class="sc">%&gt;%</span> </span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">left_join</span>(code_module_dates) <span class="co"># join the data based on course_module and course_presentation</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Joining with `by = join_by(code_module, code_presentation)`</code></pre>
+</div>
+</div>
+<p>We’re almost there! The next few lines filter the assessments data so it only includes assessments before our cutoff date.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>assessments_filtered <span class="ot">&lt;-</span> assessments_joined <span class="sc">%&gt;%</span> </span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(date <span class="sc">&lt;</span> quantile_cutoff_date) <span class="co"># filter the data so only assignments before the cutoff date are included</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Finally, we’ll find the average score for each student.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>assessments_summarized <span class="ot">&lt;-</span> assessments_filtered <span class="sc">%&gt;%</span> </span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">weighted_score =</span> score <span class="sc">*</span> weight) <span class="sc">%&gt;%</span> <span class="co"># create a new variable that accounts for the "weight" (comparable to points) given each assignment</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(id_student) <span class="sc">%&gt;%</span> </span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(<span class="at">mean_weighted_score =</span> <span class="fu">mean</span>(weighted_score)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>As a point of reflection here, note how much work we’ve done before we’ve gotten to the machine learning steps. Though a challenge, this is typical for both machine learning and more traditional statistical models: a lot of the work is in the preparation and data wrangling stages.</p>
+<p>Let’s copy the code below that we used to process the students data (when processing the <code>pass</code> and <code>imd_band</code> variables).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>students <span class="ot">&lt;-</span> students <span class="sc">%&gt;%</span> </span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">pass =</span> <span class="fu">ifelse</span>(final_result <span class="sc">==</span> <span class="st">"Pass"</span>, <span class="dv">1</span>, <span class="dv">0</span>)) <span class="sc">%&gt;%</span> <span class="co"># creates a dummy code</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">pass =</span> <span class="fu">as.factor</span>(pass)) <span class="co"># makes the variable a factor, helping later steps</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>students <span class="ot">&lt;-</span> students <span class="sc">%&gt;%</span> </span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">imd_band =</span> <span class="fu">factor</span>(imd_band, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"0-10%"</span>,</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>                                                  <span class="st">"10-20%"</span>,</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>                                                  <span class="st">"20-30%"</span>,</span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>                                                  <span class="st">"30-40%"</span>,</span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>                                                  <span class="st">"40-50%"</span>,</span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>                                                  <span class="st">"50-60%"</span>,</span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>                                                  <span class="st">"60-70%"</span>,</span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a>                                                  <span class="st">"70-80%"</span>,</span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a>                                                  <span class="st">"80-90%"</span>,</span>
+<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a>                                                  <span class="st">"90-100%"</span>))) <span class="sc">%&gt;%</span> <span class="co"># this creates a factor with ordered levels</span></span>
+<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">imd_band =</span> <span class="fu">as.integer</span>(imd_band)) <span class="co"># this changes the levels into integers based on the order of the factor levels</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="your-turn-5" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-5"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
+<p>Finally, let’s join together <code>students</code> and <code>assessments_summarized</code>, assigning the joined the name <code>students_and_assessments</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>students_and_assessments <span class="ot">&lt;-</span> students <span class="sc">%&gt;%</span> </span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">left_join</span>(assessments_summarized)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Joining with `by = join_by(id_student)`</code></pre>
+</div>
+</div>
+<p>Big picture, we’ve added another measure – another feature – that we can use to make predictions: students’ performance on assessments 1/4 of the way through the course.</p>
+<p>We’re now ready to proceed to our machine learning steps!</p>
+<p>The problem we will be working on - predicting students who pass, based on data from the first one-third of the semester - has an analog in a recent paper by Ryan Baker and colleagues:</p>
+<p>In <a href="https://www.tandfonline.com/doi/full/10.1080/10824669.2019.1670065">Baker et al.&nbsp;(2020)</a>, the authors create a precision-recall (also known as sensitivity) graph - one that demonstrates the trade-off between optimizing these two statistics. Review their paper - especially the results section - to see how they discuss these two statistics.</p>
+<blockquote class="blockquote">
+<p>Baker, R. S., Berning, A. W., Gowda, S. M., Zhang, S., &amp; Hawn, A. (2020). Predicting K-12 dropout. Journal of Education for Students Placed at Risk (JESPAR), 25(1), 28-54.</p>
+</blockquote>
+<p>Please review this paper before proceeding, focusing on how they describe</p>
+</section>
+</section>
+<section id="model" class="level2">
+<h2 class="anchored" data-anchor-id="model">4. MODEL</h2>
+<section id="step-1.-split-data" class="level3">
+<h3 class="anchored" data-anchor-id="step-1.-split-data">Step 1. Split data</h3>
+<p>This is identical to what we did in the first learning lab, using the <code>students_and_assessments</code> data. We’ll also create a testing data set we’ll use later.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">20230712</span>)</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>students_and_assessments <span class="ot">&lt;-</span> students_and_assessments <span class="sc">%&gt;%</span> </span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">drop_na</span>(mean_weighted_score)</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>train_test_split <span class="ot">&lt;-</span> <span class="fu">initial_split</span>(students_and_assessments, <span class="at">prop =</span> .<span class="dv">50</span>, <span class="at">strata =</span> <span class="st">"pass"</span>)</span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>data_train <span class="ot">&lt;-</span> <span class="fu">training</span>(train_test_split)</span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>data_test <span class="ot">&lt;-</span> <span class="fu">testing</span>(train_test_split)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="step-2-engineer-features-and-write-down-the-recipe" class="level3">
+<h3 class="anchored" data-anchor-id="step-2-engineer-features-and-write-down-the-recipe">Step 2: Engineer features and write down the recipe</h3>
+<p>We’ll also specify the recipe, adding our <code>mean_weighted_score</code> variable we calculated above as well as variables we used in LL1 (case study and badge). Note how we dummy code two variables using <code>step_dummy()</code> (described further in the first learning lab).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>my_rec <span class="ot">&lt;-</span> <span class="fu">recipe</span>(pass <span class="sc">~</span> disability <span class="sc">+</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>                     date_registration <span class="sc">+</span> </span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>                     gender <span class="sc">+</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>                     code_module <span class="sc">+</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>                     mean_weighted_score, </span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>                 <span class="at">data =</span> data_train) <span class="sc">%&gt;%</span> </span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">step_dummy</span>(disability) <span class="sc">%&gt;%</span> </span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">step_dummy</span>(gender) <span class="sc">%&gt;%</span>  </span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">step_dummy</span>(code_module)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="step-3-specify-the-model-and-workflow" class="level3">
+<h3 class="anchored" data-anchor-id="step-3-specify-the-model-and-workflow">Step 3: Specify the model and workflow</h3>
+<p>These steps are also the same as in LL1.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># specify model</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>my_mod <span class="ot">&lt;-</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">logistic_reg</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">set_engine</span>(<span class="st">"glm"</span>) <span class="sc">%&gt;%</span> <span class="co"># generalized linear model</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">set_mode</span>(<span class="st">"classification"</span>) <span class="co"># since we are predicting a dichotomous outcome, specify classification; for a number, specify regression</span></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a><span class="co"># specify workflow</span></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>my_wf <span class="ot">&lt;-</span></span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">workflow</span>() <span class="sc">%&gt;%</span> <span class="co"># create a workflow</span></span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">add_model</span>(my_mod) <span class="sc">%&gt;%</span> <span class="co"># add the model we wrote above</span></span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">add_recipe</span>(my_rec) <span class="co"># add our recipe we wrote above</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="step-4-fit-model" class="level3">
+<h3 class="anchored" data-anchor-id="step-4-fit-model">Step 4: Fit model</h3>
+<p>Finally, we’ll fit our model.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>fitted_model <span class="ot">&lt;-</span> <span class="fu">fit</span>(my_wf, <span class="at">data =</span> data_train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Finally, we’ll use the <code>last_fit</code> function, but we’ll add something a little different - we’ll add the metric set here. To the above, we’ll add another common metric - Cohen’s Kappa, which is similar to accuracy, but which accounts for chance agreement.</p>
+<p>To do so, we have to specify <em>which</em> metrics we want to use using the <code>metric_set()</code> function (see all of the available options <a href="https://yardstick.tidymodels.org/articles/metric-types.html">here</a>). Please specify six metrics in the metric set – accuracy, sensitivity, specificity, ppv (recall), npv, and kappa. Assign the name <code>class_metrics</code> to the output of your use of the <code>metric_set()</code> function.</p>
+<section id="your-turn-6" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-6"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>class_metrics <span class="ot">&lt;-</span> <span class="fu">metric_set</span>(accuracy, sensitivity, specificity, ppv, npv, kap) <span class="co"># add probs?</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Then, please use <code>last_fit</code>, looking to how we did this in the last learning lab for a guide on how to specify the argument nts. To the arguments, add <code>metrics = class_metrics</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>final_fit <span class="ot">&lt;-</span> <span class="fu">last_fit</span>(my_wf, train_test_split, <span class="at">metrics =</span> class_metrics)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We’re now ready to move on to interpreting the accuracy of our model.</p>
+</section>
+</section>
+<section id="step-5-interpret-accuracy" class="level3">
+<h3 class="anchored" data-anchor-id="step-5-interpret-accuracy">Step 5: Interpret accuracy</h3>
+</section>
+<section id="a-confusion-matrix-and-true-and-false-positives-and-negatives" class="level3">
+<h3 class="anchored" data-anchor-id="a-confusion-matrix-and-true-and-false-positives-and-negatives">A confusion matrix and true and false positives and negatives</h3>
+<p>Let’s start with a simple confusion matrix. The confusion matrix is a 2 x 2 table with values (cells in the table) representing one of four conditions, elaborated below. You’ll fill in the last two columns in a few moments.</p>
+<table class="table">
+<colgroup>
+<col style="width: 18%">
+<col style="width: 18%">
+<col style="width: 27%">
+<col style="width: 18%">
+<col style="width: 18%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Statistic</th>
+<th style="text-align: center;">How to Find</th>
+<th style="text-align: center;">Interpretation</th>
+<th style="text-align: center;">Value</th>
+<th style="text-align: center;">%</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">True positive (TP)</td>
+<td style="text-align: center;">Truth: 1, Prediction: 1</td>
+<td style="text-align: center;">Proportion of the population that is affected by a condition and correctly tested positive</td>
+<td style="text-align: center;">2443</td>
+<td style="text-align: center;">19.8</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">True negative (TN)</td>
+<td style="text-align: center;">Truth: 0, Prediction: 0</td>
+<td style="text-align: center;">Proportion of the population that is not affected by a condition and correctly tested negative</td>
+<td style="text-align: center;">4536</td>
+<td style="text-align: center;">36.8</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">False positive (FP)</td>
+<td style="text-align: center;">Truth: 0, Prediction: 1</td>
+<td style="text-align: center;">Proportion of the population that is not affected by a condition and incorrectly tested positive</td>
+<td style="text-align: center;">2070</td>
+<td style="text-align: center;">16.8</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">False negative (FN)</td>
+<td style="text-align: center;">Truth: 1, Prediction: 0</td>
+<td style="text-align: center;">Proportion of the population that is affected by a condition and incorrectly tested positive.</td>
+<td style="text-align: center;">3269</td>
+<td style="text-align: center;">26.5</td>
+</tr>
+</tbody>
+</table>
+<p>To create a confusion matrix, run <code>collect_predictions()</code>, which does what it suggests - it gathers together the model’s test set predictions. Pass the <code>last_fit</code> object to this function below.</p>
+<section id="your-turn-7" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-7"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">collect_predictions</span>(final_fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 12,318 × 5
+   .pred_class id                .row pass  .config             
+   &lt;fct&gt;       &lt;chr&gt;            &lt;int&gt; &lt;fct&gt; &lt;chr&gt;               
+ 1 1           train/test split     1 1     Preprocessor1_Model1
+ 2 1           train/test split     2 1     Preprocessor1_Model1
+ 3 1           train/test split     3 1     Preprocessor1_Model1
+ 4 1           train/test split     5 1     Preprocessor1_Model1
+ 5 1           train/test split     6 1     Preprocessor1_Model1
+ 6 1           train/test split     8 1     Preprocessor1_Model1
+ 7 1           train/test split    10 1     Preprocessor1_Model1
+ 8 1           train/test split    11 1     Preprocessor1_Model1
+ 9 1           train/test split    12 1     Preprocessor1_Model1
+10 1           train/test split    17 1     Preprocessor1_Model1
+# ℹ 12,308 more rows</code></pre>
+</div>
+</div>
+<p>Take a look at the columns. You’ll need to provide the predictions (created with <code>collect_predictions()</code>) and then pipe that to <code>conf_mat()</code>, to which you provide the names of a) the predictions and b) the known values for the test set. Some code to get you started is below.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">collect_predictions</span>(final_fit) <span class="sc">%&gt;%</span> </span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">conf_mat</span>(.pred_class, pass)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>          Truth
+Prediction    0    1
+         0 4777 1824
+         1 3525 2187</code></pre>
+</div>
+</div>
+<p>You should see a confusion matrix output. If so, nice work! Please fill in the <strong>Value</strong> and <strong>Percentage</strong> columns in the table above (with TP, TN, FP, and FN), entering the appropriate values and then converting those into a percentage based on the total number of data points in the test data set. The accuracy can be interpreted as the sum of the true positive and true negative percentages. So, what’s the accuracy? Add that below as a percentage.</p>
+<ul>
+<li><strong>Accuracy:</strong> 56.6%</li>
+</ul>
+</section>
+</section>
+<section id="other-measures-of-predictive-accuracy" class="level3">
+<h3 class="anchored" data-anchor-id="other-measures-of-predictive-accuracy">Other measures of predictive accuracy</h3>
+<p>Here’s where things get interesting: There are other statistics that have different denominators. Recall from the overview presentation that we can slice and dice the confusion matrix to calculate statistics that give us insights into the predictive utility of the model. Based on the above <strong>Values</strong> for TP, TN, FP, and FN you interpreted a few moments ago, add the <strong>Statistic Values</strong> for sensitivity, specificity, precision, and negative predictive value below to three decimal points.</p>
+<section id="your-turn-8" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-8"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
+<table class="table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><strong>Statistic</strong></td>
+<td style="text-align: center;"><strong>Equation</strong></td>
+<td style="text-align: center;"><strong>Interpretation</strong></td>
+<td style="text-align: center;"><strong>Question Answered</strong></td>
+<td style="text-align: center;"><strong>Statistic Values</strong></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><strong>Sensitivity</strong> (AKA recall)</td>
+<td style="text-align: center;">TP / (TP + FN)</td>
+<td style="text-align: center;">Proportion of those who are affected by a condition and correctly tested positive</td>
+<td style="text-align: center;">Out of all the actual positives, how many did we correctly predict?</td>
+<td style="text-align: center;">.428</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><strong>Specificity</strong></td>
+<td style="text-align: center;">TN / (FP + TN)</td>
+<td style="text-align: center;">Proportion of those who are not affected by a condition and correctly tested negative;</td>
+<td style="text-align: center;">Out of all the actual negatives, how many did we correctly predict?</td>
+<td style="text-align: center;">.687</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><strong>Precision</strong> (AKA Positive Predictive Value)</td>
+<td style="text-align: center;">TP / (TP + FP)</td>
+<td style="text-align: center;">Proportion of those who tested positive who are affected by a condition</td>
+<td style="text-align: center;">Out of all the instances we predicted as positive, how many are actually positive?</td>
+<td style="text-align: center;">.581</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><strong>Negative Predictive Value</strong></td>
+<td style="text-align: center;">TN / (TN + FN)</td>
+<td style="text-align: center;">Proportion of those who tested positive who are not affected by a condition; <em>the probability that a negative test is correct</em></td>
+<td style="text-align: center;">Out of all the instances we predicted as negative, how many are actually negative?</td>
+<td style="text-align: center;">.541</td>
+</tr>
+</tbody>
+</table>
+<p>So, what does this hard-won by output tell us? Let’s interpret each statistic carefully in the table below. Please add the value and provide a <em>substantive interpretation</em>. One is provided to get you started.</p>
+</section>
+<section id="your-turn-9" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-9"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
+<table class="table">
+<colgroup>
+<col style="width: 27%">
+<col style="width: 72%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><strong>Statistic</strong></td>
+<td><strong>Substantive Interpretation</strong></td>
+</tr>
+<tr class="even">
+<td>Accuracy</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>Sensitivity (AKA recall)</td>
+<td>The model correctly predicts about 2/3 of students who do not pass correctly (as not passing). This is pretty good, but it could be better.</td>
+</tr>
+<tr class="even">
+<td>Specificity</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>Precision (AKA Positive Predictive Value)</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>Negative Predictive Value</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>This process might suggest to you how a “good” model isn’t necessarily one that is the most accurate, but instead is one that has good values for statistics that matter given our particular question and context.</p>
+<p>Recall that Baker and colleagues sought to balance between precision and recall (specificity). Please briefly discuss how well our model does this; is it better suited to correctly identifying “positive” pass cases (sensitivity) or “negatively” identifying students who do not pass (specificity)?</p>
+<ul>
+<li></li>
+</ul>
+</section>
+</section>
+</section>
+<section id="communicate" class="level2">
+<h2 class="anchored" data-anchor-id="communicate">5. COMMUNICATE</h2>
+<section id="quickly-calculating-metrics" class="level3">
+<h3 class="anchored" data-anchor-id="quickly-calculating-metrics">Quickly calculating metrics</h3>
+<p>After all of this work, we <em>can</em> calculate the above much more easily given how we setup our metrics (using <code>metric_set()</code> earlier, such as when we want to efficiently communicate the results of our analysis to our audience? Below, use <code>collect_metrics()</code> with the <code>final_fit</code> object, noting that in addition to the four metrics we calculated manually just a few moments ago, we are also provided with the accuracy and Cohen’s Kappa values.</p>
+<section id="your-turn-10" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-10"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">collect_metrics</span>(final_fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 4
+  .metric     .estimator .estimate .config             
+  &lt;chr&gt;       &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
+1 accuracy    binary         0.566 Preprocessor1_Model1
+2 sensitivity binary         0.724 Preprocessor1_Model1
+3 specificity binary         0.383 Preprocessor1_Model1
+4 ppv         binary         0.575 Preprocessor1_Model1
+5 npv         binary         0.545 Preprocessor1_Model1
+6 kap         binary         0.109 Preprocessor1_Model1</code></pre>
+</div>
+</div>
+<p>Having invested in understanding the terminology of machine learning metrics, we’ll use this “shortcut” (using <code>collect_metrics()</code> going forward.</p>
+</section>
+</section>
+<section id="knit-check" class="level3">
+<h3 class="anchored" data-anchor-id="knit-check">🧶 Knit &amp; Check ✅</h3>
+<p>Congratulations - you’ve completed this case study! Consider moving on to the badge activity next.</p>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
