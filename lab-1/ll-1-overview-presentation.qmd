@@ -1,296 +1,266 @@
 ---
-title: "Machine Learning Learning Lab 1: Foundations"
-subtitle: "Overview Presentation"
-author: "**Dr. Joshua Rosenberg**"
-institute: "LASER Institute"
-date: '`r format(Sys.time(), "%B %d, %Y")`'
-output:
-  xaringan::moon_reader:
-    css:
-     - default
-     - css/laser.css
-     - css/laser-fonts.css
-    lib_dir: libs                        # creates directory for libraries
-    seal: false                          # false: custom title slide
-    nature:
-      highlightStyle: default         # highlighting syntax for code
-      highlightLines: true               # true: enables code line highlighting 
-      highlightLanguage: ["r"]           # languages to highlight
-      countIncrementalSlides: false      # false: disables counting of incremental slides
-      ratio: "16:9"                      # 4:3 for standard size,16:9
-      slideNumberFormat: |
-       <div class="progress-bar-container">
-        <div class="progress-bar" style="width: calc(%current% / %total% * 100%);">
-        </div>
-       </div>
+title: "Machine Learning - Learning Lab 1"
+subtitle: "Conceptual Overview - Foundations"
+format:
+  revealjs: 
+    slide-number: c/t
+    progress: true
+    chalkboard: 
+      buttons: false
+    preview-links: auto
+    logo: img/LASERLogoB.png
+    theme: [default, css/laser.scss]
+    width: 1920
+    height: 1080
+    margin: 0.05
+    footer: <a href=https://www.go.ncsu.edu/laser-institute>go.ncsu.edu/laser-institute
 ---
 
-class: clear, title-slide, inverse, center, top, middle
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE, warning = FALSE)
+```{r}
+#| include: false
 ```
 
-```{r, echo=FALSE}
+```{r}
+#| echo: false
 # then load all the relevant packages
 pacman::p_load(pacman, knitr, tidyverse, readxl)
 ```
 
-```{r xaringan-panelset, echo=FALSE}
-xaringanExtra::use_panelset()
-```
-
-```{r xaringanExtra-clipboard, echo=FALSE}
-
-```
-
-# `r rmarkdown::metadata$title`
-----
-### `r rmarkdown::metadata$author`
-### `r format(Sys.time(), "%B %d, %Y")`
-
----
-
 # Purpose and Agenda
+
+## Purpose
 
 Machine learning is increasingly prevalent in our lives---and in educational contexts. Its role in educational research and practice is growing, albeit with some challenges and even controversy. These learning labs are designed to familiarize you with machine learning and its applications in STEM education research. Throughout the module, we'll explore four key questions that correspond to the focus of each of the four learning labs. By the end, you will have a deep understanding of the key characteristics of machine learning and how to implement machine learning workflows in R and Python.
 
----
+## Agenda
 
-## What we'll do in this presentation
-
-- Discussion 1
-- Key Concept: Machine learning
-- Key Concept: Prediction vs. inferences
-- Key Concept: Four LLs
-- Code-along
-- Discussion 2
-- Introduction to the other parts of this learning lab
-
----
+-   Discussion 1
+-   Code-along
+-   Discussion 2
+-   Introduction to the other parts of this learning lab
 
 # Discussion 1
 
-- Why are you interested in machine learning?
-
----
+-   Why are you interested in machine learning?
 
 # Key Concept: Machine learning
 
----
+## One example of ML . . .
 
-# One example of ML . . .
-
-```{r, echo = FALSE, out.width="30%", fig.align='center'}
-knitr::include_graphics("lab-1/img/gpt-4.png")
-```
+![](img/gpt-4.png){fig-align="center"}
 
 *Builds upon supervised machine learning models--namely, deep neural networks, the likes of which can be estimated within R; the big advance has to do with the transformer architecture that allows for the fitting of more complex models. It is still important (maybe necessary) to learn about the foundational techniques and methodologies underlying GPT-4.*
 
----
-
-class: clear, inverse, center, middle
-
 # Overview of Machine Learning (ML)
 
----
+## Defining ML
 
-# Defining ML
-
-- *Artificial Intelligence (AI)* (i.e., [GPT-4](https://openai.com/api/))
-: Simulating human intelligence through the use of computers
-- *Machine learning (ML)*: A subset of AI focused on how computers acquire new information/knowledge
+-   *Artificial Intelligence (AI)* (i.e., [GPT-4](https://openai.com/api/)): Simulating human intelligence through the use of computers
+-   *Machine learning (ML)*: A subset of AI focused on how computers acquire new information/knowledge
 
 This definition leaves a lot of space for a range of approaches to ML
 
----
-
-# Supervised & unsupervised
-
 ## Supervised ML
 
-- Requires coded data or data with a known outcome
-- Uses coded/outcome data to train an algorithm
-- Uses that algorithm to **predict the codes/outcomes for new data** (data not used during the training)
-- Can take the form of a *classification* (predicting a dichotomous or categorical outcome) or a *regression* (predicting a continuous outcome)
-- Algorithms include:
-  - [Linear regression (really!)](https://web.stanford.edu/~hastie/ElemStatLearn/)
-  - Logistic regression
-  - Random forest
-  - Neural network
+-   Requires coded data or data with a known outcome
+-   Uses coded/outcome data to train an algorithm
+-   Uses that algorithm to **predict the codes/outcomes for new data** (data not used during the training)
+-   Can take the form of a *classification* (predicting a dichotomous or categorical outcome) or a *regression* (predicting a continuous outcome)
+-   Algorithms include:
+    -   [Linear regression (really!)](https://web.stanford.edu/~hastie/ElemStatLearn/)
+    -   Logistic regression
+    -   Random forest
+    -   Neural network
 
----
-
-# What kind of coded data?
+## What kind of coded data?
 
 > Want to detect spam? Get samples of spam messages. Want to forecast stocks? Find the price history. Want to find out user preferences? Parse their activities on Facebook (no, Mark, stop collecting it, enough!) (from [ML for Everyone](https://vas3k.com/blog/machine_learning/))
 
 In educational research:
 
-- Assessment data (e.g., [1](https://link.springer.com/article/10.1007/s10956-020-09895-9))
-- Data from log files ("trace data") (e.g., [1](https://www.tandfonline.com/doi/full/10.1080/10508406.2013.837391?casa_token=-8Fm2KCFJ30AAAAA%3Altbc8Y8ci_z-uLJx4se9tgvru9mzm3yqCTFi12ndJ5uM6RDl5YJGG6_4KpUgIK5BYa_Ildeh2qogoQ))
-- Open-ended written responses (e.g., [1](https://link.springer.com/article/10.1007/s10956-020-09889-7), [2](https://doi.org/10.1007/s11423-020-09761-w))
-- Achievement data (i.e., end-of-course grades) (e.g., [1](https://link.springer.com/article/10.1007/s10956-020-09888-8), [2](https://search.proquest.com/docview/2343734516?pq-origsite=gscholar&fromopenview=true))
+-   Assessment data (e.g., [1](https://link.springer.com/article/10.1007/s10956-020-09895-9))
+-   Data from log files ("trace data") (e.g., [1](https://www.tandfonline.com/doi/full/10.1080/10508406.2013.837391?casa_token=-8Fm2KCFJ30AAAAA%3Altbc8Y8ci_z-uLJx4se9tgvru9mzm3yqCTFi12ndJ5uM6RDl5YJGG6_4KpUgIK5BYa_Ildeh2qogoQ))
+-   Open-ended written responses (e.g., [1](https://link.springer.com/article/10.1007/s10956-020-09889-7), [2](https://doi.org/10.1007/s11423-020-09761-w))
+-   Achievement data (i.e., end-of-course grades) (e.g., [1](https://link.springer.com/article/10.1007/s10956-020-09888-8), [2](https://search.proquest.com/docview/2343734516?pq-origsite=gscholar&fromopenview=true))
 
----
+## How is this different from regression?
 
-# How is this different from regression?
-
-The _aim_ is different, the algorithms and methods of estimation are not (or, are differences in degree, rather than in kind).
+The *aim* is different, the algorithms and methods of estimation are not (or, are differences in degree, rather than in kind).
 
 In a linear regression, our aim is to estimate parameters, such as $\beta_0$ (intercept) and $\beta_1$ (slope), and to make inferences about them that are not biased by our particular sample.
 
 In an ML approach, we can use the same linear regression model, but with a goal other than making unbiased inferences about the $\beta$ parameters:
 
-<h4><center>In supervised ML, our goal is to minimize the difference between a known $y$ and our predictions, $\hat{y}$</center></h3>
+<h4>
 
----
+<center>In supervised ML, our goal is to minimize the difference between a known $y$ and our predictions, $\hat{y}$</center>
 
-# So, how is this really different?
+</h3>
 
-This _predictive goal_ means that we can do things differently:
+## It's the same!
 
-- Multicollinearity is not an issue because we do not care to make inferences about parameters
-- Because interpreting specific parameters is less of an interest, we can use a great deal more predictors
-- We focus on how accurately a _trained_ model can predict the values in _test_ data
-- We can make our models very complex!
+We can use the same model for an inferential or a predictive approach:
 
----
+$y$ = $b_0$ + $b_1$ + ... + $e$
 
-# Okay, _really_ complex
+If we are interested in making inferences about a particular $b$ (e.g., $b_1$), we can use theory and prior research to include particular predictors
 
-- Neutral/deep networks
-  - i.e., GPT-3 (175 B parameters), GPT-4 (>1 T parameters)
-- And, some models can take a different form than familiar regressions:
-  - *k*-nearest neighbors
-  - Decision trees (and their extensions of bagged and random forests)
-- Last, the modeling process can look different:
-  - Ensemble models that combine or improve on ("boosting") the predictions of individual models
+If we are interested in making the best possible predictions, we can add a _bunch_ of predictors and see how much we can minimize the prediction error
 
----
+## But different!
+
+This *predictive goal* means that we can do things differently:
+
+-   Multicollinearity is not an issue because we do not care to make inferences about parameters
+-   Because interpreting specific parameters is less of an interest, we can use a great deal more predictors
+-   We focus on how accurately a *trained* model can predict the values in *test* data
+-   We can make our models very complex - we can choose different models!
+
+## Okay, *really* complex
+
+-   Neutral/deep networks
+    -   i.e., GPT-3 (175 B parameters), GPT-4 (\>1 T parameters)
+-   And, some models can take a different form than familiar regressions:
+    -   *k*-nearest neighbors
+    -   Decision trees (and their extensions of bagged and random forests)
+-   Last, the modeling process can look different:
+    -   Ensemble models that combine or improve on ("boosting") the predictions of individual models
 
 # Key Concept: SML vs. inferential modeling
 
----
-
-## Unsupervised ML
-
-- Does not require coded data; one way to think about unsupervised ML is that its purpose is to discover codes/labels
-- Can be used in an _exploratory mode_ (see [Nelson, 2020](https://journals.sagepub.com/doi/full/10.1177/0049124118769114?casa_token=EV5XH31qbyAAAAAA%3AFg09JQ1XHOOzlxYT2SSJ06vZv0jG-s4Qfz8oDIQwh2jrZ-jrHNr7xZYL2FwnZtZiokhPalvV1RL2Bw)) 
-- **Warning**: The results of unsupervised ML _cannot_ directly be used to provide codes/outcomes for supervised ML techniques 
-- Algorithms include:
-  - Cluster analysis and Latent Profile Analysis
-  - [Principle Components Analysis (really!)](https://web.stanford.edu/~hastie/ElemStatLearn/)
-
----
-
-# What technique should I choose?
+## Which technique should I choose?
 
 Do you have coded data or data with a known outcome -- let's say about K-12 students -- and, do you want to:
 
-- _Predict_ how other students with similar data (but without a known outcome) perform?
-- _Scale_ coding that you have done for a sample of data to a larger sample?
-- _Provide timely or instantaneous feedback_, like in many learning analytics systems?
+-   *Predict* how other students with similar data (but without a known outcome) perform?
+-   *Scale* coding that you have done for a sample of data to a larger sample?
+-   *Provide timely or instantaneous feedback*, like in many learning analytics systems?
 
 **Supervised methods may be your best bet**
 
----
-
-# What technique should I choose?
+## Which technique should I choose?
 
 Do you not yet have codes/outcomes -- and do you want to?
 
-- _Achieve a starting point_ for qualitative coding, perhaps in a ["computational grounded theory"](https://journals.sagepub.com/doi/full/10.1177/0049124117729703) mode?
-- _Discover groups or patterns in your data_ that may be of interest?
-- _Reduce the number of variables in your dataset_ to a smaller, but perhaps nearly as explanatory/predictive - set of variables?
+-   *Achieve a starting point* for qualitative coding, perhaps in a ["computational grounded theory"](https://journals.sagepub.com/doi/full/10.1177/0049124117729703) mode?
+-   *Discover groups or patterns in your data* that may be of interest?
+-   *Reduce the number of variables in your dataset* to a smaller, but perhaps nearly as explanatory/predictive - set of variables?
 
 **Unsupervised methods may be helpful**
 
----
-
-# What technique should I choose?
+## Which technique should I choose?
 
 Do you want to say something about one or several variables' relations with an outcome?
 
-- Understand whether an intervention was effective
-- See how one or more variables relates to an outcome
+-   Understand whether an intervention was effective
+-   See how one or more variables relates to an outcome
 
 **Traditional inferential statistics may be best**
 
----
+## Examples of machine learning in STEM Ed Research
 
-# Examples of machine learning in STEM Ed Research
-
-.panelset[
-
-.panel[.panel-name[Example 1]
+::: panel-tabset
+### Example 1
 
 **Using digital log-trace data and supervised ML**
 
 > Gobert, J. D., Sao Pedro, M., Raziuddin, J., & Baker, R. S. (2013). From log files to assessment metrics: Measuring students' science inquiry skills using educational data mining. *Journal of the Learning Sciences, 22*(4), 521-563.
 
-- Utilized *replay tagging* to code sequences of students' activity within digital *log-trace* data
-- Then trained a supervised ML algorithm to **automate** the prediction the presence or absence of students' engagement in inquiry
-]
+-   Utilized *replay tagging* to code sequences of students' activity within digital *log-trace* data
+-   Then trained a supervised ML algorithm to **automate** the prediction the presence or absence of students' engagement in inquiry
 
-.panel[.panel-name[Example 2]
+### Example 2
 
 **Combining best practices in assessment with supervised ML**
 
 > Maestrales, S., Zhai, X., Touitou, I., Baker, Q., Schneider, B., & Krajcik, J. (2021). Using machine learning to score multi-dimensional assessments of chemistry and physics. Journal of Science Education and Technology, 30(2), 239-254.
 
-- Carrying out a careful process of qualitative coding (and the establishment of validity and interrater reliability) of students' written constructed responses
-- Training a supervised ML algorithm in advance of being able to **scale up** their coding to a larger number of responses
-]
+-   Carrying out a careful process of qualitative coding (and the establishment of validity and interrater reliability) of students' written constructed responses
+-   Training a supervised ML algorithm in advance of being able to **scale up** their coding to a larger number of responses
 
-.panel[.panel-name[Example 3]
+### Example 3
 
 **Combining qualitative methods with unsupervised ML**
 
-> Rosenberg, J. M., & Krist, C. (2021). Combining machine learning and
-> qualitative methods to elaborate students' ideas about the generality
-> of their model-based explanations. *Journal of Science Education and
-> Technology, 30*, 255-267.
+> Rosenberg, J. M., & Krist, C. (2021). Combining machine learning and qualitative methods to elaborate students' ideas about the generality of their model-based explanations. *Journal of Science Education and Technology, 30*, 255-267.
 
-- Used unsupervised machine learning methods to identify topics within students' interviews **from patterns in the data alone**
-- Interpreted those topics in light of rigorous qualitative coding with the aim of boosting the validity of the use of both the machine learning and qualitative approaches
-]
-]
+-   Used unsupervised machine learning methods to identify topics within students' interviews **from patterns in the data alone**
+-   Interpreted those topics in light of rigorous qualitative coding with the aim of boosting the validity of the use of both the machine learning and qualitative approaches
+:::
 
----
+# Modules Overview
 
-class: clear, inverse, center, middle
+::: panel-tabset
+## Module 1
 
-# Learning Labs!
+**SML Module 1: Foundations**
 
-.panel[.panel-name[LL 1]
-
-**SML Learning Lab 1: Foundations**
- 
 How is prediction different from explanation? This lab provides a gentle introduction to supervised machine learning by drawing out similarities to and differences from a regression modeling approach. The case study will involve modeling the graduation rate across 1000s of higher education institutions in the United States using data from the Integrated Postsecondary Education Data System (IPEDS).
 
-]
+## Module 2
 
-.panel[.panel-name[LL 2]
-
-**SML Learning Lab 2: Workflows With Training and Testing Data**
+**SML Module 2: Workflows With Training and Testing Data**
 
 Building on the foundations from Lab 1, this session delves deeper into the workflows we will use when we are using a SML approach. Particularly, we'll explore the roles of training and testing data and when to use them in a SML workflow. We'll predict students' withdrawal from a course using the Open University Learning Analytics Dataset (OULAD).
 
-]
+## Module 3
 
-.panel[.panel-name[LL 3]
-
-**SML Learning Lab 3: Interpreting SML Metrics**
+**SML Module 3: Interpreting SML Metrics**
 
 How is the interpretation of SML models different from more familiar models? In this lab, we'll explore and work to understand the confusion matrix that can and the various metrics (e.g., precision, recall, PPV, NPV, F-score, and AUC) that are used to interpret how good at making dichotomous predictions SML models are. We'll again use the OULAD, augmenting the variables we used in Lab 1, and we'll introduce a more complex model---the random forest model---as an alternative to the regression models used in previous labs.
 
-]
+## Module 4
 
-.panel[.panel-name[LL 4]
+**SML Module 4: Improving Predictions Through Feature Engineering**
 
-**SML Learning Lab 4: Improving Predictions Through Feature Engineering**
- 
 How can we improve our predictions? This lab introduces the concept of feature engineering to enhance model performance. We'll explore techniques for creating new variables and refining existing ones to improve prediction accuracy. We also explore cross-validation to revise and refine our model without biasing its predictions. We'll work with the finest-grained OULAD data—interaction data—to demonstrate key feature engineering steps.
-]
-]
+:::
+
+# Discussion 2
+
+::: {.panel-tabset}
+
+## Reflecting
+
+- When might you use SML?
+
+## Applying
+
+- How could you use SML?
+
+:::
+
+# Introduction to the other parts of this learning lab
+
+::: {.panel-tabset}
+
+## Readings
+
+Breiman, L. (2001). Statistical modeling: The two cultures (with comments and a rejoinder by the author). *Statistical Science, 16*(3), 199-231. https://projecteuclid.org/journals/statistical-science/volume-16/issue-3/Statistical-Modeling--The-Two-Cultures-with-comments-and-a/10.1214/ss/1009213726.pdf
+
+Estrellado, R. A., Freer, E. A., Mostipak, J., Rosenberg, J. M., & Velásquez, I. C. (2020). *Data science in education using R. Routledge* (c14), Predicting students' final grades using machine learning methods with online course data. http://www.datascienceineducation.com/
+
+## Case Study
+
+- Building a prediction model for students passing the class---based just on student data.
+- Work with peers to complete this, reading the text, following links to resources (and the reading), and then completing the required 👉 Your Turn ⤵ tasks
+- A key is available, but we strongly encourage you to use it only at the end to check your work, or if you are completely stuck and have tried our recommended troubleshooting steps: https://docs.google.com/document/d/14Jc-KG3m5k1BvyKWqw7KmDD21IugU5nV5edfJkZyspY/edit
+
+## Badge
+
+- Involves applying what you have done through this point in the learning lab to a) extending our model and b) reflecting and planning, after which you will knit and submit your work by publishing to Posit Cloud.
+
+:::
+
+# Troubleshooting and setup
+
+- Please view [this Google doc](https://docs.google.com/document/d/14Jc-KG3m5k1BvyKWqw7KmDD21IugU5nV5edfJkZyspY/edit)
+- Change default settings: Tools -> Global Settings -> Workspace -> DO NOT restore workspace 
+- Change default settings: Tools -> Global Settings -> Workspace -> Save workspace to .RData NEVER
+- Session -> Restart R and Clear Output is a good place to start
+
+## *fin*
+
+- *Dr. Joshua Rosenberg* (jmrosenberg@utk.edu; https://joshuamrosenberg.com)
+
+[General troubleshooting tips for R and RStudio](https://docs.google.com/document/d/14Jc-KG3m5k1BvyKWqw7KmDD21IugU5nV5edfJkZyspY/edit)

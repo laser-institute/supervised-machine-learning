@@ -1,66 +1,42 @@
 ---
-title: "Machine Learning Learning Lab 1: Foundations"
-subtitle: "Overview Presentation"
-author: "**Dr. Joshua Rosenberg**"
-institute: "LASER Institute"
-date: '`r format(Sys.time(), "%B %d, %Y")`'
-output:
-  xaringan::moon_reader:
-    css:
-     - default
-     - css/laser.css
-     - css/laser-fonts.css
-    lib_dir: libs                        # creates directory for libraries
-    seal: false                          # false: custom title slide
-    nature:
-      highlightStyle: default         # highlighting syntax for code
-      highlightLines: true               # true: enables code line highlighting 
-      highlightLanguage: ["r"]           # languages to highlight
-      countIncrementalSlides: false      # false: disables counting of incremental slides
-      ratio: "16:9"                      # 4:3 for standard size,16:9
-      slideNumberFormat: |
-       <div class="progress-bar-container">
-        <div class="progress-bar" style="width: calc(%current% / %total% * 100%);">
-        </div>
-       </div>
+title: "Machine Learning - Learning Lab 1"
+subtitle: "Code-along - Foundations"
+format:
+  revealjs: 
+    slide-number: c/t
+    progress: true
+    chalkboard: 
+      buttons: false
+    preview-links: auto
+    logo: img/LASERLogoB.png
+    theme: [default, css/laser.scss]
+    width: 1920
+    height: 1080
+    margin: 0.05
+    footer: <a href=https://www.go.ncsu.edu/laser-institute>go.ncsu.edu/laser-institute
 ---
 
-class: clear, title-slide, inverse, center, top, middle
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE, warning = FALSE)
+```{r}
+#| include: false
 ```
 
-```{r, echo=FALSE}
+```{r}
+#| echo: false
 # then load all the relevant packages
 pacman::p_load(pacman, knitr, tidyverse, readxl)
 ```
 
-```{r xaringan-panelset, echo=FALSE}
-xaringanExtra::use_panelset()
-```
+# Code-along - SML
 
-```{r xaringanExtra-clipboard, echo=FALSE}
+::: {.panel-tabset}
 
-```
-
-# `r rmarkdown::metadata$title`
-----
-### `r rmarkdown::metadata$author`
-### `r format(Sys.time(), "%B %d, %Y")`
-
-
----
-
-# Code-along
-
-.panelset[
-
-.panel[.panel-name[0]
+## 0
 
 **Loading, setting up: create a .R file in /lab-1 and run this code**
 
-```{r, eval = FALSE, echo = TRUE}
+```{r}
+#| eval: false
+#| echo: true
 library(tidyverse)
 library(tidymodels)
 
@@ -71,142 +47,108 @@ starwars_recoded %>%
     count(species) # how many humans are there?
 ```
 
-]
+## 1
 
-.panel[.panel-name[1]
+```{r}
+#| eval: false
+#| echo: true
+
+m1 <- lm(species_human ~ height + mass, data = starwars)
+```
+
+## 2
+
+```{r}
+#| eval: false
+#| echo: true
+
+summary(m1)
+```
+
+:::
+
+# Code-along - SML
+
+::: {.panel-tabset}
+
+## 0
+
+**Loading, setting up: create a .R file in /lab-1 and run this code**
+
+```{r}
+#| eval: false
+#| echo: true
+library(tidyverse)
+library(tidymodels)
+
+starwars_recoded <- starwars %>% # built-in data available just by typing
+    mutate(species_human = ifelse(species == "Human", "Human", "Not human")) # recoding species to create a categorical variable
+
+starwars_recoded %>% 
+    count(species) # how many humans are there?
+```
+
+## 1
 
 **Split data**
 
-```{r, echo = TRUE, eval = FALSE}
+```{r}
+#| echo: true
+#| eval: false
 train_test_split <- initial_split(starwars_recoded, prop = .80)
-
 data_train <- training(train_test_split)
 data_test <- testing(train_test_split)
 ```
 
-]
-
-.panel[.panel-name[2]
+## 2
 
 **Engineer features**
 
-```{r, echo = TRUE, eval = FALSE}
+```{r}
+#| echo: true
+#| eval: false
 # predicting humans based on the independent effects of height and mass
 my_rec <- recipe(species_human ~ height + mass, data = data_train)
 ```
 
-]
-
-.panel[.panel-name[3]
+## 3
 
 **Specify recipe, model, and workflow**
 
-```{r, echo = TRUE, eval = FALSE}
+```{r}
+#| echo: true
+#| eval: false
 # specify model
-my_mod <- logistic_reg() %>% 
+my_mod <- logistic_reg() %>%
     set_engine("glm") %>%
     set_mode("classification")
 
 # specify workflow
 my_wf <- workflow() %>%
-    add_model(my_mod) %>% 
+   add_model(my_mod) %>% 
     add_recipe(my_rec)
 ```
 
-]
-
-.panel[.panel-name[4]
+## 4
 
 **Fit model**
 
-```{r, echo = TRUE, eval = FALSE}
+```{r}
+#| echo: true
+#| eval: false
 fitted_model <- fit(my_wf, data = data_train)
-
 final_fit <- last_fit(fitted_model, train_test_split)
 ```
 
-]
-
-.panel[.panel-name[5]
+## 5
 
 **Evaluate accuracy**
 
-```{r, echo = TRUE, eval = FALSE}
+```{r}
+#| echo: true
+#| eval: false
 final_fit %>%
-    collect_metrics()
+   collect_metrics()
 ```
 
-]
-
-
-]
-
----
-
-# Discussion 2
-
-.panelset[
-
-.panel[.panel-name[Reflecting]
-
-- When might you use SML?
-
-]
-
-.panel[.panel-name[Applying]
-
-- How could you use SML?
-
-]
-
-]
-
----
-
-# Introduction to the other parts of this learning lab
-
-.panelset[
-
-.panel[.panel-name[Readings]
-
-Breiman, L. (2001). Statistical modeling: The two cultures (with comments and a rejoinder by the author). *Statistical Science, 16*(3), 199-231. https://projecteuclid.org/journals/statistical-science/volume-16/issue-3/Statistical-Modeling--The-Two-Cultures-with-comments-and-a/10.1214/ss/1009213726.pdf
-
-Estrellado, R. A., Freer, E. A., Mostipak, J., Rosenberg, J. M., & Velásquez, I. C. (2020). *Data science in education using R. Routledge* (c14), Predicting students’ final grades using machine learning methods with online course data. http://www.datascienceineducation.com/
-
-]
-
-.panel[.panel-name[Case Study]
-
-- Building a prediction model for students passing the class---based just on student data.
-- Work with peers to complete this, reading the text, following links to resources (and the reading), and then completing the required 👉 Your Turn ⤵ tasks
-- A key is available, but we strongly encourage you to use it only at the end to check your work, or if you are completely stuck and have tried our recommended troubleshooting steps: https://docs.google.com/document/d/14Jc-KG3m5k1BvyKWqw7KmDD21IugU5nV5edfJkZyspY/edit
-
-]
-
-.panel[.panel-name[Badge]
-
-- Involves applying what you have done through this point in the learning lab to a) extending our model and b) reflecting and planning, after which you will knit and submit your work by publishing to Posit Cloud.
-
-]
-]
-
----
-
-# Troubleshooting and setup
-
-- Please view [this Google doc](https://docs.google.com/document/d/14Jc-KG3m5k1BvyKWqw7KmDD21IugU5nV5edfJkZyspY/edit)
-- Change default settings: Tools -> Global Settings -> Workspace -> DO NOT restore workspace 
-- Change default settings: Tools -> Global Settings -> Workspace -> Save workspace to .RData NEVER
-- Session -> Restart R and Clear Output is a good place to start
-
----
-
-# *fin*
-
-We hope to see you in the ML topic area learning labs!
-
-- *Dr. Joshua Rosenberg* (jmrosenberg@utk.edu; https://joshuamrosenberg.com)
-
-[These slides (Introductory Presentation)](https://laser-institute.github.io/machine-learning/introductory-presentation.html#1)
-
-[General troubleshooting tips for R and RStudio](https://docs.google.com/document/d/14Jc-KG3m5k1BvyKWqw7KmDD21IugU5nV5edfJkZyspY/edit)
+:::

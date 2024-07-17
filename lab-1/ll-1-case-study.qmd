@@ -1,18 +1,8 @@
 ---
-title: 'Learning Lab 1 Case Study'
-author: ""
-date: "`r format(Sys.Date(),'%B %e, %Y')`"
-output: 
-  html_document:
-    toc: yes
-    toc_depth: 4
-    toc_float: yes
-    code_folding: show
-    code_download: TRUE
-editor_options:
-  markdown:
-    wrap: 72
-bibliography: lit/references.bib
+title: 'Machine Learning - Learning Lab 1'
+subtitle: "Case Study - Foundations"
+format: html
+editor: visual
 ---
 
 ```{r setup, include=FALSE}
@@ -23,7 +13,7 @@ set.seed(20240706) # so the results are readily reproducible
 
 ## 1. PREPARE
 
-We will be using data from the IPEDS.
+We will be using data from the [IPEDS, the Integrated Postsecondary Education Data System](https://nces.ed.gov/ipeds/).
 
 ```{r}
 library(tidyverse)
