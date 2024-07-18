@@ -29,7 +29,6 @@ glimpse(ipeds)
 ## 2. WRANGLE
 
 ```{r}
-
 ipeds <- ipeds %>% 
     select(name = institution_name, 
            title_iv = hd2022_postsecondary_and_title_iv_institution_indicator, 

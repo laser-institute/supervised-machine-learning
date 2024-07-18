@@ -10,7 +10,7 @@
 <link href="ll-1-code-along_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
   <meta name="generator" content="quarto-1.3.450">
 
-  <title>Machine Learning - Learning Lab 1</title>
+  <title>Machine Learning - Module 1</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -391,20 +391,45 @@
     <div class="slides">
 
 <section id="title-slide" class="quarto-title-block center">
-  <h1 class="title">Machine Learning - Learning Lab 1</h1>
+  <h1 class="title">Machine Learning - Module 1</h1>
   <p class="subtitle">Code-along - Foundations</p>
 
 <div class="quarto-title-authors">
 </div>
 
 </section>
-<section id="code-along---sml" class="title-slide slide level1 center">
-<h1>Code-along - SML</h1>
+<section>
+<section id="getting-started" class="title-slide slide level1 center">
+<h1>Getting started</h1>
+
+</section>
+<section id="process" class="slide level2">
+<h2>Process</h2>
+<ul>
+<li>Create a .R file in <code>/module-1</code></li>
+<li>Then, run copy and paste the code in this presentation as we talk through each step</li>
+</ul>
+</section>
+<section id="quick-discussion" class="slide level2">
+<h2>Quick discussion</h2>
+<ul>
+<li>How comfortable are you with using RStudio?</li>
+<li>What concerns do you have about coding?</li>
+</ul>
+<p><strong>We’ll take this part easily!</strong></p>
+</section></section>
+<section>
+<section id="code-along---regression" class="title-slide slide level1 center">
+<h1>Code-along - Regression</h1>
+
+</section>
+<section id="r-code" class="slide level2">
+<h2>R Code</h2>
 <div class="panel-tabset">
 <ul id="tabset-1" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-1-1">0</a></li><li><a href="#tabset-1-2">1</a></li><li><a href="#tabset-1-3">2</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1">
-<p><strong>Loading, setting up: create a .R file in /lab-1 and run this code</strong></p>
+<p><strong>Loading, setting up</strong></p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb1-2"><a href="#cb1-2"></a><span class="fu">library</span>(tidymodels)</span>
@@ -417,11 +442,13 @@
 </div>
 </div>
 <div id="tabset-1-2">
+<p><strong>Fit model</strong></p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>m1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(species_human <span class="sc">~</span> height <span class="sc">+</span> mass, <span class="at">data =</span> starwars)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div id="tabset-1-3">
+<p><strong>Interpret fit statistics, coefficients and standard errors, and p-values</strong></p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="fu">summary</span>(m1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -429,70 +456,127 @@
 </div>
 </div>
 </section>
-
-<section id="code-along---sml-1" class="title-slide slide level1 center">
+<section id="python-code" class="slide level2">
+<h2>python code</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb4-2"><a href="#cb4-2"></a><span class="im">import</span> statsmodels.api <span class="im">as</span> sm</span>
+<span id="cb4-3"><a href="#cb4-3"></a></span>
+<span id="cb4-4"><a href="#cb4-4"></a><span class="co"># Load and preprocess the data</span></span>
+<span id="cb4-5"><a href="#cb4-5"></a>starwars <span class="op">=</span> pd.read_csv(<span class="st">'path_to_starwars.csv'</span>)  <span class="co"># Load your data file</span></span>
+<span id="cb4-6"><a href="#cb4-6"></a>starwars[<span class="st">'species_human'</span>] <span class="op">=</span> starwars[<span class="st">'species'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: <span class="st">'Human'</span> <span class="cf">if</span> x <span class="op">==</span> <span class="st">'Human'</span> <span class="cf">else</span> <span class="st">'Not human'</span>)</span>
+<span id="cb4-7"><a href="#cb4-7"></a>starwars[<span class="st">'species_human'</span>] <span class="op">=</span> starwars[<span class="st">'species_human'</span>].astype(<span class="st">'category'</span>).cat.codes</span>
+<span id="cb4-8"><a href="#cb4-8"></a></span>
+<span id="cb4-9"><a href="#cb4-9"></a><span class="co"># Regression model</span></span>
+<span id="cb4-10"><a href="#cb4-10"></a>X_reg <span class="op">=</span> starwars[[<span class="st">'height'</span>, <span class="st">'mass'</span>]]</span>
+<span id="cb4-11"><a href="#cb4-11"></a>y_reg <span class="op">=</span> starwars[<span class="st">'species_human'</span>]</span>
+<span id="cb4-12"><a href="#cb4-12"></a>X_reg <span class="op">=</span> sm.add_constant(X_reg)  <span class="co"># Add a constant term for the intercept</span></span>
+<span id="cb4-13"><a href="#cb4-13"></a></span>
+<span id="cb4-14"><a href="#cb4-14"></a>reg_model <span class="op">=</span> sm.Logit(y_reg, X_reg).fit()</span>
+<span id="cb4-15"><a href="#cb4-15"></a><span class="bu">print</span>(reg_model.summary())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section></section>
+<section>
+<section id="code-along---sml" class="title-slide slide level1 center">
 <h1>Code-along - SML</h1>
+
+</section>
+<section id="r-code-1" class="slide level2">
+<h2>R Code</h2>
 <div class="panel-tabset">
 <ul id="tabset-2" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-2-1">0</a></li><li><a href="#tabset-2-2">1</a></li><li><a href="#tabset-2-3">2</a></li><li><a href="#tabset-2-4">3</a></li><li><a href="#tabset-2-5">4</a></li><li><a href="#tabset-2-6">5</a></li></ul>
 <div class="tab-content">
 <div id="tabset-2-1">
-<p><strong>Loading, setting up: create a .R file in /lab-1 and run this code</strong></p>
+<p><strong>Loading, setting up</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb4-2"><a href="#cb4-2"></a><span class="fu">library</span>(tidymodels)</span>
-<span id="cb4-3"><a href="#cb4-3"></a></span>
-<span id="cb4-4"><a href="#cb4-4"></a>starwars_recoded <span class="ot">&lt;-</span> starwars <span class="sc">%&gt;%</span> <span class="co"># built-in data available just by typing</span></span>
-<span id="cb4-5"><a href="#cb4-5"></a>    <span class="fu">mutate</span>(<span class="at">species_human =</span> <span class="fu">ifelse</span>(species <span class="sc">==</span> <span class="st">"Human"</span>, <span class="st">"Human"</span>, <span class="st">"Not human"</span>)) <span class="co"># recoding species to create a categorical variable</span></span>
-<span id="cb4-6"><a href="#cb4-6"></a></span>
-<span id="cb4-7"><a href="#cb4-7"></a>starwars_recoded <span class="sc">%&gt;%</span> </span>
-<span id="cb4-8"><a href="#cb4-8"></a>    <span class="fu">count</span>(species) <span class="co"># how many humans are there?</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb5-2"><a href="#cb5-2"></a><span class="fu">library</span>(tidymodels)</span>
+<span id="cb5-3"><a href="#cb5-3"></a></span>
+<span id="cb5-4"><a href="#cb5-4"></a>starwars_recoded <span class="ot">&lt;-</span> starwars <span class="sc">%&gt;%</span> <span class="co"># built-in data available just by typing</span></span>
+<span id="cb5-5"><a href="#cb5-5"></a>    <span class="fu">mutate</span>(<span class="at">species_human =</span> <span class="fu">ifelse</span>(species <span class="sc">==</span> <span class="st">"Human"</span>, <span class="st">"Human"</span>, <span class="st">"Not human"</span>)) <span class="co"># recoding species to create a categorical variable</span></span>
+<span id="cb5-6"><a href="#cb5-6"></a></span>
+<span id="cb5-7"><a href="#cb5-7"></a>starwars_recoded <span class="sc">%&gt;%</span> </span>
+<span id="cb5-8"><a href="#cb5-8"></a>    <span class="fu">count</span>(species) <span class="co"># how many humans are there?</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div id="tabset-2-2">
 <p><strong>Split data</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>train_test_split <span class="ot">&lt;-</span> <span class="fu">initial_split</span>(starwars_recoded, <span class="at">prop =</span> .<span class="dv">80</span>)</span>
-<span id="cb5-2"><a href="#cb5-2"></a>data_train <span class="ot">&lt;-</span> <span class="fu">training</span>(train_test_split)</span>
-<span id="cb5-3"><a href="#cb5-3"></a>data_test <span class="ot">&lt;-</span> <span class="fu">testing</span>(train_test_split)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a>train_test_split <span class="ot">&lt;-</span> <span class="fu">initial_split</span>(starwars_recoded, <span class="at">prop =</span> .<span class="dv">80</span>)</span>
+<span id="cb6-2"><a href="#cb6-2"></a>data_train <span class="ot">&lt;-</span> <span class="fu">training</span>(train_test_split)</span>
+<span id="cb6-3"><a href="#cb6-3"></a>data_test <span class="ot">&lt;-</span> <span class="fu">testing</span>(train_test_split)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div id="tabset-2-3">
 <p><strong>Engineer features</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="co"># predicting humans based on the independent effects of height and mass</span></span>
-<span id="cb6-2"><a href="#cb6-2"></a>my_rec <span class="ot">&lt;-</span> <span class="fu">recipe</span>(species_human <span class="sc">~</span> height <span class="sc">+</span> mass, <span class="at">data =</span> data_train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="co"># predicting humans based on the independent effects of height and mass</span></span>
+<span id="cb7-2"><a href="#cb7-2"></a>my_rec <span class="ot">&lt;-</span> <span class="fu">recipe</span>(species_human <span class="sc">~</span> height <span class="sc">+</span> mass, <span class="at">data =</span> data_train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div id="tabset-2-4">
 <p><strong>Specify recipe, model, and workflow</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="co"># specify model</span></span>
-<span id="cb7-2"><a href="#cb7-2"></a>my_mod <span class="ot">&lt;-</span> <span class="fu">logistic_reg</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb7-3"><a href="#cb7-3"></a>    <span class="fu">set_engine</span>(<span class="st">"glm"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb7-4"><a href="#cb7-4"></a>    <span class="fu">set_mode</span>(<span class="st">"classification"</span>)</span>
-<span id="cb7-5"><a href="#cb7-5"></a></span>
-<span id="cb7-6"><a href="#cb7-6"></a><span class="co"># specify workflow</span></span>
-<span id="cb7-7"><a href="#cb7-7"></a>my_wf <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb7-8"><a href="#cb7-8"></a>   <span class="fu">add_model</span>(my_mod) <span class="sc">%&gt;%</span> </span>
-<span id="cb7-9"><a href="#cb7-9"></a>    <span class="fu">add_recipe</span>(my_rec)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a><span class="co"># specify model</span></span>
+<span id="cb8-2"><a href="#cb8-2"></a>my_mod <span class="ot">&lt;-</span> <span class="fu">logistic_reg</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb8-3"><a href="#cb8-3"></a>    <span class="fu">set_engine</span>(<span class="st">"glm"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb8-4"><a href="#cb8-4"></a>    <span class="fu">set_mode</span>(<span class="st">"classification"</span>)</span>
+<span id="cb8-5"><a href="#cb8-5"></a></span>
+<span id="cb8-6"><a href="#cb8-6"></a><span class="co"># specify workflow</span></span>
+<span id="cb8-7"><a href="#cb8-7"></a>my_wf <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb8-8"><a href="#cb8-8"></a>   <span class="fu">add_model</span>(my_mod) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-9"><a href="#cb8-9"></a>    <span class="fu">add_recipe</span>(my_rec)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div id="tabset-2-5">
 <p><strong>Fit model</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>fitted_model <span class="ot">&lt;-</span> <span class="fu">fit</span>(my_wf, <span class="at">data =</span> data_train)</span>
-<span id="cb8-2"><a href="#cb8-2"></a>final_fit <span class="ot">&lt;-</span> <span class="fu">last_fit</span>(fitted_model, train_test_split)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a>fitted_model <span class="ot">&lt;-</span> <span class="fu">fit</span>(my_wf, <span class="at">data =</span> data_train)</span>
+<span id="cb9-2"><a href="#cb9-2"></a>final_fit <span class="ot">&lt;-</span> <span class="fu">last_fit</span>(fitted_model, train_test_split)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div id="tabset-2-6">
 <p><strong>Evaluate accuracy</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a>final_fit <span class="sc">%&gt;%</span></span>
-<span id="cb9-2"><a href="#cb9-2"></a>   <span class="fu">collect_metrics</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a>final_fit <span class="sc">%&gt;%</span></span>
+<span id="cb10-2"><a href="#cb10-2"></a>   <span class="fu">collect_metrics</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
 </div>
+</section>
+<section id="python-code-1" class="slide level2">
+<h2>python code</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb11-2"><a href="#cb11-2"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
+<span id="cb11-3"><a href="#cb11-3"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LogisticRegression</span>
+<span id="cb11-4"><a href="#cb11-4"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> classification_report</span>
+<span id="cb11-5"><a href="#cb11-5"></a></span>
+<span id="cb11-6"><a href="#cb11-6"></a><span class="co"># Load and preprocess the data</span></span>
+<span id="cb11-7"><a href="#cb11-7"></a>starwars <span class="op">=</span> pd.read_csv(<span class="st">'path_to_starwars.csv'</span>)  <span class="co"># Load your data file</span></span>
+<span id="cb11-8"><a href="#cb11-8"></a>starwars[<span class="st">'species_human'</span>] <span class="op">=</span> starwars[<span class="st">'species'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: <span class="st">'Human'</span> <span class="cf">if</span> x <span class="op">==</span> <span class="st">'Human'</span> <span class="cf">else</span> <span class="st">'Not human'</span>)</span>
+<span id="cb11-9"><a href="#cb11-9"></a></span>
+<span id="cb11-10"><a href="#cb11-10"></a><span class="co"># Split data</span></span>
+<span id="cb11-11"><a href="#cb11-11"></a>train, test <span class="op">=</span> train_test_split(starwars, test_size<span class="op">=</span><span class="fl">0.2</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb11-12"><a href="#cb11-12"></a>X_train, y_train <span class="op">=</span> train[[<span class="st">'height'</span>, <span class="st">'mass'</span>]], train[<span class="st">'species_human'</span>]</span>
+<span id="cb11-13"><a href="#cb11-13"></a>X_test, y_test <span class="op">=</span> test[[<span class="st">'height'</span>, <span class="st">'mass'</span>]], test[<span class="st">'species_human'</span>]</span>
+<span id="cb11-14"><a href="#cb11-14"></a></span>
+<span id="cb11-15"><a href="#cb11-15"></a><span class="co"># Specify model and fit</span></span>
+<span id="cb11-16"><a href="#cb11-16"></a>clf <span class="op">=</span> LogisticRegression()</span>
+<span id="cb11-17"><a href="#cb11-17"></a>clf.fit(X_train, y_train)</span>
+<span id="cb11-18"><a href="#cb11-18"></a></span>
+<span id="cb11-19"><a href="#cb11-19"></a><span class="co"># Evaluate accuracy</span></span>
+<span id="cb11-20"><a href="#cb11-20"></a>y_pred <span class="op">=</span> clf.predict(X_test)</span>
+<span id="cb11-21"><a href="#cb11-21"></a><span class="bu">print</span>(classification_report(y_test, y_pred))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section></section>
+<section id="discussion" class="title-slide slide level1 center">
+<h1>Discussion</h1>
+<ul>
+<li>What do you notice about the differences in the output between regression and SML?</li>
+<li>What do you notice is different about the modeling approach?</li>
+</ul>
 
 <img src="img/LASERLogoB.png" class="slide-logo r-stretch"><div class="footer footer-default">
 <p><a href="https://www.go.ncsu.edu/laser-institute">go.ncsu.edu/laser-institute</a></p><a href="https://www.go.ncsu.edu/laser-institute">

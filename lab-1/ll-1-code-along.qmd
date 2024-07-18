@@ -1,5 +1,5 @@
 ---
-title: "Machine Learning - Learning Lab 1"
+title: "Machine Learning - Module 1"
 subtitle: "Code-along - Foundations"
 format:
   revealjs: 
@@ -26,13 +26,29 @@ format:
 pacman::p_load(pacman, knitr, tidyverse, readxl)
 ```
 
-# Code-along - SML
+# Getting started
+
+## Process
+
+- Create a .R file in `/module-1`
+- Then, run copy and paste the code in this presentation as we talk through each step
+
+## Quick discussion
+
+- How comfortable are you with using RStudio? 
+- What concerns do you have about coding?
+
+**We'll take this part easily!**
+
+# Code-along - Regression
+
+## R Code
 
 ::: {.panel-tabset}
 
 ## 0
 
-**Loading, setting up: create a .R file in /lab-1 and run this code**
+**Loading, setting up**
 
 ```{r}
 #| eval: false
@@ -49,6 +65,8 @@ starwars_recoded %>%
 
 ## 1
 
+**Fit model**
+
 ```{r}
 #| eval: false
 #| echo: true
@@ -57,6 +75,8 @@ m1 <- lm(species_human ~ height + mass, data = starwars)
 ```
 
 ## 2
+
+**Interpret fit statistics, coefficients and standard errors, and p-values**
 
 ```{r}
 #| eval: false
@@ -67,13 +87,38 @@ summary(m1)
 
 :::
 
+## python code
+
+```{python}
+#| eval: false
+#| echo: true
+
+import pandas as pd
+import statsmodels.api as sm
+
+# Load and preprocess the data
+starwars = pd.read_csv('path_to_starwars.csv')  # Load your data file
+starwars['species_human'] = starwars['species'].apply(lambda x: 'Human' if x == 'Human' else 'Not human')
+starwars['species_human'] = starwars['species_human'].astype('category').cat.codes
+
+# Regression model
+X_reg = starwars[['height', 'mass']]
+y_reg = starwars['species_human']
+X_reg = sm.add_constant(X_reg)  # Add a constant term for the intercept
+
+reg_model = sm.Logit(y_reg, X_reg).fit()
+print(reg_model.summary())
+```
+
 # Code-along - SML
+
+## R Code
 
 ::: {.panel-tabset}
 
 ## 0
 
-**Loading, setting up: create a .R file in /lab-1 and run this code**
+**Loading, setting up**
 
 ```{r}
 #| eval: false
@@ -152,3 +197,37 @@ final_fit %>%
 ```
 
 :::
+
+## python code
+
+```{python}
+#| eval: false
+#| echo: true
+
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import classification_report
+
+# Load and preprocess the data
+starwars = pd.read_csv('path_to_starwars.csv')  # Load your data file
+starwars['species_human'] = starwars['species'].apply(lambda x: 'Human' if x == 'Human' else 'Not human')
+
+# Split data
+train, test = train_test_split(starwars, test_size=0.2, random_state=42)
+X_train, y_train = train[['height', 'mass']], train['species_human']
+X_test, y_test = test[['height', 'mass']], test['species_human']
+
+# Specify model and fit
+clf = LogisticRegression()
+clf.fit(X_train, y_train)
+
+# Evaluate accuracy
+y_pred = clf.predict(X_test)
+print(classification_report(y_test, y_pred))
+```
+
+# Discussion
+
+- What do you notice about the differences in the output between regression and SML?
+- What do you notice is different about the modeling approach?

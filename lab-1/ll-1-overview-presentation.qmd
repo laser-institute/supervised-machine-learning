@@ -1,5 +1,5 @@
 ---
-title: "Machine Learning - Learning Lab 1"
+title: "Machine Learning - Module 1"
 subtitle: "Conceptual Overview - Foundations"
 format:
   revealjs: 
@@ -34,10 +34,12 @@ Machine learning is increasingly prevalent in our lives---and in educational con
 
 ## Agenda
 
+-   Purpose and Agenda
 -   Discussion 1
--   Code-along
+-   Key Concept: Machine Learning
+-   Modules Overview
 -   Discussion 2
--   Introduction to the other parts of this learning lab
+-   Introduction to the other parts of this module
 
 # Discussion 1
 
@@ -50,8 +52,6 @@ Machine learning is increasingly prevalent in our lives---and in educational con
 ![](img/gpt-4.png){fig-align="center"}
 
 *Builds upon supervised machine learning models--namely, deep neural networks, the likes of which can be estimated within R; the big advance has to do with the transformer architecture that allows for the fitting of more complex models. It is still important (maybe necessary) to learn about the foundational techniques and methodologies underlying GPT-4.*
-
-# Overview of Machine Learning (ML)
 
 ## Defining ML
 
@@ -91,11 +91,7 @@ In a linear regression, our aim is to estimate parameters, such as $\beta_0$ (in
 
 In an ML approach, we can use the same linear regression model, but with a goal other than making unbiased inferences about the $\beta$ parameters:
 
-<h4>
-
-<center>In supervised ML, our goal is to minimize the difference between a known $y$ and our predictions, $\hat{y}$</center>
-
-</h3>
+In supervised ML, our goal is to minimize the difference between a known $y$ and our predictions, $\hat{y}$.
 
 ## It's the same!
 
@@ -105,7 +101,7 @@ $y$ = $b_0$ + $b_1$ + ... + $e$
 
 If we are interested in making inferences about a particular $b$ (e.g., $b_1$), we can use theory and prior research to include particular predictors
 
-If we are interested in making the best possible predictions, we can add a _bunch_ of predictors and see how much we can minimize the prediction error
+If we are interested in making the best possible predictions, we can add a *bunch* of predictors and see how much we can minimize the prediction error
 
 ## But different!
 
@@ -125,8 +121,6 @@ This *predictive goal* means that we can do things differently:
     -   Decision trees (and their extensions of bagged and random forests)
 -   Last, the modeling process can look different:
     -   Ensemble models that combine or improve on ("boosting") the predictions of individual models
-
-# Key Concept: SML vs. inferential modeling
 
 ## Which technique should I choose?
 
@@ -218,22 +212,19 @@ How can we improve our predictions? This lab introduces the concept of feature e
 
 # Discussion 2
 
-::: {.panel-tabset}
-
+::: panel-tabset
 ## Reflecting
 
-- When might you use SML?
+-   When might you use SML?
 
 ## Applying
 
-- How could you use SML?
-
+-   How could you use SML?
 :::
 
-# Introduction to the other parts of this learning lab
+# Introduction to the other parts of this module
 
-::: {.panel-tabset}
-
+::: panel-tabset
 ## Readings
 
 Breiman, L. (2001). Statistical modeling: The two cultures (with comments and a rejoinder by the author). *Statistical Science, 16*(3), 199-231. https://projecteuclid.org/journals/statistical-science/volume-16/issue-3/Statistical-Modeling--The-Two-Cultures-with-comments-and-a/10.1214/ss/1009213726.pdf
@@ -242,25 +233,22 @@ Estrellado, R. A., Freer, E. A., Mostipak, J., Rosenberg, J. M., & Velásquez, I
 
 ## Case Study
 
-- Building a prediction model for students passing the class---based just on student data.
-- Work with peers to complete this, reading the text, following links to resources (and the reading), and then completing the required 👉 Your Turn ⤵ tasks
-- A key is available, but we strongly encourage you to use it only at the end to check your work, or if you are completely stuck and have tried our recommended troubleshooting steps: https://docs.google.com/document/d/14Jc-KG3m5k1BvyKWqw7KmDD21IugU5nV5edfJkZyspY/edit
+-   Building a prediction model for students passing the class---based just on student data.
+-   Work with peers to complete this, reading the text, following links to resources (and the reading), and then completing the required 👉 Your Turn ⤵ tasks
+-   A key is available, but we strongly encourage you to use it only at the end to check your work, or if you are completely stuck and have tried our recommended troubleshooting steps: https://docs.google.com/document/d/14Jc-KG3m5k1BvyKWqw7KmDD21IugU5nV5edfJkZyspY/edit
 
 ## Badge
 
-- Involves applying what you have done through this point in the learning lab to a) extending our model and b) reflecting and planning, after which you will knit and submit your work by publishing to Posit Cloud.
-
+-   Involves applying what you have done through this point in the learning lab to a) extending our model and b) reflecting and planning, after which you will knit and submit your work by publishing to Posit Cloud.
 :::
 
 # Troubleshooting and setup
 
-- Please view [this Google doc](https://docs.google.com/document/d/14Jc-KG3m5k1BvyKWqw7KmDD21IugU5nV5edfJkZyspY/edit)
-- Change default settings: Tools -> Global Settings -> Workspace -> DO NOT restore workspace 
-- Change default settings: Tools -> Global Settings -> Workspace -> Save workspace to .RData NEVER
-- Session -> Restart R and Clear Output is a good place to start
+-   Please view [this Google doc](https://docs.google.com/document/d/14Jc-KG3m5k1BvyKWqw7KmDD21IugU5nV5edfJkZyspY/edit)
+-   Change default settings: Tools -\> Global Settings -\> Workspace -\> DO NOT restore workspace
+-   Change default settings: Tools -\> Global Settings -\> Workspace -\> Save workspace to .RData NEVER
+-   Session -\> Restart R and Clear Output is a good place to start
 
 ## *fin*
 
-- *Dr. Joshua Rosenberg* (jmrosenberg@utk.edu; https://joshuamrosenberg.com)
-
-[General troubleshooting tips for R and RStudio](https://docs.google.com/document/d/14Jc-KG3m5k1BvyKWqw7KmDD21IugU5nV5edfJkZyspY/edit)
+-   *Dr. Joshua Rosenberg* (jmrosenberg\@utk.edu; https://joshuamrosenberg.com)
