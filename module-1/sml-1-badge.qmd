@@ -1,35 +1,37 @@
 ---
-title: 'Machine Learning - Learning Lab 4 Badge'
+title: 'Machine Learning - Learning Lab 1 Badge'
 author: ""
 date: "`r format(Sys.Date(),'%B %e, %Y')`"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
-![](img/ML_UM_Hx.jpg){width="30%"}
-
 As a reminder, to earn a badge for each lab, you are required to respond to a set of prompts for two parts:
 
 -   In Part I, you will reflect on your understanding of key concepts and begin to think about potential next steps for your own study.
 
--   In Part II, you will create a simple data product in R that demonstrates your ability to apply an analytic technique introduced in this learning lab.
+-   In Part II, you will take very precursory steps toward interpreting a supervised machine learning model.
 
 ### Part I: Reflect and Plan
 
 Part A:
 
-1.  How interpretable or useful is the solution we estimated in the case study?
+1.  What were some key differences between the regression (inferential) and supervised machine learning (predictive) models?
 
 -   
 
-2.  How might a qualitative analysis follow from the Latent Profile Analysis we carried out? What steps could you take in a qualitative investigation? Think broadly and creatively here!
+-   
 
 -   
 
-Part B: Once last time, use the institutional library (e.g. [NCSU Library](https://www.lib.ncsu.edu/#articles)), [Google Scholar](https://scholar.google.com/) or search engine to locate a research article, presentation, or resource that applies unsupervised machine learning to an educational context aligned with your research interests. More specifically, **locate a study that involve using Latent Profile Analysis or a similar method**. You may find the published papers that have used LPA helpful in this respect; those can be browsed [here](https://scholar.google.com/scholar?hl=en&as_sdt=0%2C34&q=tidylpa&btnG=).
+2.  Describe how a supervised machine learning approach could be useful given your research interests/a select research question.
+
+-   
+
+3.  Describe how a regression modeling approach (or an extension of a regression approach, such as an SEM or multi-level model) could be useful given your research interests/a select research question.
+
+-   
+
+Part B: Use institutional library access (e.g. [NCSU Library](https://www.lib.ncsu.edu/#articles)), [Google Scholar](https://scholar.google.com/) or search engine to locate a research article, presentation, or resource that applies supervised machine learning to an educational context aligned with your research interests.
 
 1.  Provide an APA citation for your selected study.
 
@@ -47,15 +49,15 @@ Part B: Once last time, use the institutional library (e.g. [NCSU Library](https
 
     -   
 
-### Part II: Data Product
+### Part II: Interpret our Predictive Model
 
-Like the last data product, this one may be a challenge, too. Here, estimate latent profiles using *your own data*. If you do not have ready access to appropriate data (for LPA, continuous/numeric data), choose any of the data sets in the `data` folder of this repository.
+Here, we are going to interpret our predictive model in a very precursory way. Later, you will have the opportunity to dive deep into metrics for interpreting supervised machine learning models. Now, just interpret the output of the supervised machine learning model from the case study on its face. What does this model seem to tell us? How useful is this predictive model? You may find the readings helpful for this task - particularly, the Baker et al. (2023) paper.
 
-```{r}
+-   
 
-```
+-   
 
-Please interpret the results of your analysis below. What did you find? How interpretable and useful are the profiles? And, what next steps - including those involving qualitative analysis - might you take to deepen this analysis?
+-   
 
 ### Knit and Publish
 
@@ -67,12 +69,12 @@ Complete the following steps to knit and publish your work:
 
 3.  Finally, publish your webpage on Posit Cloud by clicking the "Publish" button located in the Viewer Pane after you knit your document. See screenshot below.
 
-![](img/knit-publish.png){width="80%"}
+![](img/publish.png)
 
-### Receiving Your Machine Learning Badge
+### Receive Your Badge
 
-To receive credit for this assignment and earn your fourth ML badge, share the link to published webpage under the next incomplete badge artifact column on the 2023 LASER Scholar Information and Documents spreadsheet: <https://go.ncsu.edu/laser-sheet>. 
+To receive credit for this assignment and earn your first ML badge, share the link to published webpage under the next incomplete badge artifact column on the LASER Scholar Information and Documents spreadsheet: <https://go.ncsu.edu/laser-sheet>.
 
 Once your instructor has checked your link, you will be provided a physical version of the badge below!
 
-![](img/ML_UM_Hx.jpg){width="30%"}
+![](img/sml-1-badge.png){width="30%"}

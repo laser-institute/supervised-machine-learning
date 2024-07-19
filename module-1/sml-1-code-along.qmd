@@ -1,5 +1,5 @@
 ---
-title: "Machine Learning - Module 1"
+title: "Foundations of Supervised Machine Learning"
 subtitle: "Code-along"
 format:
   revealjs: 
@@ -140,9 +140,8 @@ starwars_recoded %>%
 ```{r}
 #| echo: true
 #| eval: false
-train_test_split <- initial_split(starwars_recoded, prop = .80)
-data_train <- training(train_test_split)
-data_test <- testing(train_test_split)
+
+# We will skip this step for now, but know this is common!
 ```
 
 ## 2
@@ -181,8 +180,8 @@ my_wf <- workflow() %>%
 ```{r}
 #| echo: true
 #| eval: false
-fitted_model <- fit(my_wf, data = data_train)
-final_fit <- last_fit(fitted_model, train_test_split)
+
+fit_model <- fit(my_wf, data = starwars_recoded)
 ```
 
 ## 5
@@ -192,8 +191,14 @@ final_fit <- last_fit(fitted_model, train_test_split)
 ```{r}
 #| echo: true
 #| eval: false
-final_fit %>%
-   collect_metrics()
+
+predictions <- predict(fit_model, starwars_recoded) %>% 
+    bind_cols(starwars_recoded) %>% 
+    mutate(species_human = as.factor(species_human))
+
+predictions %>%
+  metrics(species_human, .pred_class) %>%
+  filter(.metric == "accuracy")
 ```
 
 :::
@@ -205,7 +210,6 @@ final_fit %>%
 #| echo: true
 
 import pandas as pd
-from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report
 
@@ -213,18 +217,17 @@ from sklearn.metrics import classification_report
 starwars = pd.read_csv('path_to_starwars.csv')  # Load your data file
 starwars['species_human'] = starwars['species'].apply(lambda x: 'Human' if x == 'Human' else 'Not human')
 
-# Split data
-train, test = train_test_split(starwars, test_size=0.2, random_state=42)
-X_train, y_train = train[['height', 'mass']], train['species_human']
-X_test, y_test = test[['height', 'mass']], test['species_human']
+# Prepare the features and target
+X = starwars[['height', 'mass']]
+y = starwars['species_human']
 
 # Specify model and fit
 clf = LogisticRegression()
-clf.fit(X_train, y_train)
+clf.fit(X, y)
 
-# Evaluate accuracy
-y_pred = clf.predict(X_test)
-print(classification_report(y_test, y_pred))
+# Evaluate accuracy on the training data
+y_pred = clf.predict(X)
+print(classification_report(y, y_pred))
 ```
 
 # Discussion

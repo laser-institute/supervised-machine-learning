@@ -1,6 +1,6 @@
 ---
 title: "Supervised Machine Learning"
-subtitle: "Module 1 - Essential Readings"
+subtitle: "Readings"
 author: "LASER Institute"
 date: today 
 format:
@@ -12,75 +12,44 @@ theme:
   light: simplex
   dark: cyborg
 editor: visual
-bibliography: lit/references.bib
 ---
 
 ## Overview
 
-The primary goal of our essential readings in Module 1 is to build a basic understanding of social network analysis (SNA) as an approach to understand and improve learning processes and outcomes. The required and self-selected readings provide an introduction to SNA in the field of education, including the historical, theoretical, and analytical foundations of a social network perspective. A secondary goal of the readings and reflection questions is to help you start generating ideas for independent application of network analysis.
+The goal of this module is to begin to understand how a supervised machine learning (i.e., a predictive model) differs from a more traditional regression model.
 
 ## Readings
 
-The following readings for this module illustrate how social network analysis provides educational researchers with a different way of thinking about and measuring an learning processes and outcomes by that explicitly account for the importance of one's relationships with others, as well as the larger pattern in which these relationships are embedded.
+> Brooks, C., & Thompson, C. (2017). Predictive modelling in teaching and learning. Handbook of learning analytics, 61-68.
 
-1.  [Chapter 1: The Social Network Perspective and Educational Research Introduction](https://github.com/laser-institute/essential-readings/blob/main/sna-labs/sna-lab-1/carolan-network-perspective.pdf)
+> Jaquette, O., & Parra, E. E. (2013). Using IPEDS for panel analyses: Core concepts, data challenges, and empirical applications. In Higher Education: Handbook of Theory and Research: Volume 29 (pp. 467-533). Dordrecht: Springer Netherlands.
 
-2.  [Chapter 2: Historical, Theoretical, and Analytical Foundations](https://github.com/laser-institute/essential-readings/blob/main/sna-labs/sna-lab-1/carolan-history-theory.pdf)
-
-3.  [Chapter 3](https://methods.sagepub.com/book/social-network-analysis-and-education/n3.xml): [Basic Concepts](https://github.com/laser-institute/essential-readings/blob/main/sna-labs/sna-lab-1/carolan-basic-concepts.pdf)
+> Zong, C., & Davis, A. (2022). Modeling university retention and graduation rates using IPEDS. *Journal of College Student Retention: Research, Theory & Practice*, 15210251221074379.
 
 ## Reflection
 
-To help guide your reflection on the readings, a set of guiding questions are provided below. After you have had a chance to work through one or more of the readings, **we encourage you to contribute to our learning community by creating a new post to our network-analysis channel on [Slack](http://laser-scholars.slack.com/)**. Your post might contain a response to one or more of the guiding questions, questions you still have about the topics addressed, or insights gained into your own research.
+To help guide your reflecchattion on the readings, a set of guiding questions are provided below. After you have had a chance to work through one or more of the readings, **we encourage you to contribute to our learning community by creating a new post to our machine-learning channel on [Slack](http://laser-scholars.slack.com/)**. Your post might contain a response to one or more of the guiding questions, questions you still have about the topics addressed, or insights gained into your own research.
 
-### Chapter 1: The Social Network Perspective and Educational Research Introduction
+### Brooks & Thompson (2017)
 
-Consider a network of which you are a part and think about the following questions:
+- The authors distinguish between explanatory and predictive modeling. Discuss the key differences between these two approaches and provide examples of how each can be applied in educational settings.
 
-1.  Who are the network's actors?
+- The chapter outlines several common challenges associated with predictive modeling in education, such as data sparsity and noisy data. How can researchers mitigate these challenges to improve the accuracy and reliability of their predictive models?
 
-2.  What ties connect these actors?
+- Reflect on the ethical considerations of deploying predictive models in educational environments. What are the potential risks, and how can institutions ensure that their use of predictive analytics promotes equity and fairness among students?
 
-3.  Are there any groups within this network?
+### Jaquette & Parra (2013)
 
-4.  What relations within this network might be of interest to a researcher?
+- What are some of the attributes of IPEDS that make it useful for research?
 
-5.  Finally, what makes this collection of actors a social network?
+- What are key considerations to keep in mind when using IPEDS data?
 
-6.  Using the same question from the previous response, explain the analytical level at which these data would need to be collected and analyzed.
+- How could you use data to answer a question related to your research interests?
 
-### Chapter 2: Historical, Theoretical, and Analytical Foundations
+### Zong and Davis (2022)
 
-Draft a research question for a population you may be interested in studying, or that would be of interest to educational researchers, and that would require the collection of relational data. Next, think about the following questions:
+-   Zong and Davis utilize the Integrated Postsecondary Education Data System (IPEDS) to model university retention and graduation rates. What are the strengths and limitations of using IPEDS data for this purpose, and how might these affect the study's conclusions?
 
-1.  What relational data would need to be collected? 
+-   Examine the variables selected by Zong and Davis in their predictive models. How do these variables compare to those used in K-12 dropout prediction models, and what unique factors might influence retention and graduation at the university level?
 
-2.  For what reason would relational data need to be collected in order to address this question?
-
-3.  Explain the analytical level at which these data would need to be collected and analyzed.
-
-4.  How does this differ from the ways in which individual or group behavior is typically conceptualized and modeled in conventional educational research?
-
-### Chapter 3: Basic Concepts
-
-Refer to the graph below and answer the following questions:
-
-1.  Is this graph directed or undirected? Are the lines arcs or edges? Given your responses to these questions, what type of relation might this graph represent?
-
-2.  Based on what you see in this graph, is this relation valued or binary?
-
-3.  What attribute data might you want to incorporate into analysis?
-
-#### Bonus Questions:
-
-Create a matrix that represents the relational data evident in the graph and answer the following questions:
-
-1.  How many actors are in this matrix?
-
-2.  How many rows and columns are in this matrix?
-
-3.  What type of data are in the cells of this matrix?
-
-4.  Is this matrix symmetric? Explain the values on the diagonal of the matrix.
-
-![](img/graph.jpeg)
+-   Discuss the potential impact of predictive modeling on university policy and student support services. How can universities implement these findings to enhance student retention and graduation rates effectively?

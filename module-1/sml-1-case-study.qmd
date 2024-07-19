@@ -1,5 +1,5 @@
 ---
-title: 'Machine Learning - Module 1'
+title: 'Explaining versus predicting: The case of graduation rates'
 subtitle: "Case Study"
 author: "LASER Institute"
 date: today 
@@ -42,7 +42,9 @@ In the overview presentation for this learning lab, we considered five steps in 
 
 5.  **Communicate:** To wrap up our case study, we'll create our first "data product" and share our analyses and findings by creating our first web page using R Markdown.
 
-In this module, we will be using data from the [IPEDS, the Integrated Postsecondary Education Data System](https://nces.ed.gov/ipeds/). We use Zong and Davis' (2022) study as an inspiration for ours. These authors used inferential models to try to understand what relates to the graduation rates of around 700 four-year universities in the United States, predicting this outcome on the basis of student backround, finance, academic and social environment, and retention rate independent variables.
+In this module, we will be using data from the [IPEDS, the Integrated Postsecondary Education Data System](https://nces.ed.gov/ipeds/). We use Zong and Davis' (2022) study as an inspiration for ours. These authors used inferential models to try to understand what relates to the graduation rates of around 700 four-year universities in the United States, predicting this outcome on the basis of student backround, finance, academic and social environment, and retention rate independent variables. You can find this in the `lit` folder (with an elaboration and discussion questions in the Readings file for this module).
+
+> Zong, C., & Davis, A. (2022). Modeling university retention and graduation rates using IPEDS. Journal of College Student Retention: Research, Theory & Practice, 15210251221074379.
 
 ### Loading packages
 
@@ -68,7 +70,6 @@ Click the green arrow in the right corner of the "code chunk" that follows to lo
 library(tidyverse)
 library(janitor)
 ```
-
 
 #### tidymodels
 
@@ -98,7 +99,7 @@ As a tip, remember to use the `library()` function to load these packages. After
 
 ### Loading data
 
-Next, we'll read in data. We'll use the `read_csv()` function to load the data file. 
+Next, we'll read in data. We'll use the `read_csv()` function to load the data file.
 
 For now, please read in the `oulad-students.csv` file. Use the `read_csv()` function to do this, paying attention to where those files are located relative to this case study file.
 
@@ -186,9 +187,9 @@ ipeds %>%
 
 What do you notice about this graph -- and about graduation rate?
 
-- YOUR RESPONSE
-- YOUR RESPONSE
-- YOUR RESPONSE
+-   YOUR RESPONSE
+-   YOUR RESPONSE
+-   YOUR RESPONSE
 
 We'll first do a little additional data wrangling.
 
@@ -209,28 +210,25 @@ Please write our research questions for both a regression (RQ A) and supervised 
 
 ### RQ A Research Question
 
-- YOUR RESEARCH QUESTION
+-   YOUR RESEARCH QUESTION
 
 ### RQ A Research Question
 
-- YOUR RESEARCH QUESTION
+-   YOUR RESEARCH QUESTION
 
 Now, we will proceed to the analyses.
 
 We'll first conduct a regression analysis, like in the code-along.
 
 ```{r}
-m1 <- lm(species_human ~ height + mass, data = starwars)
+m1 <- lm(species_human ~ height + mass, data = ipeds)
 summary(m1)
 ```
 
 Then, we'll conduct a supervised machine learning analysis.
 
 ```{r}
-train_test_split <- initial_split(ipeds, prop = .80)
-data_train <- training(train_test_split)
-
-my_rec <- recipe(good_grad_rate ~ total_enroll + pct_admitted + n_bach + n_grad + tuition_fees + percent_fin_aid + avg_salary, data = data_train) %>% 
+my_rec <- recipe(good_grad_rate ~ total_enroll + pct_admitted + n_bach + n_grad + tuition_fees + percent_fin_aid + avg_salary, data = ipeds) %>% 
     step_normalize(all_numeric_predictors())
 
 # specify model
@@ -244,10 +242,16 @@ my_wf <-
     add_model(my_mod) %>% 
     add_recipe(my_rec)
 
-final_fit <- last_fit(my_wf, train_test_split)
+fit_model <- fit(my_wf, ipeds)
 
-final_fit %>%
-    collect_metrics()
+predictions <- predict(fit_model, ipeds) %>%
+  bind_cols(ipeds)
+
+accuracy <- predictions %>%
+  metrics(truth = good_grad_rate, estimate = .pred_class) %>%
+  filter(.metric == "accuracy")
+
+accuracy
 ```
 
 ## 5. COMMUNICATE
@@ -262,7 +266,7 @@ The final step in the workflow/process is sharing the results of your analysis w
 
 What did we find for each of our RQs? Add a few thoughts below for each. Focus on what you would communicate about this analysis to a general audience.
 
-### RQ A 
+### RQ A
 
 Add a few notes below. Again,
 
@@ -272,4 +276,10 @@ Add a few notes below. Again,
 
 ### 🧶 Knit & Check ✅
 
-Congratulations - you've completed this case study! Consider moving on to the badge activity next.
+For your SML Module 1 Badge, you will further reflect on and interpret these models, and their distinctions.
+
+Rendered HTML files can be published online through a variety of ways including [Posit Cloud](https://posit.cloud/learn/guide#publish-from-cloud), [RPubs](#0) , [GitHub Pages](#0), [Quarto Pub](#0), or [other methods](#0). The easiest way to quickly publish your file online is to publish directly from RStudio. You can do so by clicking the "Publish" button located in the Viewer Pane after you render your document as illustrated in the screenshot below.
+
+![](img/publish.png)
+
+Congratulations - you've completed this case study! Move on to the badge activity next.

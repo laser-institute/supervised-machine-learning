@@ -1,0 +1,218 @@
+---
+title: "Machine Learning - Module 3"
+subtitle: "Conceptual Overview"
+format:
+  revealjs: 
+    slide-number: c/t
+    progress: true
+    chalkboard: 
+      buttons: false
+    preview-links: auto
+    logo: img/LASERLogoB.png
+    theme: [default, css/laser.scss]
+    width: 1920
+    height: 1080
+    margin: 0.05
+    footer: <a href=https://www.go.ncsu.edu/laser-institute>go.ncsu.edu/laser-institute
+---
+
+```{r}
+# load all the relevant packages
+pacman::p_load(pacman, knitr, tidyverse, readxl)
+```
+
+# Purpose and Agenda
+
+How do we interpret a machine learning model? What else can we say, besides how accurate a model this? This learning lab is intended to help you to answer these questions by examining output from a classification and a regression model. We again use the OULAD, but add an assessment file.
+
+::: {.notes}
+The key point to make here is that we will go well beyond the relatiely simplistic "Accuracy" metric, which is used to simply represent the proportion of the predictions that are correct. While useful, there are many other metrics that can give us a better sense of _for which cases_ our SML model is making good predictions (e.g., just the "true" cases in a binary classification model, but not the "false" cases -- or vice versa). You can make the point that this is especially important in our field, as different incorrect predictions may have different stakes (i.e., incorrectly classifying a student as needing additional support may not be directly harmful, but incorrectly predicting that a in fact student cheated may have substantial consequences). Metrics and interpreting them given the specifics of a particular analysis and context can help to avoid these harms, and to build the best performing models possible.
+:::
+
+## What we'll do in this presentation
+
+- Discussion 1
+- Key Concept: Accuracy
+- Key Concept: Feature Engineering (part A)
+- Code-along
+- Discussion 2
+- Introduction to the other parts of this learning lab
+
+
+::: {.notes}
+Make the point that we will engage _much_ more deeply about feature engineering in the next module; we do this here to start the conversation and to open up some space in the next module for the complexity of cross-validation and a new type of model that we will use --- a random forest.
+:::
+
+
+# Discussion 1
+
+::: {.panel-tabset}
+## Background
+
+- We are likely familiar with _accuracy_ and maybe another measure, _Cohen's Kappa_
+- But, you may have heard of other means of determining how good a model is at making predictions: confusion matrices, specificity, sensitivity, recall, AUC-ROC, and others
+- Broadly, these help us to understand _for which cases and types of cases a model is predictively better than others_ in a finer-grained way than accuracy
+
+## Getting Started
+
+- Think broadly and not formally (yet): What makes a prediction model a good one?
+
+## Digging Deeper
+
+- After having worked through the first learning lab, have your thoughts on what data you might use for a machine learning study evolved? If so, in what ways? If not, please elaborate on your initial thoughts and plans.
+
+::: {.notes}
+This can connect back to the purpose at the beginning --- try to elicit ideas that go beyond simple "Accuracy" to other, broader ideas about what makes a model good. These ideas can even extend beyond metrics (e.g., a learner may mention that the data is collected ethically) - these can be rich conversations to have here, but try to focus the conversation back on metrics as a nexus and tool for thinking about what makes an SML model a good one.
+:::
+
+:::
+
+# Key Concept: Accuracy
+
+::: {.panel-tabset}
+## Accuracy
+
+Let's start with accuracy and a simple confusion matrix; what is the **Accuracy**?
+
+```{r}
+readr::read_csv("data/sample-table.csv") %>% 
+    slice(1:5) %>% 
+    knitr::kable()
+```
+
+## Accuracy Calculation
+
+Use the `tabyl()` function (from {janitor} to calculate the accuracy in the code chunk below.
+
+```{r}
+library(janitor)
+
+data_for_conf_mat <- tibble(Outcome = c(1, 0, 0, 1, 1),
+                            Prediction = c(1, 0, 1, 0, 1)) %>% 
+    mutate_all(as.factor)
+```
+
+```{r}
+#| echo: true
+data_for_conf_mat %>% 
+    mutate(correct = Outcome == Prediction) %>% 
+    tabyl(correct)
+```
+
+## Confusion Matrix
+
+Now, let's create a confusion matrix based on this data:
+
+```{r}
+#| echo: true
+#| code-line-numbers: "|1|2-3"
+library(tidymodels)
+
+data_for_conf_mat %>% 
+    conf_mat(Outcome, Prediction)
+```
+
+## Confusion Matrix Terms
+
+**Accuracy**: Prop. of the sample that is true positive or true negative
+
+**True positive (TP)**: Prop. of the sample that is affected by a condition and correctly tested positive
+
+**True negative (TN)**: Prop. of the sample that is not affected by a condition and correctly tested negative
+
+**False positive (FP)**: Prop. of the sample that is not affected by a condition and incorrectly tested positive
+
+**False negative (FN)**: Prop. of the sample that is affected by a condition and incorrectly tested positive.
+
+## Confusion Matrix Visual
+
+![](img/conf-mat-descriptor.png)
+
+
+::: {.notes}
+This and the next slide can take awhile to work through --- it may be helpful to do some math on a whiteboard, and to ask lots of questions of learners to work through the math, which is simple mathematically but somewhat challenging conceptually! Take time here --- this can be really valuable as a time and space to deeply understand what is under the hood of these metrics.
+:::
+
+## Metrics
+
+![](img/interpretation-of-metrics.png)
+
+::: {.notes}
+Please note that Precision goes by the name Positive Predictive Value, whereas Negative Predictive Value does not have another commonly used name.
+:::
+
+:::
+
+# Key Concept: Feature Engineering (Part A)
+
+::: {.panel-tabset}
+## Why?
+
+Let's consider a very simple data set, `d`, one with _time_point_ data, `var_a`, for a single student. How do we add this to our model?
+
+```{r}
+#| echo: true
+d <- tibble(student_id = "janyia", time_point = 1:10, var_a = c(0.01, 0.32, 0.32, 0.34, 0.04, 0.54, 0.56, 0.75, 0.63, 0.78))
+d %>% head(3)
+```
+
+## How?
+
+- We can do all of these things **manually**
+- But, there are also helpful "**{recipes}**" functions to do this
+- Any, the {recipes} package makes it practical to carry out feature engineering steps for not only single variables, but groups of variables (or all of the variables)
+- Examples, all of which start with `step()`, e.g. `step_dummy()`
+
+:::
+
+
+::: {.notes}
+Emphasize this very brief introduction is to just begin to explore these topics (that we'll explore in more depth in the next module), and to make our more sophisticated modeling possible
+:::
+
+## AUC-ROC
+
+- *Area Under the Curve - Receiver Operator Characteristic* (AUC-ROC)
+- Informs us as to how the True Positive rate changes given a different classification threshhold
+- Classification threshhold: the probability above which a model makes a positive prediction
+- Higher is better
+
+# Discussion 2
+
+::: {.panel-tabset}
+## Reflecting
+
+- Which metrics for supervised machine learning models (in classification "mode") are important to interpret? Why?
+
+## Applying
+
+- Thinking broadly about your research interest, what would you need to consider before using a supervised machine learning model? Consider not only model metrics but also the data collection process and how the predictions may be used.
+
+:::
+
+# Introduction to the other parts of this learning lab
+
+::: {.panel-tabset}
+## Reading
+
+> Baker, R. S., Berning, A. W., Gowda, S. M., Zhang, S., & Hawn, A. (2020). Predicting K-12 dropout. *Journal of Education for Students Placed at Risk, 25*(1), 28-54.
+
+## Case Study
+
+- Adding another data source from the [OULAD](https://analyse.kmi.open.ac.uk/open_dataset), assessments data
+- Interpreting each of the metrics in greater detail
+- Using `metric_set`
+
+## Badge
+
+- Adding still another variable
+- Stepping back and interpreting the model as a whole
+- Finding another relevant study 
+
+:::
+
+# *fin*
+
+- *Dr. Joshua Rosenberg* (jmrosenberg@utk.edu; https://joshuamrosenberg.com)
+
+[General troubleshooting tips for R and RStudio](https://docs.google.com/document/d/14Jc-KG3m5k1BvyKWqw7KmDD21IugU5nV5edfJkZyspY/edit)

@@ -1,6 +1,6 @@
 ---
-title: "Who Drops Online Courses?"
-subtitle: "ML Module 2: Case Study Key"
+title: "Who drops online courses?"
+subtitle: "Case Study"
 author: "LASER Institute"
 date: today 
 format:
@@ -14,17 +14,13 @@ theme:
 editor: visual
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, eval = TRUE)
-```
-
 ## 1. PREPARE
 
 Conceptually, we focus on prediction and how it differs from the goals of description or explanation. We have two readings in Learning Lab 1 that accompany this. The first reading introduced below focuses on this distinction between prediction and description or explanation. It is one of the most widely-read papers in machine learning and articulates how machine learning differs from other kinds of statistical models. Breiman describes the difference in terms of *data modeling* (models for description and explanation) and *algorithmic modeling* (what we call prediction or machine learning models)\*
 
 #### Research Question
 
-Technically, we'll focus on the core parts of doing a machine learning analysis in R. We'll use the {[tidymodels](https://www.tidymodels.org/)} set of R packages (add-ons) to do so. However, to help anchor our analysis and provide us with some direction, we'll focus on the following research question as we explore this new:
+Technically, we'll focus on the core parts of doing a machine learning analysis in R. We'll use the {[tidymodels](https://www.tidymodels.org/)} set of R packages (add-ons) to do so, like in the first module. However, to help anchor our analysis and provide us with some direction, we'll focus on the following research question as we explore this new:
 
 > How well can we predict students who are at risk of dropping a course?
 
@@ -244,12 +240,14 @@ To split our data, we will be using our first {tidymodels} function - `initial_s
 
 The function `initial_split()` function from the {rsample} package takes the original data and saves the information on how to make the partitions. The {rsample} package has two aptly named functions for created a training and testing data set called `training()` and `testing()`, respectively.
 
+We also specify the strata to ensure there is not misbalance in the dependent variable (pass).
+
 Run the following code to split the data:
 
 ```{r}
 set.seed(20230712)
 
-train_test_split <- initial_split(students, prop = .80)
+train_test_split <- initial_split(students, prop = .80, strata = "pass")
 
 data_train <- training(train_test_split)
 
@@ -462,18 +460,10 @@ That's it for now; the core parts of machine learning are used in the above step
 
 ## 5. COMMUNICATE
 
-For your learning SML Module 2 Badge, you will have an opportunity to create a simple "data product" designed to illustrate insights some insights gained from your model and ideally highlight an "action step" that can be taken to act upon your findings.
+For your SML Module 2 Badge, you will have an opportunity to create a simple "data product" designed to illustrate insights some insights gained from your model and ideally highlight an "action step" that can be taken to act upon your findings.
 
-#### **👉 Your Turn** **⤵**
+Rendered HTML files can be published online through a variety of ways including [Posit Cloud](https://posit.cloud/learn/guide#publish-from-cloud), [RPubs](#0) , [GitHub Pages](#0), [Quarto Pub](#0), or [other methods](#0). The easiest way to quickly publish your file online is to publish directly from RStudio. You can do so by clicking the "Publish" button located in the Viewer Pane after you render your document as illustrated in the screenshot below.
 
-For now, we will wrap up this case study by converting our work into a webpage that can be used to communicate your learning and demonstrate some of your new R skills. To do so, you will need to "knit" your document by clicking the button in the menu bar at the the top of this file. This will do two things; it will:
+![](img/publish.png)
 
-1.  check through all your code for any errors; and,
-
-2.  create a file in your directory that you can use to share you work through [Posit Cloud](https://posit.cloud/learn/guide#publish-from-cloud) (see screenshot example below to publish), [RPubs](#0) , [GitHub Pages](#0), [Quarto Pub](#0), or any [other methods](#0).
-
-**Note:** Before knitting, make sure you change the `author:` name in the YAML header at the top of this document so you can take credit for your hard work!
-
-![](img/knit-publish.png){width="80%"}
-
-Congratulations - you've completed the first machine learning case study!
+Congratulations - you've completed the second supervised machine learning case study!

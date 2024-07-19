@@ -1,6 +1,6 @@
 ---
 title: "Supervised Machine Learning"
-subtitle: "Module 1 - Essential Readings"
+subtitle: "Badge"
 author: "LASER Institute"
 date: today 
 format:
@@ -12,75 +12,45 @@ theme:
   light: simplex
   dark: cyborg
 editor: visual
-bibliography: lit/references.bib
 ---
+
 
 ## Overview
 
-The primary goal of our essential readings in Module 1 is to build a basic understanding of social network analysis (SNA) as an approach to understand and improve learning processes and outcomes. The required and self-selected readings provide an introduction to SNA in the field of education, including the historical, theoretical, and analytical foundations of a social network perspective. A secondary goal of the readings and reflection questions is to help you start generating ideas for independent application of network analysis.
+This module was intended to instigate the interpretation of supervised machine learning models with metrics other than accuracy. These readings are intended to help you to deepen your understanding by providing a worked example and a more general argument on the use of multiple metrics to interpret supervised machine learning models. The first (Baker et al., 2020) uses _precision_ (positive predictive value) as a key, relevant metric---instead of accuracy. The second (Baker et al., 2024) makes a broader argument about using an ensemble of metrics.
 
 ## Readings
 
-The following readings for this module illustrate how social network analysis provides educational researchers with a different way of thinking about and measuring an learning processes and outcomes by that explicitly account for the importance of one's relationships with others, as well as the larger pattern in which these relationships are embedded.
+> Baker, R. S., Berning, A. W., Gowda, S. M., Zhang, S., & Hawn, A. (2020). Predicting K-12 dropout. *Journal of Education for Students Placed at Risk (JESPAR)*, 25(1), 28-54.
 
-1.  [Chapter 1: The Social Network Perspective and Educational Research Introduction](https://github.com/laser-institute/essential-readings/blob/main/sna-labs/sna-lab-1/carolan-network-perspective.pdf)
+> Baker, R. S., Bosch, N., Hutt, S., Zambrano, A. F., & Bowers, A. J. (2024). On fixing the right problems in predictive analytics: AUC is not the problem. *arXiv preprint*. https://arxiv.org/pdf/2404.06989
 
-2.  [Chapter 2: Historical, Theoretical, and Analytical Foundations](https://github.com/laser-institute/essential-readings/blob/main/sna-labs/sna-lab-1/carolan-history-theory.pdf)
-
-3.  [Chapter 3](https://methods.sagepub.com/book/social-network-analysis-and-education/n3.xml): [Basic Concepts](https://github.com/laser-institute/essential-readings/blob/main/sna-labs/sna-lab-1/carolan-basic-concepts.pdf)
+> Maestrales, S., Zhai, X., Touitou, I., Baker, Q., Schneider, B., & Krajcik, J. (2021). Using machine learning to score multi-dimensional assessments of chemistry and physics. Journal of Science Education and Technology, 30(2), 239-254.
 
 ## Reflection
 
-To help guide your reflection on the readings, a set of guiding questions are provided below. After you have had a chance to work through one or more of the readings, **we encourage you to contribute to our learning community by creating a new post to our network-analysis channel on [Slack](http://laser-scholars.slack.com/)**. Your post might contain a response to one or more of the guiding questions, questions you still have about the topics addressed, or insights gained into your own research.
+To help guide your reflection on the readings, a set of guiding questions are provided below. After you have had a chance to work through one or more of the readings, **we encourage you to contribute to our learning community by creating a new post to our machine-learning channel on [Slack](http://laser-scholars.slack.com/)**. Your post might contain a response to one or more of the guiding questions, questions you still have about the topics addressed, or insights gained into your own research.
 
-### Chapter 1: The Social Network Perspective and Educational Research Introduction
+### Baker et al. (2020)
 
-Consider a network of which you are a part and think about the following questions:
+-   How do the authors leverage predictive analytics to identify students at risk of dropping out, and what are the key features used in their logistic regression model? Discuss the implications of these features on intervention strategies.
 
-1.  Who are the network's actors?
+-   The paper highlights the importance of data mining techniques in educational settings. What are the potential ethical considerations and challenges associated with using predictive models to identify at-risk students?
 
-2.  What ties connect these actors?
+-   Reflect on the role of socio-economic factors in the prediction of K-12 dropout rates. How can schools and policymakers address these underlying issues to improve student retention?
 
-3.  Are there any groups within this network?
+### Baker et al. (2024)
 
-4.  What relations within this network might be of interest to a researcher?
+- The authors argue that AUC ROC is not inherently flawed but often misused. Discuss how AUC ROC should be correctly interpreted and applied in predictive modeling, especially in educational contexts.
 
-5.  Finally, what makes this collection of actors a social network?
+- The paper critiques the reliance on single metrics for model evaluation. How can combining multiple metrics improve the robustness and fairness of predictive models? Provide examples of complementary metrics that can be used alongside AUC ROC.
 
-6.  Using the same question from the previous response, explain the analytical level at which these data would need to be collected and analyzed.
+- How do the takeaways from this paper accord with or differ from the themes of this module (interpreting metrics other than accuracy)?
 
-### Chapter 2: Historical, Theoretical, and Analytical Foundations
+### Maestrales et al. (2021)
 
-Draft a research question for a population you may be interested in studying, or that would be of interest to educational researchers, and that would require the collection of relational data. Next, think about the following questions:
+- The study compares the accuracy of human scoring and machine learning algorithms in evaluating multi-dimensional constructed response items in science assessments. Discuss the key findings and implications of these comparisons for future educational assessments.
 
-1.  What relational data would need to be collected? 
+- The authors highlight the challenges of achieving high agreement between human raters and machine algorithms. What strategies did the researchers employ to improve this agreement, and what were the outcomes of these strategies?
 
-2.  For what reason would relational data need to be collected in order to address this question?
-
-3.  Explain the analytical level at which these data would need to be collected and analyzed.
-
-4.  How does this differ from the ways in which individual or group behavior is typically conceptualized and modeled in conventional educational research?
-
-### Chapter 3: Basic Concepts
-
-Refer to the graph below and answer the following questions:
-
-1.  Is this graph directed or undirected? Are the lines arcs or edges? Given your responses to these questions, what type of relation might this graph represent?
-
-2.  Based on what you see in this graph, is this relation valued or binary?
-
-3.  What attribute data might you want to incorporate into analysis?
-
-#### Bonus Questions:
-
-Create a matrix that represents the relational data evident in the graph and answer the following questions:
-
-1.  How many actors are in this matrix?
-
-2.  How many rows and columns are in this matrix?
-
-3.  What type of data are in the cells of this matrix?
-
-4.  Is this matrix symmetric? Explain the values on the diagonal of the matrix.
-
-![](img/graph.jpeg)
+- Reflect on the potential benefits and limitations of using machine learning to score multi-dimensional assessments. How can educators ensure the reliability and validity of these automated scoring systems in real-world classroom settings?

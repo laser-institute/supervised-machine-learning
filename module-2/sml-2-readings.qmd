@@ -1,6 +1,6 @@
 ---
 title: "Supervised Machine Learning"
-subtitle: "Module 1 - Essential Readings"
+subtitle: "Essential Readings"
 author: "LASER Institute"
 date: today 
 format:
@@ -12,75 +12,39 @@ theme:
   light: simplex
   dark: cyborg
 editor: visual
-bibliography: lit/references.bib
 ---
 
 ## Overview
 
-The primary goal of our essential readings in Module 1 is to build a basic understanding of social network analysis (SNA) as an approach to understand and improve learning processes and outcomes. The required and self-selected readings provide an introduction to SNA in the field of education, including the historical, theoretical, and analytical foundations of a social network perspective. A secondary goal of the readings and reflection questions is to help you start generating ideas for independent application of network analysis.
+These readings go deeper into the supervised machine learning process. The Breiman paper is a classic that provides a high-level introduction to how the _goals_ of the analyst or scholar using supervised machine learning may be similar to and different from those using more traditional (i.e., inferential) models. The Estrellado et al. (2020) chapter provides an example similar to that which we undertook in this chapter, but with a different data set and set of packages (caret) that you may encounter when using R for supervised machine learning; though the code is different in some key places, consider how the modeling process is similar. Kuzilek et al. (2017) provides an overview of the OULAD dataset, if interested in using it for research (or any other purpose).
 
 ## Readings
 
-The following readings for this module illustrate how social network analysis provides educational researchers with a different way of thinking about and measuring an learning processes and outcomes by that explicitly account for the importance of one's relationships with others, as well as the larger pattern in which these relationships are embedded.
+> Breiman, L. (2001). Statistical modeling: The two cultures (with comments and a rejoinder by the author). *Statistical science*, *16*(3), 199-231.
 
-1.  [Chapter 1: The Social Network Perspective and Educational Research Introduction](https://github.com/laser-institute/essential-readings/blob/main/sna-labs/sna-lab-1/carolan-network-perspective.pdf)
+> Estrellado, R. A., Freer, E. A., Mostipak, J., Rosenberg, J. M., & Velásquez, I. C. (2020). *Data science in education using R*. Routledge (c14), Predicting students' final grades using machine learning methods with online course data. http://www.datascienceineducation.com/
 
-2.  [Chapter 2: Historical, Theoretical, and Analytical Foundations](https://github.com/laser-institute/essential-readings/blob/main/sna-labs/sna-lab-1/carolan-history-theory.pdf)
-
-3.  [Chapter 3](https://methods.sagepub.com/book/social-network-analysis-and-education/n3.xml): [Basic Concepts](https://github.com/laser-institute/essential-readings/blob/main/sna-labs/sna-lab-1/carolan-basic-concepts.pdf)
+> Kuzilek, J., Hlosta, M., & Zdrahal, Z. (2017). Data descriptor: Open University learning analytics dataset. Scientific Data, 4, 1-8.
 
 ## Reflection
 
-To help guide your reflection on the readings, a set of guiding questions are provided below. After you have had a chance to work through one or more of the readings, **we encourage you to contribute to our learning community by creating a new post to our network-analysis channel on [Slack](http://laser-scholars.slack.com/)**. Your post might contain a response to one or more of the guiding questions, questions you still have about the topics addressed, or insights gained into your own research.
+To help guide your reflection on the readings, a set of guiding questions are provided below. After you have had a chance to work through one or more of the readings, **we encourage you to contribute to our learning community by creating a new post to our machine-learning channel on [Slack](http://laser-scholars.slack.com/)**. Your post might contain a response to one or more of the guiding questions, questions you still have about the topics addressed, or insights gained into your own research.
 
-### Chapter 1: The Social Network Perspective and Educational Research Introduction
+### Breiman (2001)
 
-Consider a network of which you are a part and think about the following questions:
+-   Breiman contrasts the data modeling culture and the algorithmic modeling culture. How do these two cultures differ in their approach to statistical modeling, and what are the potential benefits and drawbacks of each?
 
-1.  Who are the network's actors?
+-   In the context of educational data science, how can the principles of the algorithmic modeling culture be applied to improve the prediction of student outcomes? Provide examples of methods that align with this culture.
 
-2.  What ties connect these actors?
+-   Breiman emphasizes the importance of prediction accuracy over interpretability in some cases. Discuss scenarios in educational data science where this trade-off might be justified and how educators can balance these competing priorities.
 
-3.  Are there any groups within this network?
+### Estrellado et al. (2021)
 
-4.  What relations within this network might be of interest to a researcher?
+-   Discuss the importance of data preprocessing and feature engineering in building predictive models for educational data. What specific techniques were used in this chapter, and how did they impact the model's performance?
 
-5.  Finally, what makes this collection of actors a social network?
+-   How do the authors address the issue of missing data in online course datasets? What alternative strategies could be considered for handling missing data, and how might these affect the results?
 
-6.  Using the same question from the previous response, explain the analytical level at which these data would need to be collected and analyzed.
+-   Which algorithm do Estrellado et al. (2021) use, and why? What are the drawbacks and limitations of this model.
 
-### Chapter 2: Historical, Theoretical, and Analytical Foundations
+### Kuzilek et al. (2017)
 
-Draft a research question for a population you may be interested in studying, or that would be of interest to educational researchers, and that would require the collection of relational data. Next, think about the following questions:
-
-1.  What relational data would need to be collected? 
-
-2.  For what reason would relational data need to be collected in order to address this question?
-
-3.  Explain the analytical level at which these data would need to be collected and analyzed.
-
-4.  How does this differ from the ways in which individual or group behavior is typically conceptualized and modeled in conventional educational research?
-
-### Chapter 3: Basic Concepts
-
-Refer to the graph below and answer the following questions:
-
-1.  Is this graph directed or undirected? Are the lines arcs or edges? Given your responses to these questions, what type of relation might this graph represent?
-
-2.  Based on what you see in this graph, is this relation valued or binary?
-
-3.  What attribute data might you want to incorporate into analysis?
-
-#### Bonus Questions:
-
-Create a matrix that represents the relational data evident in the graph and answer the following questions:
-
-1.  How many actors are in this matrix?
-
-2.  How many rows and columns are in this matrix?
-
-3.  What type of data are in the cells of this matrix?
-
-4.  Is this matrix symmetric? Explain the values on the diagonal of the matrix.
-
-![](img/graph.jpeg)
