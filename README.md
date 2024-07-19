@@ -2,7 +2,7 @@
 
 Machine learning is increasingly prevalent in our lives---and in educational contexts. Its role in educational research and practice is growing, albeit with some challenges and even controversy. These modules are designed to familiarize you with supervised machine learning and its applications in STEM education research. Throughout the module, we'll explore four key questions that correspond to the focus of each of the four modules. By the end, you will have a deep understanding of the key characteristics of supervised machine learning and how to implement supervised machine learning workflows in R and Python.
 
-## Module 1: Supervised Machine Learning (SML) Foundations
+## Module 1: Supervised Machine Learning Foundations
 
 How is prediction different from explanation? This lab provides a gentle introduction to supervised machine learning by drawing out similarities to and differences from a regression modeling approach. The case study will involve modeling the graduation rate across 1000s of higher education institutions in the United States using data from the Integrated Postsecondary Education Data System (IPEDS).
 
