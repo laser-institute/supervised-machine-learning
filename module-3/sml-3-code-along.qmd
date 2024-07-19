@@ -1,6 +1,6 @@
 ---
-title: "Machine Learning - Module 3"
-subtitle: "Conceptual Overview"
+title: "Adding Metrics to a Workflow"
+subtitle: "Code Along"
 format:
   revealjs: 
     slide-number: c/t

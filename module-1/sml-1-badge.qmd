@@ -1,5 +1,6 @@
 ---
-title: 'Machine Learning - Learning Lab 1 Badge'
+title: "Initial Interpretations of a Predictive Model"
+subtitle: "Badge"
 author: ""
 date: "`r format(Sys.Date(),'%B %e, %Y')`"
 output: html_document

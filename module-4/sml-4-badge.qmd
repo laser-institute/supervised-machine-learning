@@ -1,5 +1,5 @@
 ---
-title: "Supervised Machine Learning"
+title: "Feature Engineering Activity Types"
 subtitle: "Badge"
 author: "LASER Institute"
 date: today 
@@ -16,17 +16,15 @@ editor: visual
 
 ### Part I: Reflect and Plan
 
-Please read this article and then answer then response to the following three questions.
-
-> Baker, R. S., Esbenshade, L., Vitale, J., & Karumbaiah, S. (2023). Using demographic data as predictor variables: A questionable choice. *Journal of Educational Data Mining, 15*(2), 22-52.
-
 Part A:
 
-1.  In what ways could the inclusion of demographic variables as predictors potentially reinforce biases in predictive analytics within education?
+1.  Which features are most relevant to your work? For each, briefly explain why.
 
-2.  The authors argue that demographic variables should be used to validate fairness rather than as predictors within models. What are the potential benefits and drawbacks of this approach?
+    -   
 
-3.  How could the limitations of categorization impact the use of demographic variables in predictive models?
+2.  Which feature engineering steps are necessary to include those in a model?
+
+    -   
 
 Part B: Once again, use the institutional library (e.g. [NCSU Library](https://www.lib.ncsu.edu/#articles)), [Google Scholar](https://scholar.google.com/) or search engine to locate a research article, presentation, or resource that applies machine learning to an educational context aligned with your research interests. More specifically, please find an article in your field that utilizes in *feature engineering*
 

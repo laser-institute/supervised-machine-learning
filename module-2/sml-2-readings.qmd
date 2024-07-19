@@ -1,7 +1,6 @@
 ---
-title: "Supervised Machine Learning"
+title: "What Makes Supervised Machine Learning Distinct"
 subtitle: "Essential Readings"
-author: "LASER Institute"
 date: today 
 format:
   html:
@@ -16,9 +15,11 @@ editor: visual
 
 ## Overview
 
-These readings go deeper into the supervised machine learning process. The Breiman paper is a classic that provides a high-level introduction to how the _goals_ of the analyst or scholar using supervised machine learning may be similar to and different from those using more traditional (i.e., inferential) models. The Estrellado et al. (2020) chapter provides an example similar to that which we undertook in this chapter, but with a different data set and set of packages (caret) that you may encounter when using R for supervised machine learning; though the code is different in some key places, consider how the modeling process is similar. Kuzilek et al. (2017) provides an overview of the OULAD dataset, if interested in using it for research (or any other purpose).
+These readings principally highlight what makes supervised machine learning distinct from other analytic approaches. The Breiman paper is a classic that provides a high-level introduction to how the *goals* of the analyst or scholar using supervised machine learning may be similar to and different from those using more traditional (i.e., inferential) models. The Estrellado et al. (2020) chapter provides an example similar to that which we undertook in this chapter, but with a different data set and set of packages (caret) that you may encounter when using R for supervised machine learning; though the code is different in some key places, consider how the modeling process is similar. Kuzilek et al. (2017) provides an overview of the OULAD dataset, if interested in using it for research (or any other purpose).
 
 ## Readings
+
+**These readings are all in the `/lit` folder.**
 
 > Breiman, L. (2001). Statistical modeling: The two cultures (with comments and a rejoinder by the author). *Statistical science*, *16*(3), 199-231.
 
@@ -48,3 +49,8 @@ To help guide your reflection on the readings, a set of guiding questions are pr
 
 ### Kuzilek et al. (2017)
 
+-   The Open University Learning Analytics Dataset (OULAD) includes demographic data and aggregated clickstream data. Discuss how this combination of data types can be used to gain insights into student behavior and learning outcomes. What are the potential benefits and limitations of this dataset?
+
+-   The authors describe the process of anonymizing the dataset to protect student privacy. Reflect on the ethical considerations of using and sharing educational data, and how anonymization techniques can address these concerns.
+
+-   How might you use the OULAD for your research?

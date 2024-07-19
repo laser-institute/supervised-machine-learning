@@ -1,7 +1,6 @@
 ---
-title: "Supervised Machine Learning"
-subtitle: "Badge"
-author: "LASER Institute"
+title: "Considering Many Metrics"
+subtitle: "Readings"
 date: today 
 format:
   html:
@@ -14,12 +13,13 @@ theme:
 editor: visual
 ---
 
-
 ## Overview
 
-This module was intended to instigate the interpretation of supervised machine learning models with metrics other than accuracy. These readings are intended to help you to deepen your understanding by providing a worked example and a more general argument on the use of multiple metrics to interpret supervised machine learning models. The first (Baker et al., 2020) uses _precision_ (positive predictive value) as a key, relevant metric---instead of accuracy. The second (Baker et al., 2024) makes a broader argument about using an ensemble of metrics.
+This module was intended to instigate the interpretation of supervised machine learning models with metrics other than accuracy. These readings are intended to help you to deepen your understanding by providing a worked example and a more general argument on the use of multiple metrics to interpret supervised machine learning models. The first (Baker et al., 2020) uses *precision* (positive predictive value) as a key, relevant metric---instead of accuracy. The second (Baker et al., 2024) makes a broader argument about using an ensemble of metrics.
 
 ## Readings
+
+**These readings are all in the `/lit` folder.**
 
 > Baker, R. S., Berning, A. W., Gowda, S. M., Zhang, S., & Hawn, A. (2020). Predicting K-12 dropout. *Journal of Education for Students Placed at Risk (JESPAR)*, 25(1), 28-54.
 
@@ -41,16 +41,16 @@ To help guide your reflection on the readings, a set of guiding questions are pr
 
 ### Baker et al. (2024)
 
-- The authors argue that AUC ROC is not inherently flawed but often misused. Discuss how AUC ROC should be correctly interpreted and applied in predictive modeling, especially in educational contexts.
+-   The authors argue that AUC ROC is not inherently flawed but often misused. Discuss how AUC ROC should be correctly interpreted and applied in predictive modeling, especially in educational contexts.
 
-- The paper critiques the reliance on single metrics for model evaluation. How can combining multiple metrics improve the robustness and fairness of predictive models? Provide examples of complementary metrics that can be used alongside AUC ROC.
+-   The paper critiques the reliance on single metrics for model evaluation. How can combining multiple metrics improve the robustness and fairness of predictive models? Provide examples of complementary metrics that can be used alongside AUC ROC.
 
-- How do the takeaways from this paper accord with or differ from the themes of this module (interpreting metrics other than accuracy)?
+-   How do the takeaways from this paper accord with or differ from the themes of this module (interpreting metrics other than accuracy)?
 
 ### Maestrales et al. (2021)
 
-- The study compares the accuracy of human scoring and machine learning algorithms in evaluating multi-dimensional constructed response items in science assessments. Discuss the key findings and implications of these comparisons for future educational assessments.
+-   The study compares the accuracy of human scoring and machine learning algorithms in evaluating multi-dimensional constructed response items in science assessments. Discuss the key findings and implications of these comparisons for future educational assessments.
 
-- The authors highlight the challenges of achieving high agreement between human raters and machine algorithms. What strategies did the researchers employ to improve this agreement, and what were the outcomes of these strategies?
+-   The authors highlight the challenges of achieving high agreement between human raters and machine algorithms. What strategies did the researchers employ to improve this agreement, and what were the outcomes of these strategies?
 
-- Reflect on the potential benefits and limitations of using machine learning to score multi-dimensional assessments. How can educators ensure the reliability and validity of these automated scoring systems in real-world classroom settings?
+-   Reflect on the potential benefits and limitations of using machine learning to score multi-dimensional assessments. How can educators ensure the reliability and validity of these automated scoring systems in real-world classroom settings?

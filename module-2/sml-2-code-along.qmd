@@ -1,6 +1,6 @@
 ---
-title: "Machine Learning - Module 2"
-subtitle: "Code-along"
+title: "How to Split Data into Training and Testing Sets"
+subtitle: "Code Along"
 format:
   revealjs: 
     slide-number: c/t

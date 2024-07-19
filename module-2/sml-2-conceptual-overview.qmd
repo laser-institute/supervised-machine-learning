@@ -1,5 +1,5 @@
 ---
-title: "Machine Learning - Module 2"
+title: "Using Training and Testing Data in a Workflow"
 subtitle: "Conceptual Overview"
 format:
   revealjs: 
@@ -43,7 +43,7 @@ We have some data and want to develop a prediction model. Supervised machine lea
 
 - Provide an example of supervised machine learning in the context of educational research. Discuss why this counts as machine learning.
 
-### Digging Deeper
+## Digging Deeper
 
 - How might presenting the results of a machine learning model differ from presenting those from a more traditional ("explanatory") model? 
 
@@ -62,13 +62,13 @@ We have some data and want to develop a prediction model. Supervised machine lea
 - The OULAD was created by learning analytics researchers at the United Kingdom-based Open University.
 - It includes data from post-secondary learners participation in one of several Massive Open Online Courses (called *modules* in the OULAD).
 
-### OULAD
+### OULAD (1)
 
 - Many students pass these courses, but not all do
 - We have data on students' initial characteristics and their interactions in the course
 - If we could develop a good prediction model, we could provide additional supports to students--and maybe move the needle on some students succeeding who might not otherwise
 
-### OULAD
+### OULAD (2)
 
 We'll be focusing on three files:
 

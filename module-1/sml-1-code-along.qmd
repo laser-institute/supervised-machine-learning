@@ -1,6 +1,6 @@
 ---
-title: "Foundations of Supervised Machine Learning"
-subtitle: "Code-along"
+title: "Same Model, Different Analytic Goals"
+subtitle: "Code Along"
 format:
   revealjs: 
     slide-number: c/t

@@ -1,5 +1,5 @@
 ---
-title: "Machine Learning - Module 1"
+title: "What is Supervised Machine Learning?"
 subtitle: "Conceptual Overview"
 format:
   revealjs: 
@@ -186,6 +186,8 @@ Do you want to say something about one or several variables' relations with an o
 -   Carrying out a careful process of qualitative coding (and the establishment of validity and interrater reliability) of students' written constructed responses
 -   Training a supervised ML algorithm in advance of being able to **scale up** their coding to a larger number of responses
 
+**We'll read this later, in module 3!**
+
 # Modules Overview
 
 ::: panel-tabset
@@ -242,11 +244,17 @@ This is meant to elicit thoughts from learners on SML, now that we are beginning
 
 ## Readings
 
-> Baker, R. S., Berning, A. W., Gowda, S. M., Zhang, S., & Hawn, A. (2020). Predicting K-12 dropout. *Journal of Education for Students Placed at Risk (JESPAR), 25*(1), 28-54.
+**Please see `sml-1-readings.qmd`**
 
-> Zong, C., & Davis, A. (2022). Modeling university retention and graduation rates using IPEDS. *Journal of College Student Retention: Research, Theory & Practice*, https://journals.sagepub.com/doi/10.1177/15210251221074379.
+> Brooks, C., & Thompson, C. (2017). Predictive modelling in teaching and learning. Handbook of learning analytics, 61-68.
+
+> Jaquette, O., & Parra, E. E. (2013). Using IPEDS for panel analyses: Core concepts, data challenges, and empirical applications. In Higher Education: Handbook of Theory and Research: Volume 29 (pp. 467-533). Dordrecht: Springer Netherlands.
+
+> Zong, C., & Davis, A. (2022). Modeling university retention and graduation rates using IPEDS. Journal of College Student Retention: Research, Theory & Practice, 15210251221074379.
 
 ## Case Study
+
+**Please see `sml-1-case-study.qmd`**
 
 -   Building a prediction model for graduate rates using data from the National Center for Education Statistics.
 -   We'll use not only the same _data_ but also the same _model_ in two modes - inferential regression modeling and predicitive SML, seeing how the key is in how we use the model, not the model type
@@ -254,6 +262,8 @@ This is meant to elicit thoughts from learners on SML, now that we are beginning
 -   A key is available, but we strongly encourage you to use it only at the end to check your work, or if you are completely stuck and have tried our recommended troubleshooting steps: https://docs.google.com/document/d/14Jc-KG3m5k1BvyKWqw7KmDD21IugU5nV5edfJkZyspY/edit
 
 ## Badge
+
+**Please see `sml-badge.qmd`**
 
 -   Involves applying what you have done through this point in the module to a) extending our model and b) reflecting and planning, after which you will knit and submit your work by publishing to Posit Cloud.
 :::

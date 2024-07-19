@@ -1,5 +1,5 @@
 ---
-title: "Supervised Machine Learning"
+title: "Diving Deep on Features and Feature Engineering"
 subtitle: "Module 1 - Essential Readings"
 author: "LASER Institute"
 date: today 
@@ -16,9 +16,11 @@ editor: visual
 
 ## Overview
 
-At this point, you are familiar with the key parts of the supervised machine learning workflow. These readings are intended to help you to deepen you understanding of featuring engineering and the inclusion of features (Baker et al., 2023; Bosch, 2021) and to see how feature engineering is used in the case of a specfic empirical analysis (Rodriguez et al., 2021). 
+At this point, you are familiar with the key parts of the supervised machine learning workflow. These readings are intended to help you to deepen you understanding of featuring engineering and the inclusion of features (Baker et al., 2023; Bosch, 2021) and to see how feature engineering is used in the case of a specfic empirical analysis (Rodriguez et al., 2021).
 
 ## Readings
+
+**These readings are all in the `/lit` folder.**
 
 > Baker, R. S., Esbenshade, L., Vitale, J., & Karumbaiah, S. (2023). Using demographic data as predictor variables: A questionable choice. *Journal of Educational Data Mining, 15*(2), 22-52.
 
@@ -32,24 +34,24 @@ To help guide your reflection on the readings, a set of guiding questions are pr
 
 ### Baker et al. (2023)
 
-- The authors discuss the pros and cons of using demographic data as predictors in educational models. What are the main arguments for and against this practice, and how do these arguments impact the ethical considerations of model use?
+1.  In what ways could the inclusion of demographic variables as predictors potentially reinforce biases in predictive analytics within education?
 
-- Reflect on the concept of "fairness through unawareness" as discussed in the paper. How does this approach compare to using demographic data for validation rather than as predictors? Provide examples of how each approach might be implemented in educational settings.
+2.  The authors argue that demographic variables should be used to validate fairness rather than as predictors within models. What are the potential benefits and drawbacks of this approach?
 
-- The paper suggests that demographic variables can reduce actionability and reinforce biases. How can educational institutions address these concerns while still aiming to improve predictive accuracy and fairness in their models?
+3.  How could the limitations of categorization impact the use of demographic variables in predictive models?
 
 ### Bosch (2021)
 
-- Bosch highlights the trade-off between accuracy and interpretability in using AutoML for student modeling. Discuss the implications of this trade-off for educators and policymakers. How can they balance the need for accurate predictions with the necessity of understanding and explaining model decisions?
+-   Bosch highlights the trade-off between accuracy and interpretability in using AutoML for student modeling. Discuss the implications of this trade-off for educators and policymakers. How can they balance the need for accurate predictions with the necessity of understanding and explaining model decisions?
 
-- The paper presents the use of AutoML in feature engineering. What are the potential benefits and limitations of this approach in the context of student modeling, and how might these affect the deployment of predictive analytics in educational environments?
+-   The paper presents the use of AutoML in feature engineering. What are the potential benefits and limitations of this approach in the context of student modeling, and how might these affect the deployment of predictive analytics in educational environments?
 
-- Reflect on the ethical considerations of using highly accurate but less interpretable models in education. How can transparency and accountability be maintained when employing such models to make decisions affecting students?
+-   Reflect on the ethical considerations of using highly accurate but less interpretable models in education. How can transparency and accountability be maintained when employing such models to make decisions affecting students?
 
 ### Rodriguez et al. (2021)
 
-- The study uses clickstream data to identify self-regulated learning patterns among first-generation college students. Discuss the four distinct learning patterns identified and their implications for student support and intervention strategies.
+-   The study uses clickstream data to identify self-regulated learning patterns among first-generation college students. Discuss the four distinct learning patterns identified and their implications for student support and intervention strategies.
 
-- The authors found that early planning behaviors were particularly predictive of course success. How can educators design interventions or course structures to promote these behaviors among students, especially first-generation students?
+-   The authors found that early planning behaviors were particularly predictive of course success. How can educators design interventions or course structures to promote these behaviors among students, especially first-generation students?
 
-- Reflect on the potential of using clickstream data to support underrepresented students in online learning environments. What are the benefits and challenges of implementing such data-driven approaches in practice?
+-   Reflect on the potential of using clickstream data to support underrepresented students in online learning environments. What are the benefits and challenges of implementing such data-driven approaches in practice?

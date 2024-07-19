@@ -1,5 +1,5 @@
 ---
-title: "Supervised Machine Learning"
+title: "Metrics for Continuous Outcome Variables"
 subtitle: "Badge"
 author: "LASER Institute"
 date: today 

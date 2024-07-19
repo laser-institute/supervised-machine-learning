@@ -1,6 +1,6 @@
 ---
-title: 'Model Interpretation'
-subtitle: "ML Module 3: Case Study Key"
+title: "Beyond Accuracy: How to Calculate Metrics"
+subtitle: "Case Study"
 author: "LASER Institute"
 date: today 
 format:
@@ -277,7 +277,7 @@ We're now ready to move on to interpreting the accuracy of our model.
 Let's start with a simple confusion matrix. The confusion matrix is a 2 x 2 table with values (cells in the table) representing one of four conditions, elaborated below. You'll fill in the last two columns in a few moments.
 
 |      Statistic      |       How to Find       |                                          Interpretation                                          | Value | \%  |
-|:-----------:|:-----------:|:------------------:|:-----------:|:-----------:|
+|:-------------------:|:-----------------------:|:------------------------------------------------------------------------------------------------:|:-----:|:---:|
 | True positive (TP)  | Truth: 1, Prediction: 1 |    Proportion of the population that is affected by a condition and correctly tested positive    |       |     |
 | True negative (TN)  | Truth: 0, Prediction: 0 |  Proportion of the population that is not affected by a condition and correctly tested negative  |       |     |
 | False positive (FP) | Truth: 0, Prediction: 1 | Proportion of the population that is not affected by a condition and incorrectly tested positive |       |     |
@@ -309,7 +309,7 @@ Here's where things get interesting: There are other statistics that have differ
 #### [Your Turn]{style="color: green;"} ⤵
 
 |                                               |                |                                                                                                                                |                                                                                    |                      |
-|:-------------:|:-------------:|:-------------:|:-------------:|:-------------:|
+|:---------------------------------------------:|:--------------:|:------------------------------------------------------------------------------------------------------------------------------:|:----------------------------------------------------------------------------------:|:--------------------:|
 |                 **Statistic**                 |  **Equation**  |                                                       **Interpretation**                                                       |                               **Question Answered**                                | **Statistic Values** |
 |         **Sensitivity** (AKA recall)          | TP / (TP + FN) |                       Proportion of those who are affected by a condition and correctly tested positive                        |        Out of all the actual positives, how many did we correctly predict?         |                      |
 |                **Specificity**                | TN / (FP + TN) |                     Proportion of those who are not affected by a condition and correctly tested negative;                     |        Out of all the actual negatives, how many did we correctly predict?         |                      |
@@ -321,7 +321,7 @@ So, what does this hard-won by output tell us? Let's interpret each statistic ca
 #### [Your Turn]{style="color: green;"} ⤵
 
 |                                           |                                                                                                                                             |
-|--------------------|----------------------------------------------------|
+|-------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------|
 | **Statistic**                             | **Substantive Interpretation**                                                                                                              |
 | Accuracy                                  |                                                                                                                                             |
 | Sensitivity (AKA recall)                  | The model correctly predicts about 2/3 of students who do not pass correctly (as not passing). This is pretty good, but it could be better. |

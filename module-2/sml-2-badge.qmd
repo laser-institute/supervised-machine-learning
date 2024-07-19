@@ -1,8 +1,16 @@
 ---
-title: 'Machine Learning - Learning Lab 2 Badge'
-author: ""
-date: "`r format(Sys.Date(),'%B %e, %Y')`"
-output: html_document
+title: "Adding Additional Predictors to Improve Accuracy"
+subtitle: "Badge"
+date: today 
+format:
+  html:
+    toc: true
+    toc-depth: 4
+    toc-location: right
+theme:
+  light: simplex
+  dark: cyborg
+editor: visual
 ---
 
 The final activity for each learning lab provides space to work with data and to reflect on how the concepts and techniques introduced in each lab might apply to your own research.

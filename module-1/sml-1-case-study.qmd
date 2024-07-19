@@ -1,5 +1,5 @@
 ---
-title: 'Explaining versus predicting: The case of graduation rates'
+title: 'Explaining or Predicting Graduation Rates Using IPEDS'
 subtitle: "Case Study"
 author: "LASER Institute"
 date: today 
@@ -15,8 +15,6 @@ editor: visual
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-
 set.seed(20240706) # so the results are readily reproducible
 ```
 

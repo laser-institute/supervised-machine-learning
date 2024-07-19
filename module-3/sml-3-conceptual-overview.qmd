@@ -1,5 +1,5 @@
 ---
-title: "Machine Learning - Module 3"
+title: "How Good is Our Model, Really?"
 subtitle: "Conceptual Overview"
 format:
   revealjs: 
@@ -34,7 +34,6 @@ The key point to make here is that we will go well beyond the relatiely simplist
 - Discussion 1
 - Key Concept: Accuracy
 - Key Concept: Feature Engineering (part A)
-- Code-along
 - Discussion 2
 - Introduction to the other parts of this learning lab
 
@@ -67,7 +66,9 @@ This can connect back to the purpose at the beginning --- try to elicit ideas th
 
 :::
 
-# Key Concept: Accuracy
+# Key Concept #1 
+
+## Accuracy
 
 ::: {.panel-tabset}
 ## Accuracy
@@ -126,8 +127,7 @@ data_for_conf_mat %>%
 
 ## Confusion Matrix Visual
 
-![](img/conf-mat-descriptor.png)
-
+![](img/conf-mat-descriptor.png){width=80%}
 
 ::: {.notes}
 This and the next slide can take awhile to work through --- it may be helpful to do some math on a whiteboard, and to ask lots of questions of learners to work through the math, which is simple mathematically but somewhat challenging conceptually! Take time here --- this can be really valuable as a time and space to deeply understand what is under the hood of these metrics.
@@ -135,7 +135,7 @@ This and the next slide can take awhile to work through --- it may be helpful to
 
 ## Metrics
 
-![](img/interpretation-of-metrics.png)
+![](img/interpretation-of-metrics.png){width=80%}
 
 ::: {.notes}
 Please note that Precision goes by the name Positive Predictive Value, whereas Negative Predictive Value does not have another commonly used name.
@@ -143,7 +143,9 @@ Please note that Precision goes by the name Positive Predictive Value, whereas N
 
 :::
 
-# Key Concept: Feature Engineering (Part A)
+# Key Concept # 2
+
+## Feature Engineering (Part A)
 
 ::: {.panel-tabset}
 ## Why?
@@ -193,9 +195,13 @@ Emphasize this very brief introduction is to just begin to explore these topics 
 # Introduction to the other parts of this learning lab
 
 ::: {.panel-tabset}
-## Reading
+## Readings
 
-> Baker, R. S., Berning, A. W., Gowda, S. M., Zhang, S., & Hawn, A. (2020). Predicting K-12 dropout. *Journal of Education for Students Placed at Risk, 25*(1), 28-54.
+> Baker, R. S., Berning, A. W., Gowda, S. M., Zhang, S., & Hawn, A. (2020). Predicting K-12 dropout. Journal of Education for Students Placed at Risk (JESPAR), 25(1), 28-54.
+
+> Baker, R. S., Bosch, N., Hutt, S., Zambrano, A. F., & Bowers, A. J. (2024). On fixing the right problems in predictive analytics: AUC is not the problem. arXiv preprint. https://arxiv.org/pdf/2404.06989
+
+> Maestrales, S., Zhai, X., Touitou, I., Baker, Q., Schneider, B., & Krajcik, J. (2021). Using machine learning to score multi-dimensional assessments of chemistry and physics. Journal of Science Education and Technology, 30(2), 239-254.
 
 ## Case Study
 

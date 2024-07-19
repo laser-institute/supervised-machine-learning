@@ -1,6 +1,6 @@
 ---
-title: 'Title Here'
-subtitle: "ML Module 4: Case Study Key"
+title: 'Modeling Interactions Data with Random Forests'
+subtitle: "Case Study"
 author: "LASER Institute"
 date: today 
 format:

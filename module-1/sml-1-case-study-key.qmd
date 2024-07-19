@@ -1,0 +1,283 @@
+---
+title: 'Explaining or Predicting Graduation Rates Using IPEDS'
+subtitle: "Case Study Key"
+author: "LASER Institute"
+date: today 
+format:
+  html:
+    toc: true
+    toc-depth: 4
+    toc-location: right
+theme:
+  light: simplex
+  dark: cyborg
+editor: visual
+---
+
+```{r setup, include=FALSE}
+set.seed(20240706) # so the results are readily reproducible
+```
+
+## 1. PREPARE
+
+### The LASER workflow
+
+Each machine learning "case study" is designed to illustrate how machine learning methods and techniques can be applied to address a research question of interest, create useful data products, and conduct reproducible research. Each case study is structured around a basic analytics workflow modeled after the Data-Intensive Research Workflow from [Learning Analytics Goes to School](#0) (Krumm et al., 2018):
+
+![](https://sbkellogg.github.io/eci-589/unit-1/img/workflow.png){alt="" width="80%"}
+
+Figure 2.2 Steps of Data-Intensive Research Workflow
+
+In the overview presentation for this learning lab, we considered five steps in our supervised machine learning process. Those steps are mirrored here in this case study, with the addition of some other components of this workflow. For example, to help prepare for analysis, we'll first take a step back and think about how we want to use machine learning, and *predicting* is a key word. Many scholars have focused on predicting students who are *at-risk*: of dropping a course or not succeeding in it. In the ML Learning Lab 1 case study will cover the following workflow topics as we attempt to develop our own model for predicting student drop-out:
+
+1.  **Prepare**: Prior to analysis, we'll look at the context from which our data came, formulate a basic research question, and get introduced the {tidymodels} packages for machine learning.
+
+2.  **Wrangle**: Wrangling data entails the work of cleaning, transforming, and merging data. In Part 2 we focus on importing CSV files and modifying some of our variables.
+
+3.  **Explore**: We take a quick look at our variables of interest and do some basic "feature engineering" by creating some new variables we think will be predictive of students at risk.
+
+4.  **Model:** We dive deeper into the five steps in our supervised machine learning process, focusing on the mechanics of **making predictions**.
+
+5.  **Communicate:** To wrap up our case study, we'll create our first "data product" and share our analyses and findings by creating our first web page using R Markdown.
+
+In this module, we will be using data from the [IPEDS, the Integrated Postsecondary Education Data System](https://nces.ed.gov/ipeds/). We use Zong and Davis' (2022) study as an inspiration for ours. These authors used inferential models to try to understand what relates to the graduation rates of around 700 four-year universities in the United States, predicting this outcome on the basis of student backround, finance, academic and social environment, and retention rate independent variables. You can find this in the `lit` folder (with an elaboration and discussion questions in the Readings file for this module).
+
+> Zong, C., & Davis, A. (2022). Modeling university retention and graduation rates using IPEDS. Journal of College Student Retention: Research, Theory & Practice, 15210251221074379.
+
+### Loading packages
+
+As highlighted in [Chapter 6 of Data Science in Education Using R](https://datascienceineducation.com/c06.html) (DSIEUR), one of the first steps of every workflow should be to set up your "Project" within RStudio. Recall that:
+
+> A **Project** is the home for all of the files, images, reports, and code that are used in any given project
+
+Since we are working from an R project cloned from [GitHub](https://github.com/laser-institute), a Project has already been set up for you as indicated by the `.Rproj` file in your main directory in the Files pane. Instead, we will focus on getting our project set up withe the requisite packages we'll need for analysis.
+
+**Packages**, sometimes called libraries, are shareable collections of R code that can contain functions, data, and/or documentation and extend the functionality of R. You can always check to see which packages have already been installed and loaded into RStudio Cloud by looking at the the Files, Plots, & Packages Pane in the lower right-hand corner.
+
+Two packages we'll use extensively throughout these learning labs are the {tidyverse} and {tidymodels} packages.
+
+#### tidyverse 📦
+
+![](img/tidyverse.png){width="20%"}
+
+One package that we'll be using extensively throughout LASER is the {tidyverse} package. Recall from earlier tutorials that the {tidyverse} package is actually a [collection of R packages](https://www.tidyverse.org/packages) designed for reading, wrangling, and exploring data and which all share an underlying design philosophy, grammar, and data structures. These shared features are sometimes "tidy data principles."
+
+Click the green arrow in the right corner of the "code chunk" that follows to load the {tidyverse} library. We'll also load another package, janitor.
+
+```{r}
+library(tidyverse)
+library(janitor)
+```
+
+#### tidymodels
+
+[![](img/tidymodels.png){width="20%"}](https://www.tidymodels.org/)
+
+The [tidymodels](https://www.tidymodels.org/) package is a "meta-package" for modeling and statistical analysis that shares the underlying design philosophy, grammar, and data structures of the [tidyverse](https://www.tidyverse.org/). It includes a core set of packages that are loaded on startup and contains tools for:
+
+-   data splitting and pre-processing;
+
+-   model selection, tuning, and evaluation;
+
+-   feature selection and variable importance estimation;
+
+-   as well as other functionality.
+
+#### **👉 Your Turn** **⤵**
+
+In addition to the {tidymodels} package, we'll also be using the lightweight but highly useful {janitor} package to help with some data cleaning tasks. Use the code chunk below to load these two packages:
+
+```{r load-tidymodels}
+
+
+
+```
+
+As a tip, remember to use the `library()` function to load these packages. After you've done that, click the green arrow to run the code chunk. If you see a bunch of messages (not anything labeled as an error), you are good to go! These messages mean the packages loaded correctly.
+
+### Loading data
+
+Next, we'll read in data. We'll use the `read_csv()` function to load the data file.
+
+For now, please read in the `oulad-students.csv` file. Use the `read_csv()` function to do this, paying attention to where those files are located relative to this case study file.
+
+```{r}
+ipeds <- read_csv("data/ipeds-all-title-9-2022-data.csv")
+
+ipeds <- janitor::clean_names(ipeds)
+
+```
+
+In the chunk below, examine the data set using a function or means of your choice (such as just *printing* the data set by typing its name or using the `glimpse()` function). Do this in the code chunk below! Note its dimensions --- especially how many rows it has!
+
+```{r}
+
+```
+
+Write down a few observations after inspecting the data:
+
+-   YOUR RESPONSE HERE
+-   YOUR RESPONSE HERE
+-   YOUR RESPONSE HERE
+
+## 2. WRANGLE
+
+```{r}
+ipeds <- ipeds %>% 
+    select(name = institution_name, 
+           title_iv = hd2022_postsecondary_and_title_iv_institution_indicator, 
+           carnegie_class = hd2022_carnegie_classification_2021_basic, 
+           state = hd2022_state_abbreviation, 
+           total_enroll = drvef2022_total_enrollment,
+           pct_admitted = drvadm2022_percent_admitted_total,
+           n_bach = drvc2022_bachelors_degree,
+           n_mast = drvc2022_masters_degree,
+           n_doc = drvc2022_doctors_degree_research_scholarship,
+           tuition_fees = drvic2022_tuition_and_fees_2021_22,
+           grad_rate = drvgr2022_graduation_rate_total_cohort,
+           percent_fin_aid = sfa2122_percent_of_full_time_first_time_undergraduates_awarded_any_financial_aid,
+           avg_salary = drvhr2022_average_salary_equated_to_9_months_of_full_time_instructional_staff_all_ranks)
+```
+
+A useful function for exploring data is `count()`; it does what it sounds like! It counts how many times values for a variable appear.
+
+```{r}
+ipeds %>% 
+    count(title_iv)
+```
+
+Filtering
+
+```{r}
+ipeds <- ipeds %>% 
+    filter(title_iv == "Title IV postsecondary institution")
+
+ipeds <- ipeds %>% 
+    filter(carnegie_class != "Not applicable, not in Carnegie universe (not accredited or nondegree-granting)")
+
+```
+
+```{r}
+ipeds %>% 
+    glimpse()
+```
+
+```{r}
+ipeds <- ipeds %>% 
+    select(-title_iv, -state)
+```
+
+#### **👉 Your Turn** **⤵**
+
+```{r}
+ipeds
+```
+
+## 3. EXPLORE
+
+One key step in most analyses is to explore the data. Here, we conduct an exploratory data analysis with the IPEDS data, focusing on the key outcome of graduate rate.
+
+```{r}
+ipeds %>% 
+    ggplot(aes(x = grad_rate)) +
+    geom_histogram()
+```
+
+What do you notice about this graph -- and about graduation rate?
+
+-   YOUR RESPONSE
+-   YOUR RESPONSE
+-   YOUR RESPONSE
+
+We'll first do a little additional data wrangling.
+
+```{r}
+ipeds <- ipeds %>% 
+    mutate(n_grad = n_mast + n_doc)
+
+ipeds <- ipeds %>% 
+    mutate(good_grad_rate = if_else(grad_rate > 65, 1, 0),
+           good_grad_rate = as.factor(good_grad_rate))
+```
+
+## 4. MODEL
+
+Now, we reach a fork in the road. Recall from our first reading that there are two general types of modeling approaches: unsupervised and supervised machine learning. In Part 4, we focus on supervised learning models, which are used to quantify relationships between features (e.g., motivation and performance) and a known outcome (e.g., student drop out). These models can be used for classification of binary or categorical outcomes, as we'll illustrate in this section, or regression as we'll demonstrate in modules 2 and 3.
+
+Please write our research questions for both a regression (RQ A) and supervised machine learning (RQ B) analysis.
+
+### RQ A Research Question
+
+-   YOUR RESEARCH QUESTION
+
+### RQ A Research Question
+
+-   YOUR RESEARCH QUESTION
+
+Now, we will proceed to the analyses.
+
+We'll first conduct a regression analysis, like in the code-along.
+
+```{r}
+m1 <- lm(species_human ~ height + mass, data = ipeds)
+summary(m1)
+```
+
+Then, we'll conduct a supervised machine learning analysis.
+
+```{r}
+my_rec <- recipe(good_grad_rate ~ total_enroll + pct_admitted + n_bach + n_grad + tuition_fees + percent_fin_aid + avg_salary, data = ipeds) %>% 
+    step_normalize(all_numeric_predictors())
+
+# specify model
+my_mod <-
+    logistic_reg() %>% 
+    set_engine("glm") %>%
+    set_mode("classification")
+
+my_wf <-
+    workflow() %>%
+    add_model(my_mod) %>% 
+    add_recipe(my_rec)
+
+fit_model <- fit(my_wf, ipeds)
+
+predictions <- predict(fit_model, ipeds) %>%
+  bind_cols(ipeds)
+
+accuracy <- predictions %>%
+  metrics(truth = good_grad_rate, estimate = .pred_class) %>%
+  filter(.metric == "accuracy")
+
+accuracy
+```
+
+## 5. COMMUNICATE
+
+The final step in the workflow/process is sharing the results of your analysis with wider audience. Krumm et al. (2018) have outlined the following 3-step process for communicating with education stakeholders findings from an analysis:
+
+1.  **Select.** Communicating what one has learned involves selecting among those analyses that are most important and most useful to an intended audience, as well as selecting a form for displaying that information, such as a graph or table in static or interactive form, i.e. a "data product."
+
+2.  **Polish**. After creating initial versions of data products, research teams often spend time refining or polishing them, by adding or editing titles, labels, and notations and by working with colors and shapes to highlight key points.
+
+3.  **Narrate.** Writing a narrative to accompany the data products involves, at a minimum, pairing a data product with its related research question, describing how best to interpret the data product, and explaining the ways in which the data product helps answer the research question.
+
+What did we find for each of our RQs? Add a few thoughts below for each. Focus on what you would communicate about this analysis to a general audience.
+
+### RQ A
+
+Add a few notes below. Again,
+
+-   ADD YOUR RESPONSE HERE
+
+-   ADD YOUR RESPONSE HERE
+
+### 🧶 Knit & Check ✅
+
+For your SML Module 1 Badge, you will further reflect on and interpret these models, and their distinctions.
+
+Rendered HTML files can be published online through a variety of ways including [Posit Cloud](https://posit.cloud/learn/guide#publish-from-cloud), [RPubs](#0) , [GitHub Pages](#0), [Quarto Pub](#0), or [other methods](#0). The easiest way to quickly publish your file online is to publish directly from RStudio. You can do so by clicking the "Publish" button located in the Viewer Pane after you render your document as illustrated in the screenshot below.
+
+![](img/publish.png)
+
+Congratulations - you've completed this case study! Move on to the badge activity next.

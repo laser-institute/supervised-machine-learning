@@ -1,5 +1,5 @@
 ---
-title: "Who drops online courses?"
+title: "Who Drops Online Courses? An Analysis Using the OULAD"
 subtitle: "Case Study"
 author: "LASER Institute"
 date: today 

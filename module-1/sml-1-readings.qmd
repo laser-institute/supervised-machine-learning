@@ -1,5 +1,5 @@
 ---
-title: "Supervised Machine Learning"
+title: "Considering Models for Inference and Models for Prediction"
 subtitle: "Readings"
 author: "LASER Institute"
 date: today 
@@ -20,6 +20,8 @@ The goal of this module is to begin to understand how a supervised machine learn
 
 ## Readings
 
+**These readings are all in the `/lit` folder.**
+
 > Brooks, C., & Thompson, C. (2017). Predictive modelling in teaching and learning. Handbook of learning analytics, 61-68.
 
 > Jaquette, O., & Parra, E. E. (2013). Using IPEDS for panel analyses: Core concepts, data challenges, and empirical applications. In Higher Education: Handbook of Theory and Research: Volume 29 (pp. 467-533). Dordrecht: Springer Netherlands.
@@ -32,19 +34,19 @@ To help guide your reflecchattion on the readings, a set of guiding questions ar
 
 ### Brooks & Thompson (2017)
 
-- The authors distinguish between explanatory and predictive modeling. Discuss the key differences between these two approaches and provide examples of how each can be applied in educational settings.
+-   The authors distinguish between explanatory and predictive modeling. Discuss the key differences between these two approaches and provide examples of how each can be applied in educational settings.
 
-- The chapter outlines several common challenges associated with predictive modeling in education, such as data sparsity and noisy data. How can researchers mitigate these challenges to improve the accuracy and reliability of their predictive models?
+-   The chapter outlines several common challenges associated with predictive modeling in education, such as data sparsity and noisy data. How can researchers mitigate these challenges to improve the accuracy and reliability of their predictive models?
 
-- Reflect on the ethical considerations of deploying predictive models in educational environments. What are the potential risks, and how can institutions ensure that their use of predictive analytics promotes equity and fairness among students?
+-   Reflect on the ethical considerations of deploying predictive models in educational environments. What are the potential risks, and how can institutions ensure that their use of predictive analytics promotes equity and fairness among students?
 
 ### Jaquette & Parra (2013)
 
-- What are some of the attributes of IPEDS that make it useful for research?
+-   What are some of the attributes of IPEDS that make it useful for research?
 
-- What are key considerations to keep in mind when using IPEDS data?
+-   What are key considerations to keep in mind when using IPEDS data?
 
-- How could you use data to answer a question related to your research interests?
+-   How could you use data to answer a question related to your research interests?
 
 ### Zong and Davis (2022)
 
