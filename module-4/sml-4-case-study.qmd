@@ -346,7 +346,8 @@ Then, please *add to* the following code by completing three steps, building on 
 
 1.  Please normalize all numeric predictors.
 2.  Please dummy code the following three variables: `disability`, `gender`, and `code_module`.
-3.  Please impute missing values using the nearest neighbors method for the `sum_clicks` and `date_registration` variables.
+3.  Please impute missing values using the nearest neighbors method for
+the `mean_weighted_score`, `sum_clicks`, `sd_clicks`, `mean_clicks`, `intercept`, `slope`, and `date_registration` variables.
 
 ```{r}
 

@@ -21,6 +21,7 @@ resource_files:
 knitr::opts_chunk$set(echo = TRUE, eval = TRUE)
 ```
 
+
 ## 1. PREPARE
 
 After interpreting our last model, it is easy to think we can do a
@@ -85,6 +86,7 @@ Please install and add two additional packages: {ranger}, for one
 implementation of random forest modeling, and {vip}, for variable
 importance metrics.
 
+
 ```{r}
 library(janitor)
 library(tidyverse)
@@ -92,6 +94,7 @@ library(tidymodels)
 library(vip) # a new package we're adding for variable importance measures
 library(ranger) # this is needed for the random forest algorithm
 ```
+
 
 Next, we'll load a new file --- one with *interactions* (or log-trace)
 data.
@@ -116,9 +119,11 @@ data frame the name `interactions`. Note, you may need to unzip this file!
 
 #### [Your Turn]{style="color: green;"} ⤵
 
+
 ```{r}
 interactions <- read_csv("data/oulad-interactions-filtered.csv")
 ```
+
 
 In the OULAD documentation, this is called the VLE (virtual learning
 environment) data source. Please review the description of the variables
@@ -129,9 +134,11 @@ read in the `oulad-interactions.csv` file.
 
 Also, we'll load another file we created in the last module - `oulad-students_and_assessments.csv`. That is in this module's data folder; please load this in with `read_csv()`, as below.
 
+
 ```{r}
 students_and_assessments <- read_csv("data/oulad-students-and-assessments.csv")
 ```
+
 
 Woah, even filtered, this is a large file! Let's start to explore it a
 bit. Please take three steps to explore the data, as follows.
@@ -143,10 +150,12 @@ bit. Please take three steps to explore the data, as follows.
 *First*, `count()` the `activity_type` variable and *sort* the resulting
 output by frequency.
 
+
 ```{r}
 interactions %>% 
     count(activity_type)
 ```
+
 
 What does this tell you? Consulting the codebook and your output, please
 add at least two notes on what you are noticing:
@@ -157,11 +166,13 @@ add at least two notes on what you are noticing:
 
 *Second*, please create a histogram of the `date` variable.
 
+
 ```{r}
 interactions %>% 
     ggplot(aes(x = date)) +
     geom_histogram()
 ```
+
 
 What does this tell you? Add one or more notes:
 
@@ -173,10 +184,12 @@ What does this tell you? Add one or more notes:
 choosing. Options include creating simple graphs or calculating
 descriptive, summary statistics.
 
+
 ```{r}
 library(skimr)
 skim(interactions)
 ```
+
 
 We're ready to proceed to engineering some features with the
 interactions data.
@@ -186,6 +199,7 @@ First, let's join together the `interactions` and the
 
 We'll use the same code to create the `code_module_dates` we used in LL2.
 
+
 ```{r}
 assessments <- read_csv("data/oulad-assessments.csv")
 
@@ -194,10 +208,12 @@ code_module_dates <- assessments %>%
     summarize(quantile_cutoff_date = quantile(date, probs = .25, na.rm = TRUE))
 ```
 
+
 This is so we have the cut-offs
 (one-third through the semester), which will help us to only use data
 from that period in our model when we filter the data based upon those
 dates.
+
 
 ```{r}
 interactions_joined <- interactions %>% 
@@ -206,6 +222,7 @@ interactions_joined <- interactions %>%
 interactions_filtered <- interactions_joined %>% 
     filter(date < quantile_cutoff_date) # filter the data so only assignments before the cutoff date are included
 ```
+
 
 Then, let's engineer several features. For the present time, we'll focus
 on the `sum_click` variable, which tells us how many times students
@@ -216,9 +233,11 @@ code chunk below.
 
 #### [Your Turn]{style="color: green;"} ⤵
 
+
 ```{r}
 interactions_filtered <- read_csv("data/oulad-interactions-filtered.csv")
 ```
+
 
 How can we create a feature with `sum_click`? Think back to our
 discussion in the presentation; we have *many* options for working with
@@ -236,11 +255,13 @@ the same function).
 
 #### [Your Turn]{style="color: green;"} ⤵
 
+
 ```{r}
 interactions_summarized <- interactions_filtered %>% 
     group_by(id_student, code_module, code_presentation) %>% 
     summarize(sum_clicks = sum(sum_click))
 ```
+
 
 #### [Your Turn]{style="color: green;"} ⤵
 
@@ -250,11 +271,13 @@ of the `sum_clicks` variable you just created. Turn to [the
 documentation](https://ggplot2.tidyverse.org/reference/geom_histogram.html)
 if you need a pointer!
 
+
 ```{r}
 interactions_summarized %>% 
     ggplot(aes(x = sum_clicks)) +
     geom_histogram()
 ```
+
 
 This is a good start - we've created our first feature based upon the
 log data, `sum_clicks`! What are some other features we can add? An affordance
@@ -266,6 +289,7 @@ summary statistics.
 
 #### [Your Turn]{style="color: green;"} ⤵
 
+
 ```{r}
 interactions_summarized <- interactions_filtered %>% 
     group_by(id_student, code_module, code_presentation) %>% 
@@ -274,11 +298,13 @@ interactions_summarized <- interactions_filtered %>%
               mean_clicks = mean(sum_click))
 ```
 
+
 We'll take one last step here -- creating individual *slopes* of
 students' clicks over time. This code is a bit more involved, and so is
 annotated for you below; feel free to modify and re-use this. 
 
 First, we use a custom function that can deal with cases where the fitting of the slopes fails (e.g., for students with only a single data point, or some other unanticipated issue with the model estimation).
+
 
 ```{r}
 # Define a function to fit the model and handle warnings
@@ -298,7 +324,9 @@ fit_model <- function(data) {
 }
 ```
 
+
 **Note: this next step may take up to a minute or so! Please feel free to relax!**
+
 
 ```{r}
 # Fit the models for each group
@@ -309,7 +337,9 @@ interactions_slopes <- interactions_filtered %>%
     unnest(model) # Unnest the model output, returning to a regular data frame
 ```
 
+
 We'll do a bit of data wrangling.
+
 
 ```{r}
 # Process the output
@@ -321,15 +351,18 @@ interactions_slopes <- interactions_slopes %>%
     mutate_if(is.numeric, round, 4) # Round numeric columns to 4 decimal places
 ```
 
+
 Please rename the resulting intercept and date, changing them`intercept` and `slope`, respectively. Note, selecting a variable with a parenthesis in it can be tricky! Think of other ways you could do this, if you wish (hint: think of what a function in janitor can do!).
 
 #### [Your Turn]{style="color: green;"} ⤵
+
 
 ```{r}
 interactions_slopes <- interactions_slopes %>% 
     rename(intercept = `(Intercept)`,
            slope = date)
 ```
+
 
 After running this code, we will have intercepts, linear slopes, and
 quadratic terms for each students' clickstream pattern over the
@@ -342,9 +375,11 @@ resulting output the name `interactions_summaried_and_slopes`.
 
 #### [Your Turn]{style="color: green;"} ⤵
 
+
 ```{r}
 interactions_summarized_and_slopes <- left_join(interactions_slopes, interactions_summarized)
 ```
+
 
 Just one last step! Let's join together *all* of the data we'll use for
 our modeling: `students_and_assessments` and `all_features`. Use
@@ -353,10 +388,12 @@ our modeling: `students_and_assessments` and `all_features`. Use
 
 #### [Your Turn]{style="color: green;"} ⤵
 
+
 ```{r}
 students_assessments_and_interactions <- left_join(students_and_assessments, 
                                                    interactions_summarized_and_slopes)
 ```
+
 
 One more small step. Let's ensure that our outcome variable -- `pass` --
 is a factor. It was, but when saving to and reading from a CSV, it lots
@@ -365,6 +402,7 @@ necessary for the outcome of a classification model (like the one we are
 using) to be a factor. Please use `mutate()` to do just that.
 
 #### [Your Turn]{style="color: green;"} ⤵
+
 
 ```{r}
 students_assessments_and_interactions <- students_assessments_and_interactions %>% 
@@ -377,6 +415,7 @@ students_assessments_and_interactions <- students_assessments_and_interactions %
 students_assessments_and_interactions %>% 
     skimr::skim()
 ```
+
 
 We're now ready to model!
 
@@ -396,6 +435,7 @@ very similar to this in LL1 and LL2; return to the case study for those
 
 #### [Your Turn]{style="color: green;"} ⤵
 
+
 ```{r}
 set.seed(20230712)
 
@@ -403,15 +443,18 @@ train_test_split <- initial_split(students_assessments_and_interactions, prop = 
 data_train <- training(train_test_split)
 ```
 
+
 There is a key difference that is next. In this step. we'll further
 process `data_train`, creating different subsets of the data, or folds
 of the data, that we can use to fit our model multiple times.
+
 
 ```{r}
 vfcv <- vfold_cv(data_train, v = 4) # this differentiates this from what we did before
 # before, we simple used data_train to fit our model
 vfcv
 ```
+
 
 How does this work? `data_train` is sampled as many time as we se \####
 [Your Turn]{style="color: green;"} ⤵
@@ -421,10 +464,12 @@ folds from 10 to 5 by changing the value of v; 10 is simply the
 default---not always the best one! For help, run `?vfold_cv` to get a
 hint.
 
+
 ```{r}
 kfcv <- vfold_cv(data_train, v = 10)
 kfcv
 ```
+
 
 ### Step 2: Engineer features and write down the recipe
 
@@ -450,23 +495,28 @@ you want to use for the feature engineering step. For example, below, we
 would normalize a hypothetical variable, one called
 `minutes_of_videos_watched`:
 
+
 ```{r, eval = FALSE}
 step_normalize(minutes_of_videos_watched)
 ```
+
 
 Another way is to specify *for which types of variables* the feature
 engineering step applies. You can see all of the available types
 [here](https://recipes.tidymodels.org/reference/has_role.html). For
 example, the code below would normalize all numeric variables:
 
+
 ```{r, eval = FALSE}
 step_normalize(all_numeric_predictors())
 ```
+
 
 #### [Your Turn]{style="color: green;"} ⤵
 
 Let's turn to our recipe. Please *add to* the code below to add the new
 variables---features---we created.  We've started you off with ___ code below (where you can add the new variables -- be sure to add all of them!).
+
 
 ```{r}
 my_rec <- recipe(pass ~ disability +
@@ -479,6 +529,7 @@ my_rec <- recipe(pass ~ disability +
                  data = data_train) 
 ```
 
+
 #### [Your Turn]{style="color: green;"} ⤵
 
 Then, please *add to* the following code by completing three steps,
@@ -489,6 +540,7 @@ building on the code that is started below:
 `gender`, and `code_module`.
 3.  Please impute missing values using the nearest neighbors method for
 the `mean_weighted_score`, `sum_clicks`, `sd_clicks`, `mean_clicks`, `intercept`, `slope`, and `date_registration` variables.
+
 
 ```{r}
 my_rec <- my_rec %>% 
@@ -504,6 +556,7 @@ my_rec <- my_rec %>%
     step_impute_knn(date_registration) %>% 
     step_normalize(all_numeric_predictors())
 ```
+
 
 ### Step 3: Specify the model and workflow
 
@@ -522,6 +575,7 @@ random forest models
 predicting categories (transactional and substantive conversations
 taking place through #NGSSchat)
 
+
 ```{r panel-chunk-3, echo = TRUE, eval = TRUE}
 # specify model
 my_mod <-
@@ -536,6 +590,7 @@ my_wf <-
     add_recipe(my_rec) # add our recipe we wrote above
 ```
 
+
 ### Step 4: Fit model
 
 Note that here we use the `kfcv` data and a different function -
@@ -544,10 +599,12 @@ have multiple folds of our sample, as we created using the vfcv function
 above. See more about this function
 [here](https://tune.tidymodels.org/reference/fit_resamples.html).
 
+
 ```{r}
 class_metrics <- metric_set(accuracy, sensitivity, specificity, ppv, npv, kap) # specify the same metrics as earlier
 fitted_model_resamples <- fit_resamples(my_wf, resamples = vfcv, metrics = class_metrics) # specify the workflow, resampled data, and our metrics
 ```
+
 
 Note that you have fit as many models as the value for `v` that you
 specified earlier. So, this may take some time. Take a walk, grab a
@@ -559,9 +616,11 @@ inspect the predictive strength of the model. Please do that for
 
 #### [Your Turn]{style="color: green;"} ⤵
 
+
 ```{r}
 collect_metrics(fitted_model_resamples)
 ```
+
 
 We noted earlier that we may introduce bias when we evaluate different
 models against the same training data. The benefit of using the multiple
@@ -575,10 +634,12 @@ until we reach the last step - fitting our last model. We can do that
 using the familiar `fit()` function, followed by `last_fit`. It is
 important to not make further changes after this point.
 
+
 ```{r}
 fitted_model <- fit(my_wf, data_train)
 final_fit <- last_fit(fitted_model, train_test_split, metrics = class_metrics)
 ```
+
 
 ### Step 5: Interpret accuracy
 
@@ -586,10 +647,12 @@ fa Finally, collect the metrics for our final fit. *These* are the
 values that you should report as final. \#### [Your
 Turn]{style="color: green;"} ⤵
 
+
 ```{r}
 final_fit %>% 
     collect_metrics()
 ```
+
 
 We can see that `final_fit` is for a single fit: a random forest with
 the best performing tuning parameters trained with the *entire* training
@@ -598,16 +661,19 @@ testing set of data.
 
 #### [Your Turn]{style="color: green;"} ⤵
 
+
 ```{r}
 collect_predictions(final_fit) %>% 
     conf_mat(.pred_class, pass)
 
 ```
 
+
 ## 5. COMMUNICATE
 
 Another benefit of a random forest is we can interpret variable
 importance metrics. Do that here with the following code.
+
 
 ```{r}
 final_fit %>% 
@@ -615,6 +681,7 @@ final_fit %>%
     extract_fit_parsnip() %>% 
     vip(num_features = 10)
 ```
+
 
 Please add two or more notes on what you notice about which variables
 (features) are important, focused on what you would say to someone in
@@ -627,3 +694,4 @@ your audience about what the important variables in your model were.
 ### 🧶 Knit & Check ✅
 
 Congratulations - you've completed this case study! Consider moving on to the badge activity next.
+
