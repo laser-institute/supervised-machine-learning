@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="LASER Institute">
+<meta name="dcterms.date" content="2024-07-19">
+
+<title>Who Drops Online Courses? An Analysis Using the OULAD</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="sml-2-case-study-key_files/libs/clipboard/clipboard.min.js"></script>
+<script src="sml-2-case-study-key_files/libs/quarto-html/quarto.js"></script>
+<script src="sml-2-case-study-key_files/libs/quarto-html/popper.min.js"></script>
+<script src="sml-2-case-study-key_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="sml-2-case-study-key_files/libs/quarto-html/anchor.min.js"></script>
+<link href="sml-2-case-study-key_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="sml-2-case-study-key_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="sml-2-case-study-key_files/libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="sml-2-case-study-key_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="sml-2-case-study-key_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="sml-2-case-study-key_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="sml-2-case-study-key_files/libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+
+
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#prepare" id="toc-prepare" class="nav-link active" data-scroll-target="#prepare">1. PREPARE</a>
+  <ul>
+  <li><a href="#research-question" id="toc-research-question" class="nav-link" data-scroll-target="#research-question">Research Question</a></li>
+  <li><a href="#reading-statistical-modeling-the-two-cultures" id="toc-reading-statistical-modeling-the-two-cultures" class="nav-link" data-scroll-target="#reading-statistical-modeling-the-two-cultures">Reading: Statistical modeling: The two cultures</a></li>
+  <li><a href="#reading-predicting-students-final-grades" id="toc-reading-predicting-students-final-grades" class="nav-link" data-scroll-target="#reading-predicting-students-final-grades">Reading: Predicting students’ final grades</a></li>
+  <li><a href="#your-turn" id="toc-your-turn" class="nav-link" data-scroll-target="#your-turn"><strong>👉 Your Turn</strong> <strong>⤵</strong></a></li>
+  <li><a href="#b.-load-packages" id="toc-b.-load-packages" class="nav-link" data-scroll-target="#b.-load-packages">1b. Load Packages</a></li>
+  </ul></li>
+  <li><a href="#wrangle" id="toc-wrangle" class="nav-link" data-scroll-target="#wrangle">2. WRANGLE</a>
+  <ul>
+  <li><a href="#a.-import-and-inspect-data" id="toc-a.-import-and-inspect-data" class="nav-link" data-scroll-target="#a.-import-and-inspect-data">1a. Import and Inspect Data</a>
+  <ul class="collapse">
+  <li><a href="#your-turn-1" id="toc-your-turn-1" class="nav-link" data-scroll-target="#your-turn-1"><strong>👉 Your Turn</strong> <strong>⤵</strong></a></li>
+  <li><a href="#read-csv-data-file" id="toc-read-csv-data-file" class="nav-link" data-scroll-target="#read-csv-data-file">Read CSV Data File</a></li>
+  <li><a href="#your-turn-2" id="toc-your-turn-2" class="nav-link" data-scroll-target="#your-turn-2"><strong>👉 Your Turn</strong> <strong>⤵</strong></a></li>
+  <li><a href="#inspect-data" id="toc-inspect-data" class="nav-link" data-scroll-target="#inspect-data">Inspect Data</a></li>
+  </ul></li>
+  <li><a href="#b.-mutate-variables" id="toc-b.-mutate-variables" class="nav-link" data-scroll-target="#b.-mutate-variables">2b. “Mutate” Variables</a>
+  <ul class="collapse">
+  <li><a href="#your-turn-3" id="toc-your-turn-3" class="nav-link" data-scroll-target="#your-turn-3"><strong>👉 Your Turn</strong> <strong>⤵</strong></a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#explore" id="toc-explore" class="nav-link" data-scroll-target="#explore">3. EXPLORE</a>
+  <ul>
+  <li><a href="#your-turn-4" id="toc-your-turn-4" class="nav-link" data-scroll-target="#your-turn-4"><strong>👉 Your Turn</strong> <strong>⤵</strong></a></li>
+  <li><a href="#a.-examine-variables" id="toc-a.-examine-variables" class="nav-link" data-scroll-target="#a.-examine-variables">3a. Examine Variables</a></li>
+  <li><a href="#b.-feature-engineering" id="toc-b.-feature-engineering" class="nav-link" data-scroll-target="#b.-feature-engineering">3b. Feature Engineering</a>
+  <ul class="collapse">
+  <li><a href="#student-socioeconomic-index" id="toc-student-socioeconomic-index" class="nav-link" data-scroll-target="#student-socioeconomic-index">Student Socioeconomic Index</a></li>
+  <li><a href="#your-turn-5" id="toc-your-turn-5" class="nav-link" data-scroll-target="#your-turn-5"><strong>👉 Your Turn</strong> <strong>⤵</strong></a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#model" id="toc-model" class="nav-link" data-scroll-target="#model">4. MODEL</a>
+  <ul>
+  <li><a href="#step-1.-split-data" id="toc-step-1.-split-data" class="nav-link" data-scroll-target="#step-1.-split-data">Step 1. Split data</a>
+  <ul class="collapse">
+  <li><a href="#training-and-testing-sets" id="toc-training-and-testing-sets" class="nav-link" data-scroll-target="#training-and-testing-sets">Training and Testing Sets</a></li>
+  <li><a href="#split-data-sets" id="toc-split-data-sets" class="nav-link" data-scroll-target="#split-data-sets">Split Data Sets</a></li>
+  <li><a href="#your-turn-6" id="toc-your-turn-6" class="nav-link" data-scroll-target="#your-turn-6"><strong>👉 Your Turn</strong> <strong>⤵</strong></a></li>
+  </ul></li>
+  <li><a href="#step-2-create-a-recipe" id="toc-step-2-create-a-recipe" class="nav-link" data-scroll-target="#step-2-create-a-recipe">Step 2: Create a “Recipe”</a>
+  <ul class="collapse">
+  <li><a href="#add-a-formula" id="toc-add-a-formula" class="nav-link" data-scroll-target="#add-a-formula"><strong>Add a formula</strong></a></li>
+  <li><a href="#your-turn-7" id="toc-your-turn-7" class="nav-link" data-scroll-target="#your-turn-7"><strong>👉 Your Turn</strong> <strong>⤵</strong></a></li>
+  </ul></li>
+  <li><a href="#step-3-specify-the-model-and-workflow" id="toc-step-3-specify-the-model-and-workflow" class="nav-link" data-scroll-target="#step-3-specify-the-model-and-workflow">Step 3: Specify the model and workflow</a>
+  <ul class="collapse">
+  <li><a href="#start-your-engine" id="toc-start-your-engine" class="nav-link" data-scroll-target="#start-your-engine"><strong>Start your engine</strong></a></li>
+  <li><a href="#your-turn-8" id="toc-your-turn-8" class="nav-link" data-scroll-target="#your-turn-8"><strong>👉 Your Turn</strong> <strong>⤵</strong></a></li>
+  <li><a href="#add-to-workflow" id="toc-add-to-workflow" class="nav-link" data-scroll-target="#add-to-workflow"><strong>Add to workflow</strong></a></li>
+  </ul></li>
+  <li><a href="#step-4-fit-model" id="toc-step-4-fit-model" class="nav-link" data-scroll-target="#step-4-fit-model">Step 4: Fit model</a>
+  <ul class="collapse">
+  <li><a href="#your-turn-9" id="toc-your-turn-9" class="nav-link" data-scroll-target="#your-turn-9"><strong>👉 Your Turn</strong> <strong>⤵</strong></a></li>
+  </ul></li>
+  <li><a href="#step-5-interpret-accuracy" id="toc-step-5-interpret-accuracy" class="nav-link" data-scroll-target="#step-5-interpret-accuracy">Step 5: Interpret accuracy</a>
+  <ul class="collapse">
+  <li><a href="#your-turn-10" id="toc-your-turn-10" class="nav-link" data-scroll-target="#your-turn-10"><strong>👉 Your Turn</strong> <strong>⤵</strong></a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#communicate" id="toc-communicate" class="nav-link" data-scroll-target="#communicate">5. COMMUNICATE</a></li>
+  </ul>
+</nav>
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Who Drops Online Courses? An Analysis Using the OULAD</h1>
+<p class="subtitle lead">Case Study Key</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>LASER Institute </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">July 19, 2024</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="prepare" class="level2">
+<h2 class="anchored" data-anchor-id="prepare">1. PREPARE</h2>
+<p>Conceptually, we focus on prediction and how it differs from the goals of description or explanation. We have two readings in Learning Lab 1 that accompany this. The first reading introduced below focuses on this distinction between prediction and description or explanation. It is one of the most widely-read papers in machine learning and articulates how machine learning differs from other kinds of statistical models. Breiman describes the difference in terms of <em>data modeling</em> (models for description and explanation) and <em>algorithmic modeling</em> (what we call prediction or machine learning models)*</p>
+<section id="research-question" class="level4">
+<h4 class="anchored" data-anchor-id="research-question">Research Question</h4>
+<p>Technically, we’ll focus on the core parts of doing a machine learning analysis in R. We’ll use the {<a href="https://www.tidymodels.org/">tidymodels</a>} set of R packages (add-ons) to do so, like in the first module. However, to help anchor our analysis and provide us with some direction, we’ll focus on the following research question as we explore this new:</p>
+<blockquote class="blockquote">
+<p>How well can we predict students who are at risk of dropping a course?</p>
+</blockquote>
+</section>
+<section id="reading-statistical-modeling-the-two-cultures" class="level4">
+<h4 class="anchored" data-anchor-id="reading-statistical-modeling-the-two-cultures">Reading: Statistical modeling: The two cultures</h4>
+<blockquote class="blockquote">
+<p>Breiman, L. (2001). Statistical modeling: The two cultures (with comments and a rejoinder by the author). <em>Statistical Science, 16</em>(3), 199-231. <a href="https://projecteuclid.org/journals/statistical-science/volume-16/issue-3/Statistical-Modeling--The-Two-Cultures-with-comments-and-a/10.1214/ss/1009213726.pdf" class="uri">https://projecteuclid.org/journals/statistical-science/volume-16/issue-3/Statistical-Modeling--The-Two-Cultures-with-comments-and-a/10.1214/ss/1009213726.pdf</a></p>
+</blockquote>
+<p><strong>👉 Your Turn</strong> <strong>⤵</strong></p>
+<p>You’ll be asked to reflect more deeply on this article later on (in the badge activity); but for now, open up the article and take quick scan of the article and note below an observation or question you have about the article.</p>
+<ul>
+<li>YOUR RESPONSE HERE</li>
+</ul>
+</section>
+<section id="reading-predicting-students-final-grades" class="level4">
+<h4 class="anchored" data-anchor-id="reading-predicting-students-final-grades">Reading: Predicting students’ final grades</h4>
+<blockquote class="blockquote">
+<p>Estrellado, R. A., Freer, E. A., Mostipak, J., Rosenberg, J. M., &amp; Velásquez, I. C. (2020). <em>Data science in education using R</em>. Routledge (c14), Predicting students’ final grades using machine learning methods with online course data. <a href="http://www.datascienceineducation.com/" class="uri">http://www.datascienceineducation.com/</a></p>
+</blockquote>
+<p>Please review this chapter, focusing on the overall goals of the analysis and how the analysis was presented (focusing on predictions, rather than the ways we may typically interpret a statistical model–like measures of statistical significance).</p>
+</section>
+<section id="your-turn" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
+</section>
+<section id="b.-load-packages" class="level3">
+<h3 class="anchored" data-anchor-id="b.-load-packages">1b. Load Packages</h3>
+<p>Like in the last module, please load the tidyverse package. Also, please load the tidymodels and janitor packages in the code chunk below.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.4     ✔ readr     2.1.5
+✔ forcats   1.0.0     ✔ stringr   1.5.1
+✔ ggplot2   3.5.0     ✔ tibble    3.2.1
+✔ lubridate 1.9.3     ✔ tidyr     1.3.1
+✔ purrr     1.0.2     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidymodels)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching packages ────────────────────────────────────── tidymodels 1.2.0 ──
+✔ broom        1.0.5      ✔ rsample      1.2.1 
+✔ dials        1.2.1      ✔ tune         1.2.1 
+✔ infer        1.0.7      ✔ workflows    1.1.4 
+✔ modeldata    1.4.0      ✔ workflowsets 1.1.0 
+✔ parsnip      1.2.1      ✔ yardstick    1.3.1 
+✔ recipes      1.0.10     
+── Conflicts ───────────────────────────────────────── tidymodels_conflicts() ──
+✖ scales::discard() masks purrr::discard()
+✖ dplyr::filter()   masks stats::filter()
+✖ recipes::fixed()  masks stringr::fixed()
+✖ dplyr::lag()      masks stats::lag()
+✖ yardstick::spec() masks readr::spec()
+✖ recipes::step()   masks stats::step()
+• Use suppressPackageStartupMessages() to eliminate package startup messages</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(janitor)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'janitor'
+
+The following objects are masked from 'package:stats':
+
+    chisq.test, fisher.test</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="wrangle" class="level2">
+<h2 class="anchored" data-anchor-id="wrangle">2. WRANGLE</h2>
+<p>In general, data wrangling involves some combination of cleaning, reshaping, transforming, and merging data (Wickham &amp; Grolemund, 2017). The importance of data wrangling is difficult to overstate, as it involves the initial steps of going from raw data to a dataset that can be explored and modeled (Krumm et al, 2018). In Part 2, we focus on the the following wrangling processes to:</p>
+<ol type="1">
+<li><p><strong>Importing and Inspecting Data</strong>. In this section, we will “read” in our CSV data file and take a quick look at what our file contains.</p></li>
+<li><p><strong>Mutate Variables</strong>. We use the <code>mutate()</code> function to create a dichotomous variable for whether or not the student withdrew from the course.</p></li>
+</ol>
+<section id="a.-import-and-inspect-data" class="level3">
+<h3 class="anchored" data-anchor-id="a.-import-and-inspect-data">1a. Import and Inspect Data</h3>
+<p>For learning labs 1-3, we’ll be using a widely-used data set in the learning analytics field: the <a href="https://analyse.kmi.open.ac.uk/open_dataset">Open University Learning Analytics Dataset (OULAD)</a>. The OULAD was created by learning analytics researchers at the United Kingdom-based Open University. It includes data from post-secondary learners participation in one of several Massive Open Online Courses (called <em>modules</em> in the OULAD).</p>
+<blockquote class="blockquote">
+<p>Kuzilek, J., Hlosta, M., &amp; Zdrahal, Z. (2017). Open university learning analytics dataset. <em>Scientific Data, 4(</em>1), 1-8. <a href="https://www.nature.com/articles/sdata2017171" class="uri">https://www.nature.com/articles/sdata2017171</a></p>
+</blockquote>
+<p><strong>Abstract</strong></p>
+<p>Learning Analytics focuses on the collection and analysis of learners’ data to improve their learning experience by providing informed guidance and to optimise learning materials. To support the research in this area we have developed a dataset, containing data from courses presented at the Open University (OU). What makes the dataset unique is the fact that it contains demographic data together with aggregated clickstream data of students’ interactions in the Virtual Learning Environment (VLE). This enables the analysis of student behavior, represented by their actions. The dataset contains the information about 22 courses, 32,593 students, their assessment results, and logs of their interactions with the VLE represented by daily summaries of student clicks (10,655,280 entries). The dataset is freely available at <a href="https://analyse.kmi.open.ac.uk/open_dataset" class="uri">https://analyse.kmi.open.ac.uk/open_dataset</a> under a CC-BY 4.0 license.</p>
+<section id="your-turn-1" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-1"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
+<p>You don’t need to read the entire article yet, but please open this article, scan the sections, and write down two things you notice or wonder about the dataset.</p>
+<ol type="1">
+<li><p>YOUR RESPONSE HERE</p></li>
+<li><p>YOUR RESPONSE HERE</p></li>
+</ol>
+</section>
+<section id="read-csv-data-file" class="level4">
+<h4 class="anchored" data-anchor-id="read-csv-data-file">Read CSV Data File</h4>
+<p>Like in the last module, read in the data using <code>read_csv()</code>. Note: we have done some minimal processing of these files to make getting us started easier. If you’re interested in what we’ve done, check out the <code>oulad.R</code> file in the <code>module-2</code> folder.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>students <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/oulad-students.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 32593 Columns: 15
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr (9): code_module, code_presentation, gender, region, highest_education, ...
+dbl (6): id_student, num_of_prev_attempts, studied_credits, module_presentat...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+</div>
+<p>You can see a description of the data <a href="https://analyse.kmi.open.ac.uk/open_dataset#description">here</a>. The students file includes three files joined together: studentInfo, courses, and studentRegistration. Take a look at the data description to get a sense for what variables are in which data frame.</p>
+</section>
+<section id="your-turn-2" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-2"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
+</section>
+<section id="inspect-data" class="level4">
+<h4 class="anchored" data-anchor-id="inspect-data">Inspect Data</h4>
+<p>Use the <code>glimpse()</code> function we used in the first module.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(students)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 32,593
+Columns: 15
+$ code_module                &lt;chr&gt; "AAA", "AAA", "AAA", "AAA", "AAA", "AAA", "…
+$ code_presentation          &lt;chr&gt; "2013J", "2013J", "2013J", "2013J", "2013J"…
+$ id_student                 &lt;dbl&gt; 11391, 28400, 30268, 31604, 32885, 38053, 4…
+$ gender                     &lt;chr&gt; "M", "F", "F", "F", "F", "M", "M", "F", "F"…
+$ region                     &lt;chr&gt; "East Anglian Region", "Scotland", "North W…
+$ highest_education          &lt;chr&gt; "HE Qualification", "HE Qualification", "A …
+$ imd_band                   &lt;chr&gt; "90-100%", "20-30%", "30-40%", "50-60%", "5…
+$ age_band                   &lt;chr&gt; "55&lt;=", "35-55", "35-55", "35-55", "0-35", …
+$ num_of_prev_attempts       &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…
+$ studied_credits            &lt;dbl&gt; 240, 60, 60, 60, 60, 60, 60, 120, 90, 60, 6…
+$ disability                 &lt;chr&gt; "N", "N", "Y", "N", "N", "N", "N", "N", "N"…
+$ final_result               &lt;chr&gt; "Pass", "Pass", "Withdrawn", "Pass", "Pass"…
+$ module_presentation_length &lt;dbl&gt; 268, 268, 268, 268, 268, 268, 268, 268, 268…
+$ date_registration          &lt;dbl&gt; -159, -53, -92, -52, -176, -110, -67, -29, …
+$ date_unregistration        &lt;dbl&gt; NA, NA, 12, NA, NA, NA, NA, NA, NA, NA, NA,…</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="b.-mutate-variables" class="level3">
+<h3 class="anchored" data-anchor-id="b.-mutate-variables">2b. “Mutate” Variables</h3>
+<p>We’re going to do a few more steps related to data wrangling here, noting we could also do these at later stages of our process (namely, in the feature engineering stage).</p>
+<p>First, since we are interested in developing a model that can predict whether a student is at risk of dropping a course, and so we can intervene before that happens, we need an outcome variable that let’s us know if they have passed.</p>
+<p>To create this variable, let’s use the <code>mutate()</code> function to create a dichotomous variable for whether or not the student withdrew from the course. Here’s a way we can do this, using <code>if_else()</code> and <code>as.factor()</code>. This will be our <em>outcome</em> variable, or the predicted variable.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>students <span class="ot">&lt;-</span> students <span class="sc">%&gt;%</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">pass =</span> <span class="fu">ifelse</span>(final_result <span class="sc">==</span> <span class="st">"Pass"</span>, <span class="dv">1</span>, <span class="dv">0</span>)) <span class="sc">%&gt;%</span> <span class="co"># creates a new variable named "pass" and a dummy code of 1 if value of final_result equals "pass" and 0 if not</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">pass =</span> <span class="fu">as.factor</span>(pass)) <span class="co"># makes the variable a factor, helping later steps</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>Note</strong>: The <a href="https://dplyr.tidyverse.org/reference/mutate.html#:~:text=mutate()%20creates%20new%20columns,setting%20their%20value%20to%20NULL%20"><code>mutate()</code> function</a>.) is a critical function to learn and is used to create new columns that are functions of existing variables. It can also modify (if the name is the same as an existing column) and delete columns (by setting their value to <code>NULL</code>).</p>
+<p>Next, let’s do something similar for whether a student identifies as having a disability. In this case, there are only two values for the disability variable, so we can simply convert it directly to a factor. Look at the code you used above, <em>modifying</em> it for the disability variable. This will be an <em>independent variable</em>, or a predictor variable.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>students <span class="ot">&lt;-</span> students <span class="sc">%&gt;%</span> </span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">disability =</span> <span class="fu">as.factor</span>(disability))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="your-turn-3" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-3"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
+<p>In the chunk below, use the <code>view()</code> function to manually check and see if our new variable has indeed been added to our data frame.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">view</span>(students)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Write down a few observations after inspecting the data:</p>
+<ul>
+<li>YOUR RESPONSE HERE</li>
+<li>YOUR RESPONSE HERE</li>
+<li>YOUR RESPONSE HERE</li>
+</ul>
+<p><strong>Note</strong>: The <a href="https://dplyr.tidyverse.org/reference/mutate.html#:~:text=mutate()%20creates%20new%20columns,setting%20their%20value%20to%20NULL%20"><code>mutate()</code> function</a>.) is a critical function to learn and is used to create new columns that are functions of existing variables. It can also modify (if the name is the same as an existing column) and delete columns (by setting their value to <code>NULL</code>).</p>
+<p>Next, let’s do something similar for whether a student identifies as having a disability. In this case, there are only two values for the disability variable, so we can simply convert it directly to a factor. Look at the code you used above, <em>modifying</em> it for the disability variable. This will be an <em>independent variable</em>, or a predictor variable.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>students <span class="ot">&lt;-</span> students <span class="sc">%&gt;%</span> </span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">disability =</span> <span class="fu">as.factor</span>(disability))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="explore" class="level2">
+<h2 class="anchored" data-anchor-id="explore">3. EXPLORE</h2>
+<p>As noted by Krumm et al.&nbsp;(2018), exploratory data analysis often involves some combination of data visualization and <em>feature engineering</em>. In Part 3, we will create a quick visualization to help us spot any potential issues with our data and engineer new predictive variables or “features” that we will use in our predictive models. Specifically, in Part 3 we will:</p>
+<ol type="1">
+<li><p><strong>Examine Outcomes</strong> by taking a quick <code>count()</code> of the number of students and the number of specific offerings of each course module.</p></li>
+<li><p><strong>Engineer Predictors</strong> by creating one more predictor variable based on a measure of socioeconomic resources–the index of multiple depravity variable.</p></li>
+</ol>
+<section id="your-turn-4" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-4"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
+</section>
+<section id="a.-examine-variables" class="level3">
+<h3 class="anchored" data-anchor-id="a.-examine-variables">3a. Examine Variables</h3>
+<p>Referring to the <a href="https://analyse.kmi.open.ac.uk/open_dataset#description">data description</a>, in the chunk below, count the number of students. Also, count the number of courses (modules) and specific offerings (as modules can be offered multiple times per year). Learn more about <code>count()</code> <a href="https://dplyr.tidyverse.org/reference/count.html">here</a>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>students <span class="sc">%&gt;%</span> </span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">count</span>(id_student) <span class="co"># this many students</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 28,785 × 2
+   id_student     n
+        &lt;dbl&gt; &lt;int&gt;
+ 1       3733     1
+ 2       6516     1
+ 3       8462     2
+ 4      11391     1
+ 5      23629     1
+ 6      23632     1
+ 7      23698     1
+ 8      23798     1
+ 9      24186     1
+10      24213     2
+# ℹ 28,775 more rows</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>students <span class="sc">%&gt;%</span> </span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">count</span>(code_module, code_presentation) <span class="co"># this many offerings</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 22 × 3
+   code_module code_presentation     n
+   &lt;chr&gt;       &lt;chr&gt;             &lt;int&gt;
+ 1 AAA         2013J               383
+ 2 AAA         2014J               365
+ 3 BBB         2013B              1767
+ 4 BBB         2013J              2237
+ 5 BBB         2014B              1613
+ 6 BBB         2014J              2292
+ 7 CCC         2014B              1936
+ 8 CCC         2014J              2498
+ 9 DDD         2013B              1303
+10 DDD         2013J              1938
+# ℹ 12 more rows</code></pre>
+</div>
+</div>
+</section>
+<section id="b.-feature-engineering" class="level3">
+<h3 class="anchored" data-anchor-id="b.-feature-engineering">3b. Feature Engineering</h3>
+<p>As defined by Krumm, Means, and Bienkowski (2018) in <em>Learning Analytics Goes to School</em>:</p>
+<blockquote class="blockquote">
+<p><strong>Feature engineering</strong> is the process of creating new variables within a dataset, which goes above and beyond the work of recoding and rescaling variables.</p>
+</blockquote>
+<p>The authors note that feature engineering draws on substantive knowledge from theory or practice, experience with a particular data system, and general experience in data-intensive research. Moreover, these features can be used not only in machine learning models, but also in visualizations and tables comprising descriptive statistics.</p>
+<p>Though not often discussed, feature engineering is an important element of data-intensive research that can generate new insights and improve predictive models. You can read more about feature engineering <a href="https://www.tmwr.org/recipes.html">here</a>.</p>
+<section id="student-socioeconomic-index" class="level4">
+<h4 class="anchored" data-anchor-id="student-socioeconomic-index">Student Socioeconomic Index</h4>
+<p>For our first lab, we’ll engage in a very basic feature engineering step, though we’ll do this <em>much</em> more in the next learning lab.</p>
+<p>To do feature engineering, let’s create one more predictor variable based on a measure of socioeconomic resources–the index of multiple depravity variable. The process we take here is to turn this variable that is a character string into a number by creating a factor and then <em>coercing</em> it to an integer.</p>
+</section>
+<section id="your-turn-5" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-5"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
+<p>Please replace the ___ values in the code below with the correct variable.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>students <span class="ot">&lt;-</span> students <span class="sc">%&gt;%</span> </span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">imd_band =</span> <span class="fu">factor</span>(imd_band, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"0-10%"</span>,</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>                                        <span class="st">"10-20%"</span>,</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>                                        <span class="st">"20-30%"</span>,</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>                                        <span class="st">"30-40%"</span>,</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>                                        <span class="st">"40-50%"</span>,</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>                                        <span class="st">"50-60%"</span>,</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>                                        <span class="st">"60-70%"</span>,</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>                                        <span class="st">"70-80%"</span>,</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>                                        <span class="st">"80-90%"</span>,</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>                                        <span class="st">"90-100%"</span>))) <span class="sc">%&gt;%</span> <span class="co"># this creates a factor with ordered levels</span></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">imd_band =</span> <span class="fu">as.integer</span>(imd_band)) <span class="co"># this changes the levels into integers based on the order of the factor levels</span></span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>students</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 32,593 × 16
+   code_module code_presentation id_student gender region      highest_education
+   &lt;chr&gt;       &lt;chr&gt;                  &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;       &lt;chr&gt;            
+ 1 AAA         2013J                  11391 M      East Angli… HE Qualification 
+ 2 AAA         2013J                  28400 F      Scotland    HE Qualification 
+ 3 AAA         2013J                  30268 F      North West… A Level or Equiv…
+ 4 AAA         2013J                  31604 F      South East… A Level or Equiv…
+ 5 AAA         2013J                  32885 F      West Midla… Lower Than A Lev…
+ 6 AAA         2013J                  38053 M      Wales       A Level or Equiv…
+ 7 AAA         2013J                  45462 M      Scotland    HE Qualification 
+ 8 AAA         2013J                  45642 F      North West… A Level or Equiv…
+ 9 AAA         2013J                  52130 F      East Angli… A Level or Equiv…
+10 AAA         2013J                  53025 M      North Regi… Post Graduate Qu…
+# ℹ 32,583 more rows
+# ℹ 10 more variables: imd_band &lt;int&gt;, age_band &lt;chr&gt;,
+#   num_of_prev_attempts &lt;dbl&gt;, studied_credits &lt;dbl&gt;, disability &lt;fct&gt;,
+#   final_result &lt;chr&gt;, module_presentation_length &lt;dbl&gt;,
+#   date_registration &lt;dbl&gt;, date_unregistration &lt;dbl&gt;, pass &lt;fct&gt;</code></pre>
+</div>
+</div>
+<p>We’re now ready to proceed to the five machine learning steps!</p>
+</section>
+</section>
+</section>
+<section id="model" class="level2">
+<h2 class="anchored" data-anchor-id="model">4. MODEL</h2>
+<p>In this step, we will dive into the SML modeling process in much more depth than in the last module.</p>
+<ol type="1">
+<li><p><strong>Split Data</strong> into a training and test set that will be used to develop a predictive model;</p></li>
+<li><p><strong>Create a “Recipe”</strong> for our predictive model and learn how to deal with nominal data that we would like to use as predictors;</p></li>
+<li><p><strong>Specify the model and workflow</strong> by selecting the <em>functional form</em> of the model that we want and using a <em>model workflow</em> to pair our model and recipe together;</p></li>
+<li><p><strong>Fit Models</strong> to our training set using logistic regression;</p></li>
+<li><p><strong>Interpret Accuracy</strong> of our model to see how well our model can “predict” our outcome of interest.</p></li>
+</ol>
+<section id="step-1.-split-data" class="level3">
+<h3 class="anchored" data-anchor-id="step-1.-split-data">Step 1. Split data</h3>
+<p>The authors of Data Science in Education Using R (Estrellado et al.,2020) remind us that:</p>
+<blockquote class="blockquote">
+<p>At its core, machine learning is the process of “showing” your statistical model only some of the data at once and training the model to predict accurately on that training dataset (this is the “learning” part of machine learning). Then, the model as developed on the training data is shown new data - data you had all along, but hid from your computer initially - and you see how well the model that you developed on the training data performs on this new testing data. Eventually, you might use the model on entirely new data.</p>
+</blockquote>
+<section id="training-and-testing-sets" class="level4">
+<h4 class="anchored" data-anchor-id="training-and-testing-sets">Training and Testing Sets</h4>
+<p>It is therefore common when beginning a modeling project to <a href="https://bookdown.org/max/FES/data-splitting.html">separate the data set</a> into two partitions:</p>
+<ul>
+<li><p>The <em>training set</em> is used to estimate, develop and compare models; feature engineering techniques; tune models, etc.</p></li>
+<li><p>The <em>test set</em> is held in reserve until the end of the project, at which point there should only be one or two models under serious consideration. It is used as an unbiased source for measuring final model performance.</p></li>
+</ul>
+<p>There are different ways to create these partitions of the data and there is no uniform guideline for determining how much data should be set aside for testing. The proportion of data can be driven by many factors, including the size of the original pool of samples and the total number of predictors.&nbsp;</p>
+<p>After you decide how much to set aside, the most common approach for actually partitioning your data is to use a random sample. For our purposes, we’ll use random sampling to select 20% for the test set and use the remainder for the training set, which are the defaults for the {<a href="https://tidymodels.github.io/rsample/">rsample</a>} package.</p>
+</section>
+<section id="split-data-sets" class="level4">
+<h4 class="anchored" data-anchor-id="split-data-sets">Split Data Sets</h4>
+<p>To split our data, we will be using our first {tidymodels} function - <code>initial_split()</code>.</p>
+<p>The function <code>initial_split()</code> function from the {rsample} package takes the original data and saves the information on how to make the partitions. The {rsample} package has two aptly named functions for created a training and testing data set called <code>training()</code> and <code>testing()</code>, respectively.</p>
+<p>We also specify the strata to ensure there is not misbalance in the dependent variable (pass).</p>
+<p>Run the following code to split the data:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">20230712</span>)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>train_test_split <span class="ot">&lt;-</span> <span class="fu">initial_split</span>(students, <span class="at">prop =</span> .<span class="dv">80</span>, <span class="at">strata =</span> <span class="st">"pass"</span>)</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>data_train <span class="ot">&lt;-</span> <span class="fu">training</span>(train_test_split)</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>data_test  <span class="ot">&lt;-</span> <span class="fu">testing</span>(train_test_split)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>Note</strong>: Since random sampling uses random numbers, it is important to set the random number seed using the <code>set.seed()</code> function. This ensures that the random numbers can be reproduced at a later time (if needed). We pick the first date on which we may carry out this learning lab as the seed, but any number will work!</p>
+</section>
+<section id="your-turn-6" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-6"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
+<p>Go ahead and type <code>data_train</code> and <code>data_test</code> into the console (in steps) to check that this data set indeed has 80% of the number of observations as in the larger data. Do that in the chunk below:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>data_train</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 26,073 × 16
+   code_module code_presentation id_student gender region      highest_education
+   &lt;chr&gt;       &lt;chr&gt;                  &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;       &lt;chr&gt;            
+ 1 AAA         2013J                  30268 F      North West… A Level or Equiv…
+ 2 AAA         2013J                  65002 F      East Angli… A Level or Equiv…
+ 3 AAA         2013J                 106247 M      South Regi… HE Qualification 
+ 4 AAA         2013J                 129955 M      West Midla… A Level or Equiv…
+ 5 AAA         2013J                 134143 F      South East… A Level or Equiv…
+ 6 AAA         2013J                 135400 F      South East… Lower Than A Lev…
+ 7 AAA         2013J                 147756 M      North Regi… Lower Than A Lev…
+ 8 AAA         2013J                 147793 F      North Regi… Lower Than A Lev…
+ 9 AAA         2013J                 148993 F      North West… A Level or Equiv…
+10 AAA         2013J                 155984 F      East Angli… Lower Than A Lev…
+# ℹ 26,063 more rows
+# ℹ 10 more variables: imd_band &lt;int&gt;, age_band &lt;chr&gt;,
+#   num_of_prev_attempts &lt;dbl&gt;, studied_credits &lt;dbl&gt;, disability &lt;fct&gt;,
+#   final_result &lt;chr&gt;, module_presentation_length &lt;dbl&gt;,
+#   date_registration &lt;dbl&gt;, date_unregistration &lt;dbl&gt;, pass &lt;fct&gt;</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>data_test</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6,520 × 16
+   code_module code_presentation id_student gender region      highest_education
+   &lt;chr&gt;       &lt;chr&gt;                  &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;       &lt;chr&gt;            
+ 1 AAA         2013J                  32885 F      West Midla… Lower Than A Lev…
+ 2 AAA         2013J                  45642 F      North West… A Level or Equiv…
+ 3 AAA         2013J                  74372 M      East Angli… A Level or Equiv…
+ 4 AAA         2013J                  77367 M      East Midla… A Level or Equiv…
+ 5 AAA         2013J                  94961 M      South Regi… Lower Than A Lev…
+ 6 AAA         2013J                 110175 M      East Angli… HE Qualification 
+ 7 AAA         2013J                 116692 M      East Angli… A Level or Equiv…
+ 8 AAA         2013J                 123044 M      South Regi… A Level or Equiv…
+ 9 AAA         2013J                 135335 F      East Angli… Lower Than A Lev…
+10 AAA         2013J                 141377 M      South West… A Level or Equiv…
+# ℹ 6,510 more rows
+# ℹ 10 more variables: imd_band &lt;int&gt;, age_band &lt;chr&gt;,
+#   num_of_prev_attempts &lt;dbl&gt;, studied_credits &lt;dbl&gt;, disability &lt;fct&gt;,
+#   final_result &lt;chr&gt;, module_presentation_length &lt;dbl&gt;,
+#   date_registration &lt;dbl&gt;, date_unregistration &lt;dbl&gt;, pass &lt;fct&gt;</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="step-2-create-a-recipe" class="level3">
+<h3 class="anchored" data-anchor-id="step-2-create-a-recipe">Step 2: Create a “Recipe”</h3>
+<p>In this section, we introduce another tidymodels package named {<a href="https://recipes.tidymodels.org/">recipes</a>}, which is designed to help you prepare your data <em>before</em> training your model. Recipes are built as a series of preprocessing steps, such as:</p>
+<ul>
+<li><p>converting qualitative predictors to indicator variables (also known as dummy variables),</p></li>
+<li><p>transforming data to be on a different scale (e.g., taking the logarithm of a variable),</p></li>
+<li><p>transforming whole groups of predictors together,</p></li>
+<li><p>extracting key features from raw variables (e.g., getting the day of the week out of a date variable), and so on.</p></li>
+</ul>
+<p>If you are familiar with R’s formula interface, a lot of this might sound familiar and like what a formula already does. Recipes can be used to do many of the same things, but they have a much wider range of possibilities.</p>
+<section id="add-a-formula" class="level4">
+<h4 class="anchored" data-anchor-id="add-a-formula"><strong>Add a formula</strong></h4>
+<p>To get started, let’s create a recipe for a simple logistic regression model. Before training the model, we can use a recipe.</p>
+<p>The <a href="https://recipes.tidymodels.org/reference/recipe.html"><code>recipe()</code>function</a> as we used it here has two arguments:</p>
+<ul>
+<li><p>A <strong>formula</strong>. Any variable on the left-hand side of the tilde (<code>~</code>) is considered the model outcome (<code>code</code>, in our present case). On the right-hand side of the tilde are the predictors. Variables may be listed by name, or you can use the dot (<code>.</code>) to indicate all other variables as predictors.</p></li>
+<li><p>The <strong>data</strong>. A recipe is associated with the data set used to create the model. This will typically be the <em>training</em> set, so <code>data = train_data</code> here. Naming a data set doesn’t actually change the data itself; it is only used to catalog the names of the variables and their types, like factors, integers, dates, etc.</p></li>
+</ul>
+</section>
+<section id="your-turn-7" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-7"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
+<p>Let’s create a recipe where we predict <code>pass</code> (the outcome variable) on the basis of the <code>disability</code> and <code>imd_band</code> (predictor) variables. Add these two variables to your recipe, below.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>my_rec <span class="ot">&lt;-</span> <span class="fu">recipe</span>(pass <span class="sc">~</span> disability <span class="sc">+</span> imd_band, <span class="at">data =</span> data_train)</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>my_rec</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code></code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Recipe ──────────────────────────────────────────────────────────────────────</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code></code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Inputs </code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Number of variables by role</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>outcome:   1
+predictor: 2</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="step-3-specify-the-model-and-workflow" class="level3">
+<h3 class="anchored" data-anchor-id="step-3-specify-the-model-and-workflow">Step 3: Specify the model and workflow</h3>
+<p>With tidymodels, we start building a model by specifying the <em>functional form</em> of the model that we want using the <a href="https://tidymodels.github.io/parsnip/">{parsnip} package</a>. Since our outcome is binary, the model type we will use is&nbsp;“<a href="https://parsnip.tidymodels.org/reference/logistic_reg.html">logistic regression</a>.” We can declare this with <code>logistic_reg()</code> and assign to an object we will later use in our workflow:</p>
+<p>Run the following code to finish specifying our model:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># specify model</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>my_mod <span class="ot">&lt;-</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">logistic_reg</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>That is pretty underwhelming since, on its own, it doesn’t really do much. However, now that the type of model has been specified, a method for&nbsp;<em>fitting</em>&nbsp;or training the model can be stated using the <strong>engine</strong>.</p>
+<section id="start-your-engine" class="level4">
+<h4 class="anchored" data-anchor-id="start-your-engine"><strong>Start your engine</strong></h4>
+<p>To set the <em>engine,</em> let’s rewrite the code above and “pipe” in the <code>set_engine("glm")</code> function and <code>set_mode("classification"))</code> to set the “<em>mode</em>” to classification. Note that this could also be changed to regression for a continuous/numeric outcome.</p>
+</section>
+<section id="your-turn-8" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-8"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
+<p>Below, specify a glm engine, and a classification mode, replacing the placeholder text below.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>my_mod <span class="ot">&lt;-</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">logistic_reg</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">set_engine</span>(<span class="st">"glm"</span>) <span class="sc">%&gt;%</span> <span class="co"># generalized linear model</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">set_mode</span>(<span class="st">"classification"</span>) <span class="co"># since we are predicting a dichotomous outcome, specify classification; for a number, specify regression</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>my_mod</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Logistic Regression Model Specification (classification)
+
+Computational engine: glm </code></pre>
+</div>
+</div>
+<p>The engine value is often a mash-up of different packages that can be used to fit or train the model as well as the estimation method. For example, we will use “glm” a generalized linear model for binary outcomes and default for logistic regression in the {parsnip} package.</p>
+</section>
+<section id="add-to-workflow" class="level4">
+<h4 class="anchored" data-anchor-id="add-to-workflow"><strong>Add to workflow</strong></h4>
+<p>Now we can use the recipe created earlier across several steps as we train and test our model. To simplify this process, we can use a <em>model workflow</em>, which pairs a model and recipe together.</p>
+<p>This is a straightforward approach because different recipes are often needed for different models, so when a model and recipe are bundled, it becomes easier to train and test&nbsp;<em>workflows</em>.</p>
+<p>We’ll use the{<a href="https://workflows.tidymodels.org/">workflows</a>} package from tidymodels to bundle our parsnip model (<code>lr_mod</code>) with our first recipe (<code>lr_recipe_1</code>).</p>
+<p>Add your model and recipe (see their names above)!</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>my_wf <span class="ot">&lt;-</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">workflow</span>() <span class="sc">%&gt;%</span> <span class="co"># create a workflow</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">add_model</span>(my_mod) <span class="sc">%&gt;%</span> <span class="co"># add the model we wrote above</span></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">add_recipe</span>(my_rec) <span class="co"># add our recipe we wrote above</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="step-4-fit-model" class="level3">
+<h3 class="anchored" data-anchor-id="step-4-fit-model">Step 4: Fit model</h3>
+<p>Now that we have a single workflow that can be used to prepare the recipe and train the model from the resulting predictors, we can use the <code>fit()</code> function to fit our model to our <code>train_data</code>. And again, we set a random number seed to ensure that if we run this same code again, we will get the same results in terms of the data partition:</p>
+<p>Finally, we’ll use the <code>last_fit</code> function, which is the key here: note that it uses the <code>train_test_split</code> data—not just the training data.</p>
+<p>Here, then, we fit the data <em>using the training data set</em> and evaluate its accuracy using the <em>testing data set</em> (which is not used to train the model), passing the <code>my_wf</code> object as the first argument, and the split as the second.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>final_fit <span class="ot">&lt;-</span> <span class="fu">last_fit</span>(my_wf, train_test_split)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="your-turn-9" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-9"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
+<p>Type the output of the above function (the name you assigned the output to) below; this is the final, fitted model—one that can be interpreted further in the next step!</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>final_fit</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># Resampling results
+# Manual resampling 
+# A tibble: 1 × 6
+  splits               id              .metrics .notes   .predictions .workflow 
+  &lt;list&gt;               &lt;chr&gt;           &lt;list&gt;   &lt;list&gt;   &lt;list&gt;       &lt;list&gt;    
+1 &lt;split [26073/6520]&gt; train/test spl… &lt;tibble&gt; &lt;tibble&gt; &lt;tibble&gt;     &lt;workflow&gt;</code></pre>
+</div>
+</div>
+<p>You may see a message/warning above or when you examine <code>final_fit</code>; you can safely ignore that.</p>
+</section>
+</section>
+<section id="step-5-interpret-accuracy" class="level3">
+<h3 class="anchored" data-anchor-id="step-5-interpret-accuracy">Step 5: Interpret accuracy</h3>
+<p>Importantly, we can <em>summarize</em> across all of these codes. One way to do this is straightforward; how many of the codes were the same, as in the following chunk of code:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>final_fit <span class="sc">%&gt;%</span> </span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">collect_predictions</span>() <span class="sc">%&gt;%</span> <span class="co"># see test set predictions</span></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(.pred_class, pass) <span class="sc">%&gt;%</span> <span class="co"># just to make the output easier to view </span></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">correct =</span> .pred_class <span class="sc">==</span> pass) <span class="co"># create a new variable, correct, telling us when the model was and was not correct</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6,520 × 3
+   .pred_class pass  correct
+   &lt;fct&gt;       &lt;fct&gt; &lt;lgl&gt;  
+ 1 0           1     FALSE  
+ 2 0           1     FALSE  
+ 3 &lt;NA&gt;        0     NA     
+ 4 0           1     FALSE  
+ 5 0           0     TRUE   
+ 6 0           1     FALSE  
+ 7 0           1     FALSE  
+ 8 0           1     FALSE  
+ 9 0           0     TRUE   
+10 0           0     TRUE   
+# ℹ 6,510 more rows</code></pre>
+</div>
+</div>
+<p>You may notice some of the rows may be missing values. This is because there were some missing values in the <code>imd_band</code> variable, and for this machine learning algorithm (the generalized linear model), missing values result in row-wise deletion.</p>
+<p>When these are <strong>the same</strong>, the model predicted the code <em>correctly</em>; when they aren’t the same, the model was incorrect.</p>
+<p>How accurate was our predictive model? Consider how well our model would have done by chance alone – what would the accuracy be in that case (with the model predicting pass one-half of the time)?</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>students <span class="sc">%&gt;%</span> </span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">count</span>(pass)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 2
+  pass      n
+  &lt;fct&gt; &lt;int&gt;
+1 0     20232
+2 1     12361</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>students <span class="sc">%&gt;%</span> </span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">prediction =</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="fu">nrow</span>(students), <span class="at">replace =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">correct =</span> <span class="fu">if_else</span>(prediction <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span> pass <span class="sc">==</span> <span class="dv">1</span> <span class="sc">|</span></span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>                                 prediction <span class="sc">==</span> <span class="dv">0</span> <span class="sc">&amp;</span> pass <span class="sc">==</span> <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tabyl</span>(correct)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> correct     n   percent
+       0 16197 0.4969472
+       1 16396 0.5030528</code></pre>
+</div>
+</div>
+<p>Curiously, randomly picking a 0 (did not pass) or a 1 (passed) will <em>always</em> lead to around a 50% accuracy, regardless of how many observations are actually associated with a 0 or a 1.</p>
+<section id="your-turn-10" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-10"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
+<p>A short-cut to the above is to simply use the <code>collect_metrics()</code> function, taking <code>final_fit</code> as its one argument; <strong>we’ll use this short-cut from here forward</strong>, having seen how accuracy is calculated. Write that code below.</p>
+<p>Let’s step back a bit. How well <em>could</em> we do if we include more data? And how <em>useful</em> could such a model be in the real world? We’ll dive into these questions more over the forthcoming learning labs.</p>
+<p>That’s it for now; the core parts of machine learning are used in the above steps you took; what we’ll do after this leaning lab only adds nuance and complexity to what we’ve already done.</p>
+</section>
+</section>
+</section>
+<section id="communicate" class="level2">
+<h2 class="anchored" data-anchor-id="communicate">5. COMMUNICATE</h2>
+<p>For your SML Module 2 Badge, you will have an opportunity to create a simple “data product” designed to illustrate insights some insights gained from your model and ideally highlight an “action step” that can be taken to act upon your findings.</p>
+<p>Rendered HTML files can be published online through a variety of ways including <a href="https://posit.cloud/learn/guide#publish-from-cloud">Posit Cloud</a>, <a href="#0">RPubs</a> , <a href="#0">GitHub Pages</a>, <a href="#0">Quarto Pub</a>, or <a href="#0">other methods</a>. The easiest way to quickly publish your file online is to publish directly from RStudio. You can do so by clicking the “Publish” button located in the Viewer Pane after you render your document as illustrated in the screenshot below.</p>
+<p><img src="img/publish.png" class="img-fluid"></p>
+<p>Congratulations - you’ve completed the second supervised machine learning case study!</p>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  let localAlternateSentinel = 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

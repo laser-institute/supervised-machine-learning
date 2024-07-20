@@ -42,7 +42,7 @@ Please review this chapter, focusing on the overall goals of the analysis and ho
 
 ### 1b. Load Packages
 
-Like in the last module, please load the tidyverse package.
+Like in the last module, please load the tidyverse package. Also, please load the tidymodels and janitor packages in the code chunk below.
 
 ```{r load-tidyverse}
 
@@ -151,16 +151,14 @@ As noted by Krumm et al. (2018), exploratory data analysis often involves some 
 
 2.  **Engineer Predictors** by creating one more predictor variable based on a measure of socioeconomic resources--the index of multiple depravity variable.
 
+#### **👉 Your Turn** **⤵**
+
 ### 3a. Examine Variables
 
 Referring to the [data description](https://analyse.kmi.open.ac.uk/open_dataset#description), in the chunk below, count the number of students. Also, count the number of courses (modules) and specific offerings (as modules can be offered multiple times per year). Learn more about `count()` [here](https://dplyr.tidyverse.org/reference/count.html).
 
 ```{r}
-students %>% 
-    count(id_student) # this many students
 
-students %>% 
-    count(code_module, code_presentation) # this many offerings
 ```
 
 ### 3b. Feature Engineering
@@ -288,10 +286,10 @@ The [`recipe()`function](https://recipes.tidymodels.org/reference/recipe.html) a
 
 -   The **data**. A recipe is associated with the data set used to create the model. This will typically be the *training* set, so `data = train_data` here. Naming a data set doesn't actually change the data itself; it is only used to catalog the names of the variables and their types, like factors, integers, dates, etc.
 
-Let's create a recipe where we predict `pass` (the outcome variable) on the basis of the `disability` and `imd_band` (predictor) variables.
+Let's create a recipe where we predict `pass` (the outcome variable) on the basis of the `disability` and `imd_band` (predictor) variables. Add these two variables to your recipe, below, replacing \_\_\_ below with that code.
 
 ```{r}
-my_rec <- recipe(pass ~ disability + imd_band, data = data_train)
+my_rec <- recipe(pass ~ ___, data = data_train)
 
 my_rec
 ```
@@ -314,13 +312,13 @@ That is pretty underwhelming since, on its own, it doesn't really do much. Howev
 
 To set the *engine,* let's rewrite the code above and "pipe" in the `set_engine("glm")` function and `set_mode("classification"))` to set the "*mode*" to classification. Note that this could also be changed to regression for a continuous/numeric outcome.
 
-Run the following code to finish specifying our model:
+Below, specify a glm engine, and a classification mode, replacing the placeholder text below.
 
 ```{r}
 my_mod <-
     logistic_reg() %>% 
-    set_engine("glm") %>% # generalized linear model
-    set_mode("classification") # since we are predicting a dichotomous outcome, specify classification; for a number, specify regression
+    set_engine("XXX") %>% # generalized linear model
+    set_mode("YYY") # since we are predicting a dichotomous outcome, specify classification; for a number, specify regression
 
 my_mod
 ```
@@ -335,6 +333,15 @@ This is a straightforward approach because different recipes are often needed fo
 
 We'll use the{[workflows](https://workflows.tidymodels.org/)} package from tidymodels to bundle our parsnip model (`lr_mod`) with our first recipe (`lr_recipe_1`).
 
+Add your model and recipe (see their names above), again. replacing the placeholders below.
+
+```{r}
+my_wf <-
+    workflow() %>% # create a workflow
+    add_model(MODEL) %>% # add the model we wrote above
+    add_recipe(RECIPE) # add our recipe we wrote above
+```
+
 ```{r}
 my_wf <-
     workflow() %>% # create a workflow
@@ -346,62 +353,25 @@ my_wf <-
 
 Now that we have a single workflow that can be used to prepare the recipe and train the model from the resulting predictors, we can use the `fit()` function to fit our model to our `train_data`. And again, we set a random number seed to ensure that if we run this same code again, we will get the same results in terms of the data partition:
 
-Finally, we'll fit our model.
-
-```{r}
-fitted_model <- fit(my_wf, data = data_train)
-```
-
-#### **👉 Your Turn** **⤵**
-
-Importantly, here, we can look at the model. Type `fitted_model` in a code chunk to take a look.
-
-```{r}
-
-```
-
-Note that while we don't typically interpret the coefficients for a machine learning model, it's important to recognize that many models *do* produce coefficients we *could* interpret. Instead, we focus on how the model does with respect to predicting the dependent variable.
-
-**Observations**
-
-Write down a brief observation of the output above, focusing on the coefficients:
-
--   YOUR RESPONSE HERE
-
-#### The last_fit function
-
 Finally, we'll use the `last_fit` function, which is the key here: note that it uses the `train_test_split` data---not just the training data.
 
-Here, then, we fit the data *using the training data set* and evaluate its accuracy using the *testing data set* (which is not used to train the model).
+Here, then, we fit the data *using the training data set* and evaluate its accuracy using the *testing data set* (which is not used to train the model), passing the `my_wf` object as the first argument, and the split as the second.
 
 ```{r}
 final_fit <- last_fit(fitted_model, train_test_split)
 ```
 
+#### **👉 Your Turn** **⤵**
+
 Type `final_fit` below; this is the final, fitted model---one that can be interpreted further in the next step!
 
 ```{r}
-final_fit
+
 ```
 
 You may see a message/warning above or when you examine `final_fit`; you can safely ignore that.
 
 ### Step 5: Interpret accuracy
-
-Run the code below to examine the predictions for the *test* split of data. Note that the row ID is in the output below, but this doesn't correspond one-one to the ID variables used in the presentation/Shiny.
-
-```{r}
-# collect test split predictions
-final_fit %>%
-    collect_predictions()
-```
-
-This is our first set of real output! Note two things:
-
-1.  `.pres_class`: This is the *predicted* code\
-2.  `pass`: This is the known *code*
-
-When these are **the same**, the model predicted the code *correctly*; when they aren't the same, the model was incorrect.
 
 Importantly, we can *summarize* across all of these codes. One way to do this is straightforward; how many of the codes were the same, as in the following chunk of code:
 
@@ -409,33 +379,12 @@ Importantly, we can *summarize* across all of these codes. One way to do this is
 final_fit %>% 
     collect_predictions() %>% # see test set predictions
     select(.pred_class, pass) %>% # just to make the output easier to view 
-    mutate(correct = .pred_class == opass) # create a new variable, correct, telling us when the model was and was not correct
+    mutate(correct = .pred_class == pass) # create a new variable, correct, telling us when the model was and was not correct
 ```
 
 You may notice some of the rows may be missing values. This is because there were some missing values in the `imd_band` variable, and for this machine learning algorithm (the generalized linear model), missing values result in row-wise deletion.
 
-That's helpful, but there's one more step we can take -- counting up the values of `correct`:
-
-```{r}
-final_fit %>% 
-    collect_predictions() %>% # see test set predictions
-    select(.pred_class, pass) %>% # just to make the output easier to view 
-    mutate(correct = .pred_class == pass) %>% # create a new variable, correct, telling us when the model was and was not correct
-    tabyl(correct)
-```
-
-#### **👉 Your Turn** **⤵**
-
-Let's interpret the above. If the value of `correct` is `TRUE` when the predicted and known code are the same, what does the `percent` column tell us? Add one or more notes to the dashes below:
-
--   YOUR RESPONSE HERE
-
-A short-cut to the above is below; **we'll use this short-cut from here forward**, having seen how accuracy is calculated.
-
-```{r}
-final_fit %>% 
-    collect_metrics()
-```
+When these are **the same**, the model predicted the code *correctly*; when they aren't the same, the model was incorrect.
 
 How accurate was our predictive model? Consider how well our model would have done by chance alone -- what would the accuracy be in that case (with the model predicting pass one-half of the time)?
 
@@ -452,7 +401,13 @@ students %>%
 
 Curiously, randomly picking a 0 (did not pass) or a 1 (passed) will *always* lead to around a 50% accuracy, regardless of how many observations are actually associated with a 0 or a 1.
 
-**Observation**
+#### **👉 Your Turn** **⤵**
+
+A short-cut to the above is to simply use the `collect_metrics()` function, taking `final_fit` as its one argument; **we'll use this short-cut from here forward**, having seen how accuracy is calculated. Write that code below.
+
+```{r}
+
+```
 
 Let's step back a bit. How well *could* we do if we include more data? And how *useful* could such a model be in the real world? We'll dive into these questions more over the forthcoming learning labs.
 

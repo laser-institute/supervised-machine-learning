@@ -62,11 +62,10 @@ Two packages we'll use extensively throughout these learning labs are the {tidyv
 
 One package that we'll be using extensively throughout LASER is the {tidyverse} package. Recall from earlier tutorials that the {tidyverse} package is actually a [collection of R packages](https://www.tidyverse.org/packages) designed for reading, wrangling, and exploring data and which all share an underlying design philosophy, grammar, and data structures. These shared features are sometimes "tidy data principles."
 
-Click the green arrow in the right corner of the "code chunk" that follows to load the {tidyverse} library. We'll also load another package, janitor.
+Click the green arrow in the right corner of the "code chunk" that follows to load the {tidyverse} library.
 
 ```{r}
 library(tidyverse)
-library(janitor)
 ```
 
 #### tidymodels
@@ -85,9 +84,9 @@ The [tidymodels](https://www.tidymodels.org/) package is a "meta-package" for mo
 
 #### **👉 Your Turn** **⤵**
 
-In addition to the {tidymodels} package, we'll also be using the lightweight but highly useful {janitor} package to help with some data cleaning tasks. Use the code chunk below to load these two packages:
+In addition to the {tidymodels} package, we'll also be using the lightweight but highly useful {janitor} package to help with some data cleaning tasks. Use the code chunk below to load janitor.
 
-```{r load-tidymodels}
+```{r}
 
 
 
@@ -99,14 +98,19 @@ As a tip, remember to use the `library()` function to load these packages. After
 
 Next, we'll read in data. We'll use the `read_csv()` function to load the data file.
 
-For now, please read in the `oulad-students.csv` file. Use the `read_csv()` function to do this, paying attention to where those files are located relative to this case study file.
+For now, please read in the \`ipeds-all-title-9-2022-data.csv\` file. Use the `read_csv()` function to do this, paying attention to where those files are located relative to this case study file – in the data folder!
 
 ```{r}
 ipeds <- read_csv("data/ipeds-all-title-9-2022-data.csv")
-
-ipeds <- janitor::clean_names(ipeds)
-
 ```
+
+We'll then use a handy function from janitor, `clean_names()`. It does what it seems like it should - it cleans the names of variables, making them easy to view and type. Run this next code chunk. 
+
+```{r}
+ipeds <- janitor::clean_names(ipeds)
+```
+
+#### **👉 Your Turn** **⤵**
 
 In the chunk below, examine the data set using a function or means of your choice (such as just *printing* the data set by typing its name or using the `glimpse()` function). Do this in the code chunk below! Note its dimensions --- especially how many rows it has!
 
@@ -114,7 +118,9 @@ In the chunk below, examine the data set using a function or means of your choic
 
 ```
 
-Write down a few observations after inspecting the data:
+#### **👉 Your Turn** **⤵**
+
+Write down a few observations after inspecting the data - and any all observations welcome!
 
 -   YOUR RESPONSE HERE
 -   YOUR RESPONSE HERE
@@ -122,21 +128,25 @@ Write down a few observations after inspecting the data:
 
 ## 2. WRANGLE
 
+Even though we cleaned the names to make them easier to view and type (thanks, `clean_names()`), they are still pretty long. 
+
+The code chunk below uses a very handy function, `select()`. This allows you to simultaneously choose and rename variables, returning a data frame with only the variables you have selected --- named as you like. For now, we'll just run this code. Later in your analyses, you'll almost certainly use `select()` to get a more managable dataset.
+
 ```{r}
 ipeds <- ipeds %>% 
     select(name = institution_name, 
-           title_iv = hd2022_postsecondary_and_title_iv_institution_indicator, 
-           carnegie_class = hd2022_carnegie_classification_2021_basic, 
-           state = hd2022_state_abbreviation, 
-           total_enroll = drvef2022_total_enrollment,
-           pct_admitted = drvadm2022_percent_admitted_total,
-           n_bach = drvc2022_bachelors_degree,
-           n_mast = drvc2022_masters_degree,
-           n_doc = drvc2022_doctors_degree_research_scholarship,
-           tuition_fees = drvic2022_tuition_and_fees_2021_22,
-           grad_rate = drvgr2022_graduation_rate_total_cohort,
-           percent_fin_aid = sfa2122_percent_of_full_time_first_time_undergraduates_awarded_any_financial_aid,
-           avg_salary = drvhr2022_average_salary_equated_to_9_months_of_full_time_instructional_staff_all_ranks)
+           title_iv = hd2022_postsecondary_and_title_iv_institution_indicator, # is the university a title IV university?
+           carnegie_class = hd2022_carnegie_classification_2021_basic, # which carnegie classification
+           state = hd2022_state_abbreviation, # state
+           total_enroll = drvef2022_total_enrollment, # total enrollment
+           pct_admitted = drvadm2022_percent_admitted_total, # percentage of applicants admitted
+           n_bach = drvc2022_bachelors_degree, # number of students receiving a bachelor's degree
+           n_mast = drvc2022_masters_degree, # number receiving a master's
+           n_doc = drvc2022_doctors_degree_research_scholarship, # number receive a doctoral degree
+           tuition_fees = drvic2022_tuition_and_fees_2021_22, # total cost of tuition and fees
+           grad_rate = drvgr2022_graduation_rate_total_cohort, # graduation rate
+           percent_fin_aid = sfa2122_percent_of_full_time_first_time_undergraduates_awarded_any_financial_aid, # percent of students receive financial aid
+           avg_salary = drvhr2022_average_salary_equated_to_9_months_of_full_time_instructional_staff_all_ranks) # average salary of instructional staff
 ```
 
 A useful function for exploring data is `count()`; it does what it sounds like! It counts how many times values for a variable appear.
