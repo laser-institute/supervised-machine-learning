@@ -246,12 +246,6 @@ my_wf <-
 
 ### Step 4: Fit model
 
-Finally, we'll fit our model.
-
-```{r}
-fitted_model <- fit(my_wf, data = data_train)
-```
-
 Finally, we'll use the `last_fit` function, but we'll add something a little different - we'll add the metric set here. To the above, we'll add another common metric - Cohen's Kappa, which is similar to accuracy, but which accounts for chance agreement.
 
 To do so, we have to specify *which* metrics we want to use using the `metric_set()` function (see all of the available options [here](https://yardstick.tidymodels.org/articles/metric-types.html)). Please specify six metrics in the metric set -- accuracy, sensitivity, specificity, ppv (recall), npv, and kappa. Assign the name `class_metrics` to the output of your use of the `metric_set()` function.
@@ -265,7 +259,7 @@ To do so, we have to specify *which* metrics we want to use using the `metric_se
 Then, please use `last_fit`, looking to how we did this in the last learning lab for a guide on how to specify the argument nts. To the arguments, add `metrics = class_metrics`.
 
 ```{r}
-final_fit <- last_fit(fitted_model, train_test_split, metrics = class_metrics)
+final_fit <- last_fit(my_wf, train_test_split, metrics = class_metrics)
 ```
 
 We're now ready to move on to interpreting the accuracy of our model.

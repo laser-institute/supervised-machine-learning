@@ -109,7 +109,6 @@ my_wf <- workflow() %>%
 ```{r}
 #| echo: true
 #| eval: false
-fitted_model <- fit(my_wf, data = data_train)
 
 final_fit <- last_fit(my_wf, train_test_split)
 ```

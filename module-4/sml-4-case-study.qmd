@@ -78,6 +78,12 @@ Please load `oulad-interactions-filtered.csv` into R, assigning the resulting da
 
 In the OULAD documentation, this is called the VLE (virtual learning environment) data source. Please review the description of the variables in the *studentVLE* and *VLE* sources (which are joined together for this learning lab) [here](https://analyse.kmi.open.ac.uk/open_dataset#description). Then, read in the `oulad-interactions.csv` file.
 
+Also, we'll load another file we created in the last module - `oulad-students_and_assessments.csv`. That is in this module's data folder; please load this in with `read_csv()`, as below.
+
+```{r}
+students_and_assessments <- read_csv("data/oulad-students-and-assessments.csv")
+```
+
 Woah, even filtered, this is a large file! Let's start to explore it a bit. Please take three steps to explore the data, as follows.
 
 ## 3. EXPLORE
@@ -138,7 +144,7 @@ interactions_filtered <- interactions_joined %>%
   filter(date < quantile_cutoff_date) # filter the data so only assignments before the cutoff date are included
 ```
 
-Then, let's engineer several features. For the present time, we'll focus on the `sum_click` variable, which tells us how many times students clicked on a resource for a given date. We'll use the `interactions_filtered` data set we just created. Let's start simple: please type the name of that data set (`interactions_filtered`) in the code chunk below.
+Then, let's engineer several features. For the present time, we'll focus on the `sum_click` variable, which tells us how many times students clicked on a resource for a given date. We'll use the `interactions_filtered` data set we just created. Let's start simple: please type the name of that data set (`interactions_filtered`) in the code chunk below. Note, you may need to unzip this file!
 
 #### **👉 Your Turn** **⤵**
 
@@ -180,18 +186,51 @@ This is a good start - we've created our first feature based upon the log data, 
 
 We'll take one last step here -- creating individual *slopes* of students' clicks over time. This code is a bit more involved, and so is annotated for you below; feel free to modify and re-use this.
 
-**Note: this may take up to a minute or two to run! Please feel free to relax!**
+
+First, we use a custom function that can deal with cases where the fitting of the slopes fails (e.g., for students with only a single data point, or some other unanticipated issue with the model estimation).
 
 ```{r}
-interactions_slopes <- interactions_filtered %>% # start with our interactions data
-  group_by(id_student, code_module, code_presentation) %>% # group by student and course so a slope is calculated for each student by course combination 
-  nest() %>% # this tells R that we want to create a smaller data frame, wherein each students' data is assigned its own cell; it makes the next step possible
-  mutate(model = map(data, ~lm(sum_click ~ 1 + date + I(date^2), data = .x) %>% 
-                       tidy)) %>% # now, given that we have a smaller data frame with each student by course combination in its own cell, we can use mutate to fit a linear model for each students by course data set; the linear model fits a linear and a quadratic term
-  unnest(model) # this returns the data to its original (non-nested structure), retaining the mutated model output
+# Define a function to fit the model and handle warnings
+fit_model <- function(data) {
+    tryCatch(
+        { 
+            # Fit a linear model with sum_click as the response and date as the predictor
+            model <- lm(sum_click ~ date, data = data)
+            # Tidy the model output (convert to a tidy data frame)
+            tidy(model) 
+        },
+        # Handle errors: return a tibble with NA values
+        error = function(e) { tibble(term = NA, estimate = NA, std.error = NA, statistic = NA, p.value = NA) },
+        # Handle warnings: return a tibble with NA values
+        warning = function(w) { tibble(term = NA, estimate = NA, std.error = NA, statistic = NA, p.value = NA) }
+    )
+}
 ```
 
-Please rename the resulting intercept, date, and data squared variables to be renamed: `intercept`, `date`, and `date_2`, respectively.
+**Note: this next step may take up to a minute or so! Please feel free to relax!**
+
+```{r}
+# Fit the models for each group
+interactions_slopes <- interactions_filtered %>%
+    group_by(id_student, code_module, code_presentation) %>% # Group by student and course
+    nest() %>% # Nest the data frame, creating a list of data frames for each group
+    mutate(model = map(data, fit_model)) %>% # Apply the fit_model function to each nested data frame
+    unnest(model) # Unnest the model output, returning to a regular data frame
+```
+
+We'll do a bit of data wrangling.
+
+```{r}
+# Process the output
+interactions_slopes <- interactions_slopes %>%
+    ungroup() %>% # Remove grouping
+    select(code_module, code_presentation, id_student, term, estimate) %>% # Select relevant columns
+    filter(!is.na(term)) %>% # Filter out rows where term is NA
+    spread(term, estimate) %>% # Spread the terms into separate columns
+    mutate_if(is.numeric, round, 4) # Round numeric columns to 4 decimal places
+```
+
+Please rename the resulting intercept and date, changing them`intercept` and `slope`, respectively. Note, selecting a variable with a parenthesis in it can be tricky! Think of other ways you could do this, if you wish (hint: think of what a function in janitor can do!).
 
 #### **👉 Your Turn** **⤵**
 
@@ -201,15 +240,18 @@ Please rename the resulting intercept, date, and data squared variables to be re
 
 After running this code, we will have intercepts, linear slopes, and quadratic terms for each students' clickstream pattern over the semester.
 
-Let's join together several files. First, let's join all our features into a single file. Please use `left_join()` to join `interactions_filtered` and `interactions_slopes`, assigning the resulting output the name `all_features`.
+Let's join together several files. First, let's join all our features
+into a single file. Please use `left_join()` to join
+`interactions_summarized` and `interactions_slopes`, assigning the
+resulting output the name `interactions_summarized_and_slopes`.
 
-#### **👉 Your Turn** **⤵**
+#### [Your Turn]{style="color: green;"} ⤵
 
 ```{r}
 
 ```
 
-Just one last step! Let's join together *all* of the data we'll use for our modeling: `students_and_assessments` and `all_features`. Use `left_join()` once more, assigning the resulting output the name `students_assessments_and_interactions`.
+Just one last step! Let's join together *all* of the data we'll use for our modeling: `students_and_assessments` and `interactions_summarized_and_slopes`. Use `left_join()` once more, assigning the resulting output the name `students_assessments_and_interactions`. Lots of joining! Sometimes, the hardest part of complex analyses lies in the preparation (and joining) of the data.
 
 #### **👉 Your Turn** **⤵**
 
@@ -253,10 +295,10 @@ vfcv
 
 How does this work? `data_train` is sampled as many time as we se \#### [Your Turn]{style="color: green;"} ⤵
 
-Above, we split the data into 10 different folds. Change the number of folds from 10 to 20 by changing the value of v; 10 is simply the default---not always the best one! For help, run `?vfold_cv` to get a hint.
+Above, we split the data into 10 different folds. Change the number of folds from 10 to 5 by changing the value of v; 10 is simply the default---not always the best one! For help, run `?vfold_cv` to get a hint.
 
 ```{r}
-kfcv <- vfold_cv(data_train, v = 20) # this differentiates this from what we did before
+kfcv <- vfold_cv(data_train, v = 5) # this differentiates this from what we did before
 # before, we simple used data_train to fit our model
 kfcv
 ```
@@ -293,7 +335,8 @@ my_rec <- recipe(pass ~ disability +
                    gender +
                    code_module +
                    mean_weighted_score +
-                   ___ + ___ + ___,
+                   ___ + ___ + ___ +
+                     ___ + ___,
                  data = data_train) 
 ```
 
