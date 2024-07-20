@@ -1,0 +1,101 @@
+---
+title: 'Machine Learning - Learning Lab 3 Badge'
+author: ""
+date: "`r format(Sys.Date(),'%B %e, %Y')`"
+output: html_document
+---
+
+![](img/ML_FE_Hx.jpg){width="30%"}
+
+### Part I: Reflect and Plan
+
+Please read this article and then answer then response to the following
+three questions.
+
+> Baker, R. S., Esbenshade, L., Vitale, J., & Karumbaiah, S. (2023).
+> Using Demographic Data as Predictor Variables: a Questionable Choice.
+> *Journal of Educational Data Mining, 15*(2), 22-52.
+
+Part A:
+
+1.  In what ways could the inclusion of demographic variables as
+    predictors potentially reinforce biases in predictive analytics
+    within education?
+
+2.  The authors argue that demographic variables should be used to
+    validate fairness rather than as predictors within models. What are
+    the potential benefits and drawbacks of this approach?
+
+3.  How could the limitations of categorization impact the use of
+    demographic variables in predictive models?
+
+Part B: Once again, use the institutional library (e.g. [NCSU
+Library](https://www.lib.ncsu.edu/#articles)), [Google
+Scholar](https://scholar.google.com/) or search engine to locate a
+research article, presentation, or resource that applies machine
+learning to an educational context aligned with your research interests.
+More specifically, please find an article in your field that utilizes in
+*feature engineering*
+
+1.  Provide an APA citation for your selected study.
+
+    -   
+
+2.  What is the data source used in the study?
+
+    -   
+
+3.  Why was feature engineering *useful* or even *necessary* in this
+    study?
+
+    -   
+
+### Part II: Data Product
+
+For this data product, please add a feature (or several features)
+*specific to one or more of the activity types* in the OULAD
+interactions data, and then add these features to your model and
+evaluate the accuracy. How did the accuracy appreciably change--if at
+all? Please copy all of your code in one or more code chunks below.
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+### Knit and Publish
+
+Complete the following steps to knit and publish your work:
+
+1.  First, change the name of the `author:` in the [YAML
+    header](https://bookdown.org/yihui/rmarkdown-cookbook/rmarkdown-anatomy.html#yaml-metadata)
+    at the very top of this document to your name. The YAML header
+    controls the style and feel for knitted document but doesn't
+    actually display in the final output.
+
+2.  Next, click the knit button in the toolbar above to "knit" your R
+    Markdown document to a
+    [HTML](https://bookdown.org/yihui/rmarkdown/html-document.html) file
+    that will be saved in your R Project folder. You should see a
+    formatted webpage appear in your Viewer tab in the lower right pan
+    or in a new browser window. Let's us know if you run into any issues
+    with knitting.
+
+3.  Finally, publish your webpage on Posit Cloud by clicking the
+    "Publish" button located in the Viewer Pane after you knit your
+    document. See screenshot below.
+
+### Receiving Your Machine Learning Badge
+
+To receive credit for this assignment and earn your third ML badge,
+share the link to published webpage under the next incomplete badge
+artifact column on the 2023 LASER Scholar Information and Documents
+spreadsheet: <https://go.ncsu.edu/laser-sheet>.
+
+Once your instructor has checked your link, you will be provided a
+physical version of the badge below!
+
+![](img/ML_FE_Hx.jpg){width="30%"}

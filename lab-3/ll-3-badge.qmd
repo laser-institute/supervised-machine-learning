@@ -1,0 +1,127 @@
+---
+title: "Machine Learning - Learning Lab 1 Independent Practice"
+author: "LASER Institute"
+date: today 
+format:
+  html:
+    toc: true
+    toc-depth: 4
+    toc-location: right
+theme:
+  light: simplex
+  dark: cyborg
+editor: visual
+jupyter: python3
+---
+
+![](img/ML_I_Hx.png){width="30%"}
+
+As a reminder, to earn a badge for these learning labs, you will have to
+respond to a set of prompts for two parts.
+
+### Part I: Data Product
+
+For the data product, you will interpret a different type of model -- a
+model in a *regression* mode.
+
+So far, we have specified and interpreted a *classification* model: one
+predicting a dichotomous outcome (i.e., whether students pass a course).
+In many cases, however, we are interested in predicting a continuous
+outcome (e.g., students' number of points in a course or their score on
+a final exam).
+
+While many parts of the machine learning process are the same for a
+regression machine learning model, one key part that is relevant to this
+learning lab is different: their interpretation. The confusion matrix we
+created to parse the predictive strength of our classification model
+[does not pertain]{.underline} to regression machine learning models.
+Different metrics are used. For this badge activity, you will specify
+and interpret a regression machine learning model.
+
+The requirements are as follows:
+
+-   Change your outcome to **students' final exam performance** (note:
+    check [the data
+    dictionary](https://analyse.kmi.open.ac.uk/open_dataset) for a
+    pointer!).
+
+-   Using the same data (and testing and training data sets), recipe,
+    and workflow as you used in the case study, **change the mode** of
+    your model from classification to regression and change the
+    **engine** from a glm to an lm model.
+
+-   **Interpret your regression machine learning model** in terms of
+    three regression machine learning model metrics: **MAE**, **MSE**,
+    and **RMSE**. Read about these metrics
+    [here](https://bradleyboehmke.github.io/HOML/process.html#model-eval).
+    Similar to how we interpreted the classification machine learning
+    metrics, focus on the substantive meaning of these statistics.
+
+Please use the code chunk below for your code:
+
+```{r}
+
+```
+
+Please add your interpretations here:
+
+-   MAE:
+
+-   MSE:
+
+-   RMSE:
+
+### Part II: Reflect and Plan
+
+1.  What is an example of an outcome related to your research interests
+    that could be modeled using a *classification* machine learning
+    model?
+
+-   
+
+3.  What is an example of an outcome related to your research interests
+    that could be modeled using a *regression* machine learning model?
+
+-   
+
+3.  Look back to the study you identified for the first machine learning
+    learning lab badge activity. Was the outcome one that is modeled
+    using a classification or a regression machine learning model?
+    Identify which mode(s) the authors of that paper used and briefly
+    discuss the appropriateness of their decision.
+
+-   
+
+### Knit and Publish
+
+Complete the following steps to knit and publish your work:
+
+1.  First, change the name of the `author:` in the [YAML
+    header](https://bookdown.org/yihui/rmarkdown-cookbook/rmarkdown-anatomy.html#yaml-metadata)
+    at the very top of this document to your name. The YAML header
+    controls the style and feel for knitted document but doesn't
+    actually display in the final output.
+
+2.  Next, click the knit button in the toolbar above to "knit" your R
+    Markdown document to a
+    [HTML](https://bookdown.org/yihui/rmarkdown/html-document.html) file
+    that will be saved in your R Project folder. You should see a
+    formatted webpage appear in your Viewer tab in the lower right pan
+    or in a new browser window. Let's us know if you run into any issues
+    with knitting.
+
+3.  Finally, publish your webpage on Posit Cloud by clicking the
+    "Publish" button located in the Viewer Pane after you knit your
+    document. See screenshot below.
+
+### Receiving Your Machine Learning Badge
+
+To receive credit for this assignment and earn your second ML Badge,
+share the link to published webpage under the next incomplete badge
+artifact column on the 2023 LASER Scholar Information and Documents
+spreadsheet: <https://go.ncsu.edu/laser-sheet>.
+
+Once your instructor has checked your link, you will be provided a
+physical version of the badge below!
+
+![](img/ML_I_Hx.png){width="30%"}

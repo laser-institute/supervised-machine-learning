@@ -1,0 +1,478 @@
+---
+title: 'Learning Lab 3 Case Study: Interpretation'
+author: ""
+date: "`r format(Sys.Date(),'%B %e, %Y')`"
+output:
+  html_document:
+    toc: yes
+    toc_depth: 4
+    toc_float: yes
+    code_folding: show
+    code_download: TRUE
+editor_options:
+  markdown:
+    wrap: 72
+---
+
+## 1. PREPARE
+
+When we left off the first case study, we saw that our model was *pretty
+accurate*. We can and will do better in terms of accuracy. But, the
+accuracy value we found also raises a broader question: How good was our
+model in terms of making predictions?
+
+While accuracy is an easy to understand and interpret value, it provides
+a limited answer to the above question about how good our model was in
+terms of making predictions.
+
+In this learning and case study, we explore a variety of ways to
+understand how good of a predictive model ours is. We do this through a
+variety of means:
+
+-   Other **statistics**, such as sensitivity and specificity
+
+-   **Tables**--particularly, a confusion matrix
+
+Our driving question for this case study, then, is: *How good is our
+model at making predictions?*
+
+We'll use the [Open University Learning Analytics Dataset
+(OULAD)](https://analyse.kmi.open.ac.uk/open_dataset) again--this time,
+adding another data source, one on students' performance on assessments.
+
+Like in the first learning lab, we'll first load several packages --
+{tidyverse}, {tidymodels}, and {janitor}. Make sure these are installed
+(via `install.packages()`). Note that if they're already installed, you
+don't need to install them again.
+
+```{r}
+library(tidyverse)
+library(tidymodels)
+library(janitor)
+```
+
+## 2. WRANGLE
+
+Like in the code-along for the overview presentation, let's take a look
+at the data and do some processing of it.
+
+#### **👉 Your Turn** **⤵**
+
+We'll load the students file together; you'll write code to read the
+assessments file, which is named "oulad-assessments.csv". Please assign
+the name `assessments` to the loaded assessments file.
+
+```{r}
+students <- read_csv("data/oulad-students.csv")
+assessments <- read_csv("data/oulad-assessments.csv")
+```
+
+## 3. EXPLORE
+
+#### **👉 Your Turn** **⤵**
+
+In the last learning lab, we used the `count()` function. Let's practice
+that again, by counting the number of of assessments of different types.
+If you need, recall that the data dictionary is
+[here](https://analyse.kmi.open.ac.uk/open_dataset). Note what the
+different types of assessments mean.
+
+```{r}
+assessments %>% 
+    count(assessment_type)
+```
+
+-   
+
+#### **👉 Your Turn** **⤵**
+
+We'll now use another function--like `count()`, from the {tidyverse}.
+Specifically, we'll use the `distinct()` function. This returns the
+unique (or distinct) values for a specified variable. Learn more about
+`distinct()`
+[here](https://dplyr.tidyverse.org/reference/distinct.html). Below, find
+the distinct assessment IDs.
+
+```{r}
+assessments %>% 
+    distinct(id_assessment) # this many unique assessments
+```
+
+Let's explore the assessments data a bit.
+
+We might be interested in how many assessments there are per course. To
+calculate that, we need to `count()` several variables at once; when
+doing this, `count()` tabulates the number of unique combinations of the
+variables passed to it.
+
+```{r}
+assessments %>% 
+    count(assessment_type, code_module, code_presentation)
+```
+
+Let's explore the dates assignments were submitted a bit -- using the
+`summarize()` function:
+
+```{r}
+assessments %>% 
+    summarize(mean_date = mean(date, na.rm = TRUE), # find the mean date for assignments
+              median_date = median(date, na.rm = TRUE), # find the median
+              sd_date = sd(date, na.rm = TRUE), # find the sd
+              min_date = min(date, na.rm = TRUE), # find the min
+              max_date = max(date, na.rm = TRUE)) # find the mad
+```
+
+What can we take from this? It looks like, on average, the average (mean
+and median) date assignments were due was around 130 -- 130 days after
+the start of the course. The first assignment seems to have been due 12
+days into the course, and the last 261 days after.
+
+Crucially, though, these dates vary by course. Thus, we need to first
+group the data by course. Let's use a different function this time --
+`quantile()`, and calculate the first quantile value. Our reasoning is
+that we want to be able to act to support students, and if we wait until
+after the average assignment is due, then that might be too late.
+Whereas the first quantile comes approximately one-quarter through the
+semester --- with, therefore, more time to intervene.
+
+```{r}
+assessments %>% 
+    group_by(code_module, code_presentation) %>% # first, group by course (module: course; presentation: semester)
+    summarize(mean_date = mean(date, na.rm = TRUE),
+              median_date = median(date, na.rm = TRUE),
+              sd_date = sd(date, na.rm = TRUE),
+              min_date = min(date, na.rm = TRUE),
+              max_date = max(date, na.rm = TRUE),
+              first_quantile = quantile(date, probs = .25, na.rm = TRUE)) # find the first (25%) quantile
+```
+
+Alright, this is a bit complicated, but we can actually work with this
+data. Let's use just a portion of the above code, assigning it the name
+`code_module_dates`.
+
+```{r}
+code_module_dates <- assessments %>% 
+    group_by(code_module, code_presentation) %>% 
+    summarize(quantile_cutoff_date = quantile(date, probs = .25, na.rm = TRUE))
+```
+
+#### **👉 Your Turn** **⤵**
+
+Let's take a look at what we just created; type `code_module_dates`
+below:
+
+```{r}
+code_module_dates
+```
+
+What have we created? We found the date that is one-quarter of the way
+through the semester (in terms of the dates assignments are due).
+
+#### **👉 Your Turn** **⤵**
+
+We can thus use this to group and calculate students' performance on
+assignments through this point. To do this, we need to use a join
+function --- `left_join()`, in particular. Please use `left_join()` to
+join together `assessments` and `code_module_dates`, with `assessments`
+being the "left" data frame, and `code_module_dates` the right. Save the
+output of the join the name `assessments_joined`.
+
+```{r}
+assessments_joined <- assessments %>% 
+    left_join(code_module_dates) # join the data based on course_module and course_presentation
+```
+
+We're almost there! The next few lines filter the assessments data so it
+only includes assessments before our cutoff date.
+
+```{r}
+assessments_filtered <- assessments_joined %>% 
+    filter(date < quantile_cutoff_date) # filter the data so only assignments before the cutoff date are included
+```
+
+Finally, we'll find the average score for each student.
+
+```{r}
+assessments_summarized <- assessments_filtered %>% 
+    mutate(weighted_score = score * weight) %>% # create a new variable that accounts for the "weight" (comparable to points) given each assignment
+    group_by(id_student) %>% 
+    summarize(mean_weighted_score = mean(weighted_score)) 
+```
+
+As a point of reflection here, note how much work we've done before
+we've gotten to the machine learning steps. Though a challenge, this is
+typical for both machine learning and more traditional statistical
+models: a lot of the work is in the preparation and data wrangling
+stages.
+
+Let's copy the code below that we used to process the students data
+(when processing the `pass` and `imd_band` variables).
+
+```{r}
+students <- students %>% 
+    mutate(pass = ifelse(final_result == "Pass", 1, 0)) %>% # creates a dummy code
+    mutate(pass = as.factor(pass)) # makes the variable a factor, helping later steps
+
+students <- students %>% 
+    mutate(imd_band = factor(imd_band, levels = c("0-10%",
+                                                  "10-20%",
+                                                  "20-30%",
+                                                  "30-40%",
+                                                  "40-50%",
+                                                  "50-60%",
+                                                  "60-70%",
+                                                  "70-80%",
+                                                  "80-90%",
+                                                  "90-100%"))) %>% # this creates a factor with ordered levels
+    mutate(imd_band = as.integer(imd_band)) # this changes the levels into integers based on the order of the factor levels
+```
+
+#### **👉 Your Turn** **⤵**
+
+Finally, let's join together `students` and `assessments_summarized`,
+assigning the joined the name `students_and_assessments`.
+
+```{r}
+students_and_assessments <- students %>% 
+    left_join(assessments_summarized)
+```
+
+Big picture, we've added another measure -- another feature -- that we
+can use to make predictions: students' performance on assessments 1/4 of
+the way through the course.
+
+We're now ready to proceed to our machine learning steps!
+
+The problem we will be working on - predicting students who pass, based
+on data from the first one-third of the semester - has an analog in a
+recent paper by Ryan Baker and colleagues:
+
+In [Baker et al.
+(2020)](https://www.tandfonline.com/doi/full/10.1080/10824669.2019.1670065),
+the authors create a precision-recall (also known as sensitivity)
+graph - one that demonstrates the trade-off between optimizing these two
+statistics. Review their paper - especially the results section - to see
+how they discuss these two statistics.
+
+> Baker, R. S., Berning, A. W., Gowda, S. M., Zhang, S., & Hawn, A.
+> (2020). Predicting K-12 dropout. Journal of Education for Students
+> Placed at Risk (JESPAR), 25(1), 28-54.
+
+Please review this paper before proceeding, focusing on how they
+describe
+
+## 4. MODEL
+
+### Step 1. Split data
+
+This is identical to what we did in the first learning lab, using the
+`students_and_assessments` data. We'll also create a testing data set
+we'll use later.
+
+```{r}
+set.seed(20230712)
+
+students_and_assessments <- students_and_assessments %>% 
+    drop_na(mean_weighted_score)
+
+train_test_split <- initial_split(students_and_assessments, prop = .50, strata = "pass")
+data_train <- training(train_test_split)
+data_test <- testing(train_test_split)
+```
+
+### Step 2: Engineer features and write down the recipe
+
+We'll also specify the recipe, adding our `mean_weighted_score` variable
+we calculated above as well as variables we used in LL1 (case study and
+badge). Note how we dummy code two variables using `step_dummy()`
+(described further in the first learning lab).
+
+```{r}
+my_rec <- recipe(pass ~ disability +
+                     date_registration + 
+                     gender +
+                     code_module +
+                     mean_weighted_score, 
+                 data = data_train) %>% 
+    step_dummy(disability) %>% 
+    step_dummy(gender) %>%  
+    step_dummy(code_module)
+
+```
+
+### Step 3: Specify the model and workflow
+
+These steps are also the same as in LL1.
+
+```{r}
+# specify model
+my_mod <-
+    logistic_reg() %>% 
+    set_engine("glm") %>% # generalized linear model
+    set_mode("classification") # since we are predicting a dichotomous outcome, specify classification; for a number, specify regression
+
+# specify workflow
+my_wf <-
+    workflow() %>% # create a workflow
+    add_model(my_mod) %>% # add the model we wrote above
+    add_recipe(my_rec) # add our recipe we wrote above
+```
+
+### Step 4: Fit model
+
+Finally, we'll fit our model.
+
+```{r}
+fitted_model <- fit(my_wf, data = data_train)
+```
+
+Finally, we'll use the `last_fit` function, but we'll add something a
+little different - we'll add the metric set here. To the above, we'll
+add another common metric - Cohen's Kappa, which is similar to accuracy,
+but which accounts for chance agreement.
+
+To do so, we have to specify *which* metrics we want to use using the
+`metric_set()` function (see all of the available options
+[here](https://yardstick.tidymodels.org/articles/metric-types.html)).
+Please specify six metrics in the metric set -- accuracy, sensitivity,
+specificity, ppv (recall), npv, and kappa. Assign the name
+`class_metrics` to the output of your use of the `metric_set()`
+function.
+
+#### **👉 Your Turn** **⤵**
+
+```{r}
+class_metrics <- metric_set(accuracy, sensitivity, specificity, ppv, npv, kap) # add probs?
+```
+
+Then, please use `last_fit`, looking to how we did this in the last
+learning lab for a guide on how to specify the argument nts. To the
+arguments, add `metrics = class_metrics`.
+
+```{r}
+
+'final_fit <- last_fit(fitted_model, train_test_split, metrics = class_metrics)'
+```
+
+We're now ready to move on to interpreting the accuracy of our model.
+
+### Step 5: Interpret accuracy
+
+### A confusion matrix and true and false positives and negatives
+
+Let's start with a simple confusion matrix. The confusion matrix is a 2
+x 2 table with values (cells in the table) representing one of four
+conditions, elaborated below. You'll fill in the last two columns in a
+few moments.
+
+|      Statistic      |       How to Find       |                                          Interpretation                                          | Value |  \%  |
+|:-------------------:|:-----------------------:|:------------------------------------------------------------------------------------------------:|:-----:|:----:|
+| True positive (TP)  | Truth: 1, Prediction: 1 |    Proportion of the population that is affected by a condition and correctly tested positive    | 2443  | 19.8 |
+| True negative (TN)  | Truth: 0, Prediction: 0 |  Proportion of the population that is not affected by a condition and correctly tested negative  | 4536  | 36.8 |
+| False positive (FP) | Truth: 0, Prediction: 1 | Proportion of the population that is not affected by a condition and incorrectly tested positive | 2070  | 16.8 |
+| False negative (FN) | Truth: 1, Prediction: 0 |  Proportion of the population that is affected by a condition and incorrectly tested positive.   | 3269  | 26.5 |
+
+To create a confusion matrix, run `collect_predictions()`, which does
+what it suggests - it gathers together the model's test set predictions.
+Pass the `last_fit` object to this function below.
+
+#### **👉 Your Turn** **⤵**
+
+```{r}
+'collect_predictions(final_fit)'
+```
+
+Take a look at the columns. You'll need to provide the predictions
+(created with `collect_predictions()`) and then pipe that to
+`conf_mat()`, to which you provide the names of a) the predictions and
+b) the known values for the test set. Some code to get you started is
+below.
+
+```{r}
+'collect_predictions(final_fit) %>% 
+    conf_mat(.pred_class, pass)'
+```
+
+You should see a confusion matrix output. If so, nice work! Please fill
+in the **Value** and **Percentage** columns in the table above (with TP,
+TN, FP, and FN), entering the appropriate values and then converting
+those into a percentage based on the total number of data points in the
+test data set. The accuracy can be interpreted as the sum of the true
+positive and true negative percentages. So, what's the accuracy? Add
+that below as a percentage.
+
+-   **Accuracy:** 56.6%
+
+### Other measures of predictive accuracy
+
+Here's where things get interesting: There are other statistics that
+have different denominators. Recall from the overview presentation that
+we can slice and dice the confusion matrix to calculate statistics that
+give us insights into the predictive utility of the model. Based on the
+above **Values** for TP, TN, FP, and FN you interpreted a few moments
+ago, add the **Statistic Values** for sensitivity, specificity,
+precision, and negative predictive value below to three decimal points.
+
+#### **👉 Your Turn** **⤵**
+
+|                                               |                |                                                                                                                                |                                                                                    |                      |
+|:---------------------------------------------:|:--------------:|:------------------------------------------------------------------------------------------------------------------------------:|:----------------------------------------------------------------------------------:|:--------------------:|
+|                 **Statistic**                 |  **Equation**  |                                                       **Interpretation**                                                       |                               **Question Answered**                                | **Statistic Values** |
+|         **Sensitivity** (AKA recall)          | TP / (TP + FN) |                       Proportion of those who are affected by a condition and correctly tested positive                        |        Out of all the actual positives, how many did we correctly predict?         |         .428         |
+|                **Specificity**                | TN / (FP + TN) |                     Proportion of those who are not affected by a condition and correctly tested negative;                     |        Out of all the actual negatives, how many did we correctly predict?         |         .687         |
+| **Precision** (AKA Positive Predictive Value) | TP / (TP + FP) |                            Proportion of those who tested positive who are affected by a condition                             | Out of all the instances we predicted as positive, how many are actually positive? |         .581         |
+|         **Negative Predictive Value**         | TN / (TN + FN) | Proportion of those who tested positive who are not affected by a condition; *the probability that a negative test is correct* | Out of all the instances we predicted as negative, how many are actually negative? |         .541         |
+
+So, what does this hard-won by output tell us? Let's interpret each
+statistic carefully in the table below. Please add the value and provide
+a *substantive interpretation*. One is provided to get you started.
+
+#### **👉 Your Turn** **⤵**
+
+|                                           |                                                                                                                                             |
+|-------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------|
+| **Statistic**                             | **Substantive Interpretation**                                                                                                              |
+| Accuracy                                  |                                                                                                                                             |
+| Sensitivity (AKA recall)                  | The model correctly predicts about 2/3 of students who do not pass correctly (as not passing). This is pretty good, but it could be better. |
+| Specificity                               |                                                                                                                                             |
+| Precision (AKA Positive Predictive Value) |                                                                                                                                             |
+| Negative Predictive Value                 |                                                                                                                                             |
+
+This process might suggest to you how a "good" model isn't necessarily
+one that is the most accurate, but instead is one that has good values
+for statistics that matter given our particular question and context.
+
+Recall that Baker and colleagues sought to balance between precision and
+recall (specificity). Please briefly discuss how well our model does
+this; is it better suited to correctly identifying "positive" pass cases
+(sensitivity) or "negatively" identifying students who do not pass
+(specificity)?
+
+-   
+
+## 5. COMMUNICATE
+
+### Quickly calculating metrics
+
+After all of this work, we *can* calculate the above much more easily
+given how we setup our metrics (using `metric_set()` earlier, such as
+when we want to efficiently communicate the results of our analysis to
+our audience? Below, use `collect_metrics()` with the `final_fit`
+object, noting that in addition to the four metrics we calculated
+manually just a few moments ago, we are also provided with the accuracy
+and Cohen's Kappa values.
+
+#### **👉 Your Turn** **⤵**
+
+```{r}
+'collect_metrics(final_fit)'
+```
+
+Having invested in understanding the terminology of machine learning
+metrics, we'll use this "shortcut" (using `collect_metrics()` going
+forward.
+
+### 🧶 Knit & Check ✅
+
+Congratulations - you've completed this case study! Consider moving on
+to the badge activity next.

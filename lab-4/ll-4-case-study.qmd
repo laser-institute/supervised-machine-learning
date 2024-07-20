@@ -1,0 +1,579 @@
+---
+title: 'Learning Lab 3 Case Study'
+author: ""
+date: "`r format(Sys.Date(),'%B %e, kf%Y')`"
+output:
+  html_document:
+    toc: yes
+    toc_depth: 4
+    toc_float: yes
+    code_folding: show
+    code_download: TRUE
+editor_options:
+  markdown:
+    wrap: 72
+bibliography: lit/references.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE)
+```
+
+## 1. PREPARE
+
+After interpreting our last model, it is easy to think we can do a
+little better. But, how? In this learning lab, we will answer this
+question will building a better model.
+
+Feature engineering is a rich topic in machine learning research,
+including in the learning analytics and educational data mining
+communities.
+
+Consider research on online learning and the work of Rodriguez et al.
+(2021). In these two studies, *digital trace data*, data generated
+through users' interactions with digital technologies. Optionally,
+review this paper -- specifically how they processed the "clickstream"
+data. As this paper illustrates, there is not one way to use such data.
+
+> Rodriguez, F., Lee, H. R., Rutherford, T., Fischer, C., Potma, E., &
+> Warschauer, M. (2021, April). Using clickstream data mining techniques
+> to understand and support first-generation college students in an
+> online chemistry course. In *LAK21: 11th International Learning
+> Analytics and Knowledge Conference* (pp. 313-322).
+> <https://github.com/laser-institute/essential-readings/blob/main/machine-learning/ml-lab-2/rodriguez-et-al-2021-lak.pdf>
+
+Notably, the authors took several steps to prepare the data so that it
+could be validly interpreted. The same is true here in the context of
+machine learning. In a different context, the work of Gobert et al.
+(2013) is a great example of using data from educational simulations.
+Optionally review this paper, too, focused on their use of a technique
+they called *replay tagging* to conduct feature engineering.
+
+> Gobert, J. D., Sao Pedro, M., Raziuddin, J., & Baker, R. S. (2013).
+> From log files to assessment metrics: Measuring students' science
+> inquiry skills using educational data mining. *Journal of the Learning
+> Sciences, 22*(4), 521-563.
+> <https://github.com/laser-institute/essential-readings/blob/main/machine-learning/ml-lab-3/gobert-et-al-2013-jls.pdf>
+
+Even after feature engineering, machine learning approaches can often
+(but not always) be improved by choosing a more sophisticated model
+type. Note how we used a regression model in the first two case studies;
+here, we explore a considerably more sophisticated model, a random
+forest. Feature engineering and choosing a more sophisticated model adds
+some complexity to the modeling. As we have discussed, it is easy to
+bias our results if we repeatedly check the performance of *different
+model fits* with the same test data. Cross-validation is one commonly
+used solution for this problem.
+
+Our driving question is: **How much can we improve our model?** Looking
+back to our predictive model from LL 2, we can see that our accuracy was
+okay. Can we improve on that? Let's dive in!
+
+## 2. WRANGLE
+
+## Step 0: Loading and setting up
+
+First, let's load the packages we'll use---the familiar {tidyverse} and
+several others focused on modeling.
+
+#### **👉 Your Turn** **⤵**
+
+Please add to the chunk below code to load three packages we've used
+before -- tidyverse, janitor, and tidymodels.
+
+Please install and add two additional packages: {ranger}, for one
+implementation of random forest modeling, and {vip}, for variable
+importance metrics. Load these with the library function
+
+```{r}
+library(tidyverse)
+library(janitor)
+library(tidymodels)
+
+
+```
+
+Next, we'll load a new file --- one with *interactions* (or log-trace)
+data. Please find that in the `data` folder for this lab, read that in
+and assign it the name `interactions`.
+
+```{r}
+
+```
+
+We have to do the same processing we did in the second learning lab, to
+obtain cut-off dates. As a reminder, the purpose of this is to train the
+model on data from the first one-third of the class, with the reasoning
+being this is a good time to intervene--far enough into the class to
+make an appreciable impact, but not too late to have a limited chance of
+being able to change students' trajectory in the class.
+
+We'll repeat the procedure we carried out with the assessments data ---
+calculating a cut-off for each class and then filtering the data based
+upon this cut-off. But, since we've already done this for the assessment
+data, to allow us to focus more on some new feature engineering steps in
+this learning lab, we are providing you with the already-filtered
+interactions data. *Note*: you can find the code used to carry out these
+steps in the Lab 3 folder in `process-interactions-data.R`.
+
+Please load `oulad-interactions-filtered.csv` into R, assigning the
+resulting data frame the name `interactions`.
+
+#### **👉 Your Turn** **⤵**
+
+```{r}
+
+
+
+```
+
+In the OULAD documentation, this is called the VLE (virtual learning
+environment) data source. Please review the description of the variables
+in the *studentVLE* and *VLE* sources (which are joined together for
+this learning lab)
+[here](https://analyse.kmi.open.ac.uk/open_dataset#description). Then,
+read in the `oulad-interactions.csv` file.
+
+Woah, even filtered, this is a large file! Let's start to explore it a
+bit. Please take three steps to explore the data, as follows.
+
+## 3. EXPLORE
+
+#### **👉 Your Turn** **⤵**
+
+*First*, `count()` the `activity_type` variable and *sort* the resulting
+output by frequency.
+
+```{r}
+
+```
+
+What does this tell you? Consulting the codebook and your output, please
+add at least two notes on what you are noticing:
+
+-   ADD YOUR RESPONSE HERE
+
+#### **👉 Your Turn** **⤵**
+
+*Second*, please create a histogram of the `date` variable.
+
+```{r}
+
+```
+
+What does this tell you? Add one or more notes:
+
+-   ADD YOUR RESPONSE HERE
+
+#### **👉 Your Turn** **⤵**
+
+*Third*, please conduct one other data exploration step of your
+choosing. Options include creating simple graphgs or calculating
+descriptive, summary statistics.
+
+```{r}
+
+```
+
+We're ready to proceed to engineering some features with the
+interactions data.
+
+First, let's join together the `interactions` and the
+`code_module_dates` data frames.
+
+We'll use the same code to create the `code_module_dates` we used in
+LL2.
+
+```{r}
+assessments <- read_csv("data/oulad-assessments.csv")
+
+code_module_dates <- assessments %>% 
+    group_by(code_module, code_presentation) %>% 
+    summarize(quantile_cutoff_date = quantile(date, probs = .25, na.rm = TRUE))
+```
+
+This is so we have the cut-offs (one-third through the semester), which
+will help us to only use data from that period in our model when we
+filter the data based upon those dates.
+
+```{r}
+interactions_joined <- interactions %>% 
+  left_join(code_module_dates) # join the data based on course_module and course_presentation
+
+interactions_filtered <- interactions_joined %>% 
+  filter(date < quantile_cutoff_date) # filter the data so only assignments before the cutoff date are included
+```
+
+Then, let's engineer several features. For the present time, we'll focus
+on the `sum_click` variable, which tells us how many times students
+clicked on a resource for a given date. We'll use the
+`interactions_filtered` data set we just created. Let's start simple:
+please type the name of that data set (`interactions_filtered`) in the
+code chunk below.
+
+#### **👉 Your Turn** **⤵**
+
+```{r}
+
+```
+
+How can we create a feature with `sum_click`? Think back to our
+discussion in the presentation; we have *many* options for working with
+such time series data. Perhaps the most simple is to count the clicks.
+Please summarize the number of clicks for each student (specific to a
+single course). This means you will need to group your data by
+`id_student`, `code_module`, and `code_presentation`, and then create a
+summary variable. Assign the resulting output the name
+`interactions_summarized`. You may find the documentation for
+`summarize()` to be helpful. That is available
+[here](https://dplyr.tidyverse.org/reference/summarise.html). [This
+chapter](https://r4ds.had.co.nz/transform.html) is also likely helpful
+(note that `summarise()` and `summarize()` are different spellings for
+the same function).
+
+#### **👉 Your Turn** **⤵**
+
+```{r}
+
+```
+
+#### **👉 Your Turn** **⤵**
+
+How many times did students click? Let's create a histogram to see.
+Please use {ggplot} and `geom_histogram()` to visualize the distribution
+of the `sum_clicks` variable you just created. Turn to [the
+documentation](https://ggplot2.tidyverse.org/reference/geom_histogram.html)
+if you need a pointer!
+
+```{r}
+
+```
+
+#### [Your Turn]{style="color: green;"} ⤵
+
+How many times did students click? Let's create a histogram to see.
+Please use {ggplot} and `geom_histogram()` to visualize the distribution
+of the `sum_clicks` variable you just created. Turn to [the
+documentation](https://ggplot2.tidyverse.org/reference/geom_histogram.html)
+if you need a pointer!
+
+```{r}
+
+```
+
+This is a good start - we've created our first feature based upon the
+log data, `sum_clicks`! What are some other features we can add? An
+affordance of using the `summarize()` function in R is we can create
+multiple summary statistics at once. Let's also calculate the standard
+deviation of the number of clicks as well as the mean. Please copy the
+code you wrote above into the code chunk below and then add these two
+additional summary statistics.
+
+#### **👉 Your Turn** **⤵**
+
+```{r}
+
+```
+
+We'll take one last step here -- creating individual *slopes* of
+students' clicks over time. This code is a bit more involved, and so is
+annotated for you below; feel free to modify and re-use this.
+
+**Note: this may take up to a minute or two to run! Please feel free to
+relax!**
+
+```{r}
+interactions_slopes <- interactions_filtered %>% # start with our interactions data
+  group_by(id_student, code_module, code_presentation) %>% # group by student and course so a slope is calculated for each student by course combination 
+  nest() %>% # this tells R that we want to create a smaller data frame, wherein each students' data is assigned its own cell; it makes the next step possible
+  mutate(model = map(data, ~lm(sum_click ~ 1 + date + I(date^2), data = .x) %>% 
+                       tidy)) %>% # now, given that we have a smaller data frame with each student by course combination in its own cell, we can use mutate to fit a linear model for each students by course data set; the linear model fits a linear and a quadratic term
+  unnest(model) # this returns the data to its original (non-nested structure), retaining the mutated model output
+```
+
+Please rename the resulting intercept, date, and data squared variables
+to be renamed: `intercept`, `date`, and `date_2`, respectively.
+
+#### **👉 Your Turn** **⤵**
+
+```{r}
+
+```
+
+After running this code, we will have intercepts, linear slopes, and
+quadratic terms for each students' clickstream pattern over the
+semester.
+
+Let's join together several files. First, let's join all our features
+into a single file. Please use `left_join()` to join
+`interactions_filtered` and `interactions_slopes`, assigning the
+resulting output the name `all_features`.
+
+#### **👉 Your Turn** **⤵**
+
+```{r}
+
+```
+
+Just one last step! Let's join together *all* of the data we'll use for
+our modeling: `students_and_assessments` and `all_features`. Use
+`left_join()` once more, assigning the resulting output the name
+`students_assessments_and_interactions`.
+
+#### **👉 Your Turn** **⤵**
+
+```{r}
+
+```
+
+One more small step. Let's ensure that our outcome variable -- `pass` --
+is a factor. It was, but when saving to and reading from a CSV, it lots
+its factor characteristics, becoming instead a character string. It is
+necessary for the outcome of a classification model (like the one we are
+using) to be a factor. Please use `mutate()` to do just that.
+
+#### **👉 Your Turn** **⤵**
+
+```{r}
+
+
+
+```
+
+We're now ready to model!
+
+## 4. MODEL
+
+### Step 1. Split data
+
+We'll follow the same steps we followed in learning labs #1 and #2,
+here. One difference - we'll use `students_assessments_and_interactions`
+instead of the data frame we used in those learning labs. Please port
+over the code you used in those learning labs here, changing the name of
+the data frame to the one we are now using.
+
+We discuss this first step minimally as we have now carried out a step
+very similar to this in LL1 and LL2; return to the case study for those
+(especially LL1) for more on data splitting.
+
+#### **👉 Your Turn** **⤵**
+
+```{r}
+
+```
+
+There is a key difference that is next. In this step. we'll further
+process `data_train`, creating different subsets of the data, or folds
+of the data, that we can use to fit our model multiple times.
+
+```{r}
+vfcv <- vfold_cv(data_train) # this differentiates this from what we did before
+# before, we simple used data_train to fit our model
+vfcv
+```
+
+How does this work? `data_train` is sampled as many time as we se \####
+[Your Turn]{style="color: green;"} ⤵
+
+Above, we split the data into 10 different folds. Change the number of
+folds from 10 to 20 by changing the value of v; 10 is simply the
+default---not always the best one! For help, run `?vfold_cv` to get a
+hint.
+
+```{r}
+kfcv <- vfold_cv(data_train, v = 20) # this differentiates this from what we did before
+# before, we simple used data_train to fit our model
+kfcv
+```
+
+### Step 2: Engineer features and write down the recipe
+
+Here, we'll carry out several feature engineering steps.
+
+Read about [possible steps](https://www.tmwr.org/recipes.html) and see
+more about how the following five feature engineering steps below work.
+Like in the first learning lab, this is the step in which we set the
+recipe.
+
+-   [`step_normalize()`](https://recipes.tidymodels.org/reference/step_normalize.html):
+    normalizes numeric data to have a standard deviation of one and a
+    mean of zero
+-   [`step_dummy()`](https://recipes.tidymodels.org/reference/step_dummy.html):
+    convert nominal data (e.g. character or factors) into one or more
+    numeric binary model terms for the levels of the original data.
+-   [`step_impute_knn()`](https://recipes.tidymodels.org/reference/step_impute_knn.html):
+    impute missing alues using the nearest neighbors method
+
+We will use all three of these. Please note that there are two ways to
+use each of these. One of them is by *specifying the specific variable*
+you want to use for the feature engineering step. For example, below, we
+would normalize a hypothetical variable, one called
+`minutes_of_videos_watched`:
+
+```{r, eval = FALSE}
+step_normalize(minutes_of_videos_watched)
+```
+
+Another way is to specify *for which types of variables* the feature
+engineering step applies. You can see all of the available types
+[here](https://recipes.tidymodels.org/reference/has_role.html). For
+example, the code below would normalize all numeric variables:
+
+```{r, eval = FALSE}
+step_normalize(all_numeric_predictors())
+```
+
+#### **👉 Your Turn** **⤵**
+
+Let's turn to our recipe. Please *add to* the code below to add the new
+variables---features---we created. We've started you off with \_\_\_
+code below (where you can add the new variables -- be sure to add all of
+them!).
+
+```{r}
+my_rec <- recipe(pass ~ disability +
+                   date_registration + 
+                   gender +
+                   code_module +
+                   mean_weighted_score +
+                   ___ + ___ + ___,
+                 data = data_train) 
+```
+
+#### **👉 Your Turn** **⤵**
+
+Then, please *add to* the following code by completing three steps,
+building on the code that is started below:
+
+1.  Please normalize all numeric predictors.
+2.  Please dummy code the following three variables: `disability`,
+    `gender`, and `code_module`.
+3.  Please impute missing values using the nearest neighbors method for
+    the `sum_clicks` and `date_registration` variables.
+
+```{r}
+
+```
+
+### Step 3: Specify the model and workflow
+
+Next, we specify the model and workflow, using the same engine *but a
+different engine and mode*, here, regression for a *continuous outcome*.
+Specifically, we are:
+
+-   using the `random_forest()` function to set the *model* as a random
+    forest
+-   using `set_engine("ranger", importance = "impurity")` to set the
+    *engine* as that provided for random forests through the {ranger}
+    package; we also add the `importance = "impurity"` line to be able
+    to interpret a particular variable importance metric specific to
+    random forest models
+-   finally, using `set_mode("classification"))` as we are again
+    predicting categories (transactional and substantive conversations
+    taking place through #NGSSchat)
+
+```{r panel-chunk-3, echo = TRUE, eval = TRUE}
+# specify model
+my_mod <-
+  rand_forest() %>% # specify the type of model we are fitting, a random forest
+  set_engine("ranger", importance = "impurity") %>% # using a variable importance metric specific to this random forest engine
+  set_mode("classification") # same as before
+
+# specify workflow
+my_wf <-
+  workflow() %>% # create a workflow
+  add_model(my_mod) %>% # add the model we wrote above
+  add_recipe(my_rec) # add our recipe we wrote above
+```
+
+### Step 4: Fit model
+
+Note that here we use the `kfcv` data and a different function -
+`fit_resamples()`, instead of `fit()`. This function is required when we
+have multiple folds of our sample, as we created using the vfcv function
+above. See more about this function
+[here](https://tune.tidymodels.org/reference/fit_resamples.html).
+
+```{r}
+class_metrics <- metric_set(accuracy, sensitivity, specificity, ppv, npv, kap) # specify the same metrics as earlier
+fitted_model_resamples <- fit_resamples(my_wf, resamples = vfcv, metrics = class_metrics) # specify the workflow, resampled data, and our metrics
+```
+
+Note that you have fit as many models as the value for `v` that you
+specified earlier. So, this may take some time. Take a walk, grab a
+snack, or make a cup of tea!
+
+Then, we can use the same `collect_metrics()` function we have used to
+inspect the predictive strength of the model. Please do that for
+`fitted_model_resamples`.
+
+#### **👉 Your Turn** **⤵**
+
+```{r}
+
+```
+
+We noted earlier that we may introduce bias when we evaluate different
+models against the same training data. The benefit of using the multiple
+folds - and fitting multiple models - is we can make changes to our
+features or model. Thus, if we decide to add a new feature, we can run
+the above steps, without concern about biasing our interpretation of how
+accurate our model is.
+
+That is, we can be unconcerned about inadvertently introducing bias
+until we reach the last step - fitting our last model. We can do that
+using the familiar `fit()` function, followed by `last_fit`. It is
+important to not make further changes after this point.
+
+```{r}
+fitted_model <- fit(my_wf, data_train)
+final_fit <- last_fit(fitted_model, train_test_split, metrics = class_metrics)
+```
+
+### Step 5: Interpret accuracy
+
+fa Finally, collect the metrics for our final fit. *These* are the
+values that you should report as final. \#### [Your
+Turn]{style="color: green;"} ⤵
+
+```{r}
+final_fit %>% 
+  collect_metrics()
+```
+
+We can see that `final_fit` is for a single fit: a random forest with
+the best performing tuning parameters trained with the *entire* training
+set of data to predict the values in our (otherwise not used/"spent")
+testing set of data.
+
+#### **👉 Your Turn** **⤵**
+
+```{r}
+
+
+```
+
+## 5. COMMUNICATE
+
+Another benefit of a random forest is we can interpret variable
+importance metrics. Do that here with the following code.
+
+```{r}
+final_fit %>% 
+  pluck(".workflow", 1) %>%   
+  extract_fit_parsnip() %>% 
+  vip(num_features = 10)
+```
+
+Please add two or more notes on what you notice about which variables
+(features) are important, focused on what you would say to someone in
+your audience about what the important variables in your model were.
+
+-   ADD YOUR RESPONSE HERE
+
+-   ADD YOUR RESPONSE HERE
+
+### 🧶 Knit & Check ✅
+
+Congratulations - you've completed this case study! Consider moving on
+to the badge activity next.

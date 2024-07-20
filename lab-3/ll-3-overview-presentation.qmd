@@ -1,0 +1,129 @@
+---
+title: "Machine Learning Learning Lab 3: Interpretation"
+subtitle: "Overview Presentation"
+author: "**Dr. Joshua Rosenberg**"
+institute: "LASER Institute"
+date: '`r format(Sys.time(), "%B %d, %Y")`'
+format:
+  revealjs: 
+    css:
+     - default
+     - css/laser.css
+     - css/laser-fonts.css
+    lib_dir: libs                        # creates directory for libraries
+    seal: false                          # false: custom title slide
+    nature:
+      highlightStyle: default         # highlighting syntax for code
+      highlightLines: true               # true: enables code line highlighting 
+      highlightLanguage: ["r"]           # languages to highlight
+      countIncrementalSlides: false      # false: disables counting of incremental slides
+      ratio: "16:9"                      # 4:3 for standard size,16:9
+      slideNumberFormat: |
+---
+
+# Purpose and Agenda
+
+How do we interpret a machine learning model? What else can we say,
+besides how accurate a model this? This learning lab is intended to help
+you to answer these questions by examining output from a classification
+and a regression model. We again use the OULAD, but add an assessment
+file.
+
+## What we'll do in this presentation
+
+-   Discussion 1
+-   Key Concept: Accuracy
+-   Key Concept: Feature Engineering (part A)
+-   Code-along
+-   Discussion 2
+-   Introduction to the other parts of this learning lab
+
+# Discussion 1
+
+## Background
+
+-   We are likely familiar with *accuracy* and maybe another measure,
+    *Cohen's Kappa*
+-   But, you may have heard of other means of determining how good a
+    model is at making predictions: confusion matrices, specificity,
+    sensitivity, recall, AUC-ROC, and others
+-   Broadly, these help us to understand *for which cases and types of
+    cases a model is predictively better than others* in a finer-grained
+    way than accuracy\]
+
+## Getting Started
+
+Think broadly and not formally (yet): What makes a prediction model a
+good one?
+
+## Digging Deeper
+
+-   After having worked through the first learning lab, have your
+    thoughts on what data you might use for a machine learning study
+    evolved? If so, in what ways? If not, please elaborate on your
+    initial thoughts and plans.
+
+# Key Concept: Accuracy
+
+## Accuracy
+
+Let's start with accuracy and a simple confusion matrix; what is the
+**Accuracy**?
+
+```{r, echo = FALSE, message = FALSE, out.}
+library(tidyverse)
+readr::read_csv("data/sample-table.csv")  
+'knitr::kable()'
+```
+
+## Accuracy
+
+Use the `tabyl()` function (from {janitor} to calculate the accuracy in
+the code chunk below.
+
+```{r}
+library(janitor)
+Outcome = c(1, 0, 0, 1, 1)
+Prediction = c(1, 0, 1, 0, 1)
+data_for_conf_mat <- tibble(Outcome = c(1, 0, 0, 1, 1),
+                            Prediction = c(1, 0, 1, 0, 1)) %>% 
+mutate_all(as.factor)
+```
+
+```{r, eval = TRUE, echo = TRUE}
+data_for_conf_mat 
+correct = Outcome == Prediction
+'mutate(correct = Outcome == Prediction) '
+'tabyl(correct)'
+```
+
+## Conf Mat
+
+Now, let's create a confusion matrix based on this data:
+
+```{r}
+library(tidymodels)
+
+data_for_conf_mat %>% 
+conf_mat(Outcome, Prediction)
+```
+
+## Conf Mat
+
+**Accuracy**: Prop. of the sample that is true positive or true negative
+
+**True positive (TP)**: Prop. of the sample that is affected by a
+condition and correctly tested positive
+
+**True negative (TN)**: Prop. of the sample that is not affected by a
+condition and correctly tested negative
+
+**False positive (FP)**: Prop. of the sample that is not affected by a
+condition and incorrectly tested positive
+
+**False negative (FN)**: Prop. of the sample that is affected by a
+condition and incorrectly tested positive.
+
+## Conf Mat
+
+![](img/conf-mat-descriptor.png)

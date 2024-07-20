@@ -1,0 +1,161 @@
+---
+title: "Machine Learning - Learning Lab 1 Independent Practice"
+author: "LASER Institute"
+date: today 
+format:
+  html:
+    toc: true
+    toc-depth: 4
+    toc-location: right
+theme:
+  light: simplex
+  dark: cyborg
+editor: visual
+jupyter: python3
+---
+
+![](img/ML_P_Hx.jpg){width="30%"}
+
+The final activity for each learning lab provides space to work with
+data and to reflect on how the concepts and techniques introduced in
+each lab might apply to your own research.
+
+To earn a badge for each lab, you are required to respond to a set of
+prompts for two parts:
+
+```{r}
+
+```
+
+-   In Part I, you will extend our model by adding another variable.
+
+-   In Part II, you will reflect on your understanding of key concepts
+    and begin to think about potential next steps for your own study.
+
+### Part I: Extending our model
+
+In this part of the badge activity, please add another variable -- a
+variable for the number of days before the start of the module students
+registered. This variable will be a **third predictor**. By adding it,
+you'll be able to examine how much *more accurate* your model is (if at
+al, as this variable might not have great predictive power). Note that
+this variable is a number and so no pre-processing is necessary.
+
+In doing so, please move all of your code needed to run the analysis
+over from your case study file here. This is essential for your analysis
+to be reproducible. You may wish to break your code into multiple chunks
+based on the overall purpose of the code in the chunk (e.g., loading
+packages and data, wrangling data, and each of the machine learning
+steps).
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+How does the accuracy of this new model compare? Add a few reflections
+below:
+
+-   
+
+### Part II: Reflect and Plan
+
+Part A: Please refer back to Breiman's (2001) article for these three
+questions.
+
+1.  Can you summarize the primary difference between the two cultures of
+    statistical modeling that Breiman outlines in his paper?
+
+-   
+
+2.  How has the advent of big data and machine learning affected or
+    reinforced Breiman's argument since the article was published?
+
+-   
+
+3.  Breiman emphasized the importance of predictive accuracy over
+    understanding why a method works. To what extent do you agree or
+    disagree with this stance?
+
+-   
+
+Part B:
+
+1.  How good was the machine learning model we developed in the badge
+    activity? What if you read about someone using such a model as a
+    reviewer of research? Please add your thoughts and reflections
+    following the bullet point below.
+
+-   
+
+2.  How might the model be improved? Share any ideas you have at this
+    time below:
+
+-   
+
+Part C: Use the institutional library (e.g. [NCSU
+Library](https://www.lib.ncsu.edu/#articles)), [Google
+Scholar](https://scholar.google.com/) or search engine to locate a
+research article, presentation, or resource that applies machine
+learning to an educational context aligned with your research interests.
+More specifically, **locate a machine learning study that involves
+making predictions**.
+
+1.  Provide an APA citation for your selected study.
+
+    -   
+
+2.  What research questions were the authors of this study trying to
+    address and why did they consider these questions important?
+
+    -   
+
+3.  What were the results of these analyses?
+
+    -   
+
+### Knit and Publish
+
+Complete the following steps to knit and publish your work:
+
+1.  First, change the name of the `author:` in the [YAML
+    header](https://bookdown.org/yihui/rmarkdown-cookbook/rmarkdown-anatomy.html#yaml-metadata)
+    at the very top of this document to your name. The YAML header
+    controls the style and feel for knitted document but doesn't
+    actually display in the final output.
+
+2.  Next, click the knit button in the toolbar above to "knit" your R
+    Markdown document to a
+    [HTML](https://bookdown.org/yihui/rmarkdown/html-document.html) file
+    that will be saved in your R Project folder. You should see a
+    formatted webpage appear in your Viewer tab in the lower right pan
+    or in a new browser window. Let's us know if you run into any issues
+    with knitting.
+
+3.  Finally, publish your webpage on Posit Cloud by clicking the
+    "Publish" button located in the Viewer Pane after you knit your
+    document. See screenshot below.
+
+![](img/knit-publish.png){width="80%"}
+
+### Your First Machine Learning Badge
+
+Congratulations, you've completed your first badge activity! To receive
+credit for this assignment and earn your first official LASER Badge,
+share the link to published webpage under the next incomplete badge
+artifact column on the 2023 LASER Scholar Information and Documents
+spreadsheet: <https://go.ncsu.edu/laser-sheet>. We recommend bookmarking
+this spreadsheet as we'll be using it throughout the year to keep track
+of your progress.
+
+Once your instructor has checked your link, you will be provided a
+physical version of the badge below!
+
+![](img/ML_P_Hx.jpg){width="30%"}

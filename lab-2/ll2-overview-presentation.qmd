@@ -1,0 +1,328 @@
+---
+title: "Machine Learning Learning Lab 2: Training and Testing Data"
+subtitle: "Overview Presentation"
+author: "**Dr. Joshua Rosenberg**"
+institute: "LASER Institute"
+date: '`r format(Sys.time(), "%B %d, %Y")`'
+format:
+  revealjs: 
+    css:
+     - default
+     - css/laser.css
+     - css/laser-fonts.css
+    lib_dir: libs                        # creates directory for libraries
+    seal: false                          # false: custom title slide
+    nature:
+      highlightStyle: default         # highlighting syntax for code
+      highlightLines: true               # true: enables code line highlighting 
+      highlightLanguage: ["r"]           # languages to highlight
+      countIncrementalSlides: false      # false: disables counting of incremental slides
+      ratio: "16:9"                      # 4:3 for standard size,16:9
+      slideNumberFormat: |
+---
+
+# Purpose and Agenda
+
+We have some data and want to develop a prediction model. Supervised
+machine learning is suited to this aim. In particular, in this learning
+lab, we explore how we can train a computer to predict students' passing
+a course. We use a large data set, the Open University Learning
+Analytics Dataset (OULAD), focusing on student data at this point. Our
+model at this point is relatively simple, a generalized linear model.
+
+## What we'll do in this presentation
+
+-   Discussion 1
+-   Key Concept: Learning analytics data & frameworks
+-   Key Concept: Making predictions
+-   Code-along
+-   Discussion 2
+-   Introduction to the other parts of this learning lab
+
+# Discussion 1
+
+## What technique should I choose?
+
+Do you have coded data or data with a known outcome -- let's say about
+K-12 students -- and, do you want to:
+
+-   *Predict* how other students with similar data (but without a known
+    outcome) perform?
+-   *Scale* coding that you have done for a sample of data to a larger
+    sample?
+-   *Provide timely or instantaneous feedback*, like in many learning
+    analytics systems?
+
+## What technique should I choose?
+
+-   Requires coded data or data with a known outcome
+-   Uses coded/outcome data to train an algorithm
+-   Uses that algorithm to **predict the codes/outcomes for new data**
+    (data not used during the training)
+-   Can take the form of a *classification* (predicting a dichotomous or
+    categorical outcome) or a *regression* (predicting a continuous
+    outcome)
+-   Algorithms include:
+    -   [Linear and logistic
+        regression](https://web.stanford.edu/~hastie/ElemStatLearn/)
+    -   Random forest , Neural network
+
+## **What kind of coded data?**
+
+In educational research:
+
+-   Assessment data (e.g.,
+    [1](https://link.springer.com/article/10.1007/s10956-020-09895-9))
+-   Data from log files ("trace data") (e.g.,
+    [1](https://www.tandfonline.com/doi/full/10.1080/10508406.2013.837391?casa_token=-8Fm2KCFJ30AAAAA%3Altbc8Y8ci_z-uLJx4se9tgvru9mzm3yqCTFi12ndJ5uM6RDl5YJGG6_4KpUgIK5BYa_Ildeh2qogoQ))
+-   Open-ended written responses (e.g.,
+    [1](https://link.springer.com/article/10.1007/s10956-020-09889-7),
+    [2](https://doi.org/10.1007/s11423-020-09761-w))
+-   Achievement data (i.e., end-of-course grades) (e.g.,
+    [1](https://link.springer.com/article/10.1007/s10956-020-09888-8),
+    [2](https://search.proquest.com/docview/2343734516?pq-origsite=gscholar&fromopenview=true))
+
+## Getting Started
+
+Provide an example of supervised machine learning in the context of
+educational research. Discuss why this counts as machine learning.
+
+## Digging Deeper
+
+-   How might presenting the results of a machine learning model differ
+    from presenting those from a more traditional ("explanatory") model?
+
+------------------------------------------------------------------------
+
+## Key Concepts
+
+-   We want to make predictions about an outcome of interest based on
+    predictor variables that we think are related to the outcome.
+-   We'll be using a widely-used data set in the learning analytics
+    field: the [Open University Learning Analytics Dataset
+    (OULAD)](https://analyse.kmi.open.ac.uk/open_dataset).
+-   The OULAD was created by learning analytics researchers at the
+    United Kingdom-based Open University.
+-   It includes data from post-secondary learners participation in one
+    of several Massive Open Online Courses (called *modules* in the
+    OULAD).
+
+## OULAD
+
+-   Many students pass these courses, but not all do
+-   We have data on students' initial characteristics and their
+    interactions in the course
+-   If we could develop a good prediction model, we could provide
+    additional supports to students--and maybe move the needle on some
+    students succeeding who might not otherwise
+
+## OULAD
+
+We'll be focusing on three files:
+
+-   studentInfo, courses, and studentRegistration
+
+These are joined together (see `oulad.R`) for this learning lab. You'll
+be doing more joining later!
+
+```{r, message = FALSE, echo=FALSE}
+library(tidyverse)
+students <- read_csv("data/oulad-students.csv")
+students %>% head(3)
+```
+
+## LASER Frame
+
+1.  **Prepare**: Prior to analysis, we'll take a look at the context
+    from which our data came, formulate some questions, and load R
+    packages.
+
+2.  **Wrangle**: In the wrangling section, we will learn some basic
+    techniques for manipulating, cleaning, transforming, and merging
+    data.
+
+3.  **Explore**: The processes of wrangling and exploring data often go
+    hand in hand.
+
+4.  **Model**: In this step, we carry out the analysis - here,
+    supervised machine learning.
+
+5.  **Communicate**: Interpreting and communicating the results of our
+    findings is the last step
+
+## Supervised ML Frame
+
+1.  **Split data** (Prepare)\
+2.  **Engineer features and write down the recipe** (Wrangle and
+    Explore)\
+3.  **Specify the model and workflow** (Model)\
+4.  **Fit model** (Model)
+5.  **Evaluate accuracy** (Communicate)
+
+**This is the foundational process we'll follow for this and the next
+two learning labs focused on supervised ML**
+
+# Key Concept: Learning analytics data & frameworks
+
+## Algorithms
+
+-   Algorithms (or estimation procedures - or informally models) refer
+    to the *structure* and *process* of estimating the *parameters* of a
+    model
+-   This definition provides a wide range of options for what kinds of
+    algorithms we use (from simple to very complex, as we discuss in a
+    later learning lab)
+-   For now, we focus on a familiar, easy to interpret algorithm (e.g.,
+    [1](https://dl.acm.org/doi/abs/10.1145/3448139.3448154?casa_token=skmk5XGbDOUAAAAA:Z0Kl4nyjpOGFA6RuFTiiLWaC_KxH1vkQ72Kr0hetXcumRdvu8tPYlCX12AgHr9aS0Fp3L-Uu0p4),
+    also
+    [this](https://linkinghub.elsevier.com/retrieve/pii/S0895435618310813)),
+    *logistic regression*
+-   This is a linear model with a binary (*"yes"* or *"no"*) outcome
+-   It will be a *bad model* to start us off!
+
+## Predictions
+
+-   When doing supervised ML, we focus on predicting an outcome: how
+    well we do this overall and for particular cases (more on how in the
+    next learning lab)
+-   We *do not* focus on inference or explanation (i.e., an
+    "explanatory" model): model fit, statistical significance, effect
+    sizes, etc.
+-   **This is a really key difference -- we use different metrics to
+    evaluate what makes for a good model**
+
+## Train vs. test
+
+-   A key concept in the context of supervised machine learning is
+    training vs. testing data:
+-   Training data: Data we use to **fit** (or train, AKA estimate) a
+    supervised machine learning **model** (AKA algorithm)
+-   Testing data: Data we use to see how well our model did---not used
+    to fit the model
+-   By splitting out data into training and testing *sets*, we can
+    obtain unbiased metrics for how good our model is at predicting \]
+
+# Code-along
+
+## Step 0
+
+**Loading, setting up: create a .R file in /lab-1 and run this code**
+
+```{r, eval = FALSE, echo = TRUE}
+library(tidyverse)
+library(tidymodels)
+
+starwars_recoded <- starwars %>% # built-in data available just by typing
+    mutate(species_human = ifelse(species == "Human", "Human", "Not human")) # recoding species to create a categorical variable
+
+starwars_recoded %>% 
+    count(species) # how many humans are there?
+```
+
+## Step 1
+
+**Split data**
+
+```{r, echo = TRUE, eval = FALSE}
+train_test_split <- initial_split(starwars_recoded, prop = .80)
+
+data_train <- training(train_test_split)
+data_test <- testing(train_test_split)
+```
+
+## Step 2
+
+**Engineer features**
+
+```{r, echo = TRUE, eval = FALSE}
+# predicting humans based on the independent effects of height and mass
+my_rec <- recipe(species_human ~ height + mass, data = data_train)
+```
+
+## Step 3
+
+**Specify recipe, model, and workflow**
+
+```{r, echo = TRUE, eval = FALSE}
+# specify model
+my_mod <- logistic_reg() %>% 
+    set_engine("glm") %>%
+    set_mode("classification")
+
+# specify workflow
+my_wf <- workflow() %>%
+    add_model(my_mod) %>% 
+    add_recipe(my_rec)
+```
+
+## Step 4
+
+**Fit model**
+
+```{r, echo = TRUE, eval = FALSE}
+fitted_model <- fit(my_wf, data = data_train)
+
+final_fit <- last_fit(fitted_model, train_test_split)
+```
+
+## Step 5
+
+**Evaluate accuracy**
+
+```{r, echo = TRUE, eval = FALSE}
+final_fit %>%
+    collect_metrics()
+```
+
+------------------------------------------------------------------------
+
+## Discussion 2
+
+### Reflecting
+
+-   Why not use our training data to evaluate how good our model is?\]
+
+### Applying
+
+-   What data or context are you interested in for your use of ML?
+
+# Introduction to the other parts of this learning lab
+
+## Readings
+
+Breiman, L. (2001). Statistical modeling: The two cultures (with
+comments and a rejoinder by the author). *Statistical Science, 16*(3),
+199-231.
+<https://projecteuclid.org/journals/statistical-science/volume-16/issue-3/Statistical-Modeling--The-Two-Cultures-with-comments-and-a/10.1214/ss/1009213726.pdf>
+
+Estrellado, R. A., Freer, E. A., Mostipak, J., Rosenberg, J. M., &
+Velásquez, I. C. (2020). *Data science in education using R. Routledge*
+(c14), Predicting students’ final grades using machine learning methods
+with online course data. <http://www.datascienceineducation.com/>
+
+## Case Study
+
+-   Building a prediction model for students passing the class---based
+    just on student data.
+-   Work with peers to complete this, reading the text, following links
+    to resources (and the reading), and then completing the required 👉
+    Your Turn ⤵ tasks
+-   A key is available, but we strongly encourage you to use it only at
+    the end to check your work, or if you are completely stuck and have
+    tried our recommended troubleshooting steps:
+    <https://docs.google.com/document/d/14Jc-KG3m5k1BvyKWqw7KmDD21IugU5nV5edfJkZyspY/edit>
+
+## Badge
+
+-   Involves applying what you have done through this point in the
+    learning lab to a) extending our model and b) reflecting and
+    planning, after which you will knit and submit your work by
+    publishing to Posit Cloud.
+
+## *fin*
+
+We hope to see you in the ML topic area learning labs!
+
+-   *Dr. Joshua Rosenberg* (jmrosenberg\@utk.edu;
+    <https://joshuamrosenberg.com)>
+-   *Dr. Peng He* (hepeng1\@msu.edu)
