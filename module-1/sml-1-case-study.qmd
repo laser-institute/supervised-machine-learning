@@ -40,7 +40,7 @@ In the overview presentation for this learning lab, we considered five steps in 
 
 5.  **Communicate:** To wrap up our case study, we'll create our first "data product" and share our analyses and findings by creating our first web page using R Markdown.
 
-In this module, we will be using data from the [IPEDS, the Integrated Postsecondary Education Data System](https://nces.ed.gov/ipeds/). We use Zong and Davis' (2022) study as an inspiration for ours. These authors used inferential models to try to understand what relates to the graduation rates of around 700 four-year universities in the United States, predicting this outcome on the basis of student backround, finance, academic and social environment, and retention rate independent variables. You can find this in the `lit` folder (with an elaboration and discussion questions in the Readings file for this module).
+In this module, we will be using data from the [IPEDS, the Integrated Postsecondary Education Data System](https://nces.ed.gov/ipeds/). We use Zong and Davis' (2022) study as an inspiration for ours. These authors used inferential models to try to understand what relates to the graduation rates of around 700 four-year universities in the United States, predicting this outcome on the basis of student background, finance, academic and social environment, and retention rate independent variables. You can find this in the `lit` folder (with an elaboration and discussion questions in the Readings file for this module).
 
 > Zong, C., & Davis, A. (2022). Modeling university retention and graduation rates using IPEDS. Journal of College Student Retention: Research, Theory & Practice, 15210251221074379.
 
@@ -84,7 +84,7 @@ The [tidymodels](https://www.tidymodels.org/) package is a "meta-package" for mo
 
 #### **👉 Your Turn** **⤵**
 
-In addition to the {tidymodels} package, we'll also be using the lightweight but highly useful {janitor} package to help with some data cleaning tasks. Use the code chunk below to load janitor.
+In addition to the {tidyverse} package, we'll also be using {tidymodels} and the lightweight but highly useful {janitor} package to help with some data cleaning tasks. Use the code chunk below to load both tidymodels and janitor.
 
 ```{r}
 
@@ -104,7 +104,7 @@ For now, please read in the \`ipeds-all-title-9-2022-data.csv\` file. Use the `r
 ipeds <- read_csv("data/ipeds-all-title-9-2022-data.csv")
 ```
 
-We'll then use a handy function from janitor, `clean_names()`. It does what it seems like it should - it cleans the names of variables, making them easy to view and type. Run this next code chunk. 
+We'll then use a handy function from janitor, `clean_names()`. It does what it seems like it should - it cleans the names of variables, making them easy to view and type. Run this next code chunk.
 
 ```{r}
 ipeds <- janitor::clean_names(ipeds)
@@ -128,9 +128,9 @@ Write down a few observations after inspecting the data - and any all observatio
 
 ## 2. WRANGLE
 
-Even though we cleaned the names to make them easier to view and type (thanks, `clean_names()`), they are still pretty long. 
+Even though we cleaned the names to make them easier to view and type (thanks, `clean_names()`), they are still pretty long.
 
-The code chunk below uses a very handy function, `select()`. This allows you to simultaneously choose and rename variables, returning a data frame with only the variables you have selected --- named as you like. For now, we'll just run this code. Later in your analyses, you'll almost certainly use `select()` to get a more managable dataset.
+The code chunk below uses a very handy function, `select()`. This allows you to simultaneously choose and rename variables, returning a data frame with only the variables you have selected --- named as you like. For now, we'll just run this code. Later in your analyses, you'll almost certainly use `select()` to get a more manageable dataset.
 
 ```{r}
 ipeds <- ipeds %>% 
@@ -156,36 +156,50 @@ ipeds %>%
     count(title_iv)
 ```
 
-Filtering
+This suggests we may wish to filter the 30 non-Title IV institutions --- something we'll do shortly.
+
+#### **👉 Your Turn** **⤵**
+
+Can you count another variable? Pick another (see the code chunk two above) and add a count below. While simple, counting up different values in our data can be very informative (and can often lead to further explorations)!
+
+```{r}
+
+```
+
+### Filtering
+
+`filter()` is a very handy function that is part of the tidyverse; it filters to *include* (or *exclude*) observations in your data based upon logical conditions (e.g., `==`, `>`, `<=`, etc.). See more [here](https://dplyr.tidyverse.org/reference/filter.html) if interested.
+
+Below, we filter the data to include only Title IV postsecondary institutions.
 
 ```{r}
 ipeds <- ipeds %>% 
     filter(title_iv == "Title IV postsecondary institution")
-
-ipeds <- ipeds %>% 
-    filter(carnegie_class != "Not applicable, not in Carnegie universe (not accredited or nondegree-granting)")
-
-```
-
-```{r}
-ipeds %>% 
-    glimpse()
-```
-
-```{r}
-ipeds <- ipeds %>% 
-    select(-title_iv, -state)
 ```
 
 #### **👉 Your Turn** **⤵**
 
+Can you filter the data again, this time to *only* include institutions with a carnegie classification?
+
+In other words, can you exclude those institutions with a value for the `carnegie_class` variable that is "Not applicable, not in Carnegie universe (not accredited or nondegree-granting)")? A little hint: whereas the logical operator `==` is used to include only matching conditions, the logical operator `!=` excludes matching conditions.
+
 ```{r}
-ipeds
+
+```
+
+#### **👉 Your Turn** **⤵**
+
+We're cruising! Let's take another peak at our data - using `glimpse()` or another means of your choosing below.
+
+```{r}
+
 ```
 
 ## 3. EXPLORE
 
 One key step in most analyses is to explore the data. Here, we conduct an exploratory data analysis with the IPEDS data, focusing on the key outcome of graduate rate.
+
+Below, we use the ggplot2 package (part of the tidyverse) to visualize the *spread* of the values of our dependent variable, `grad_rate`, which represents institutions' graduation rate. There is a *lot* to ggplot2, and data visualizations are not the focus of this module, but [this web page](https://ggplot2.tidyverse.org/) has a lot of information you can use to learn more, if you are interested. ggplot2 is fantastic for creating publication-ready visualizations!
 
 ```{r}
 ipeds %>% 
@@ -197,70 +211,100 @@ What do you notice about this graph -- and about graduation rate?
 
 -   YOUR RESPONSE
 -   YOUR RESPONSE
--   YOUR RESPONSE
 
-We'll first do a little additional data wrangling.
+#### **👉 Your Turn** **⤵**
+
+Below, can you add one ggplot2 plot with a different variable/variables? Use the ggplot2 page linked above (also [here](https://ggplot2.tidyverse.org/)) or the code above as a starting point (another histogram is fine!) for your visualization.
+
+```{r}
+
+```
+
+We'll next do a little additional data wrangling. For now, we'll model our dependent variable, `grad_rate`, as a dichotomous (i.e., yes or no; 1 or 0) dependent variable. This isn't necessary, but it makes the contrast between the regression and supervised machine learning model a bit more vivid, and also dichotomous and categorical outcome variables are common in supervised machine learning applications, and so we'll do this for this case study.
+
+#### **👉 Your Turn** **⤵**
+
+Your next task is to decide what constitutes a good graduation rate. Our only suggestion - don't pick a number *too* close to 0% or 100%. Otherwise, please replace XXX below with the number from 0-100 that represents the graduation rate percentage. Just add the number --- don't add the percentage symbol.
 
 ```{r}
 ipeds <- ipeds %>% 
-    mutate(n_grad = n_mast + n_doc)
-
-ipeds <- ipeds %>% 
-    mutate(good_grad_rate = if_else(grad_rate > 65, 1, 0),
+    mutate(good_grad_rate = if_else(grad_rate > XXX, 1, 0),
            good_grad_rate = as.factor(good_grad_rate))
 ```
+
+Here, add a reason or two for how and why you picked the number you did:
+
+-   
+
+-   
 
 ## 4. MODEL
 
 Now, we reach a fork in the road. Recall from our first reading that there are two general types of modeling approaches: unsupervised and supervised machine learning. In Part 4, we focus on supervised learning models, which are used to quantify relationships between features (e.g., motivation and performance) and a known outcome (e.g., student drop out). These models can be used for classification of binary or categorical outcomes, as we'll illustrate in this section, or regression as we'll demonstrate in modules 2 and 3.
 
-Please write our research questions for both a regression (RQ A) and supervised machine learning (RQ B) analysis.
+Please write our preliminary, draft research questions for both a regression (RQ A) and supervised machine learning (RQ B) analysis. It may help to review the readings for this module; you can find them in the `lit` folder; they are listed in `sml-1-readings.qmd`, too. There aren't right or wrong answers here; the point is to try to draw out what question might accompany these different analyses (or vice versa - what research questions are feasible to answer using different analyses).
 
-### RQ A Research Question
+#### **👉 Your Turn** **⤵**
+
+### RQ A - Regression Research Question
 
 -   YOUR RESEARCH QUESTION
 
-### RQ A Research Question
+### RQ B - Supervised Machine Learning Research Question
 
 -   YOUR RESEARCH QUESTION
 
 Now, we will proceed to the analyses.
 
-We'll first conduct a regression analysis, like in the code-along.
+We'll first conduct a regression analysis, like in the code-along. We use a generalized linear model due to the dependent variable being dichotomous. The code is relatively straightforward; the comments explain each step.
 
 ```{r}
-m1 <- lm(species_human ~ height + mass, data = ipeds)
-summary(m1)
+m1 <- glm(good_grad_rate ~ total_enroll + pct_admitted + n_bach + n_mast + n_doc + tuition_fees + percent_fin_aid + avg_salary, data = ipeds, family = "binomial") # to the left of the ~ is our dependent variable; to the right are the independent variables; family = "binomial" is to specify the correct model type for the dichotomous dependent variable
+
+summary(m1) # summary table of model output
 ```
 
-Then, we'll conduct a supervised machine learning analysis.
+Then, we'll conduct a supervised machine learning analysis (with a simple but still commonly used model - in fact, the same model we used for the regression, a generalized linear model!). Again, for now, you'll run this code; later, you'll work through each step in detail.
 
 ```{r}
-my_rec <- recipe(good_grad_rate ~ total_enroll + pct_admitted + n_bach + n_grad + tuition_fees + percent_fin_aid + avg_salary, data = ipeds) %>% 
-    step_normalize(all_numeric_predictors())
+my_rec <- recipe(good_grad_rate ~ total_enroll + pct_admitted + n_bach + n_mast + n_doc + tuition_fees + percent_fin_aid + avg_salary, data = ipeds) # same as above; this sets up what predicts the outcome
 
 # specify model
 my_mod <-
-    logistic_reg() %>% 
-    set_engine("glm") %>%
-    set_mode("classification")
+    logistic_reg() %>% # specifies a logistic regression
+    set_engine("glm") %>% # specifies the specific package used to estimate the logistic regression
+    set_mode("classification") # specifies that our outcome is a dichotomous or categorical variable
 
-my_wf <-
-    workflow() %>%
-    add_model(my_mod) %>% 
-    add_recipe(my_rec)
+my_wf <- workflow() %>% # this starts a workflow, which will stitch together the steps in our analysis
+    add_model(my_mod) %>% # adds the model
+    add_recipe(my_rec) # adds the recipe
 
-fit_model <- fit(my_wf, ipeds)
+fit_model <- fit(my_wf, ipeds) # fits the model
 
-predictions <- predict(fit_model, ipeds) %>%
-  bind_cols(ipeds)
+predictions <- predict(fit_model, ipeds) %>% # predicts the value of the dependent variable using only the predictors' values and our trained model
+  bind_cols(ipeds) # this adds the original data back to the predicted values, so everything is together
 
-accuracy <- predictions %>%
+accuracy <- predictions %>% # this and the next two steps calculate the accuracy of our predictions
   metrics(truth = good_grad_rate, estimate = .pred_class) %>%
   filter(.metric == "accuracy")
 
-accuracy
+accuracy # print the accuracy
 ```
+
+The key to observe at this point is what is similar and different between the two approaches (regression and supervised machine learning). Both used the same underlying statistical model, but had some stark differences. Add two or more similarities and two or more differences (no wrong answers!) below.
+
+#### **👉 Your Turn** **⤵**
+
+Similarities:
+
+-   XX
+-   XX
+
+Differences:
+
+-   
+
+-   
 
 ## 5. COMMUNICATE
 
@@ -272,11 +316,15 @@ The final step in the workflow/process is sharing the results of your analysis w
 
 3.  **Narrate.** Writing a narrative to accompany the data products involves, at a minimum, pairing a data product with its related research question, describing how best to interpret the data product, and explaining the ways in which the data product helps answer the research question.
 
-What did we find for each of our RQs? Add a few thoughts below for each. Focus on what you would communicate about this analysis to a general audience.
+Now, let's return to our research questions. What did we find? This (especially the supervised machine learning model and its output) is very likely new, and this is meant to elicit initial perceptions, and not the right answer. What did we find for each of your RQs? Add a few thoughts below for each. Focus on what you would communicate about this analysis to a general audience, again, keeping in mind this is based on your very initial interpretations.
 
 ### RQ A
 
-Add a few notes below. Again,
+-   ADD YOUR RESPONSE HERE
+
+-   ADD YOUR RESPONSE HERE
+
+### RQ
 
 -   ADD YOUR RESPONSE HERE
 

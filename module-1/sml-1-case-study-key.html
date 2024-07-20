@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="LASER Institute">
+<meta name="dcterms.date" content="2024-07-20">
+
+<title>Explaining or Predicting Graduation Rates Using IPEDS</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="sml-1-case-study-key_files/libs/clipboard/clipboard.min.js"></script>
+<script src="sml-1-case-study-key_files/libs/quarto-html/quarto.js"></script>
+<script src="sml-1-case-study-key_files/libs/quarto-html/popper.min.js"></script>
+<script src="sml-1-case-study-key_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="sml-1-case-study-key_files/libs/quarto-html/anchor.min.js"></script>
+<link href="sml-1-case-study-key_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="sml-1-case-study-key_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="sml-1-case-study-key_files/libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="sml-1-case-study-key_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="sml-1-case-study-key_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="sml-1-case-study-key_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="sml-1-case-study-key_files/libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+
+
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#prepare" id="toc-prepare" class="nav-link active" data-scroll-target="#prepare">1. PREPARE</a>
+  <ul>
+  <li><a href="#the-laser-workflow" id="toc-the-laser-workflow" class="nav-link" data-scroll-target="#the-laser-workflow">The LASER workflow</a></li>
+  <li><a href="#loading-packages" id="toc-loading-packages" class="nav-link" data-scroll-target="#loading-packages">Loading packages</a>
+  <ul class="collapse">
+  <li><a href="#tidyverse" id="toc-tidyverse" class="nav-link" data-scroll-target="#tidyverse">tidyverse 📦</a></li>
+  <li><a href="#tidymodels" id="toc-tidymodels" class="nav-link" data-scroll-target="#tidymodels">tidymodels</a></li>
+  <li><a href="#your-turn" id="toc-your-turn" class="nav-link" data-scroll-target="#your-turn"><strong>👉 Your Turn</strong> <strong>⤵</strong></a></li>
+  </ul></li>
+  <li><a href="#loading-data" id="toc-loading-data" class="nav-link" data-scroll-target="#loading-data">Loading data</a>
+  <ul class="collapse">
+  <li><a href="#your-turn-1" id="toc-your-turn-1" class="nav-link" data-scroll-target="#your-turn-1"><strong>👉 Your Turn</strong> <strong>⤵</strong></a></li>
+  <li><a href="#your-turn-2" id="toc-your-turn-2" class="nav-link" data-scroll-target="#your-turn-2"><strong>👉 Your Turn</strong> <strong>⤵</strong></a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#wrangle" id="toc-wrangle" class="nav-link" data-scroll-target="#wrangle">2. WRANGLE</a>
+  <ul>
+  <li><a href="#your-turn-3" id="toc-your-turn-3" class="nav-link" data-scroll-target="#your-turn-3"><strong>👉 Your Turn</strong> <strong>⤵</strong></a></li>
+  <li><a href="#filtering" id="toc-filtering" class="nav-link" data-scroll-target="#filtering">Filtering</a>
+  <ul class="collapse">
+  <li><a href="#your-turn-4" id="toc-your-turn-4" class="nav-link" data-scroll-target="#your-turn-4"><strong>👉 Your Turn</strong> <strong>⤵</strong></a></li>
+  <li><a href="#your-turn-5" id="toc-your-turn-5" class="nav-link" data-scroll-target="#your-turn-5"><strong>👉 Your Turn</strong> <strong>⤵</strong></a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#explore" id="toc-explore" class="nav-link" data-scroll-target="#explore">3. EXPLORE</a>
+  <ul>
+  <li><a href="#your-turn-6" id="toc-your-turn-6" class="nav-link" data-scroll-target="#your-turn-6"><strong>👉 Your Turn</strong> <strong>⤵</strong></a></li>
+  <li><a href="#your-turn-7" id="toc-your-turn-7" class="nav-link" data-scroll-target="#your-turn-7"><strong>👉 Your Turn</strong> <strong>⤵</strong></a></li>
+  </ul></li>
+  <li><a href="#model" id="toc-model" class="nav-link" data-scroll-target="#model">4. MODEL</a>
+  <ul>
+  <li><a href="#your-turn-8" id="toc-your-turn-8" class="nav-link" data-scroll-target="#your-turn-8"><strong>👉 Your Turn</strong> <strong>⤵</strong></a></li>
+  <li><a href="#rq-a---regression-research-question" id="toc-rq-a---regression-research-question" class="nav-link" data-scroll-target="#rq-a---regression-research-question">RQ A - Regression Research Question</a></li>
+  <li><a href="#rq-b---supervised-machine-learning-research-question" id="toc-rq-b---supervised-machine-learning-research-question" class="nav-link" data-scroll-target="#rq-b---supervised-machine-learning-research-question">RQ B - Supervised Machine Learning Research Question</a>
+  <ul class="collapse">
+  <li><a href="#your-turn-9" id="toc-your-turn-9" class="nav-link" data-scroll-target="#your-turn-9"><strong>👉 Your Turn</strong> <strong>⤵</strong></a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#communicate" id="toc-communicate" class="nav-link" data-scroll-target="#communicate">5. COMMUNICATE</a>
+  <ul>
+  <li><a href="#rq-a" id="toc-rq-a" class="nav-link" data-scroll-target="#rq-a">RQ A</a></li>
+  <li><a href="#rq" id="toc-rq" class="nav-link" data-scroll-target="#rq">RQ</a></li>
+  <li><a href="#knit-check" id="toc-knit-check" class="nav-link" data-scroll-target="#knit-check">🧶 Knit &amp; Check ✅</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Explaining or Predicting Graduation Rates Using IPEDS</h1>
+<p class="subtitle lead">Case Study</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>LASER Institute </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">July 20, 2024</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="prepare" class="level2">
+<h2 class="anchored" data-anchor-id="prepare">1. PREPARE</h2>
+<section id="the-laser-workflow" class="level3">
+<h3 class="anchored" data-anchor-id="the-laser-workflow">The LASER workflow</h3>
+<p>Each machine learning “case study” is designed to illustrate how machine learning methods and techniques can be applied to address a research question of interest, create useful data products, and conduct reproducible research. Each case study is structured around a basic analytics workflow modeled after the Data-Intensive Research Workflow from <a href="#0">Learning Analytics Goes to School</a> (Krumm et al., 2018):</p>
+<p><img src="https://sbkellogg.github.io/eci-589/unit-1/img/workflow.png" class="img-fluid" style="width:80.0%" alt=""></p>
+<p>Figure 2.2 Steps of Data-Intensive Research Workflow</p>
+<p>In the overview presentation for this learning lab, we considered five steps in our supervised machine learning process. Those steps are mirrored here in this case study, with the addition of some other components of this workflow. For example, to help prepare for analysis, we’ll first take a step back and think about how we want to use machine learning, and <em>predicting</em> is a key word. Many scholars have focused on predicting students who are <em>at-risk</em>: of dropping a course or not succeeding in it. In the ML Learning Lab 1 case study will cover the following workflow topics as we attempt to develop our own model for predicting student drop-out:</p>
+<ol type="1">
+<li><p><strong>Prepare</strong>: Prior to analysis, we’ll look at the context from which our data came, formulate a basic research question, and get introduced the {tidymodels} packages for machine learning.</p></li>
+<li><p><strong>Wrangle</strong>: Wrangling data entails the work of cleaning, transforming, and merging data. In Part 2 we focus on importing CSV files and modifying some of our variables.</p></li>
+<li><p><strong>Explore</strong>: We take a quick look at our variables of interest and do some basic “feature engineering” by creating some new variables we think will be predictive of students at risk.</p></li>
+<li><p><strong>Model:</strong> We dive deeper into the five steps in our supervised machine learning process, focusing on the mechanics of <strong>making predictions</strong>.</p></li>
+<li><p><strong>Communicate:</strong> To wrap up our case study, we’ll create our first “data product” and share our analyses and findings by creating our first web page using R Markdown.</p></li>
+</ol>
+<p>In this module, we will be using data from the <a href="https://nces.ed.gov/ipeds/">IPEDS, the Integrated Postsecondary Education Data System</a>. We use Zong and Davis’ (2022) study as an inspiration for ours. These authors used inferential models to try to understand what relates to the graduation rates of around 700 four-year universities in the United States, predicting this outcome on the basis of student background, finance, academic and social environment, and retention rate independent variables. You can find this in the <code>lit</code> folder (with an elaboration and discussion questions in the Readings file for this module).</p>
+<blockquote class="blockquote">
+<p>Zong, C., &amp; Davis, A. (2022). Modeling university retention and graduation rates using IPEDS. Journal of College Student Retention: Research, Theory &amp; Practice, 15210251221074379.</p>
+</blockquote>
+</section>
+<section id="loading-packages" class="level3">
+<h3 class="anchored" data-anchor-id="loading-packages">Loading packages</h3>
+<p>As highlighted in&nbsp;<a href="https://datascienceineducation.com/c06.html">Chapter 6 of Data Science in Education Using R</a>&nbsp;(DSIEUR), one of the first steps of every workflow should be to set up your “Project” within RStudio. Recall that:</p>
+<blockquote class="blockquote">
+<p>A <strong>Project</strong> is the home for all of the files, images, reports, and code that are used in any given project</p>
+</blockquote>
+<p>Since we are working from an R project cloned from <a href="https://github.com/laser-institute">GitHub</a>, a Project has already been set up for you as indicated by the <code>.Rproj</code> file in your main directory in the Files pane. Instead, we will focus on getting our project set up withe the requisite packages we’ll need for analysis.</p>
+<p><strong>Packages</strong>, sometimes called libraries, are shareable collections of R code that can contain functions, data, and/or documentation and extend the functionality of R. You can always check to see which packages have already been installed and loaded into RStudio Cloud by looking at the the Files, Plots, &amp; Packages Pane in the lower right-hand corner.</p>
+<p>Two packages we’ll use extensively throughout these learning labs are the {tidyverse} and {tidymodels} packages.</p>
+<section id="tidyverse" class="level4">
+<h4 class="anchored" data-anchor-id="tidyverse">tidyverse 📦</h4>
+<p><img src="img/tidyverse.png" class="img-fluid" style="width:20.0%"></p>
+<p>One package that we’ll be using extensively throughout LASER is the {tidyverse} package. Recall from earlier tutorials that the {tidyverse} package is actually a <a href="https://www.tidyverse.org/packages">collection of R packages</a> designed for reading, wrangling, and exploring data and which all share an underlying design philosophy, grammar, and data structures. These shared features are sometimes “tidy data principles.”</p>
+<p>Click the green arrow in the right corner of the “code chunk” that follows to load the {tidyverse} library.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.4     ✔ readr     2.1.5
+✔ forcats   1.0.0     ✔ stringr   1.5.1
+✔ ggplot2   3.5.0     ✔ tibble    3.2.1
+✔ lubridate 1.9.3     ✔ tidyr     1.3.1
+✔ purrr     1.0.2     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+</div>
+</div>
+</section>
+<section id="tidymodels" class="level4">
+<h4 class="anchored" data-anchor-id="tidymodels">tidymodels</h4>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="https://www.tidymodels.org/"><img src="img/tidymodels.png" class="img-fluid figure-img" style="width:20.0%"></a></p>
+</figure>
+</div>
+<p>The <a href="https://www.tidymodels.org/">tidymodels</a> package is a “meta-package” for modeling and statistical analysis that shares the underlying design philosophy, grammar, and data structures of the <a href="https://www.tidyverse.org/">tidyverse</a>. It includes a core set of packages that are loaded on startup and contains tools for:</p>
+<ul>
+<li><p>data splitting and pre-processing;</p></li>
+<li><p>model selection, tuning, and evaluation;</p></li>
+<li><p>feature selection and variable importance estimation;</p></li>
+<li><p>as well as other functionality.</p></li>
+</ul>
+</section>
+<section id="your-turn" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
+<p>In addition to the {tidyverse} package, we’ll also be using {tidymodels} and the lightweight but highly useful {janitor} package to help with some data cleaning tasks. Use the code chunk below to load both tidymodels and janitor.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidymodels)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching packages ────────────────────────────────────── tidymodels 1.2.0 ──</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>✔ broom        1.0.5      ✔ rsample      1.2.1 
+✔ dials        1.2.1      ✔ tune         1.2.1 
+✔ infer        1.0.7      ✔ workflows    1.1.4 
+✔ modeldata    1.4.0      ✔ workflowsets 1.1.0 
+✔ parsnip      1.2.1      ✔ yardstick    1.3.1 
+✔ recipes      1.0.10     </code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Conflicts ───────────────────────────────────────── tidymodels_conflicts() ──
+✖ scales::discard() masks purrr::discard()
+✖ dplyr::filter()   masks stats::filter()
+✖ recipes::fixed()  masks stringr::fixed()
+✖ dplyr::lag()      masks stats::lag()
+✖ yardstick::spec() masks readr::spec()
+✖ recipes::step()   masks stats::step()
+• Use tidymodels_prefer() to resolve common conflicts.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(janitor)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'janitor'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:stats':
+
+    chisq.test, fisher.test</code></pre>
+</div>
+</div>
+<p>As a tip, remember to use the <code>library()</code> function to load these packages. After you’ve done that, click the green arrow to run the code chunk. If you see a bunch of messages (not anything labeled as an error), you are good to go! These messages mean the packages loaded correctly.</p>
+</section>
+</section>
+<section id="loading-data" class="level3">
+<h3 class="anchored" data-anchor-id="loading-data">Loading data</h3>
+<p>Next, we’ll read in data. We’ll use the <code>read_csv()</code> function to load the data file.</p>
+<p>For now, please read in the `ipeds-all-title-9-2022-data.csv` file. Use the <code>read_csv()</code> function to do this, paying attention to where those files are located relative to this case study file – in the data folder!</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>ipeds <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/ipeds-all-title-9-2022-data.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 5988 Columns: 24
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr  (9): institution name, HD2022.Postsecondary and Title IV institution in...
+dbl (15): unitid, year, DRVADM2022.Percent admitted - total, DRVIC2022.Tuiti...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+</div>
+<p>We’ll then use a handy function from janitor, <code>clean_names()</code>. It does what it seems like it should - it cleans the names of variables, making them easy to view and type. Run this next code chunk.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>ipeds <span class="ot">&lt;-</span> janitor<span class="sc">::</span><span class="fu">clean_names</span>(ipeds)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="your-turn-1" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-1"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
+<p>In the chunk below, examine the data set using a function or means of your choice (such as just <em>printing</em> the data set by typing its name or using the <code>glimpse()</code> function). Do this in the code chunk below! Note its dimensions — especially how many rows it has!</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(ipeds)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 5,988
+Columns: 24
+$ unitid                                                                                  &lt;dbl&gt; …
+$ institution_name                                                                        &lt;chr&gt; …
+$ year                                                                                    &lt;dbl&gt; …
+$ hd2022_postsecondary_and_title_iv_institution_indicator                                 &lt;chr&gt; …
+$ drvadm2022_percent_admitted_total                                                       &lt;dbl&gt; …
+$ drvic2022_tuition_and_fees_2021_22                                                      &lt;dbl&gt; …
+$ hd2022_institution_size_category                                                        &lt;chr&gt; …
+$ hd2022_state_abbreviation                                                               &lt;chr&gt; …
+$ hd2022_carnegie_classification_2021_basic                                               &lt;chr&gt; …
+$ drvef2022_total_enrollment                                                              &lt;dbl&gt; …
+$ drvef122022_total_12_month_unduplicated_headcount                                       &lt;dbl&gt; …
+$ drvc2022_bachelors_degree                                                               &lt;dbl&gt; …
+$ drvc2022_masters_degree                                                                 &lt;dbl&gt; …
+$ drvc2022_doctors_degree_research_scholarship                                            &lt;dbl&gt; …
+$ drvgr2022_graduation_rate_total_cohort                                                  &lt;dbl&gt; …
+$ sfa2122_percent_of_full_time_first_time_undergraduates_awarded_any_financial_aid        &lt;dbl&gt; …
+$ xanyaidp                                                                                &lt;chr&gt; …
+$ drvhr2022_average_salary_equated_to_9_months_of_full_time_instructional_staff_all_ranks &lt;dbl&gt; …
+$ sfa2122_average_net_price_students_awarded_grant_or_scholarship_aid_2021_22             &lt;dbl&gt; …
+$ xnpist2                                                                                 &lt;chr&gt; …
+$ adm2022_sat_evidence_based_reading_and_writing_50th_percentile_score                    &lt;dbl&gt; …
+$ xsatvr50                                                                                &lt;chr&gt; …
+$ adm2022_act_composite_50th_percentile_score                                             &lt;dbl&gt; …
+$ xactcm50                                                                                &lt;chr&gt; …</code></pre>
+</div>
+</div>
+</section>
+<section id="your-turn-2" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-2"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
+<p>Write down a few observations after inspecting the data - and any all observations welcome!</p>
+<ul>
+<li>YOUR RESPONSE HERE</li>
+<li>YOUR RESPONSE HERE</li>
+<li>YOUR RESPONSE HERE</li>
+</ul>
+</section>
+</section>
+</section>
+<section id="wrangle" class="level2">
+<h2 class="anchored" data-anchor-id="wrangle">2. WRANGLE</h2>
+<p>Even though we cleaned the names to make them easier to view and type (thanks, <code>clean_names()</code>), they are still pretty long.</p>
+<p>The code chunk below uses a very handy function, <code>select()</code>. This allows you to simultaneously choose and rename variables, returning a data frame with only the variables you have selected — named as you like. For now, we’ll just run this code. Later in your analyses, you’ll almost certainly use <code>select()</code> to get a more manageable dataset.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>ipeds <span class="ot">&lt;-</span> ipeds <span class="sc">%&gt;%</span> </span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(<span class="at">name =</span> institution_name, </span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">title_iv =</span> hd2022_postsecondary_and_title_iv_institution_indicator, <span class="co"># is the university a title IV university?</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">carnegie_class =</span> hd2022_carnegie_classification_2021_basic, <span class="co"># which carnegie classification</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">state =</span> hd2022_state_abbreviation, <span class="co"># state</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>           <span class="at">total_enroll =</span> drvef2022_total_enrollment, <span class="co"># total enrollment</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>           <span class="at">pct_admitted =</span> drvadm2022_percent_admitted_total, <span class="co"># percentage of applicants admitted</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>           <span class="at">n_bach =</span> drvc2022_bachelors_degree, <span class="co"># number of students receiving a bachelor's degree</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>           <span class="at">n_mast =</span> drvc2022_masters_degree, <span class="co"># number receiving a master's</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>           <span class="at">n_doc =</span> drvc2022_doctors_degree_research_scholarship, <span class="co"># number receive a doctoral degree</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>           <span class="at">tuition_fees =</span> drvic2022_tuition_and_fees_2021_22, <span class="co"># total cost of tuition and fees</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>           <span class="at">grad_rate =</span> drvgr2022_graduation_rate_total_cohort, <span class="co"># graduation rate</span></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>           <span class="at">percent_fin_aid =</span> sfa2122_percent_of_full_time_first_time_undergraduates_awarded_any_financial_aid, <span class="co"># percent of students receive financial aid</span></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>           <span class="at">avg_salary =</span> drvhr2022_average_salary_equated_to_9_months_of_full_time_instructional_staff_all_ranks) <span class="co"># average salary of instructional staff</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>A useful function for exploring data is <code>count()</code>; it does what it sounds like! It counts how many times values for a variable appear.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>ipeds <span class="sc">%&gt;%</span> </span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">count</span>(title_iv)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 2
+  title_iv                                             n
+  &lt;chr&gt;                                            &lt;int&gt;
+1 Title IV NOT primarily postsecondary institution    30
+2 Title IV postsecondary institution                5958</code></pre>
+</div>
+</div>
+<p>This suggests we may wish to filter the 30 non-Title IV institutions — something we’ll do shortly.</p>
+<section id="your-turn-3" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-3"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
+<p>Can you count another variable? Pick another (see the code chunk two above) and add a count below. While simple, counting up different values in our data can be very informative (and can often lead to further explorations)!</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>ipeds <span class="sc">%&gt;%</span> </span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">count</span>(carnegie_class)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 34 × 2
+   carnegie_class                                                              n
+   &lt;chr&gt;                                                                   &lt;int&gt;
+ 1 Associate's Colleges: High Career &amp; Technical-High Nontraditional          88
+ 2 Associate's Colleges: High Career &amp; Technical-High Traditional            106
+ 3 Associate's Colleges: High Career &amp; Technical-Mixed Traditional/Nontra…   116
+ 4 Associate's Colleges: High Transfer-High Nontraditional                   105
+ 5 Associate's Colleges: High Transfer-High Traditional                      105
+ 6 Associate's Colleges: High Transfer-Mixed Traditional/Nontraditional      101
+ 7 Associate's Colleges: Mixed Transfer/Career &amp; Technical-High Nontradit…   114
+ 8 Associate's Colleges: Mixed Transfer/Career &amp; Technical-High Tradition…   104
+ 9 Associate's Colleges: Mixed Transfer/Career &amp; Technical-Mixed Traditio…    97
+10 Baccalaureate Colleges: Arts &amp; Sciences Focus                             216
+# ℹ 24 more rows</code></pre>
+</div>
+</div>
+</section>
+<section id="filtering" class="level3">
+<h3 class="anchored" data-anchor-id="filtering">Filtering</h3>
+<p><code>filter()</code> is a very handy function that is part of the tidyverse; it filters to <em>include</em> (or <em>exclude</em>) observations in your data based upon logical conditions (e.g., <code>==</code>, <code>&gt;</code>, <code>&lt;=</code>, etc.). See more <a href="https://dplyr.tidyverse.org/reference/filter.html">here</a> if interested.</p>
+<p>Below, we filter the data to include only Title IV postsecondary institutions.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>ipeds <span class="ot">&lt;-</span> ipeds <span class="sc">%&gt;%</span> </span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(title_iv <span class="sc">==</span> <span class="st">"Title IV postsecondary institution"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="your-turn-4" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-4"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
+<p>Can you filter the data again, this time to <em>only</em> include institutions with a carnegie classification?</p>
+<p>In other words, can you exclude those institutions with a value for the <code>carnegie_class</code> variable that is “Not applicable, not in Carnegie universe (not accredited or nondegree-granting)”)? A little hint: whereas the logical operator <code>==</code> is used to include only matching conditions, the logical operator <code>!=</code> excludes matching conditions.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>ipeds <span class="ot">&lt;-</span> ipeds <span class="sc">%&gt;%</span> </span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(carnegie_class <span class="sc">!=</span> <span class="st">"Not applicable, not in Carnegie universe (not accredited or nondegree-granting)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="your-turn-5" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-5"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
+<p>We’re cruising! Let’s take another peak at our data - using <code>glimpse()</code> or another means of your choosing below.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(ipeds)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 3,818
+Columns: 13
+$ name            &lt;chr&gt; "Alabama A &amp; M University", "University of Alabama at …
+$ title_iv        &lt;chr&gt; "Title IV postsecondary institution", "Title IV postse…
+$ carnegie_class  &lt;chr&gt; "Master's Colleges &amp; Universities: Larger Programs", "…
+$ state           &lt;chr&gt; "Alabama", "Alabama", "Alabama", "Alabama", "Alabama",…
+$ total_enroll    &lt;dbl&gt; 6007, 21639, 647, 9237, 3828, 38644, 1777, 2894, 5109,…
+$ pct_admitted    &lt;dbl&gt; 68, 87, NA, 78, 97, 80, NA, NA, 92, 44, 57, NA, NA, NA…
+$ n_bach          &lt;dbl&gt; 511, 2785, 54, 1624, 480, 6740, NA, 738, 672, 5653, 26…
+$ n_mast          &lt;dbl&gt; 249, 2512, 96, 570, 119, 2180, NA, 80, 300, 1415, 0, N…
+$ n_doc           &lt;dbl&gt; 9, 166, 20, 41, 2, 215, NA, 0, 0, 284, 0, NA, 0, NA, N…
+$ tuition_fees    &lt;dbl&gt; 10024, 8568, NA, 11488, 11068, 11620, 4930, NA, 8860, …
+$ grad_rate       &lt;dbl&gt; 27, 64, 50, 63, 28, 73, 22, NA, 36, 81, 65, 26, 9, 29,…
+$ percent_fin_aid &lt;dbl&gt; 87, 96, NA, 96, 97, 87, 87, NA, 99, 79, 100, 96, 92, 8…
+$ avg_salary      &lt;dbl&gt; 77824, 106434, 36637, 92561, 72635, 97394, 63494, 8140…</code></pre>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="explore" class="level2">
+<h2 class="anchored" data-anchor-id="explore">3. EXPLORE</h2>
+<p>One key step in most analyses is to explore the data. Here, we conduct an exploratory data analysis with the IPEDS data, focusing on the key outcome of graduate rate.</p>
+<p>Below, we use the ggplot2 package (part of the tidyverse) to visualize the <em>spread</em> of the values of our dependent variable, <code>grad_rate</code>, which represents institutions’ graduation rate. There is a <em>lot</em> to ggplot2, and data visualizations are not the focus of this module, but <a href="https://ggplot2.tidyverse.org/">this web page</a> has a lot of information you can use to learn more, if you are interested. ggplot2 is fantastic for creating publication-ready visualizations!</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>ipeds <span class="sc">%&gt;%</span> </span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> grad_rate)) <span class="sc">+</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_histogram</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 418 rows containing non-finite outside the scale range
+(`stat_bin()`).</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="sml-1-case-study-key_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>What do you notice about this graph – and about graduation rate?</p>
+<ul>
+<li>YOUR RESPONSE</li>
+<li>YOUR RESPONSE</li>
+</ul>
+<section id="your-turn-6" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-6"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
+<p>Below, can you add one ggplot2 plot with a different variable/variables? Use the ggplot2 page linked above (also <a href="https://ggplot2.tidyverse.org/">here</a>) or the code above as a starting point (another histogram is fine!) for your visualization.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>ipeds <span class="sc">%&gt;%</span> </span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> pct_admitted)) <span class="sc">+</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_histogram</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 2040 rows containing non-finite outside the scale range
+(`stat_bin()`).</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="sml-1-case-study-key_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>ipeds <span class="sc">%&gt;%</span> </span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> tuition_fees, <span class="at">y =</span> total_enroll, <span class="at">color =</span> avg_salary)) <span class="sc">+</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 599 rows containing missing values or values outside the scale range
+(`geom_point()`).</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="sml-1-case-study-key_files/figure-html/unnamed-chunk-13-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>We’ll next do a little additional data wrangling. For now, we’ll model our dependent variable, <code>grad_rate</code>, as a dichotomous (i.e., yes or no; 1 or 0) dependent variable. This isn’t necessary, but it makes the contrast between the regression and supervised machine learning model a bit more vivid, and also dichotomous and categorical outcome variables are common in supervised machine learning applications, and so we’ll do this for this case study.</p>
+</section>
+<section id="your-turn-7" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-7"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
+<p>Your next task is to decide what constitutes a good graduation rate. Our only suggestion - don’t pick a number <em>too</em> close to 0% or 100%. Otherwise, please replace XXX below with the number from 0-100 that represents the graduation rate percentage. Just add the number — don’t add the percentage symbol.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>ipeds <span class="ot">&lt;-</span> ipeds <span class="sc">%&gt;%</span> </span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">good_grad_rate =</span> <span class="fu">if_else</span>(grad_rate <span class="sc">&gt;</span> <span class="dv">62</span>, <span class="dv">1</span>, <span class="dv">0</span>),</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">good_grad_rate =</span> <span class="fu">as.factor</span>(good_grad_rate))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Here, add a reason or two for how and why you picked the number you did:</p>
+<ul>
+<li></li>
+<li></li>
+</ul>
+</section>
+</section>
+<section id="model" class="level2">
+<h2 class="anchored" data-anchor-id="model">4. MODEL</h2>
+<p>Now, we reach a fork in the road. Recall from our first reading that there are two general types of modeling approaches: unsupervised and supervised machine learning. In Part 4, we focus on supervised learning models, which are used to quantify relationships between features (e.g., motivation and performance) and a known outcome (e.g., student drop out). These models can be used for classification of binary or categorical outcomes, as we’ll illustrate in this section, or regression as we’ll demonstrate in modules 2 and 3.</p>
+<p>Please write our preliminary, draft research questions for both a regression (RQ A) and supervised machine learning (RQ B) analysis. It may help to review the readings for this module; you can find them in the <code>lit</code> folder; they are listed in <code>sml-1-readings.qmd</code>, too. There aren’t right or wrong answers here; the point is to try to draw out what question might accompany these different analyses (or vice versa - what research questions are feasible to answer using different analyses).</p>
+<section id="your-turn-8" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-8"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
+</section>
+<section id="rq-a---regression-research-question" class="level3">
+<h3 class="anchored" data-anchor-id="rq-a---regression-research-question">RQ A - Regression Research Question</h3>
+<ul>
+<li>YOUR RESEARCH QUESTION</li>
+</ul>
+</section>
+<section id="rq-b---supervised-machine-learning-research-question" class="level3">
+<h3 class="anchored" data-anchor-id="rq-b---supervised-machine-learning-research-question">RQ B - Supervised Machine Learning Research Question</h3>
+<ul>
+<li>YOUR RESEARCH QUESTION</li>
+</ul>
+<p>Now, we will proceed to the analyses.</p>
+<p>We’ll first conduct a regression analysis, like in the code-along. We use a generalized linear model due to the dependent variable being dichotomous. The code is relatively straightforward; the comments explain each step.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>m1 <span class="ot">&lt;-</span> <span class="fu">glm</span>(good_grad_rate <span class="sc">~</span> total_enroll <span class="sc">+</span> pct_admitted <span class="sc">+</span> n_bach <span class="sc">+</span> n_mast <span class="sc">+</span> n_doc <span class="sc">+</span> tuition_fees <span class="sc">+</span> percent_fin_aid <span class="sc">+</span> avg_salary, <span class="at">data =</span> ipeds, <span class="at">family =</span> <span class="st">"binomial"</span>) <span class="co"># to the left of the ~ is our dependent variable; to the right are the independent variables; family = "binomial" is to specify the correct model type for the dichotomous dependent variable</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(m1) <span class="co"># summary table of model output</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+glm(formula = good_grad_rate ~ total_enroll + pct_admitted + 
+    n_bach + n_mast + n_doc + tuition_fees + percent_fin_aid + 
+    avg_salary, family = "binomial", data = ipeds)
+
+Coefficients:
+                  Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)     -9.768e-01  7.271e-01  -1.343  0.17913    
+total_enroll    -1.501e-04  4.829e-05  -3.109  0.00188 ** 
+pct_admitted    -1.135e-02  3.892e-03  -2.916  0.00355 ** 
+n_bach           9.693e-04  2.130e-04   4.551 5.34e-06 ***
+n_mast          -4.401e-04  2.225e-04  -1.978  0.04790 *  
+n_doc            8.313e-03  1.782e-03   4.665 3.08e-06 ***
+tuition_fees     7.575e-05  5.551e-06  13.644  &lt; 2e-16 ***
+percent_fin_aid -3.301e-02  6.682e-03  -4.940 7.79e-07 ***
+avg_salary       3.066e-05  4.428e-06   6.925 4.37e-12 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 2164.7  on 1615  degrees of freedom
+Residual deviance: 1450.0  on 1607  degrees of freedom
+  (2202 observations deleted due to missingness)
+AIC: 1468
+
+Number of Fisher Scoring iterations: 6</code></pre>
+</div>
+</div>
+<p>Then, we’ll conduct a supervised machine learning analysis (with a simple but still commonly used model - in fact, the same model we used for the regression, a generalized linear model!). Again, for now, you’ll run this code; later, you’ll work through each step in detail.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>my_rec <span class="ot">&lt;-</span> <span class="fu">recipe</span>(good_grad_rate <span class="sc">~</span> total_enroll <span class="sc">+</span> pct_admitted <span class="sc">+</span> n_bach <span class="sc">+</span> n_mast <span class="sc">+</span> n_doc <span class="sc">+</span> tuition_fees <span class="sc">+</span> percent_fin_aid <span class="sc">+</span> avg_salary, <span class="at">data =</span> ipeds) <span class="co"># same as above; this sets up what predicts the outcome</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="co"># specify model</span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>my_mod <span class="ot">&lt;-</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">logistic_reg</span>() <span class="sc">%&gt;%</span> <span class="co"># specifies a logistic regression</span></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">set_engine</span>(<span class="st">"glm"</span>) <span class="sc">%&gt;%</span> <span class="co"># specifies the specific package used to estimate the logistic regression</span></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">set_mode</span>(<span class="st">"classification"</span>) <span class="co"># specifies that our outcome is a dichotomous or categorical variable</span></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>my_wf <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">%&gt;%</span> <span class="co"># this starts a workflow, which will stitch together the steps in our analysis</span></span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">add_model</span>(my_mod) <span class="sc">%&gt;%</span> <span class="co"># adds the model</span></span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">add_recipe</span>(my_rec) <span class="co"># adds the recipe</span></span>
+<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a>fit_model <span class="ot">&lt;-</span> <span class="fu">fit</span>(my_wf, ipeds) <span class="co"># fits the model</span></span>
+<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a>predictions <span class="ot">&lt;-</span> <span class="fu">predict</span>(fit_model, ipeds) <span class="sc">%&gt;%</span> <span class="co"># predicts the value of the dependent variable using only the predictors' values and our trained model</span></span>
+<span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_cols</span>(ipeds) <span class="co"># this adds the original data back to the predicted values, so everything is together</span></span>
+<span id="cb35-17"><a href="#cb35-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-18"><a href="#cb35-18" aria-hidden="true" tabindex="-1"></a>accuracy <span class="ot">&lt;-</span> predictions <span class="sc">%&gt;%</span> <span class="co"># this and the next two steps calculate the accuracy of our predictions</span></span>
+<span id="cb35-19"><a href="#cb35-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">metrics</span>(<span class="at">truth =</span> good_grad_rate, <span class="at">estimate =</span> .pred_class) <span class="sc">%&gt;%</span></span>
+<span id="cb35-20"><a href="#cb35-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(.metric <span class="sc">==</span> <span class="st">"accuracy"</span>)</span>
+<span id="cb35-21"><a href="#cb35-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-22"><a href="#cb35-22" aria-hidden="true" tabindex="-1"></a>accuracy <span class="co"># print the accuracy</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 3
+  .metric  .estimator .estimate
+  &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt;
+1 accuracy binary         0.810</code></pre>
+</div>
+</div>
+<p>The key to observe at this point is what is similar and different between the two approaches (regression and supervised machine learning). Both used the same underlying statistical model, but had some stark differences. Add two or more similarities and two or more differences (no wrong answers!) below.</p>
+<section id="your-turn-9" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-9"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
+<p>Similarities:</p>
+<ul>
+<li>XX</li>
+<li>XX</li>
+</ul>
+<p>Differences:</p>
+<ul>
+<li></li>
+<li></li>
+</ul>
+</section>
+</section>
+</section>
+<section id="communicate" class="level2">
+<h2 class="anchored" data-anchor-id="communicate">5. COMMUNICATE</h2>
+<p>The final step in the workflow/process is sharing the results of your analysis with wider audience. Krumm et al.&nbsp;(2018) have outlined the following 3-step process for communicating with education stakeholders findings from an analysis:</p>
+<ol type="1">
+<li><p><strong>Select.</strong> Communicating what one has learned involves selecting among those analyses that are most important and most useful to an intended audience, as well as selecting a form for displaying that information, such as a graph or table in static or interactive form, i.e.&nbsp;a “data product.”</p></li>
+<li><p><strong>Polish</strong>. After creating initial versions of data products, research teams often spend time refining or polishing them, by adding or editing titles, labels, and notations and by working with colors and shapes to highlight key points.</p></li>
+<li><p><strong>Narrate.</strong> Writing a narrative to accompany the data products involves, at a minimum, pairing a data product with its related research question, describing how best to interpret the data product, and explaining the ways in which the data product helps answer the research question.</p></li>
+</ol>
+<p>Now, let’s return to our research questions. What did we find? This (especially the supervised machine learning model and its output) is very likely new, and this is meant to elicit initial perceptions, and not the right answer. What did we find for each of your RQs? Add a few thoughts below for each. Focus on what you would communicate about this analysis to a general audience, again, keeping in mind this is based on your very initial interpretations.</p>
+<section id="rq-a" class="level3">
+<h3 class="anchored" data-anchor-id="rq-a">RQ A</h3>
+<ul>
+<li><p>ADD YOUR RESPONSE HERE</p></li>
+<li><p>ADD YOUR RESPONSE HERE</p></li>
+</ul>
+</section>
+<section id="rq" class="level3">
+<h3 class="anchored" data-anchor-id="rq">RQ</h3>
+<ul>
+<li><p>ADD YOUR RESPONSE HERE</p></li>
+<li><p>ADD YOUR RESPONSE HERE</p></li>
+</ul>
+</section>
+<section id="knit-check" class="level3">
+<h3 class="anchored" data-anchor-id="knit-check">🧶 Knit &amp; Check ✅</h3>
+<p>For your SML Module 1 Badge, you will further reflect on and interpret these models, and their distinctions.</p>
+<p>Rendered HTML files can be published online through a variety of ways including <a href="https://posit.cloud/learn/guide#publish-from-cloud">Posit Cloud</a>, <a href="#0">RPubs</a> , <a href="#0">GitHub Pages</a>, <a href="#0">Quarto Pub</a>, or <a href="#0">other methods</a>. The easiest way to quickly publish your file online is to publish directly from RStudio. You can do so by clicking the “Publish” button located in the Viewer Pane after you render your document as illustrated in the screenshot below.</p>
+<p><img src="img/publish.png" class="img-fluid"></p>
+<p>Congratulations - you’ve completed this case study! Move on to the badge activity next.</p>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  let localAlternateSentinel = 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
