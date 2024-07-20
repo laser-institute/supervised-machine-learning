@@ -399,8 +399,7 @@ We noted earlier that we may introduce bias when we evaluate different models ag
 That is, we can be unconcerned about inadvertently introducing bias until we reach the last step - fitting our last model. We can do that using the familiar `fit()` function, followed by `last_fit`. It is important to not make further changes after this point.
 
 ```{r}
-fitted_model <- fit(my_wf, data_train)
-final_fit <- last_fit(fitted_model, train_test_split, metrics = class_metrics)
+final_fit <- last_fit(my_wf, train_test_split, metrics = class_metrics)
 ```
 
 ### Step 5: Interpret accuracy

@@ -1,0 +1,1727 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="LASER Institute">
+<meta name="dcterms.date" content="2024-07-19">
+
+<title>Modeling Interactions Data with Random Forests</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="sml-4-case-study-key_files/libs/clipboard/clipboard.min.js"></script>
+<script src="sml-4-case-study-key_files/libs/quarto-html/quarto.js"></script>
+<script src="sml-4-case-study-key_files/libs/quarto-html/popper.min.js"></script>
+<script src="sml-4-case-study-key_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="sml-4-case-study-key_files/libs/quarto-html/anchor.min.js"></script>
+<link href="sml-4-case-study-key_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="sml-4-case-study-key_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="sml-4-case-study-key_files/libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="sml-4-case-study-key_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="sml-4-case-study-key_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="sml-4-case-study-key_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="sml-4-case-study-key_files/libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+
+
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#prepare" id="toc-prepare" class="nav-link active" data-scroll-target="#prepare">1. PREPARE</a></li>
+  <li><a href="#wrangle" id="toc-wrangle" class="nav-link" data-scroll-target="#wrangle">2. WRANGLE</a></li>
+  <li><a href="#step-0-loading-and-setting-up" id="toc-step-0-loading-and-setting-up" class="nav-link" data-scroll-target="#step-0-loading-and-setting-up">Step 0: Loading and setting up</a>
+  <ul>
+  <li><a href="#your-turn" id="toc-your-turn" class="nav-link" data-scroll-target="#your-turn"><span style="color: green;">Your Turn</span> ⤵</a></li>
+  <li><a href="#your-turn-1" id="toc-your-turn-1" class="nav-link" data-scroll-target="#your-turn-1"><span style="color: green;">Your Turn</span> ⤵</a></li>
+  </ul></li>
+  <li><a href="#explore" id="toc-explore" class="nav-link" data-scroll-target="#explore">3. EXPLORE</a>
+  <ul>
+  <li><a href="#your-turn-2" id="toc-your-turn-2" class="nav-link" data-scroll-target="#your-turn-2"><span style="color: green;">Your Turn</span> ⤵</a></li>
+  <li><a href="#your-turn-3" id="toc-your-turn-3" class="nav-link" data-scroll-target="#your-turn-3"><span style="color: green;">Your Turn</span> ⤵</a></li>
+  <li><a href="#your-turn-4" id="toc-your-turn-4" class="nav-link" data-scroll-target="#your-turn-4"><span style="color: green;">Your Turn</span> ⤵</a></li>
+  <li><a href="#your-turn-5" id="toc-your-turn-5" class="nav-link" data-scroll-target="#your-turn-5"><span style="color: green;">Your Turn</span> ⤵</a></li>
+  <li><a href="#your-turn-6" id="toc-your-turn-6" class="nav-link" data-scroll-target="#your-turn-6"><span style="color: green;">Your Turn</span> ⤵</a></li>
+  <li><a href="#your-turn-7" id="toc-your-turn-7" class="nav-link" data-scroll-target="#your-turn-7"><span style="color: green;">Your Turn</span> ⤵</a></li>
+  <li><a href="#your-turn-8" id="toc-your-turn-8" class="nav-link" data-scroll-target="#your-turn-8"><span style="color: green;">Your Turn</span> ⤵</a></li>
+  <li><a href="#your-turn-9" id="toc-your-turn-9" class="nav-link" data-scroll-target="#your-turn-9"><span style="color: green;">Your Turn</span> ⤵</a></li>
+  <li><a href="#your-turn-10" id="toc-your-turn-10" class="nav-link" data-scroll-target="#your-turn-10"><span style="color: green;">Your Turn</span> ⤵</a></li>
+  <li><a href="#your-turn-11" id="toc-your-turn-11" class="nav-link" data-scroll-target="#your-turn-11"><span style="color: green;">Your Turn</span> ⤵</a></li>
+  <li><a href="#your-turn-12" id="toc-your-turn-12" class="nav-link" data-scroll-target="#your-turn-12"><span style="color: green;">Your Turn</span> ⤵</a></li>
+  </ul></li>
+  <li><a href="#model" id="toc-model" class="nav-link" data-scroll-target="#model">4. MODEL</a>
+  <ul>
+  <li><a href="#step-1.-split-data" id="toc-step-1.-split-data" class="nav-link" data-scroll-target="#step-1.-split-data">Step 1. Split data</a>
+  <ul class="collapse">
+  <li><a href="#your-turn-13" id="toc-your-turn-13" class="nav-link" data-scroll-target="#your-turn-13"><span style="color: green;">Your Turn</span> ⤵</a></li>
+  </ul></li>
+  <li><a href="#step-2-engineer-features-and-write-down-the-recipe" id="toc-step-2-engineer-features-and-write-down-the-recipe" class="nav-link" data-scroll-target="#step-2-engineer-features-and-write-down-the-recipe">Step 2: Engineer features and write down the recipe</a>
+  <ul class="collapse">
+  <li><a href="#your-turn-14" id="toc-your-turn-14" class="nav-link" data-scroll-target="#your-turn-14"><span style="color: green;">Your Turn</span> ⤵</a></li>
+  <li><a href="#your-turn-15" id="toc-your-turn-15" class="nav-link" data-scroll-target="#your-turn-15"><span style="color: green;">Your Turn</span> ⤵</a></li>
+  </ul></li>
+  <li><a href="#step-3-specify-the-model-and-workflow" id="toc-step-3-specify-the-model-and-workflow" class="nav-link" data-scroll-target="#step-3-specify-the-model-and-workflow">Step 3: Specify the model and workflow</a></li>
+  <li><a href="#step-4-fit-model" id="toc-step-4-fit-model" class="nav-link" data-scroll-target="#step-4-fit-model">Step 4: Fit model</a>
+  <ul class="collapse">
+  <li><a href="#your-turn-16" id="toc-your-turn-16" class="nav-link" data-scroll-target="#your-turn-16"><span style="color: green;">Your Turn</span> ⤵</a></li>
+  </ul></li>
+  <li><a href="#step-5-interpret-accuracy" id="toc-step-5-interpret-accuracy" class="nav-link" data-scroll-target="#step-5-interpret-accuracy">Step 5: Interpret accuracy</a>
+  <ul class="collapse">
+  <li><a href="#your-turn-17" id="toc-your-turn-17" class="nav-link" data-scroll-target="#your-turn-17"><span style="color: green;">Your Turn</span> ⤵</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#communicate" id="toc-communicate" class="nav-link" data-scroll-target="#communicate">5. COMMUNICATE</a>
+  <ul>
+  <li><a href="#knit-check" id="toc-knit-check" class="nav-link" data-scroll-target="#knit-check">🧶 Knit &amp; Check ✅</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Modeling Interactions Data with Random Forests</h1>
+<p class="subtitle lead">Case Study Key</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>LASER Institute </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">July 19, 2024</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="prepare" class="level2">
+<h2 class="anchored" data-anchor-id="prepare">1. PREPARE</h2>
+<p>After interpreting our last model, it is easy to think we can do a little better. But, how? In this learning lab, we will answer this question will building a better model.</p>
+<p>Feature engineering is a rich topic in machine learning research, including in the learning analytics and educational data mining communities.</p>
+<p>Consider research on online learning and the work of Rodriguez et al. (2021). In these two studies, <em>digital trace data</em>, data generated through users’ interactions with digital technologies. Review this paper – specifically how they processed the “clickstream” data. As this paper illustrates, there is not one way to use such data.</p>
+<blockquote class="blockquote">
+<p>Rodriguez, F., Lee, H. R., Rutherford, T., Fischer, C., Potma, E., &amp; Warschauer, M. (2021, April). Using clickstream data mining techniques to understand and support first-generation college students in an online chemistry course. In LAK21: 11th International Learning Analytics and Knowledge Conference (pp.&nbsp;313-322). <a href="https://github.com/laser-institute/essential-readings/blob/main/machine-learning/ml-lab-2/rodriguez-et-al-2021-lak.pdf" class="uri">https://github.com/laser-institute/essential-readings/blob/main/machine-learning/ml-lab-2/rodriguez-et-al-2021-lak.pdf</a></p>
+</blockquote>
+<p>Last, we note that there are methods that intended to automated the process of feature engineering (Bosch et al., 2021), though such processes are not necessarily interpretable and they usually require some degree of tailoring to your particular context. Review this paper on this topic</p>
+<blockquote class="blockquote">
+<p>Bosch, N. (2021). AutoML Feature Engineering for Student Modeling Yields High Accuracy, but Limited Interpretability. <em>Journal of Educational Data Mining, 13</em>(2), 55-79. <a href="https://github.com/laser-institute/essential-readings/blob/main/machine-learning/ml-lab-3/bosch-et-al-2021-jedm.pdf" class="uri">https://github.com/laser-institute/essential-readings/blob/main/machine-learning/ml-lab-3/bosch-et-al-2021-jedm.pdf</a></p>
+</blockquote>
+<p>Even after feature engineering, machine learning approaches can often (but not always) be improved by choosing a more sophisticated model type. Note how we used a regression model in the first two case studies; here, we explore a considerably more sophisticated model, a random forest. Feature engineering and choosing a more sophisticated model adds some complexity to the modeling. As we have discussed, it is easy to bias our results if we repeatedly check the performance of <em>different model fits</em> with the same test data. Cross-validation is one commonly used solution for this problem.</p>
+<p>Our driving question is: <strong>How much can we improve our model?</strong> Looking back to our predictive model from LL 2, we can see that our accuracy was okay. Can we improve on that? Let’s dive in!</p>
+</section>
+<section id="wrangle" class="level2">
+<h2 class="anchored" data-anchor-id="wrangle">2. WRANGLE</h2>
+</section>
+<section id="step-0-loading-and-setting-up" class="level2">
+<h2 class="anchored" data-anchor-id="step-0-loading-and-setting-up">Step 0: Loading and setting up</h2>
+<p>First, let’s load the packages we’ll use—the familiar {tidyverse} and several others focused on modeling.</p>
+<section id="your-turn" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn"><span style="color: green;">Your Turn</span> ⤵</h4>
+<p>Please add to the chunk below code to load three packages we’ve used before – tidyverse, janitor, and tidymodels.</p>
+<p>Please install and add two additional packages: {ranger}, for one implementation of random forest modeling, and {vip}, for variable importance metrics.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(janitor)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'janitor'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:stats':
+
+    chisq.test, fisher.test</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.4     ✔ readr     2.1.5
+✔ forcats   1.0.0     ✔ stringr   1.5.1
+✔ ggplot2   3.5.0     ✔ tibble    3.2.1
+✔ lubridate 1.9.3     ✔ tidyr     1.3.1
+✔ purrr     1.0.2     </code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidymodels)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching packages ────────────────────────────────────── tidymodels 1.2.0 ──
+✔ broom        1.0.5      ✔ rsample      1.2.1 
+✔ dials        1.2.1      ✔ tune         1.2.1 
+✔ infer        1.0.7      ✔ workflows    1.1.4 
+✔ modeldata    1.4.0      ✔ workflowsets 1.1.0 
+✔ parsnip      1.2.1      ✔ yardstick    1.3.1 
+✔ recipes      1.0.10     
+── Conflicts ───────────────────────────────────────── tidymodels_conflicts() ──
+✖ scales::discard() masks purrr::discard()
+✖ dplyr::filter()   masks stats::filter()
+✖ recipes::fixed()  masks stringr::fixed()
+✖ dplyr::lag()      masks stats::lag()
+✖ yardstick::spec() masks readr::spec()
+✖ recipes::step()   masks stats::step()
+• Use tidymodels_prefer() to resolve common conflicts.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(vip) <span class="co"># a new package we're adding for variable importance measures</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'vip'
+
+The following object is masked from 'package:utils':
+
+    vi</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ranger) <span class="co"># this is needed for the random forest algorithm</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Next, we’ll load a new file — one with <em>interactions</em> (or log-trace) data.</p>
+<p>We have to do the same processing we did in the second learning lab, to obtain cut-off dates. As a reminder, the purpose of this is to train the model on data from the first one-third of the class, with the reasoning being this is a good time to intervene–far enough into the class to make an appreciable impact, but not too late to have a limited chance of being able to change students’ trajectory in the class.</p>
+<p>We’ll repeat the procedure we carried out with the assessments data — calculating a cut-off for each class and then filtering the data based upon this cut-off. But, since we’ve already done this for the assessment data, to allow us to focus more on some new feature engineering steps in this learning lab, we are providing you with the already-filtered interactions data. <em>Note</em>: you can find the code used to carry out these steps in the Lab 3 folder in <code>process-interactions-data.R</code>.</p>
+<p>Please load <code>oulad-interactions-filtered.csv</code> into R, assigning the resulting data frame the name <code>interactions</code>. Note, you may need to unzip this file!</p>
+</section>
+<section id="your-turn-1" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-1"><span style="color: green;">Your Turn</span> ⤵</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>interactions <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/oulad-interactions-filtered.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 5548858 Columns: 11
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr (3): code_module, code_presentation, activity_type
+dbl (8): id_student, id_site, date, sum_click, week_from, week_to, module_pr...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+</div>
+<p>In the OULAD documentation, this is called the VLE (virtual learning environment) data source. Please review the description of the variables in the <em>studentVLE</em> and <em>VLE</em> sources (which are joined together for this learning lab) <a href="https://analyse.kmi.open.ac.uk/open_dataset#description">here</a>. Then, read in the <code>oulad-interactions.csv</code> file.</p>
+<p>Also, we’ll load another file we created in the last module - <code>oulad-students_and_assessments.csv</code>. That is in this module’s data folder; please load this in with <code>read_csv()</code>, as below.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>students_and_assessments <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/oulad-students-and-assessments.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 32593 Columns: 17
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr (8): code_module, code_presentation, gender, region, highest_education, ...
+dbl (9): id_student, imd_band, num_of_prev_attempts, studied_credits, module...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+</div>
+<p>Woah, even filtered, this is a large file! Let’s start to explore it a bit. Please take three steps to explore the data, as follows.</p>
+</section>
+</section>
+<section id="explore" class="level2">
+<h2 class="anchored" data-anchor-id="explore">3. EXPLORE</h2>
+<section id="your-turn-2" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-2"><span style="color: green;">Your Turn</span> ⤵</h4>
+<p><em>First</em>, <code>count()</code> the <code>activity_type</code> variable and <em>sort</em> the resulting output by frequency.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>interactions <span class="sc">%&gt;%</span> </span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">count</span>(activity_type)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 19 × 2
+   activity_type        n
+   &lt;chr&gt;            &lt;int&gt;
+ 1 dataplus           311
+ 2 dualpane          7306
+ 3 externalquiz     18171
+ 4 forumng        1279917
+ 5 glossary          9630
+ 6 homepage        832424
+ 7 htmlactivity      6562
+ 8 oucollaborate    25861
+ 9 oucontent      1065736
+10 ouelluminate     13829
+11 ouwiki           66413
+12 page             33539
+13 questionnaire    16528
+14 quiz            398966
+15 repeatactivity       6
+16 resource        436704
+17 sharedsubpage      103
+18 subpage        1104279
+19 url             232573</code></pre>
+</div>
+</div>
+<p>What does this tell you? Consulting the codebook and your output, please add at least two notes on what you are noticing:</p>
+<ul>
+<li></li>
+</ul>
+</section>
+<section id="your-turn-3" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-3"><span style="color: green;">Your Turn</span> ⤵</h4>
+<p><em>Second</em>, please create a histogram of the <code>date</code> variable.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>interactions <span class="sc">%&gt;%</span> </span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> date)) <span class="sc">+</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_histogram</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="sml-4-case-study-key_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>What does this tell you? Add one or more notes:</p>
+<ul>
+<li></li>
+</ul>
+</section>
+<section id="your-turn-4" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-4"><span style="color: green;">Your Turn</span> ⤵</h4>
+<p><em>Third</em>, please conduct one other data exploration step of your choosing. Options include creating simple graphs or calculating descriptive, summary statistics.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(skimr)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="fu">skim</span>(interactions)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="table table-sm table-striped small">
+<caption>Data summary</caption>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Name</td>
+<td style="text-align: left;">interactions</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Number of rows</td>
+<td style="text-align: left;">5548858</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Number of columns</td>
+<td style="text-align: left;">11</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">_______________________</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Column type frequency:</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">character</td>
+<td style="text-align: left;">3</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">numeric</td>
+<td style="text-align: left;">8</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">________________________</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Group variables</td>
+<td style="text-align: left;">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: character</strong></p>
+<table class="table table-sm table-striped small">
+<colgroup>
+<col style="width: 23%">
+<col style="width: 13%">
+<col style="width: 18%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 7%">
+<col style="width: 11%">
+<col style="width: 14%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">min</th>
+<th style="text-align: right;">max</th>
+<th style="text-align: right;">empty</th>
+<th style="text-align: right;">n_unique</th>
+<th style="text-align: right;">whitespace</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">code_module</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">code_presentation</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">activity_type</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">19</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table class="table table-sm table-striped small">
+<colgroup>
+<col style="width: 23%">
+<col style="width: 8%">
+<col style="width: 12%">
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 7%">
+<col style="width: 5%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">mean</th>
+<th style="text-align: right;">sd</th>
+<th style="text-align: right;">p0</th>
+<th style="text-align: right;">p25</th>
+<th style="text-align: right;">p50</th>
+<th style="text-align: right;">p75</th>
+<th style="text-align: right;">p100</th>
+<th style="text-align: left;">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">id_student</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">726903.72</td>
+<td style="text-align: right;">571596.96</td>
+<td style="text-align: right;">6516</td>
+<td style="text-align: right;">511001</td>
+<td style="text-align: right;">588131</td>
+<td style="text-align: right;">645451</td>
+<td style="text-align: right;">2698588</td>
+<td style="text-align: left;">▅▇▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">id_site</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">734462.44</td>
+<td style="text-align: right;">129889.18</td>
+<td style="text-align: right;">526721</td>
+<td style="text-align: right;">661808</td>
+<td style="text-align: right;">730007</td>
+<td style="text-align: right;">877045</td>
+<td style="text-align: right;">941543</td>
+<td style="text-align: left;">▇▂▇▆▇</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">date</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">37.18</td>
+<td style="text-align: right;">38.87</td>
+<td style="text-align: right;">-25</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">27</td>
+<td style="text-align: right;">55</td>
+<td style="text-align: right;">172</td>
+<td style="text-align: left;">▆▇▃▂▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">sum_click</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">3.68</td>
+<td style="text-align: right;">8.45</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">6977</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">week_from</td>
+<td style="text-align: right;">4701710</td>
+<td style="text-align: right;">0.15</td>
+<td style="text-align: right;">6.08</td>
+<td style="text-align: right;">5.06</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">29</td>
+<td style="text-align: left;">▇▅▂▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">week_to</td>
+<td style="text-align: right;">4701710</td>
+<td style="text-align: right;">0.15</td>
+<td style="text-align: right;">6.12</td>
+<td style="text-align: right;">5.03</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">29</td>
+<td style="text-align: left;">▇▅▂▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">module_presentation_length</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">256.69</td>
+<td style="text-align: right;">13.28</td>
+<td style="text-align: right;">234</td>
+<td style="text-align: right;">241</td>
+<td style="text-align: right;">262</td>
+<td style="text-align: right;">269</td>
+<td style="text-align: right;">269</td>
+<td style="text-align: left;">▆▁▁▂▇</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">quantile_cutoff_date</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">99.66</td>
+<td style="text-align: right;">40.57</td>
+<td style="text-align: right;">32</td>
+<td style="text-align: right;">54</td>
+<td style="text-align: right;">129</td>
+<td style="text-align: right;">131</td>
+<td style="text-align: right;">173</td>
+<td style="text-align: left;">▅▂▁▇▁</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>We’re ready to proceed to engineering some features with the interactions data.</p>
+<p>First, let’s join together the <code>interactions</code> and the <code>code_module_dates</code> data frames.</p>
+<p>We’ll use the same code to create the <code>code_module_dates</code> we used in LL2.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>assessments <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/oulad-assessments.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 173912 Columns: 10
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr (3): code_module, code_presentation, assessment_type
+dbl (7): id_assessment, id_student, date_submitted, is_banked, score, date, ...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>code_module_dates <span class="ot">&lt;-</span> assessments <span class="sc">%&gt;%</span> </span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(code_module, code_presentation) <span class="sc">%&gt;%</span> </span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(<span class="at">quantile_cutoff_date =</span> <span class="fu">quantile</span>(date, <span class="at">probs =</span> .<span class="dv">25</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`summarise()` has grouped output by 'code_module'. You can override using the
+`.groups` argument.</code></pre>
+</div>
+</div>
+<p>This is so we have the cut-offs (one-third through the semester), which will help us to only use data from that period in our model when we filter the data based upon those dates.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>interactions_joined <span class="ot">&lt;-</span> interactions <span class="sc">%&gt;%</span> </span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">left_join</span>(code_module_dates) <span class="co"># join the data based on course_module and course_presentation</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Joining with `by = join_by(code_module, code_presentation,
+quantile_cutoff_date)`</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>interactions_filtered <span class="ot">&lt;-</span> interactions_joined <span class="sc">%&gt;%</span> </span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(date <span class="sc">&lt;</span> quantile_cutoff_date) <span class="co"># filter the data so only assignments before the cutoff date are included</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Then, let’s engineer several features. For the present time, we’ll focus on the <code>sum_click</code> variable, which tells us how many times students clicked on a resource for a given date. We’ll use the <code>interactions_filtered</code> data set we just created. Let’s start simple: please type the name of that data set (<code>interactions_filtered</code>) in the code chunk below.</p>
+</section>
+<section id="your-turn-5" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-5"><span style="color: green;">Your Turn</span> ⤵</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>interactions_filtered <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/oulad-interactions-filtered.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 5548858 Columns: 11
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr (3): code_module, code_presentation, activity_type
+dbl (8): id_student, id_site, date, sum_click, week_from, week_to, module_pr...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+</div>
+<p>How can we create a feature with <code>sum_click</code>? Think back to our discussion in the presentation; we have <em>many</em> options for working with such time series data. Perhaps the most simple is to count the clicks. Please summarize the number of clicks for each student (specific to a single course). This means you will need to group your data by <code>id_student</code>, <code>code_module</code>, and <code>code_presentation</code>, and then create a summary variable. Assign the resulting output the name <code>interactions_summarized</code>. You may find the documentation for <code>summarize()</code> to be helpful. That is available <a href="https://dplyr.tidyverse.org/reference/summarise.html">here</a>. <a href="https://r4ds.had.co.nz/transform.html">This chapter</a> is also likely helpful (note that <code>summarise()</code> and <code>summarize()</code> are different spellings for the same function).</p>
+</section>
+<section id="your-turn-6" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-6"><span style="color: green;">Your Turn</span> ⤵</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>interactions_summarized <span class="ot">&lt;-</span> interactions_filtered <span class="sc">%&gt;%</span> </span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(id_student, code_module, code_presentation) <span class="sc">%&gt;%</span> </span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(<span class="at">sum_clicks =</span> <span class="fu">sum</span>(sum_click))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`summarise()` has grouped output by 'id_student', 'code_module'. You can
+override using the `.groups` argument.</code></pre>
+</div>
+</div>
+</section>
+<section id="your-turn-7" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-7"><span style="color: green;">Your Turn</span> ⤵</h4>
+<p>How many times did students click? Let’s create a histogram to see. Please use {ggplot} and <code>geom_histogram()</code> to visualize the distribution of the <code>sum_clicks</code> variable you just created. Turn to <a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html">the documentation</a> if you need a pointer!</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>interactions_summarized <span class="sc">%&gt;%</span> </span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> sum_clicks)) <span class="sc">+</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_histogram</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="sml-4-case-study-key_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>This is a good start - we’ve created our first feature based upon the log data, <code>sum_clicks</code>! What are some other features we can add? An affordance of using the <code>summarize()</code> function in R is we can create multiple summary statistics at once. Let’s also calculate the standard deviation of the number of clicks as well as the mean. Please copy the code you wrote above into the code chunk below and then add these two additional summary statistics.</p>
+</section>
+<section id="your-turn-8" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-8"><span style="color: green;">Your Turn</span> ⤵</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>interactions_summarized <span class="ot">&lt;-</span> interactions_filtered <span class="sc">%&gt;%</span> </span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(id_student, code_module, code_presentation) <span class="sc">%&gt;%</span> </span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(<span class="at">sum_clicks =</span> <span class="fu">sum</span>(sum_click),</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">sd_clicks =</span> <span class="fu">sd</span>(sum_click), </span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>              <span class="at">mean_clicks =</span> <span class="fu">mean</span>(sum_click))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`summarise()` has grouped output by 'id_student', 'code_module'. You can
+override using the `.groups` argument.</code></pre>
+</div>
+</div>
+<p>We’ll take one last step here – creating individual <em>slopes</em> of students’ clicks over time. This code is a bit more involved, and so is annotated for you below; feel free to modify and re-use this.</p>
+<p>First, we use a custom function that can deal with cases where the fitting of the slopes fails (e.g., for students with only a single data point, or some other unanticipated issue with the model estimation).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define a function to fit the model and handle warnings</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>fit_model <span class="ot">&lt;-</span> <span class="cf">function</span>(data) {</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tryCatch</span>(</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>        { </span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Fit a linear model with sum_click as the response and date as the predictor</span></span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>            model <span class="ot">&lt;-</span> <span class="fu">lm</span>(sum_click <span class="sc">~</span> date, <span class="at">data =</span> data)</span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Tidy the model output (convert to a tidy data frame)</span></span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>            <span class="fu">tidy</span>(model) </span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Handle errors: return a tibble with NA values</span></span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">error =</span> <span class="cf">function</span>(e) { <span class="fu">tibble</span>(<span class="at">term =</span> <span class="cn">NA</span>, <span class="at">estimate =</span> <span class="cn">NA</span>, <span class="at">std.error =</span> <span class="cn">NA</span>, <span class="at">statistic =</span> <span class="cn">NA</span>, <span class="at">p.value =</span> <span class="cn">NA</span>) },</span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Handle warnings: return a tibble with NA values</span></span>
+<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a>        <span class="at">warning =</span> <span class="cf">function</span>(w) { <span class="fu">tibble</span>(<span class="at">term =</span> <span class="cn">NA</span>, <span class="at">estimate =</span> <span class="cn">NA</span>, <span class="at">std.error =</span> <span class="cn">NA</span>, <span class="at">statistic =</span> <span class="cn">NA</span>, <span class="at">p.value =</span> <span class="cn">NA</span>) }</span>
+<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>Note: this next step may take up to a minute or so! Please feel free to relax!</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit the models for each group</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>interactions_slopes <span class="ot">&lt;-</span> interactions_filtered <span class="sc">%&gt;%</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(id_student, code_module, code_presentation) <span class="sc">%&gt;%</span> <span class="co"># Group by student and course</span></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">nest</span>() <span class="sc">%&gt;%</span> <span class="co"># Nest the data frame, creating a list of data frames for each group</span></span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">model =</span> <span class="fu">map</span>(data, fit_model)) <span class="sc">%&gt;%</span> <span class="co"># Apply the fit_model function to each nested data frame</span></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">unnest</span>(model) <span class="co"># Unnest the model output, returning to a regular data frame</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We’ll do a bit of data wrangling.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Process the output</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>interactions_slopes <span class="ot">&lt;-</span> interactions_slopes <span class="sc">%&gt;%</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span> <span class="co"># Remove grouping</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(code_module, code_presentation, id_student, term, estimate) <span class="sc">%&gt;%</span> <span class="co"># Select relevant columns</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(term)) <span class="sc">%&gt;%</span> <span class="co"># Filter out rows where term is NA</span></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">spread</span>(term, estimate) <span class="sc">%&gt;%</span> <span class="co"># Spread the terms into separate columns</span></span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate_if</span>(is.numeric, round, <span class="dv">4</span>) <span class="co"># Round numeric columns to 4 decimal places</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Please rename the resulting intercept and date, changing them<code>intercept</code> and <code>slope</code>, respectively. Note, selecting a variable with a parenthesis in it can be tricky! Think of other ways you could do this, if you wish (hint: think of what a function in janitor can do!).</p>
+</section>
+<section id="your-turn-9" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-9"><span style="color: green;">Your Turn</span> ⤵</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>interactions_slopes <span class="ot">&lt;-</span> interactions_slopes <span class="sc">%&gt;%</span> </span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rename</span>(<span class="at">intercept =</span> <span class="st">`</span><span class="at">(Intercept)</span><span class="st">`</span>,</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">slope =</span> date)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>After running this code, we will have intercepts, linear slopes, and quadratic terms for each students’ clickstream pattern over the semester.</p>
+<p>Let’s join together several files. First, let’s join all our features into a single file. Please use <code>left_join()</code> to join <code>interactions_summarized</code> and <code>interactions_slopes</code>, assigning the resulting output the name <code>interactions_summaried_and_slopes</code>.</p>
+</section>
+<section id="your-turn-10" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-10"><span style="color: green;">Your Turn</span> ⤵</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>interactions_summarized_and_slopes <span class="ot">&lt;-</span> <span class="fu">left_join</span>(interactions_slopes, interactions_summarized)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Joining with `by = join_by(code_module, code_presentation, id_student)`</code></pre>
+</div>
+</div>
+<p>Just one last step! Let’s join together <em>all</em> of the data we’ll use for our modeling: <code>students_and_assessments</code> and <code>all_features</code>. Use <code>left_join()</code> once more, assigning the resulting output the name <code>students_assessments_and_interactions</code>. Lots of joining! Sometimes, the hardest part of complex analyses lies in the preparation (and joining) of the data.</p>
+</section>
+<section id="your-turn-11" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-11"><span style="color: green;">Your Turn</span> ⤵</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>students_assessments_and_interactions <span class="ot">&lt;-</span> <span class="fu">left_join</span>(students_and_assessments, </span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>                                                   interactions_summarized_and_slopes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Joining with `by = join_by(code_module, code_presentation, id_student)`</code></pre>
+</div>
+</div>
+<p>One more small step. Let’s ensure that our outcome variable – <code>pass</code> – is a factor. It was, but when saving to and reading from a CSV, it lots its factor characteristics, becoming instead a character string. It is necessary for the outcome of a classification model (like the one we are using) to be a factor. Please use <code>mutate()</code> to do just that.</p>
+</section>
+<section id="your-turn-12" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-12"><span style="color: green;">Your Turn</span> ⤵</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>students_assessments_and_interactions <span class="ot">&lt;-</span> students_assessments_and_interactions <span class="sc">%&gt;%</span> </span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">pass =</span> <span class="fu">as.factor</span>(pass))</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a><span class="co"># write_csv(students_assessments_and_interactions, "students-assessments-and-interactions.csv")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>students_assessments_and_interactions <span class="sc">%&gt;%</span> </span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>    skimr<span class="sc">::</span><span class="fu">skim</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="table table-sm table-striped small">
+<caption>Data summary</caption>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Name</td>
+<td style="text-align: left;">Piped data</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Number of rows</td>
+<td style="text-align: left;">32593</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Number of columns</td>
+<td style="text-align: left;">22</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">_______________________</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Column type frequency:</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">character</td>
+<td style="text-align: left;">8</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">factor</td>
+<td style="text-align: left;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">numeric</td>
+<td style="text-align: left;">13</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">________________________</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Group variables</td>
+<td style="text-align: left;">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: character</strong></p>
+<table class="table table-sm table-striped small">
+<colgroup>
+<col style="width: 23%">
+<col style="width: 13%">
+<col style="width: 18%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 7%">
+<col style="width: 11%">
+<col style="width: 14%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">min</th>
+<th style="text-align: right;">max</th>
+<th style="text-align: right;">empty</th>
+<th style="text-align: right;">n_unique</th>
+<th style="text-align: right;">whitespace</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">code_module</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">code_presentation</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">gender</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">region</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">13</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">highest_education</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: right;">27</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">age_band</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">disability</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">final_result</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: factor</strong></p>
+<table class="table table-sm table-striped small">
+<colgroup>
+<col style="width: 18%">
+<col style="width: 13%">
+<col style="width: 18%">
+<col style="width: 10%">
+<col style="width: 12%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: left;">ordered</th>
+<th style="text-align: right;">n_unique</th>
+<th style="text-align: left;">top_counts</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">pass</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">0: 20232, 1: 12361</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table class="table table-sm table-striped small">
+<colgroup>
+<col style="width: 21%">
+<col style="width: 7%">
+<col style="width: 11%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 6%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 8%">
+<col style="width: 4%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">mean</th>
+<th style="text-align: right;">sd</th>
+<th style="text-align: right;">p0</th>
+<th style="text-align: right;">p25</th>
+<th style="text-align: right;">p50</th>
+<th style="text-align: right;">p75</th>
+<th style="text-align: right;">p100</th>
+<th style="text-align: left;">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">id_student</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">706687.67</td>
+<td style="text-align: right;">549167.31</td>
+<td style="text-align: right;">3733.00</td>
+<td style="text-align: right;">508573.00</td>
+<td style="text-align: right;">590310.00</td>
+<td style="text-align: right;">644453.00</td>
+<td style="text-align: right;">2716795.00</td>
+<td style="text-align: left;">▅▇▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">imd_band</td>
+<td style="text-align: right;">4627</td>
+<td style="text-align: right;">0.86</td>
+<td style="text-align: right;">5.62</td>
+<td style="text-align: right;">2.73</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">4.00</td>
+<td style="text-align: right;">6.00</td>
+<td style="text-align: right;">8.00</td>
+<td style="text-align: right;">10.00</td>
+<td style="text-align: left;">▃▇▇▆▆</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">num_of_prev_attempts</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">0.16</td>
+<td style="text-align: right;">0.48</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">6.00</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">studied_credits</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">79.76</td>
+<td style="text-align: right;">41.07</td>
+<td style="text-align: right;">30.00</td>
+<td style="text-align: right;">60.00</td>
+<td style="text-align: right;">60.00</td>
+<td style="text-align: right;">120.00</td>
+<td style="text-align: right;">655.00</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">module_presentation_length</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">256.01</td>
+<td style="text-align: right;">13.18</td>
+<td style="text-align: right;">234.00</td>
+<td style="text-align: right;">241.00</td>
+<td style="text-align: right;">262.00</td>
+<td style="text-align: right;">268.00</td>
+<td style="text-align: right;">269.00</td>
+<td style="text-align: left;">▇▁▁▅▇</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">date_registration</td>
+<td style="text-align: right;">45</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">-69.41</td>
+<td style="text-align: right;">49.26</td>
+<td style="text-align: right;">-322.00</td>
+<td style="text-align: right;">-100.00</td>
+<td style="text-align: right;">-57.00</td>
+<td style="text-align: right;">-29.00</td>
+<td style="text-align: right;">167.00</td>
+<td style="text-align: left;">▁▂▇▃▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">date_unregistration</td>
+<td style="text-align: right;">22521</td>
+<td style="text-align: right;">0.31</td>
+<td style="text-align: right;">49.76</td>
+<td style="text-align: right;">82.46</td>
+<td style="text-align: right;">-365.00</td>
+<td style="text-align: right;">-2.00</td>
+<td style="text-align: right;">27.00</td>
+<td style="text-align: right;">109.00</td>
+<td style="text-align: right;">444.00</td>
+<td style="text-align: left;">▁▁▇▂▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">mean_weighted_score</td>
+<td style="text-align: right;">7958</td>
+<td style="text-align: right;">0.76</td>
+<td style="text-align: right;">544.70</td>
+<td style="text-align: right;">381.39</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">160.00</td>
+<td style="text-align: right;">610.00</td>
+<td style="text-align: right;">875.00</td>
+<td style="text-align: right;">1512.00</td>
+<td style="text-align: left;">▇▃▇▅▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">intercept</td>
+<td style="text-align: right;">3565</td>
+<td style="text-align: right;">0.89</td>
+<td style="text-align: right;">3.10</td>
+<td style="text-align: right;">2.92</td>
+<td style="text-align: right;">-200.20</td>
+<td style="text-align: right;">2.18</td>
+<td style="text-align: right;">2.86</td>
+<td style="text-align: right;">3.77</td>
+<td style="text-align: right;">123.14</td>
+<td style="text-align: left;">▁▁▁▇▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">slope</td>
+<td style="text-align: right;">4320</td>
+<td style="text-align: right;">0.87</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">0.16</td>
+<td style="text-align: right;">-12.17</td>
+<td style="text-align: right;">-0.01</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">0.02</td>
+<td style="text-align: right;">8.22</td>
+<td style="text-align: left;">▁▁▇▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">sum_clicks</td>
+<td style="text-align: right;">3565</td>
+<td style="text-align: right;">0.89</td>
+<td style="text-align: right;">704.28</td>
+<td style="text-align: right;">971.10</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">158.00</td>
+<td style="text-align: right;">375.00</td>
+<td style="text-align: right;">815.00</td>
+<td style="text-align: right;">14609.00</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">sd_clicks</td>
+<td style="text-align: right;">3817</td>
+<td style="text-align: right;">0.88</td>
+<td style="text-align: right;">5.03</td>
+<td style="text-align: right;">5.41</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">2.48</td>
+<td style="text-align: right;">3.99</td>
+<td style="text-align: right;">6.54</td>
+<td style="text-align: right;">554.90</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">mean_clicks</td>
+<td style="text-align: right;">3565</td>
+<td style="text-align: right;">0.89</td>
+<td style="text-align: right;">3.21</td>
+<td style="text-align: right;">1.22</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">2.37</td>
+<td style="text-align: right;">3.01</td>
+<td style="text-align: right;">3.83</td>
+<td style="text-align: right;">46.24</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>We’re now ready to model!</p>
+</section>
+</section>
+<section id="model" class="level2">
+<h2 class="anchored" data-anchor-id="model">4. MODEL</h2>
+<section id="step-1.-split-data" class="level3">
+<h3 class="anchored" data-anchor-id="step-1.-split-data">Step 1. Split data</h3>
+<p>We’ll follow the same steps we followed in learning labs #1 and #2, here. One difference - we’ll use <code>students_assessments_and_interactions</code> instead of the data frame we used in those learning labs. Please port over the code you used in those learning labs here, changing the name of the data frame to the one we are now using.</p>
+<p>We discuss this first step minimally as we have now carried out a step very similar to this in LL1 and LL2; return to the case study for those (especially LL1) for more on data splitting.</p>
+<section id="your-turn-13" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-13"><span style="color: green;">Your Turn</span> ⤵</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">20230712</span>)</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>train_test_split <span class="ot">&lt;-</span> <span class="fu">initial_split</span>(students_assessments_and_interactions, <span class="at">prop =</span> .<span class="dv">33</span>, <span class="at">strata =</span> <span class="st">"pass"</span>)</span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>data_train <span class="ot">&lt;-</span> <span class="fu">training</span>(train_test_split)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>There is a key difference that is next. In this step. we’ll further process <code>data_train</code>, creating different subsets of the data, or folds of the data, that we can use to fit our model multiple times.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>vfcv <span class="ot">&lt;-</span> <span class="fu">vfold_cv</span>(data_train, <span class="at">v =</span> <span class="dv">4</span>) <span class="co"># this differentiates this from what we did before</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a><span class="co"># before, we simple used data_train to fit our model</span></span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>vfcv</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#  4-fold cross-validation 
+# A tibble: 4 × 2
+  splits              id   
+  &lt;list&gt;              &lt;chr&gt;
+1 &lt;split [8066/2689]&gt; Fold1
+2 &lt;split [8066/2689]&gt; Fold2
+3 &lt;split [8066/2689]&gt; Fold3
+4 &lt;split [8067/2688]&gt; Fold4</code></pre>
+</div>
+</div>
+<p>How does this work? <code>data_train</code> is sampled as many time as we se #### <span style="color: green;">Your Turn</span> ⤵</p>
+<p>Above, we split the data into 10 different folds. Change the number of folds from 10 to 5 by changing the value of v; 10 is simply the default—not always the best one! For help, run <code>?vfold_cv</code> to get a hint.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>kfcv <span class="ot">&lt;-</span> <span class="fu">vfold_cv</span>(data_train, <span class="at">v =</span> <span class="dv">10</span>)</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>kfcv</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#  10-fold cross-validation 
+# A tibble: 10 × 2
+   splits              id    
+   &lt;list&gt;              &lt;chr&gt; 
+ 1 &lt;split [9679/1076]&gt; Fold01
+ 2 &lt;split [9679/1076]&gt; Fold02
+ 3 &lt;split [9679/1076]&gt; Fold03
+ 4 &lt;split [9679/1076]&gt; Fold04
+ 5 &lt;split [9679/1076]&gt; Fold05
+ 6 &lt;split [9680/1075]&gt; Fold06
+ 7 &lt;split [9680/1075]&gt; Fold07
+ 8 &lt;split [9680/1075]&gt; Fold08
+ 9 &lt;split [9680/1075]&gt; Fold09
+10 &lt;split [9680/1075]&gt; Fold10</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="step-2-engineer-features-and-write-down-the-recipe" class="level3">
+<h3 class="anchored" data-anchor-id="step-2-engineer-features-and-write-down-the-recipe">Step 2: Engineer features and write down the recipe</h3>
+<p>Here, we’ll carry out several feature engineering steps.</p>
+<p>Read about <a href="https://www.tmwr.org/recipes.html">possible steps</a> and see more about how the following five feature engineering steps below work. Like in the first learning lab, this is the step in which we set the recipe.</p>
+<ul>
+<li><a href="https://recipes.tidymodels.org/reference/step_normalize.html"><code>step_normalize()</code></a>: normalizes numeric data to have a standard deviation of one and a mean of zero</li>
+<li><a href="https://recipes.tidymodels.org/reference/step_dummy.html"><code>step_dummy()</code></a>: convert nominal data (e.g.&nbsp;character or factors) into one or more numeric binary model terms for the levels of the original data.</li>
+<li><a href="https://recipes.tidymodels.org/reference/step_impute_knn.html"><code>step_impute_knn()</code></a>: impute missing alues using the nearest neighbors method</li>
+</ul>
+<p>We will use all three of these. Please note that there are two ways to use each of these. One of them is by <em>specifying the specific variable</em> you want to use for the feature engineering step. For example, below, we would normalize a hypothetical variable, one called <code>minutes_of_videos_watched</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">step_normalize</span>(minutes_of_videos_watched)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Another way is to specify <em>for which types of variables</em> the feature engineering step applies. You can see all of the available types <a href="https://recipes.tidymodels.org/reference/has_role.html">here</a>. For example, the code below would normalize all numeric variables:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">step_normalize</span>(<span class="fu">all_numeric_predictors</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="your-turn-14" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-14"><span style="color: green;">Your Turn</span> ⤵</h4>
+<p>Let’s turn to our recipe. Please <em>add to</em> the code below to add the new variables—features—we created. We’ve started you off with ___ code below (where you can add the new variables – be sure to add all of them!).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>my_rec <span class="ot">&lt;-</span> <span class="fu">recipe</span>(pass <span class="sc">~</span> disability <span class="sc">+</span></span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>                     date_registration <span class="sc">+</span> </span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>                     gender <span class="sc">+</span></span>
+<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>                     code_module <span class="sc">+</span></span>
+<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a>                     mean_weighted_score <span class="sc">+</span></span>
+<span id="cb53-6"><a href="#cb53-6" aria-hidden="true" tabindex="-1"></a>                     sum_clicks <span class="sc">+</span> sd_clicks <span class="sc">+</span> mean_clicks <span class="sc">+</span> <span class="co"># new</span></span>
+<span id="cb53-7"><a href="#cb53-7" aria-hidden="true" tabindex="-1"></a>                     intercept <span class="sc">+</span> slope, <span class="co"># new</span></span>
+<span id="cb53-8"><a href="#cb53-8" aria-hidden="true" tabindex="-1"></a>                 <span class="at">data =</span> data_train) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="your-turn-15" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-15"><span style="color: green;">Your Turn</span> ⤵</h4>
+<p>Then, please <em>add to</em> the following code by completing three steps, building on the code that is started below:</p>
+<ol type="1">
+<li>Please normalize all numeric predictors.</li>
+<li>Please dummy code the following three variables: <code>disability</code>, <code>gender</code>, and <code>code_module</code>.</li>
+<li>Please impute missing values using the nearest neighbors method for the <code>mean_weighted_score</code>, <code>sum_clicks</code>, <code>sd_clicks</code>, <code>mean_clicks</code>, <code>intercept</code>, <code>slope</code>, and <code>date_registration</code> variables.</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>my_rec <span class="ot">&lt;-</span> my_rec <span class="sc">%&gt;%</span> </span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">step_dummy</span>(disability) <span class="sc">%&gt;%</span> </span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">step_dummy</span>(gender) <span class="sc">%&gt;%</span>  </span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">step_dummy</span>(code_module) <span class="sc">%&gt;%</span> </span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">step_impute_knn</span>(mean_weighted_score) <span class="sc">%&gt;%</span> </span>
+<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">step_impute_knn</span>(sum_clicks) <span class="sc">%&gt;%</span> </span>
+<span id="cb54-7"><a href="#cb54-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">step_impute_knn</span>(sd_clicks) <span class="sc">%&gt;%</span> </span>
+<span id="cb54-8"><a href="#cb54-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">step_impute_knn</span>(mean_clicks) <span class="sc">%&gt;%</span> </span>
+<span id="cb54-9"><a href="#cb54-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">step_impute_knn</span>(intercept) <span class="sc">%&gt;%</span> </span>
+<span id="cb54-10"><a href="#cb54-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">step_impute_knn</span>(slope) <span class="sc">%&gt;%</span> </span>
+<span id="cb54-11"><a href="#cb54-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">step_impute_knn</span>(date_registration) <span class="sc">%&gt;%</span> </span>
+<span id="cb54-12"><a href="#cb54-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">step_normalize</span>(<span class="fu">all_numeric_predictors</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="step-3-specify-the-model-and-workflow" class="level3">
+<h3 class="anchored" data-anchor-id="step-3-specify-the-model-and-workflow">Step 3: Specify the model and workflow</h3>
+<p>Next, we specify the model and workflow, using the same engine <em>but a different engine and mode</em>, here, regression for a <em>continuous outcome</em>. Specifically, we are:</p>
+<ul>
+<li>using the <code>random_forest()</code> function to set the <em>model</em> as a random forest</li>
+<li>using <code>set_engine("ranger", importance = "impurity")</code> to set the <em>engine</em> as that provided for random forests through the {ranger} package; we also add the <code>importance = "impurity"</code> line to be able to interpret a particular variable importance metric specific to random forest models</li>
+<li>finally, using <code>set_mode("classification"))</code> as we are again predicting categories (transactional and substantive conversations taking place through #NGSSchat)</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="co"># specify model</span></span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>my_mod <span class="ot">&lt;-</span></span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rand_forest</span>() <span class="sc">%&gt;%</span> <span class="co"># specify the type of model we are fitting, a random forest</span></span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">set_engine</span>(<span class="st">"ranger"</span>, <span class="at">importance =</span> <span class="st">"impurity"</span>) <span class="sc">%&gt;%</span> <span class="co"># using a variable importance metric specific to this random forest engine</span></span>
+<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">set_mode</span>(<span class="st">"classification"</span>) <span class="co"># same as before</span></span>
+<span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-7"><a href="#cb55-7" aria-hidden="true" tabindex="-1"></a><span class="co"># specify workflow</span></span>
+<span id="cb55-8"><a href="#cb55-8" aria-hidden="true" tabindex="-1"></a>my_wf <span class="ot">&lt;-</span></span>
+<span id="cb55-9"><a href="#cb55-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">workflow</span>() <span class="sc">%&gt;%</span> <span class="co"># create a workflow</span></span>
+<span id="cb55-10"><a href="#cb55-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">add_model</span>(my_mod) <span class="sc">%&gt;%</span> <span class="co"># add the model we wrote above</span></span>
+<span id="cb55-11"><a href="#cb55-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">add_recipe</span>(my_rec) <span class="co"># add our recipe we wrote above</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="step-4-fit-model" class="level3">
+<h3 class="anchored" data-anchor-id="step-4-fit-model">Step 4: Fit model</h3>
+<p>Note that here we use the <code>kfcv</code> data and a different function - <code>fit_resamples()</code>, instead of <code>fit()</code>. This function is required when we have multiple folds of our sample, as we created using the vfcv function above. See more about this function <a href="https://tune.tidymodels.org/reference/fit_resamples.html">here</a>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>class_metrics <span class="ot">&lt;-</span> <span class="fu">metric_set</span>(accuracy, sensitivity, specificity, ppv, npv, kap) <span class="co"># specify the same metrics as earlier</span></span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>fitted_model_resamples <span class="ot">&lt;-</span> <span class="fu">fit_resamples</span>(my_wf, <span class="at">resamples =</span> vfcv, <span class="at">metrics =</span> class_metrics) <span class="co"># specify the workflow, resampled data, and our metrics</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Note that you have fit as many models as the value for <code>v</code> that you specified earlier. So, this may take some time. Take a walk, grab a snack, or make a cup of tea!</p>
+<p>Then, we can use the same <code>collect_metrics()</code> function we have used to inspect the predictive strength of the model. Please do that for <code>fitted_model_resamples</code>.</p>
+<section id="your-turn-16" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-16"><span style="color: green;">Your Turn</span> ⤵</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="fu">collect_metrics</span>(fitted_model_resamples)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 6
+  .metric     .estimator  mean     n std_err .config             
+  &lt;chr&gt;       &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;               
+1 accuracy    binary     0.669     4 0.00304 Preprocessor1_Model1
+2 kap         binary     0.266     4 0.00662 Preprocessor1_Model1
+3 npv         binary     0.582     4 0.0123  Preprocessor1_Model1
+4 ppv         binary     0.706     4 0.00613 Preprocessor1_Model1
+5 sensitivity binary     0.800     4 0.00478 Preprocessor1_Model1
+6 specificity binary     0.456     4 0.00260 Preprocessor1_Model1</code></pre>
+</div>
+</div>
+<p>We noted earlier that we may introduce bias when we evaluate different models against the same training data. The benefit of using the multiple folds - and fitting multiple models - is we can make changes to our features or model. Thus, if we decide to add a new feature, we can run the above steps, without concern about biasing our interpretation of how accurate our model is.</p>
+<p>That is, we can be unconcerned about inadvertently introducing bias until we reach the last step - fitting our last model. We can do that using the familiar <code>fit()</code> function, followed by <code>last_fit</code>. It is important to not make further changes after this point.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a>final_fit <span class="ot">&lt;-</span> <span class="fu">last_fit</span>(my_wf, train_test_split, <span class="at">metrics =</span> class_metrics)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="step-5-interpret-accuracy" class="level3">
+<h3 class="anchored" data-anchor-id="step-5-interpret-accuracy">Step 5: Interpret accuracy</h3>
+<p>fa Finally, collect the metrics for our final fit. <em>These</em> are the values that you should report as final. #### <span style="color: green;">Your Turn</span> ⤵</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>final_fit <span class="sc">%&gt;%</span> </span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">collect_metrics</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 4
+  .metric     .estimator .estimate .config             
+  &lt;chr&gt;       &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
+1 accuracy    binary         0.674 Preprocessor1_Model1
+2 sensitivity binary         0.799 Preprocessor1_Model1
+3 specificity binary         0.469 Preprocessor1_Model1
+4 ppv         binary         0.711 Preprocessor1_Model1
+5 npv         binary         0.588 Preprocessor1_Model1
+6 kap         binary         0.279 Preprocessor1_Model1</code></pre>
+</div>
+</div>
+<p>We can see that <code>final_fit</code> is for a single fit: a random forest with the best performing tuning parameters trained with the <em>entire</em> training set of data to predict the values in our (otherwise not used/“spent”) testing set of data.</p>
+<section id="your-turn-17" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-17"><span style="color: green;">Your Turn</span> ⤵</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="fu">collect_predictions</span>(final_fit) <span class="sc">%&gt;%</span> </span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">conf_mat</span>(.pred_class, pass)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>          Truth
+Prediction     0     1
+         0 10832  2724
+         1  4400  3882</code></pre>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="communicate" class="level2">
+<h2 class="anchored" data-anchor-id="communicate">5. COMMUNICATE</h2>
+<p>Another benefit of a random forest is we can interpret variable importance metrics. Do that here with the following code.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>final_fit <span class="sc">%&gt;%</span> </span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pluck</span>(<span class="st">".workflow"</span>, <span class="dv">1</span>) <span class="sc">%&gt;%</span>   </span>
+<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">extract_fit_parsnip</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb64-4"><a href="#cb64-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">vip</span>(<span class="at">num_features =</span> <span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="sml-4-case-study-key_files/figure-html/unnamed-chunk-33-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Please add two or more notes on what you notice about which variables (features) are important, focused on what you would say to someone in your audience about what the important variables in your model were.</p>
+<ul>
+<li></li>
+<li></li>
+</ul>
+<section id="knit-check" class="level3">
+<h3 class="anchored" data-anchor-id="knit-check">🧶 Knit &amp; Check ✅</h3>
+<p>Congratulations - you’ve completed this case study! Consider moving on to the badge activity next.</p>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  let localAlternateSentinel = 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

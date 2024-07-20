@@ -576,8 +576,7 @@ using the familiar `fit()` function, followed by `last_fit`. It is
 important to not make further changes after this point.
 
 ```{r}
-fitted_model <- fit(my_wf, data_train)
-final_fit <- last_fit(fitted_model, train_test_split, metrics = class_metrics)
+final_fit <- last_fit(my_wf, train_test_split, metrics = class_metrics)
 ```
 
 ### Step 5: Interpret accuracy
