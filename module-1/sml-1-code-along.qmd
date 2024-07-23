@@ -56,11 +56,14 @@ pacman::p_load(pacman, knitr, tidyverse, readxl)
 library(tidyverse)
 library(tidymodels)
 
-starwars_recoded <- starwars %>% # built-in data available just by typing
+starwars <- starwars %>% # built-in data available just by typing
     mutate(species_human = ifelse(species == "Human", "Human", "Not human")) # recoding species to create a categorical variable
 
-starwars_recoded %>% 
-    count(species) # how many humans are there?
+starwars <- starwars %>% 
+    mutate(species_human = as.factor(species_human))
+
+starwars %>% 
+    count(species_human) # how many humans are there?
 ```
 
 ## 1
@@ -71,7 +74,7 @@ starwars_recoded %>%
 #| eval: false
 #| echo: true
 
-m1 <- lm(species_human ~ height + mass, data = starwars)
+m1 <- glm(species_human ~ height + mass, data = starwars, family = "binomial")
 ```
 
 ## 2
@@ -123,14 +126,8 @@ print(reg_model.summary())
 ```{r}
 #| eval: false
 #| echo: true
-library(tidyverse)
-library(tidymodels)
 
-starwars_recoded <- starwars %>% # built-in data available just by typing
-    mutate(species_human = ifelse(species == "Human", "Human", "Not human")) # recoding species to create a categorical variable
-
-starwars_recoded %>% 
-    count(species) # how many humans are there?
+# Same as step 1 for regression!
 ```
 
 ## 1
@@ -152,7 +149,7 @@ starwars_recoded %>%
 #| echo: true
 #| eval: false
 # predicting humans based on the independent effects of height and mass
-my_rec <- recipe(species_human ~ height + mass, data = data_train)
+my_rec <- recipe(species_human ~ height + mass, data = starwars)
 ```
 
 ## 3
@@ -181,7 +178,7 @@ my_wf <- workflow() %>%
 #| echo: true
 #| eval: false
 
-fit_model <- fit(my_wf, data = starwars_recoded)
+fit_model <- fit(my_wf, data = starwars)
 ```
 
 ## 5
@@ -192,9 +189,12 @@ fit_model <- fit(my_wf, data = starwars_recoded)
 #| echo: true
 #| eval: false
 
-predictions <- predict(fit_model, starwars_recoded) %>% 
-    bind_cols(starwars_recoded) %>% 
+predictions <- predict(fit_model, starwars) %>% 
+    bind_cols(starwars) %>% 
     mutate(species_human = as.factor(species_human))
+
+predictions %>% 
+    select(.pred_class, species_human)
 
 predictions %>%
   metrics(species_human, .pred_class) %>%
