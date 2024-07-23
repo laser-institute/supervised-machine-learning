@@ -42,7 +42,7 @@ This is the rough structure used for all four module's conceptual overview prese
 Machine learning is increasingly prevalent in our lives---and in educational contexts. Its role in educational research and practice is growing, albeit with some challenges and even controversy. These modules are designed to familiarize you with supervised machine learning and its applications in STEM education research. Throughout the module, we'll explore four key questions that correspond to the focus of each of the four modules. By the end, you will have a deep understanding of the key characteristics of supervised machine learning and how to implement supervised machine learning workflows in R and Python.
 
 ::: {.notes}
-This is from the overview of the module -- it is jsut a high-level overview of the topic.
+This is from the overview of the module -- it is just a high-level overview of the topic.
 :::
 
 # Discussion 1
@@ -266,7 +266,7 @@ A key point to make here is that each lab introduces a tension/issue that is res
 **Please see `sml-1-case-study.qmd`**
 
 -   Building a prediction model for graduate rates using data from National Center for Education Statistics data --- IPEDS< specifically
--   We'll use not only the same _data_ but also the same _model_ in two modes - inferential regression modeling and predicitive SML, seeing how the key is in how we use the model, not the model type
+-   We'll use not only the same _data_ but also the same _model_ in two modes - inferential regression modeling and predictive SML, seeing how the key is in how we use the model, not the model type
 -   Work with peers to complete this, reading the text, following links to resources (and the reading), and then completing the required 👉 Your Turn ⤵ tasks
 -   A key is available, but we strongly encourage you to use it only at the end to check your work, or if you are completely stuck and have tried our recommended troubleshooting steps: https://docs.google.com/document/d/14Jc-KG3m5k1BvyKWqw7KmDD21IugU5nV5edfJkZyspY/edit
 
