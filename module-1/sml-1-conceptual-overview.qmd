@@ -148,23 +148,32 @@ This *predictive goal* means that we can do things differently:
 -   Last, the modeling process can look different:
     -   Ensemble models that combine or improve on ("boosting") the predictions of individual models
 
-## Which technique should I choose?
+## Unsupervised ML
+
+- Does not require coded data; one way to think about unsupervised ML is that its purpose is to discover codes/labels
+- Can be used in an _exploratory mode_ (see [Nelson, 2020](https://journals.sagepub.com/doi/full/10.1177/0049124118769114?casa_token=EV5XH31qbyAAAAAA%3AFg09JQ1XHOOzlxYT2SSJ06vZv0jG-s4Qfz8oDIQwh2jrZ-jrHNr7xZYL2FwnZtZiokhPalvV1RL2Bw)) 
+- **Warning**: The results of unsupervised ML _cannot_ directly be used to provide codes/outcomes for supervised ML techniques 
+- Algorithms include:
+  - Cluster analysis and Latent Profile Analysis
+  - [Principle Components Analysis (really!)](https://web.stanford.edu/~hastie/ElemStatLearn/)
+
+# What technique should I choose?
 
 Do you have coded data or data with a known outcome -- let's say about K-12 students -- and, do you want to:
 
--   *Predict* how other students with similar data (but without a known outcome) perform?
--   *Scale* coding that you have done for a sample of data to a larger sample?
--   *Provide timely or instantaneous feedback*, like in many learning analytics systems?
+- _Predict_ how other students with similar data (but without a known outcome) perform?
+- _Scale_ coding that you have done for a sample of data to a larger sample?
+- _Provide timely or instantaneous feedback_, like in many learning analytics systems?
 
 **Supervised methods may be your best bet**
 
-## Which technique should I choose?
+# What technique should I choose?
 
 Do you not yet have codes/outcomes -- and do you want to?
 
--   *Achieve a starting point* for qualitative coding, perhaps in a ["computational grounded theory"](https://journals.sagepub.com/doi/full/10.1177/0049124117729703) mode?
--   *Discover groups or patterns in your data* that may be of interest?
--   *Reduce the number of variables in your dataset* to a smaller, but perhaps nearly as explanatory/predictive - set of variables?
+- _Achieve a starting point_ for qualitative coding, perhaps in a ["computational grounded theory"](https://journals.sagepub.com/doi/full/10.1177/0049124117729703) mode?
+- _Discover groups or patterns in your data_ that may be of interest?
+- _Reduce the number of variables in your dataset_ to a smaller, but perhaps nearly as explanatory/predictive - set of variables?
 
 **Unsupervised methods may be helpful**
 
@@ -175,9 +184,9 @@ Do you want to say something about one or several variables' relations with an o
 -   Understand whether an intervention was effective
 -   See how one or more variables relates to an outcome
 
-**Traditional inferential statistics may be best**
+**Traditional, inferential statistics *i.e., regression* may be best**
 
-## Example of machine learning in STEM Edu Research
+## Example of supervised machine learning in STEM Ed Research
 
 **Combining best practices in assessment with supervised ML**
 
