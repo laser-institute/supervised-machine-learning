@@ -89,7 +89,9 @@ my_wf <-
     add_recipe(my_rec)
 ```
 
-## 4. Fit model
+## 4. Fit model (training)
+
+**Model building with training data**
 
 ```{r}
 #| eval: false
@@ -98,7 +100,27 @@ class_metrics <- metric_set(accuracy, sensitivity, specificity, ppv, npv, kap) #
 final_fit <- last_fit(my_wf, train_test_split, metrics = class_metrics)
 ```
 
+## 4. Fit model (testing)
+
+**Model evaluating with testing data**
+
+```{r}
+#| eval: false
+#| echo: true
+fit_model <- fit(my_wf, data_train)
+
+predictions <- predict(fit_model, data_train) %>% 
+    bind_cols(data_train) %>% 
+    mutate(species_human = as.factor(species_human))
+
+predictions %>%
+    metrics(species_human, .pred_class) %>%
+    filter(.metric == "accuracy")
+```
+
 ## 5. Evaluate accuracy
+
+**Only run this once you're done training/messing with your model!; this way, these estimates will be unbiased**
 
 ```{r}
 #| eval: false
@@ -121,6 +143,9 @@ band_members %>% inner_join(band_instruments)
 # Code-along: python
 
 ```{python}
+#| eval: false
+#| echo: true
+
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import OneHotEncoder

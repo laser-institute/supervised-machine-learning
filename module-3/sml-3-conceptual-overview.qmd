@@ -42,6 +42,10 @@ The key point to make here is that we will go well beyond the relatiely simplist
 Make the point that we will engage _much_ more deeply about feature engineering in the next module; we do this here to start the conversation and to open up some space in the next module for the complexity of cross-validation and a new type of model that we will use --- a random forest.
 :::
 
+## Two notes
+
+1. Sometimes, we do things that are a little bit harder in the short-term for pedagogical reasons (evaluating metrics with training data, for instance)---some of these frictions will go away when we progress to our "full" model (in the next module)
+2. Whereas the last module was focused on a big concept (the importance of splitting data into training and testing sets), this module is focused on a bunch of concepts (different fit metrics) that are best understood when they are used in a variety of specific instances (when each metric is needed, used, and interpreted)
 
 # Discussion 1
 
@@ -143,6 +147,14 @@ Please note that Precision goes by the name Positive Predictive Value, whereas N
 
 :::
 
+
+## AUC-ROC
+
+- *Area Under the Curve - Receiver Operator Characteristic* (AUC-ROC)
+- Informs us as to how the True Positive rate changes given a different classification threshhold
+- Classification threshhold: the probability above which a model makes a positive prediction
+- Higher is better
+
 # Key Concept # 2
 
 ## Feature Engineering (Part A)
@@ -150,11 +162,21 @@ Please note that Precision goes by the name Positive Predictive Value, whereas N
 ::: {.panel-tabset}
 ## Why?
 
-Let's consider a very simple data set, `d`, one with _time_point_ data, `var_a`, for a single student. How do we add this to our model?
+Let's consider a very simple data set, `d`, one with _time_point_ data, `var_a`, for a single student. *How do we add this to our model?* Focus on the time element; how could you account for this?
 
 ```{r}
 #| echo: true
 d <- tibble(student_id = "janyia", time_point = 1:10, var_a = c(0.01, 0.32, 0.32, 0.34, 0.04, 0.54, 0.56, 0.75, 0.63, 0.78))
+d %>% head(3)
+```
+
+## Why (again)?
+
+How about a different variable, now focusing on the variable, `var_b`. How could we add this to a model?
+
+```{r}
+#| echo: true
+d <- tibble(student_id = "janyia", time_point = 1:10, var_b = c(12, 10, 35, 3, 4, 54, 56, 75, 63, 78))
 d %>% head(3)
 ```
 
@@ -163,7 +185,12 @@ d %>% head(3)
 - We can do all of these things **manually**
 - But, there are also helpful "**{recipes}**" functions to do this
 - Any, the {recipes} package makes it practical to carry out feature engineering steps for not only single variables, but groups of variables (or all of the variables)
-- Examples, all of which start with `step()`, e.g. `step_dummy()`
+- Examples, all of which start with `step()`:
+    - `step_dummy()`
+    - `step_normalize()`
+    - `step_inpute()`
+    - `step_date()`
+    - `step_holiday()`
 
 :::
 
@@ -171,13 +198,6 @@ d %>% head(3)
 ::: {.notes}
 Emphasize this very brief introduction is to just begin to explore these topics (that we'll explore in more depth in the next module), and to make our more sophisticated modeling possible
 :::
-
-## AUC-ROC
-
-- *Area Under the Curve - Receiver Operator Characteristic* (AUC-ROC)
-- Informs us as to how the True Positive rate changes given a different classification threshhold
-- Classification threshhold: the probability above which a model makes a positive prediction
-- Higher is better
 
 # Discussion 2
 

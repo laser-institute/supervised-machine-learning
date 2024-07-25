@@ -1,21 +1,21 @@
 <!DOCTYPE html>
 <html lang="en"><head>
-<script src="sml-3-conceptual-overview_files/libs/clipboard/clipboard.min.js"></script>
-<script src="sml-3-conceptual-overview_files/libs/quarto-html/tabby.min.js"></script>
-<script src="sml-3-conceptual-overview_files/libs/quarto-html/popper.min.js"></script>
-<script src="sml-3-conceptual-overview_files/libs/quarto-html/tippy.umd.min.js"></script>
-<link href="sml-3-conceptual-overview_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="sml-3-conceptual-overview_files/libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="sml-3-conceptual-overview_files/libs/quarto-html/quarto-html.min.css" rel="stylesheet" data-mode="light">
-<link href="sml-3-conceptual-overview_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+<script src="sml-3-code-along_files/libs/clipboard/clipboard.min.js"></script>
+<script src="sml-3-code-along_files/libs/quarto-html/tabby.min.js"></script>
+<script src="sml-3-code-along_files/libs/quarto-html/popper.min.js"></script>
+<script src="sml-3-code-along_files/libs/quarto-html/tippy.umd.min.js"></script>
+<link href="sml-3-code-along_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="sml-3-code-along_files/libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="sml-3-code-along_files/libs/quarto-html/quarto-html.min.css" rel="stylesheet" data-mode="light">
+<link href="sml-3-code-along_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
   <meta name="generator" content="quarto-1.3.450">
 
-  <title>How Good is Our Model, Really?</title>
+  <title>Adding Metrics to a Workflow</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
-  <link rel="stylesheet" href="sml-3-conceptual-overview_files/libs/revealjs/dist/reset.css">
-  <link rel="stylesheet" href="sml-3-conceptual-overview_files/libs/revealjs/dist/reveal.css">
+  <link rel="stylesheet" href="sml-3-code-along_files/libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="sml-3-code-along_files/libs/revealjs/dist/reveal.css">
   <style>
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
@@ -94,13 +94,13 @@
     code span.vs { color: #20794d; } /* VerbatimString */
     code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
-  <link rel="stylesheet" href="sml-3-conceptual-overview_files/libs/revealjs/dist/theme/quarto.css">
-  <link href="sml-3-conceptual-overview_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
-  <link href="sml-3-conceptual-overview_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
-  <link href="sml-3-conceptual-overview_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
-  <link href="sml-3-conceptual-overview_files/libs/revealjs/plugin/reveal-chalkboard/font-awesome/css/all.css" rel="stylesheet">
-  <link href="sml-3-conceptual-overview_files/libs/revealjs/plugin/reveal-chalkboard/style.css" rel="stylesheet">
-  <link href="sml-3-conceptual-overview_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <link rel="stylesheet" href="sml-3-code-along_files/libs/revealjs/dist/theme/quarto.css">
+  <link href="sml-3-code-along_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="sml-3-code-along_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="sml-3-code-along_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="sml-3-code-along_files/libs/revealjs/plugin/reveal-chalkboard/font-awesome/css/all.css" rel="stylesheet">
+  <link href="sml-3-code-along_files/libs/revealjs/plugin/reveal-chalkboard/style.css" rel="stylesheet">
+  <link href="sml-3-code-along_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
   <style type="text/css">
 
   .callout {
@@ -391,362 +391,166 @@
     <div class="slides">
 
 <section id="title-slide" class="quarto-title-block center">
-  <h1 class="title">How Good is Our Model, Really?</h1>
-  <p class="subtitle">Conceptual Overview</p>
+  <h1 class="title">Adding Metrics to a Workflow</h1>
+  <p class="subtitle">Code Along</p>
 
 <div class="quarto-title-authors">
 </div>
 
 </section>
 <section>
-<section id="purpose-and-agenda" class="title-slide slide level1 center">
-<h1>Purpose and Agenda</h1>
-<p>How do we interpret a machine learning model? What else can we say, besides how accurate a model this? This learning lab is intended to help you to answer these questions by examining output from a classification and a regression model. We again use the OULAD, but add an assessment file.</p>
-<aside class="notes">
-<p>The key point to make here is that we will go well beyond the relatiely simplistic “Accuracy” metric, which is used to simply represent the proportion of the predictions that are correct. While useful, there are many other metrics that can give us a better sense of <em>for which cases</em> our SML model is making good predictions (e.g., just the “true” cases in a binary classification model, but not the “false” cases – or vice versa). You can make the point that this is especially important in our field, as different incorrect predictions may have different stakes (i.e., incorrectly classifying a student as needing additional support may not be directly harmful, but incorrectly predicting that a in fact student cheated may have substantial consequences). Metrics and interpreting them given the specifics of a particular analysis and context can help to avoid these harms, and to build the best performing models possible.</p>
-<style type="text/css">
-        span.MJX_Assistive_MathML {
-          position:absolute!important;
-          clip: rect(1px, 1px, 1px, 1px);
-          padding: 1px 0 0 0!important;
-          border: 0!important;
-          height: 1px!important;
-          width: 1px!important;
-          overflow: hidden!important;
-          display:block!important;
-      }</style></aside>
+<section id="getting-started" class="title-slide slide level1 center">
+<h1>Getting started</h1>
+
 </section>
-<section id="what-well-do-in-this-presentation" class="slide level2">
-<h2>What we’ll do in this presentation</h2>
+<section id="process" class="slide level2">
+<h2>Process</h2>
 <ul>
-<li>Discussion 1</li>
-<li>Key Concept: Accuracy</li>
-<li>Key Concept: Feature Engineering (part A)</li>
-<li>Discussion 2</li>
-<li>Introduction to the other parts of this learning lab</li>
+<li>Again, create a .R file in <code>/module-3</code></li>
+<li>Then, run copy and paste the code in this presentation as we talk through each step</li>
 </ul>
-<aside class="notes">
-<p>Make the point that we will engage <em>much</em> more deeply about feature engineering in the next module; we do this here to start the conversation and to open up some space in the next module for the complexity of cross-validation and a new type of model that we will use — a random forest.</p>
-<style type="text/css">
-        span.MJX_Assistive_MathML {
-          position:absolute!important;
-          clip: rect(1px, 1px, 1px, 1px);
-          padding: 1px 0 0 0!important;
-          border: 0!important;
-          height: 1px!important;
-          width: 1px!important;
-          overflow: hidden!important;
-          display:block!important;
-      }</style></aside>
 </section>
-<section id="two-notes" class="slide level2">
-<h2>Two notes</h2>
-<ol type="1">
-<li>Sometimes, we do things that are a little bit harder in the short-term for pedagogical reasons (evaluating metrics with training data, for instance)—some of these frictions will go away when we progress to our “full” model (in the next module)</li>
-<li>Whereas the last module was focused on a big concept (the importance of splitting data into training and testing sets), this module is focused on a bunch of concepts (different fit metrics) that are best understood when they are used in a variety of specific instances (when each metric is needed, used, and interpreted)</li>
-</ol>
+<section id="quick-discussion" class="slide level2">
+<h2>Quick discussion</h2>
+<ul>
+<li>What are the benefits of using metrics beyond “Accuracy”?</li>
+<li>Why is feature engineering a useful step?</li>
+</ul>
 </section></section>
-<section id="discussion-1" class="title-slide slide level1 center">
-<h1>Discussion 1</h1>
+<section id="code-along-r" class="title-slide slide level1 center">
+<h1>Code-along: R</h1>
 <div class="panel-tabset">
-<ul id="tabset-1" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-1-1">Background</a></li><li><a href="#tabset-1-2">Getting Started</a></li><li><a href="#tabset-1-3">Digging Deeper</a></li></ul>
+<ul id="tabset-1" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-1-1">0. Setup</a></li><li><a href="#tabset-1-2">1. Split data</a></li><li><a href="#tabset-1-3">2. Engineer features</a></li><li><a href="#tabset-1-4">3. Specify model</a></li><li><a href="#tabset-1-5">4. Fit model (training)</a></li><li><a href="#tabset-1-6">4. Fit model (testing)</a></li><li><a href="#tabset-1-7">5. Evaluate accuracy</a></li><li><a href="#tabset-1-8">6. Aside: Joins!</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1">
-<ul>
-<li>We are likely familiar with <em>accuracy</em> and maybe another measure, <em>Cohen’s Kappa</em></li>
-<li>But, you may have heard of other means of determining how good a model is at making predictions: confusion matrices, specificity, sensitivity, recall, AUC-ROC, and others</li>
-<li>Broadly, these help us to understand <em>for which cases and types of cases a model is predictively better than others</em> in a finer-grained way than accuracy</li>
-</ul>
+<p><strong>Loading, setting up: create a .R file in /lab-1 and run this code</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="fu">library</span>(tidymodels)</span>
+<span id="cb1-3"><a href="#cb1-3"></a></span>
+<span id="cb1-4"><a href="#cb1-4"></a>starwars_recoded <span class="ot">&lt;-</span> starwars <span class="sc">%&gt;%</span> <span class="co"># built-in data available just by typing</span></span>
+<span id="cb1-5"><a href="#cb1-5"></a>    <span class="fu">mutate</span>(<span class="at">species_human =</span> <span class="fu">ifelse</span>(species <span class="sc">==</span> <span class="st">"Human"</span>, <span class="st">"human"</span>, <span class="st">"not human"</span>))</span>
+<span id="cb1-6"><a href="#cb1-6"></a></span>
+<span id="cb1-7"><a href="#cb1-7"></a>starwars_recoded <span class="sc">%&gt;%</span> </span>
+<span id="cb1-8"><a href="#cb1-8"></a>    <span class="fu">count</span>(species_human) <span class="co"># how many humans are there?</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </div>
 <div id="tabset-1-2">
-<ul>
-<li>Think broadly and not formally (yet): What makes a prediction model a good one?</li>
-</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>train_test_split <span class="ot">&lt;-</span> <span class="fu">initial_split</span>(starwars_recoded, <span class="at">prop =</span> .<span class="dv">70</span>)</span>
+<span id="cb2-2"><a href="#cb2-2"></a></span>
+<span id="cb2-3"><a href="#cb2-3"></a>data_train <span class="ot">&lt;-</span> <span class="fu">training</span>(train_test_split)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </div>
 <div id="tabset-1-3">
-<ul>
-<li>After having worked through the first learning lab, have your thoughts on what data you might use for a machine learning study evolved? If so, in what ways? If not, please elaborate on your initial thoughts and plans.</li>
-</ul>
-<aside class="notes">
-<p>This can connect back to the purpose at the beginning — try to elicit ideas that go beyond simple “Accuracy” to other, broader ideas about what makes a model good. These ideas can even extend beyond metrics (e.g., a learner may mention that the data is collected ethically) - these can be rich conversations to have here, but try to focus the conversation back on metrics as a nexus and tool for thinking about what makes an SML model a good one.</p>
-<style type="text/css">
-        span.MJX_Assistive_MathML {
-          position:absolute!important;
-          clip: rect(1px, 1px, 1px, 1px);
-          padding: 1px 0 0 0!important;
-          border: 0!important;
-          height: 1px!important;
-          width: 1px!important;
-          overflow: hidden!important;
-          display:block!important;
-      }</style></aside>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="co"># predicting humans based on the variables we used in LL1 + birth_year and homeworld</span></span>
+<span id="cb3-2"><a href="#cb3-2"></a>my_rec <span class="ot">&lt;-</span> <span class="fu">recipe</span>(species_human <span class="sc">~</span> height <span class="sc">+</span> mass <span class="sc">+</span> birth_year <span class="sc">+</span> eye_color, <span class="at">data =</span> data_train) <span class="sc">%&gt;%</span> </span>
+<span id="cb3-3"><a href="#cb3-3"></a>    <span class="fu">step_dummy</span>(eye_color) <span class="co"># need to dummy code</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-1-4">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a>my_mod <span class="ot">&lt;-</span></span>
+<span id="cb4-2"><a href="#cb4-2"></a>    <span class="fu">logistic_reg</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb4-3"><a href="#cb4-3"></a>    <span class="fu">set_engine</span>(<span class="st">"glm"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb4-4"><a href="#cb4-4"></a>    <span class="fu">set_mode</span>(<span class="st">"classification"</span>)</span>
+<span id="cb4-5"><a href="#cb4-5"></a></span>
+<span id="cb4-6"><a href="#cb4-6"></a>my_wf <span class="ot">&lt;-</span></span>
+<span id="cb4-7"><a href="#cb4-7"></a>    <span class="fu">workflow</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb4-8"><a href="#cb4-8"></a>    <span class="fu">add_model</span>(my_mod) <span class="sc">%&gt;%</span> </span>
+<span id="cb4-9"><a href="#cb4-9"></a>    <span class="fu">add_recipe</span>(my_rec)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-1-5">
+<p><strong>Model building with training data</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>class_metrics <span class="ot">&lt;-</span> <span class="fu">metric_set</span>(accuracy, sensitivity, specificity, ppv, npv, kap) <span class="co"># this is new</span></span>
+<span id="cb5-2"><a href="#cb5-2"></a>final_fit <span class="ot">&lt;-</span> <span class="fu">last_fit</span>(my_wf, train_test_split, <span class="at">metrics =</span> class_metrics)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-1-6">
+<p><strong>Model evaluating with testing data</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a>fit_model <span class="ot">&lt;-</span> <span class="fu">fit</span>(my_wf, data_train)</span>
+<span id="cb6-2"><a href="#cb6-2"></a></span>
+<span id="cb6-3"><a href="#cb6-3"></a>predictions <span class="ot">&lt;-</span> <span class="fu">predict</span>(fit_model, data_train) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-4"><a href="#cb6-4"></a>    <span class="fu">bind_cols</span>(data_train) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-5"><a href="#cb6-5"></a>    <span class="fu">mutate</span>(<span class="at">species_human =</span> <span class="fu">as.factor</span>(species_human))</span>
+<span id="cb6-6"><a href="#cb6-6"></a></span>
+<span id="cb6-7"><a href="#cb6-7"></a>predictions <span class="sc">%&gt;%</span></span>
+<span id="cb6-8"><a href="#cb6-8"></a>    <span class="fu">metrics</span>(species_human, .pred_class) <span class="sc">%&gt;%</span></span>
+<span id="cb6-9"><a href="#cb6-9"></a>    <span class="fu">filter</span>(.metric <span class="sc">==</span> <span class="st">"accuracy"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-1-7">
+<p><strong>Only run this once you’re done training/messing with your model!; this way, these estimates will be unbiased</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a>final_fit <span class="sc">%&gt;%</span></span>
+<span id="cb7-2"><a href="#cb7-2"></a>    <span class="fu">collect_metrics</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-1-8">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>band_members <span class="sc">%&gt;%</span> <span class="fu">left_join</span>(band_instruments)</span>
+<span id="cb8-2"><a href="#cb8-2"></a>band_members <span class="sc">%&gt;%</span> <span class="fu">inner_join</span>(band_instruments)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </div>
 </div>
 </div>
 </section>
 
-<section>
-<section id="key-concept-1" class="title-slide slide level1 center">
-<h1>Key Concept #1</h1>
-
-</section>
-<section id="accuracy" class="slide level2">
-<h2>Accuracy</h2>
-<div class="panel-tabset">
-<ul id="tabset-2" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-2-1">Accuracy</a></li><li><a href="#tabset-2-2">Accuracy Calculation</a></li><li><a href="#tabset-2-3">Confusion Matrix</a></li><li><a href="#tabset-2-4">Confusion Matrix Terms</a></li><li><a href="#tabset-2-5">Confusion Matrix Visual</a></li><li><a href="#tabset-2-6">Metrics</a></li></ul>
-<div class="tab-content">
-<div id="tabset-2-1">
-<p>Let’s start with accuracy and a simple confusion matrix; what is the <strong>Accuracy</strong>?</p>
+<section id="code-along-python" class="title-slide slide level1 center">
+<h1>Code-along: python</h1>
 <div class="cell">
-<div class="cell-output-display">
-<table>
-<thead>
-<tr class="header">
-<th style="text-align: right;">Outcome</th>
-<th style="text-align: right;">Prediction</th>
-<th style="text-align: left;">Correct?</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">Yes</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: left;">Yes</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">No</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: left;">No</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">Yes</td>
-</tr>
-</tbody>
-</table>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb9-2"><a href="#cb9-2"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
+<span id="cb9-3"><a href="#cb9-3"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> OneHotEncoder</span>
+<span id="cb9-4"><a href="#cb9-4"></a><span class="im">from</span> sklearn.compose <span class="im">import</span> ColumnTransformer</span>
+<span id="cb9-5"><a href="#cb9-5"></a><span class="im">from</span> sklearn.pipeline <span class="im">import</span> Pipeline</span>
+<span id="cb9-6"><a href="#cb9-6"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LogisticRegression</span>
+<span id="cb9-7"><a href="#cb9-7"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> accuracy_score, precision_score, recall_score, f1_score</span>
+<span id="cb9-8"><a href="#cb9-8"></a></span>
+<span id="cb9-9"><a href="#cb9-9"></a><span class="co"># Assuming starwars data is loaded into a pandas DataFrame called 'starwars'</span></span>
+<span id="cb9-10"><a href="#cb9-10"></a>starwars_recoded <span class="op">=</span> starwars.copy()</span>
+<span id="cb9-11"><a href="#cb9-11"></a>starwars_recoded[<span class="st">'species_human'</span>] <span class="op">=</span> starwars_recoded[<span class="st">'species'</span>].<span class="bu">map</span>(<span class="kw">lambda</span> x: <span class="st">'human'</span> <span class="cf">if</span> x <span class="op">==</span> <span class="st">'Human'</span> <span class="cf">else</span> <span class="st">'not human'</span>)</span>
+<span id="cb9-12"><a href="#cb9-12"></a></span>
+<span id="cb9-13"><a href="#cb9-13"></a><span class="co"># Split data</span></span>
+<span id="cb9-14"><a href="#cb9-14"></a>X <span class="op">=</span> starwars_recoded[[<span class="st">'height'</span>, <span class="st">'mass'</span>, <span class="st">'birth_year'</span>, <span class="st">'eye_color'</span>]]</span>
+<span id="cb9-15"><a href="#cb9-15"></a>y <span class="op">=</span> starwars_recoded[<span class="st">'species_human'</span>]</span>
+<span id="cb9-16"><a href="#cb9-16"></a>X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.3</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb9-17"><a href="#cb9-17"></a></span>
+<span id="cb9-18"><a href="#cb9-18"></a><span class="co"># Engineer features and specify model</span></span>
+<span id="cb9-19"><a href="#cb9-19"></a>preprocessor <span class="op">=</span> ColumnTransformer(</span>
+<span id="cb9-20"><a href="#cb9-20"></a>    transformers<span class="op">=</span>[</span>
+<span id="cb9-21"><a href="#cb9-21"></a>        (<span class="st">'num'</span>, <span class="st">'passthrough'</span>, [<span class="st">'height'</span>, <span class="st">'mass'</span>, <span class="st">'birth_year'</span>]),</span>
+<span id="cb9-22"><a href="#cb9-22"></a>        (<span class="st">'cat'</span>, OneHotEncoder(drop<span class="op">=</span><span class="st">'first'</span>), [<span class="st">'eye_color'</span>])</span>
+<span id="cb9-23"><a href="#cb9-23"></a>    ])</span>
+<span id="cb9-24"><a href="#cb9-24"></a></span>
+<span id="cb9-25"><a href="#cb9-25"></a>model <span class="op">=</span> Pipeline([</span>
+<span id="cb9-26"><a href="#cb9-26"></a>    (<span class="st">'preprocessor'</span>, preprocessor),</span>
+<span id="cb9-27"><a href="#cb9-27"></a>    (<span class="st">'classifier'</span>, LogisticRegression())</span>
+<span id="cb9-28"><a href="#cb9-28"></a>])</span>
+<span id="cb9-29"><a href="#cb9-29"></a></span>
+<span id="cb9-30"><a href="#cb9-30"></a><span class="co"># Fit model</span></span>
+<span id="cb9-31"><a href="#cb9-31"></a>model.fit(X_train, y_train)</span>
+<span id="cb9-32"><a href="#cb9-32"></a></span>
+<span id="cb9-33"><a href="#cb9-33"></a><span class="co"># Evaluate accuracy</span></span>
+<span id="cb9-34"><a href="#cb9-34"></a>y_pred <span class="op">=</span> model.predict(X_test)</span>
+<span id="cb9-35"><a href="#cb9-35"></a>accuracy <span class="op">=</span> accuracy_score(y_test, y_pred)</span>
+<span id="cb9-36"><a href="#cb9-36"></a>precision <span class="op">=</span> precision_score(y_test, y_pred, pos_label<span class="op">=</span><span class="st">'human'</span>)</span>
+<span id="cb9-37"><a href="#cb9-37"></a>recall <span class="op">=</span> recall_score(y_test, y_pred, pos_label<span class="op">=</span><span class="st">'human'</span>)</span>
+<span id="cb9-38"><a href="#cb9-38"></a>f1 <span class="op">=</span> f1_score(y_test, y_pred, pos_label<span class="op">=</span><span class="st">'human'</span>)</span>
+<span id="cb9-39"><a href="#cb9-39"></a></span>
+<span id="cb9-40"><a href="#cb9-40"></a><span class="bu">print</span>(<span class="ss">f"Accuracy: </span><span class="sc">{</span>accuracy<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb9-41"><a href="#cb9-41"></a><span class="bu">print</span>(<span class="ss">f"Precision: </span><span class="sc">{</span>precision<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb9-42"><a href="#cb9-42"></a><span class="bu">print</span>(<span class="ss">f"Recall: </span><span class="sc">{</span>recall<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb9-43"><a href="#cb9-43"></a><span class="bu">print</span>(<span class="ss">f"F1 Score: </span><span class="sc">{</span>f1<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb9-44"><a href="#cb9-44"></a></span>
+<span id="cb9-45"><a href="#cb9-45"></a><span class="co"># Aside: Joins (using pandas)</span></span>
+<span id="cb9-46"><a href="#cb9-46"></a>merged_inner <span class="op">=</span> pd.merge(band_members, band_instruments, how<span class="op">=</span><span class="st">'inner'</span>)</span>
+<span id="cb9-47"><a href="#cb9-47"></a>merged_left <span class="op">=</span> pd.merge(band_members, band_instruments, how<span class="op">=</span><span class="st">'left'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</div>
-</div>
-<div id="tabset-2-2">
-<p>Use the <code>tabyl()</code> function (from {janitor} to calculate the accuracy in the code chunk below.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a>data_for_conf_mat <span class="sc">%&gt;%</span> </span>
-<span id="cb1-2"><a href="#cb1-2"></a>    <span class="fu">mutate</span>(<span class="at">correct =</span> Outcome <span class="sc">==</span> Prediction) <span class="sc">%&gt;%</span> </span>
-<span id="cb1-3"><a href="#cb1-3"></a>    <span class="fu">tabyl</span>(correct)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code> correct n percent
-   FALSE 2     0.4
-    TRUE 3     0.6</code></pre>
-</div>
-</div>
-</div>
-<div id="tabset-2-3">
-<p>Now, let’s create a confusion matrix based on this data:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb3" data-code-line-numbers="|1|2-3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="fu">library</span>(tidymodels)</span>
-<span id="cb3-2"><a href="#cb3-2"></a></span>
-<span id="cb3-3"><a href="#cb3-3"></a>data_for_conf_mat <span class="sc">%&gt;%</span> </span>
-<span id="cb3-4"><a href="#cb3-4"></a>    <span class="fu">conf_mat</span>(Outcome, Prediction)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>          Truth
-Prediction 0 1
-         0 1 1
-         1 1 2</code></pre>
-</div>
-</div>
-</div>
-<div id="tabset-2-4">
-<p><strong>Accuracy</strong>: Prop. of the sample that is true positive or true negative</p>
-<p><strong>True positive (TP)</strong>: Prop. of the sample that is affected by a condition and correctly tested positive</p>
-<p><strong>True negative (TN)</strong>: Prop. of the sample that is not affected by a condition and correctly tested negative</p>
-<p><strong>False positive (FP)</strong>: Prop. of the sample that is not affected by a condition and incorrectly tested positive</p>
-<p><strong>False negative (FN)</strong>: Prop. of the sample that is affected by a condition and incorrectly tested positive.</p>
-</div>
-<div id="tabset-2-5">
-<p><img data-src="img/conf-mat-descriptor.png" style="width:80.0%"></p>
-<aside class="notes">
-<p>This and the next slide can take awhile to work through — it may be helpful to do some math on a whiteboard, and to ask lots of questions of learners to work through the math, which is simple mathematically but somewhat challenging conceptually! Take time here — this can be really valuable as a time and space to deeply understand what is under the hood of these metrics.</p>
-<style type="text/css">
-        span.MJX_Assistive_MathML {
-          position:absolute!important;
-          clip: rect(1px, 1px, 1px, 1px);
-          padding: 1px 0 0 0!important;
-          border: 0!important;
-          height: 1px!important;
-          width: 1px!important;
-          overflow: hidden!important;
-          display:block!important;
-      }</style></aside>
-</div>
-<div id="tabset-2-6">
-<p><img data-src="img/interpretation-of-metrics.png" style="width:80.0%"></p>
-<aside class="notes">
-<p>Please note that Precision goes by the name Positive Predictive Value, whereas Negative Predictive Value does not have another commonly used name.</p>
-<style type="text/css">
-        span.MJX_Assistive_MathML {
-          position:absolute!important;
-          clip: rect(1px, 1px, 1px, 1px);
-          padding: 1px 0 0 0!important;
-          border: 0!important;
-          height: 1px!important;
-          width: 1px!important;
-          overflow: hidden!important;
-          display:block!important;
-      }</style></aside>
-</div>
-</div>
-</div>
-</section>
-<section id="auc-roc" class="slide level2">
-<h2>AUC-ROC</h2>
-<ul>
-<li><em>Area Under the Curve - Receiver Operator Characteristic</em> (AUC-ROC)</li>
-<li>Informs us as to how the True Positive rate changes given a different classification threshhold</li>
-<li>Classification threshhold: the probability above which a model makes a positive prediction</li>
-<li>Higher is better</li>
-</ul>
-</section></section>
-<section>
-<section id="key-concept-2" class="title-slide slide level1 center">
-<h1>Key Concept # 2</h1>
-
-</section>
-<section id="feature-engineering-part-a" class="slide level2">
-<h2>Feature Engineering (Part A)</h2>
-<div class="panel-tabset">
-<ul id="tabset-3" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-3-1">Why?</a></li><li><a href="#tabset-3-2">Why (again)?</a></li><li><a href="#tabset-3-3">How?</a></li></ul>
-<div class="tab-content">
-<div id="tabset-3-1">
-<p>Let’s consider a very simple data set, <code>d</code>, one with <em>time_point</em> data, <code>var_a</code>, for a single student. <em>How do we add this to our model?</em> Focus on the time element; how could you account for this?</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>d <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">student_id =</span> <span class="st">"janyia"</span>, <span class="at">time_point =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="at">var_a =</span> <span class="fu">c</span>(<span class="fl">0.01</span>, <span class="fl">0.32</span>, <span class="fl">0.32</span>, <span class="fl">0.34</span>, <span class="fl">0.04</span>, <span class="fl">0.54</span>, <span class="fl">0.56</span>, <span class="fl">0.75</span>, <span class="fl">0.63</span>, <span class="fl">0.78</span>))</span>
-<span id="cb5-2"><a href="#cb5-2"></a>d <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 3 × 3
-  student_id time_point var_a
-  &lt;chr&gt;           &lt;int&gt; &lt;dbl&gt;
-1 janyia              1  0.01
-2 janyia              2  0.32
-3 janyia              3  0.32</code></pre>
-</div>
-</div>
-</div>
-<div id="tabset-3-2">
-<p>How about a different variable, now focusing on the variable, <code>var_b</code>. How could we add this to a model?</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a>d <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">student_id =</span> <span class="st">"janyia"</span>, <span class="at">time_point =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="at">var_b =</span> <span class="fu">c</span>(<span class="dv">12</span>, <span class="dv">10</span>, <span class="dv">35</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">54</span>, <span class="dv">56</span>, <span class="dv">75</span>, <span class="dv">63</span>, <span class="dv">78</span>))</span>
-<span id="cb7-2"><a href="#cb7-2"></a>d <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 3 × 3
-  student_id time_point var_b
-  &lt;chr&gt;           &lt;int&gt; &lt;dbl&gt;
-1 janyia              1    12
-2 janyia              2    10
-3 janyia              3    35</code></pre>
-</div>
-</div>
-</div>
-<div id="tabset-3-3">
-<ul>
-<li>We can do all of these things <strong>manually</strong></li>
-<li>But, there are also helpful “<strong>{recipes}</strong>” functions to do this</li>
-<li>Any, the {recipes} package makes it practical to carry out feature engineering steps for not only single variables, but groups of variables (or all of the variables)</li>
-<li>Examples, all of which start with <code>step()</code>:
-<ul>
-<li><code>step_dummy()</code></li>
-<li><code>step_normalize()</code></li>
-<li><code>step_inpute()</code></li>
-<li><code>step_date()</code></li>
-<li><code>step_holiday()</code></li>
-</ul></li>
-</ul>
-</div>
-</div>
-</div>
-<aside class="notes">
-<p>Emphasize this very brief introduction is to just begin to explore these topics (that we’ll explore in more depth in the next module), and to make our more sophisticated modeling possible</p>
-<style type="text/css">
-        span.MJX_Assistive_MathML {
-          position:absolute!important;
-          clip: rect(1px, 1px, 1px, 1px);
-          padding: 1px 0 0 0!important;
-          border: 0!important;
-          height: 1px!important;
-          width: 1px!important;
-          overflow: hidden!important;
-          display:block!important;
-      }</style></aside>
-</section></section>
-<section id="discussion-2" class="title-slide slide level1 center">
-<h1>Discussion 2</h1>
-<div class="panel-tabset">
-<ul id="tabset-4" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-4-1">Reflecting</a></li><li><a href="#tabset-4-2">Applying</a></li></ul>
-<div class="tab-content">
-<div id="tabset-4-1">
-<ul>
-<li>Which metrics for supervised machine learning models (in classification “mode”) are important to interpret? Why?</li>
-</ul>
-</div>
-<div id="tabset-4-2">
-<ul>
-<li>Thinking broadly about your research interest, what would you need to consider before using a supervised machine learning model? Consider not only model metrics but also the data collection process and how the predictions may be used.</li>
-</ul>
-</div>
-</div>
-</div>
-</section>
-
-<section id="introduction-to-the-other-parts-of-this-learning-lab" class="title-slide slide level1 center">
-<h1>Introduction to the other parts of this learning lab</h1>
-<div class="panel-tabset">
-<ul id="tabset-5" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-5-1">Readings</a></li><li><a href="#tabset-5-2">Case Study</a></li><li><a href="#tabset-5-3">Badge</a></li></ul>
-<div class="tab-content">
-<div id="tabset-5-1">
-<blockquote>
-<p>Baker, R. S., Berning, A. W., Gowda, S. M., Zhang, S., &amp; Hawn, A. (2020). Predicting K-12 dropout. Journal of Education for Students Placed at Risk (JESPAR), 25(1), 28-54.</p>
-</blockquote>
-<blockquote>
-<p>Baker, R. S., Bosch, N., Hutt, S., Zambrano, A. F., &amp; Bowers, A. J. (2024). On fixing the right problems in predictive analytics: AUC is not the problem. arXiv preprint. https://arxiv.org/pdf/2404.06989</p>
-</blockquote>
-<blockquote>
-<p>Maestrales, S., Zhai, X., Touitou, I., Baker, Q., Schneider, B., &amp; Krajcik, J. (2021). Using machine learning to score multi-dimensional assessments of chemistry and physics. Journal of Science Education and Technology, 30(2), 239-254.</p>
-</blockquote>
-</div>
-<div id="tabset-5-2">
-<ul>
-<li>Adding another data source from the <a href="https://analyse.kmi.open.ac.uk/open_dataset">OULAD</a>, assessments data</li>
-<li>Interpreting each of the metrics in greater detail</li>
-<li>Using <code>metric_set</code></li>
-</ul>
-</div>
-<div id="tabset-5-3">
-<ul>
-<li>Adding still another variable</li>
-<li>Stepping back and interpreting the model as a whole</li>
-<li>Finding another relevant study</li>
-</ul>
-</div>
-</div>
-</div>
-</section>
-
-<section id="fin" class="title-slide slide level1 center">
-<h1><em>fin</em></h1>
-<ul>
-<li><em>Dr.&nbsp;Joshua Rosenberg</em> (jmrosenberg@utk.edu; https://joshuamrosenberg.com)</li>
-</ul>
-<p><a href="https://docs.google.com/document/d/14Jc-KG3m5k1BvyKWqw7KmDD21IugU5nV5edfJkZyspY/edit">General troubleshooting tips for R and RStudio</a></p>
 
 <img src="img/LASERLogoB.png" class="slide-logo r-stretch"><div class="footer footer-default">
 <p><a href="https://www.go.ncsu.edu/laser-institute">go.ncsu.edu/laser-institute</a></p><a href="https://www.go.ncsu.edu/laser-institute">
@@ -756,20 +560,20 @@ Prediction 0 1
   </a></div><a href="https://www.go.ncsu.edu/laser-institute">
 
   <script>window.backupDefine = window.define; window.define = undefined;</script>
-  <script src="sml-3-conceptual-overview_files/libs/revealjs/dist/reveal.js"></script>
+  <script src="sml-3-code-along_files/libs/revealjs/dist/reveal.js"></script>
   <!-- reveal.js plugins -->
-  <script src="sml-3-conceptual-overview_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
-  <script src="sml-3-conceptual-overview_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
-  <script src="sml-3-conceptual-overview_files/libs/revealjs/plugin/reveal-menu/menu.js"></script>
-  <script src="sml-3-conceptual-overview_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
-  <script src="sml-3-conceptual-overview_files/libs/revealjs/plugin/reveal-chalkboard/plugin.js"></script>
-  <script src="sml-3-conceptual-overview_files/libs/revealjs/plugin/quarto-support/support.js"></script>
+  <script src="sml-3-code-along_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="sml-3-code-along_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="sml-3-code-along_files/libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="sml-3-code-along_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="sml-3-code-along_files/libs/revealjs/plugin/reveal-chalkboard/plugin.js"></script>
+  <script src="sml-3-code-along_files/libs/revealjs/plugin/quarto-support/support.js"></script>
   
 
-  <script src="sml-3-conceptual-overview_files/libs/revealjs/plugin/notes/notes.js"></script>
-  <script src="sml-3-conceptual-overview_files/libs/revealjs/plugin/search/search.js"></script>
-  <script src="sml-3-conceptual-overview_files/libs/revealjs/plugin/zoom/zoom.js"></script>
-  <script src="sml-3-conceptual-overview_files/libs/revealjs/plugin/math/math.js"></script>
+  <script src="sml-3-code-along_files/libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="sml-3-code-along_files/libs/revealjs/plugin/search/search.js"></script>
+  <script src="sml-3-code-along_files/libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="sml-3-code-along_files/libs/revealjs/plugin/math/math.js"></script>
   <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
 
   <script>
