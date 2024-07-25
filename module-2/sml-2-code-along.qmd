@@ -30,12 +30,11 @@ pacman::p_load(pacman, knitr, tidyverse, readxl)
 
 ## Process
 
-- Again, create a .R file in `/module-2`
+- Again, create a .R file --- this time in `/module-2`
 - Then, run copy and paste the code in this presentation as we talk through each step
 
 ## Quick discussion
 
-- What's the function of the training data relative to the testing data?
 - Which parts of the supervised machine learning process is most unclear?
 
 # Code-along
@@ -157,5 +156,4 @@ print(classification_report(y_test, y_pred))
 
 # Discussion
 
-- What do you notice about the differences in the output between regression and SML?
-- What do you notice is different about the modeling approach?
+- In the big picture, what is the use of the training data relative to the testing data?

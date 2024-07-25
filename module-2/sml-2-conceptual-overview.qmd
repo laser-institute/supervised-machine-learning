@@ -107,7 +107,9 @@ students %>% head(3)
 
 ::: panel-tabset
 
-- Algorithms (or estimation procedures - or informally models) refer to the _structure_ and _process_ of estimating the _parameters_ of a model
+## Algorithms
+
+- Algorithms (or estimation procedures - or *models*) refer to the _structure_ and _process_ of estimating the _parameters_ of a model
 - This definition provides a wide range of options for what kinds of algorithms we use (from simple to very complex, as we discuss in a later learning lab)
 - For now, we focus on a familiar, easy to interpret algorithm (e.g., [1](https://dl.acm.org/doi/abs/10.1145/3448139.3448154?casa_token=skmk5XGbDOUAAAAA:Z0Kl4nyjpOGFA6RuFTiiLWaC_KxH1vkQ72Kr0hetXcumRdvu8tPYlCX12AgHr9aS0Fp3L-Uu0p4), also [this](https://linkinghub.elsevier.com/retrieve/pii/S0895435618310813)), _logistic regression_
 - This is a linear model with a binary (*"yes"* or *"no"*) outcome
@@ -124,6 +126,14 @@ students %>% head(3)
 - Training data: Data we use to **fit** (or train, AKA estimate) a supervised machine learning **model** (AKA algorithm)
 - Testing data: Data we use to see how well our model didnot used to fit the model
 - By splitting out data into training and testing _sets_, we can obtain unbiased metrics for how good our model is at predicting
+
+## How does this avoid bias?
+
+- If we used only one data set (i.e., only training data) we could fit a model that does a _really good_ job of making predictions
+- But, this model would likely be _overfit_ --- a model that is too tailored to the specific data in our training set, rather than a model that can be more _generalizable_
+- The big picture, very real risk of not using training and testing data is we think we have a better model than we do
+- We could fit a model that _perfectly_ predicts every outcome in our training data, but when the model sees new (i.e., different) data, it performs very poorly
+- This is **essential** for supervised machine learning; if you review or see a study that only uses a single data set, be skeptical of the prediction metrics!
 
 ## Strata
 
@@ -158,7 +168,7 @@ students %>% head(3)
 
 ## Case study
 
-- Building a prediction model for students passing the classbased just on student data.
+- Building a prediction model for students passing the class based just on student data.
 - Work with peers to complete this, reading the text, following links to resources (and the reading), and then completing the required 👉 Your Turn ⤵ tasks
 - A key is available, but we strongly encourage you to use it only at the end to check your work, or if you are completely stuck and have tried our recommended troubleshooting steps: https://docs.google.com/document/d/14Jc-KG3m5k1BvyKWqw7KmDD21IugU5nV5edfJkZyspY/edit
 
