@@ -530,10 +530,10 @@
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2 × 3
-     id var_a var_b
-  &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
-1     1 0.466 0.257
-2     2 0.713 0.207</code></pre>
+     id  var_a var_b
+  &lt;int&gt;  &lt;dbl&gt; &lt;dbl&gt;
+1     1 0.0345 0.325
+2     2 0.534  0.860</code></pre>
 </div>
 </div>
 <p>Using <em>k</em> = 10, how can we split <em>n</em> = 100 cases into ten distinct training and testing sets?</p>
@@ -580,6 +580,11 @@
 <li>For instance, here’s a <em>very, very</em> simple tree (from <a href="https://link.springer.com/book/10.1007/978-1-4614-6849-3">APM</a>):</li>
 </ul></li>
 </ul>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="https://www.solver.com/sites/default/files/ctree.gif" width="544"></p>
+</figure>
+</div>
 </div>
 <div id="tabset-4-2">
 <pre><code>if Predictor B &gt;= 0.197 then

@@ -26,97 +26,92 @@ pacman::p_load(pacman, knitr, tidyverse, readxl)
 
 Having fit and interpreted our machine learning model, how do we make our model better? That's the focus of this learning lab. There are three core ideas, pertaining to feature engineering, resampling, and the random forest algorithm. We again use the OULAD data.
 
-::: {.notes}
+::: notes
 A point of emphasis now is that this lab is similar in its use of OULAD data, but different in key ways --- namely, the use of cross-validation and a different algorithm, or model, the Random Forest. Plus, we do more with feature engineering! The Random Forest is considerably more complex than the logistic regression model we have been using, and the change to this model and the other additions make this a conceptually complex module. Still, in principle, the process is the same one we have followed throughout these modules. Get ready!
 :::
 
-
 ## What we'll do in this presentation
 
-- Discussion 1
-- Key Concept: Feature Engineering (Part B)
-- Key Concept: Resampling and cross-validation
-- Key Concept: The Random Forest algorithm
-- Discussion 2
-- Introduction to the other parts of this learning lab
+-   Discussion 1
+-   Key Concept: Feature Engineering (Part B)
+-   Key Concept: Resampling and cross-validation
+-   Key Concept: The Random Forest algorithm
+-   Discussion 2
+-   Introduction to the other parts of this learning lab
 
 # Discussion 1
 
-::: {.panel-tabset}
-
+::: panel-tabset
 ## Background
 
-- Having discussed ways of interpreting how good a predictive model is, we can consider how to make our model better, having a rigorous framework for answering that question.
+-   Having discussed ways of interpreting how good a predictive model is, we can consider how to make our model better, having a rigorous framework for answering that question.
 
 ## Conceptual Overview
 
-- How good is a good enough model _for which metrics_?
-
+-   How good is a good enough model *for which metrics*?
 :::
 
-# Key Concept #1 
+# Key Concept #1
 
 ## Feature Engineering (Part B)
 
-::: {.panel-tabset}
+::: panel-tabset
 ## How?
 
-- Well, what if we just add the values for these variables directly
-- But, that ignores that they are at different time points
-    - We could include the time point variable, but that is (about) the same for every student
-- OULAD interaction data is this way: the number of _clicks_ per day 
-- This data is sometimes called _log-trace_ or _clickstream_ data
-- In this module, we focus on using [OULAD data](https://analyse.kmi.open.ac.uk/open_dataset) on interactions data, the most fine-grained data**
+-   Well, what if we just add the values for these variables directly
+-   But, that ignores that they are at different time points
+    -   We could include the time point variable, but that is (about) the same for every student
+-   OULAD interaction data is this way: the number of *clicks* per day
+-   This data is sometimes called *log-trace* or *clickstream* data
+-   In this module, we focus on using [OULAD data](https://analyse.kmi.open.ac.uk/open_dataset) on interactions data, the most fine-grained data\*\*
 
 ## More Techniques
 
-- Removing those with "near-zero variance"
-- Removing ID variables and others that _should not be_ informative
-- Imputing missing values
-- Extract particular elements (i.e., particular _days_ or _times_) from time-related data 
-- Categorical variables: Dummy coding, combining categories
-- Numeric variables: Normalizing ("standardizing")
-
+-   Removing those with "near-zero variance"
+-   Removing ID variables and others that *should not be* informative
+-   Imputing missing values
+-   Extract particular elements (i.e., particular *days* or *times*) from time-related data
+-   Categorical variables: Dummy coding, combining categories
+-   Numeric variables: Normalizing ("standardizing")
 :::
 
-# Key Concept # 2 
+# Key Concept \# 2
 
 ## Resampling and cross-validation
 
-::: {.panel-tabset}
-
+::: panel-tabset
 ## Training data
 
-- In earlier modules, we fit and interpreted a single _fit of our model_ (80% training, 20% testing). What if we decided to _add new features_ or _change existing features_?
+-   In earlier modules, we fit and interpreted a single *fit of our model* (80% training, 20% testing). What if we decided to *add new features* or *change existing features*?
 
-- We'd need to use the same training data to tune a new model---and the same testing data to evaluate its performance. **But**, this could lead to fitting a model based on how well we predict the data that happened to end up in the test set. 
+-   We'd need to use the same training data to tune a new model---and the same testing data to evaluate its performance. **But**, this could lead to fitting a model based on how well we predict the data that happened to end up in the test set.
 
-- We could be optimizing our model for our testing data; when used with new data, our model could make poor predictions.
+-   We could be optimizing our model for our testing data; when used with new data, our model could make poor predictions.
 
 ## Resampling
 
-- In short, a challenges arises when we wish to use our training data _more than once_
+-   In short, a challenges arises when we wish to use our training data *more than once*
 
-- Namely, if we repeatedly training an algorithm on the same data and then make changes, we may be tailoring our model to specific features of the testing data
+-   Namely, if we repeatedly training an algorithm on the same data and then make changes, we may be tailoring our model to specific features of the testing data
 
-- Resampling conserves our testing data; we don't have to spend it until we've finalized our model!
+-   Resampling conserves our testing data; we don't have to spend it until we've finalized our model!
 
 ## Resampling Process
 
-- Resampling involves blurring the boundaries between training and testing data, _but only for the training split of the data_
+-   Resampling involves blurring the boundaries between training and testing data, *but only for the training split of the data*
 
-- Specifically, it involves combining these two portions of our data into one, iteratively considering some of the data to be for "training" and some for "testing"
+-   Specifically, it involves combining these two portions of our data into one, iteratively considering some of the data to be for "training" and some for "testing"
 
-- Then, fit measures are **averaged** across these different samples
+-   Then, fit measures are **averaged** across these different samples
 
 ## *k*-folds cross validation (KFCV)
 
-- One of the most common forms of resampling is *k*-folds cross validation
-    - Here, some of the data is considered to be a part of the *training* set 
-    - The remaining data is a part of the *testing* set
-- How many sets (samples taken through resampling)?
-    - This is determined by _k_, number of times the data is resampled
-    - When _k_ is equivalent to the number of rows in the data, i.e. "Leave One Out Cross-Validation" (LOOCV) --- typically not recommended
+-   One of the most common forms of resampling is *k*-folds cross validation
+    -   Here, some of the data is considered to be a part of the *training* set
+    -   The remaining data is a part of the *testing* set
+-   How many sets (samples taken through resampling)?
+    -   This is determined by *k*, number of times the data is resampled
+    -   When *k* is equivalent to the number of rows in the data, i.e. "Leave One Out Cross-Validation" (LOOCV) --- typically not recommended
 
 ## KFCV Example
 
@@ -129,7 +124,7 @@ d <- tibble(id = 1:100, var_a = runif(100), var_b = runif(100))
 d %>% head(2)
 ```
 
-Using _k_ = 10, how can we split *n* = 100 cases into ten distinct training and testing sets?
+Using *k* = 10, how can we split *n* = 100 cases into ten distinct training and testing sets?
 
 *First resampling*
 
@@ -144,39 +139,40 @@ test <- d[91:100, ]
 
 ## Determining k
 
-# But how do you determine what _k_ should be?
+# But how do you determine what *k* should be?
 
-- A _historically common value_ for _k_ has been 10
-- But, as computers have grown in processing power, setting _k_ equal to the number of rows in the data has become more common
-    - Though, again, LOOCV (*k* = to the number or rows) is typically not recommended, as it can take considerable time and may have some undesired statistical properties 
-
+-   A *historically common value* for *k* has been 10
+-   But, as computers have grown in processing power, setting *k* equal to the number of rows in the data has become more common
+    -   Though, again, LOOCV (*k* = to the number or rows) is typically not recommended, as it can take considerable time and may have some undesired statistical properties
 :::
 
 # Key Concept #3
 
 ## Random Forests
 
-::: {.panel-tabset}
+::: panel-tabset
 ## Background
 
-- *Random forests* are extensions of classification trees
-- _Classification trees_ are a type of algorithm that use conditional logic ("if-then" statements) in a _nested_ manner
-    - For instance, here's a _very, very_ simple tree (from [APM](https://link.springer.com/book/10.1007/978-1-4614-6849-3)):
+-   *Random forests* are extensions of classification trees
+-   *Classification trees* are a type of algorithm that use conditional logic ("if-then" statements) in a *nested* manner
+    -   For instance, here's a *very, very* simple tree (from [APM](https://link.springer.com/book/10.1007/978-1-4614-6849-3)):
+
+![](https://www.solver.com/sites/default/files/ctree.gif){fig-align="center" width="544"}
 
 ## Algorithm
 
-```
+```         
 if Predictor B >= 0.197 then
 | if Predictor A >= 0.13 then Class = 1
 | else Class = 2
 else Class = 2
 ```
 
-- Measures are used to determine the splits in such a way that classifies observations into small, homogeneous groups (using measures such as the Gini index and entropy measure)
+-   Measures are used to determine the splits in such a way that classifies observations into small, homogeneous groups (using measures such as the Gini index and entropy measure)
 
 ## More Complexity
 
-```
+```         
 if Predictor B >= 0.197 then
 | if Predictor A >= 0.13 then
     | if Predictor C < -1.04 then Class = 1
@@ -188,50 +184,48 @@ As you can imagine, with many variables, these trees can become very complex
 
 ## Tuning
 
-- There are several important tuning parameters for these models:
-    - the number of predictor variables that are randomly sampled for each split (`mtry`)
-    - the minimum number of data points required to execute a split into branches (`min_n`)
-    - the number of trees estimated as a part of the "forest" (`trees`)
-- These tuning parameters, broadly, balance predictive performance with the training data with how well the model will perform on new data 
-- A boosted tree may achieve ev
+-   There are several important tuning parameters for these models:
+    -   the number of predictor variables that are randomly sampled for each split (`mtry`)
+    -   the minimum number of data points required to execute a split into branches (`min_n`)
+    -   the number of trees estimated as a part of the "forest" (`trees`)
+-   These tuning parameters, broadly, balance predictive performance with the training data with how well the model will perform on new data
+-   A boosted tree may achieve ev
 
 ## Key Points
 
-- A Random forest is an extension of decision tree modeling whereby a collection of decision trees are sequentially **estimated using training data** - and **validated/tested using testing data**
-- Different _samples_ of predictors are sampled for inclusion in each individual tree
-- Highly complex and non-linear relationships between variables can be estimated
-- Each tree is independent of every other tree  
-- For classification ML, the final output is the category/group/class selected by individual trees
-- For regression ML, the mean or average prediction of the individual trees is returned
+-   A Random forest is an extension of decision tree modeling whereby a collection of decision trees are sequentially **estimated using training data** - and **validated/tested using testing data**
+-   Different *samples* of predictors are sampled for inclusion in each individual tree
+-   Highly complex and non-linear relationships between variables can be estimated
+-   Each tree is independent of every other tree\
+-   For classification ML, the final output is the category/group/class selected by individual trees
+-   For regression ML, the mean or average prediction of the individual trees is returned
 
 ## Boosting
 
-- Boosted trees, like those created using the xgboost package (**engine**), sequentially build trees where each new tree attempts to correct the errors made by the previous ones
+-   Boosted trees, like those created using the xgboost package (**engine**), sequentially build trees where each new tree attempts to correct the errors made by the previous ones
 
-- By focusing on correcting mistakes and optimizing the model iteratively, boosted trees can achieve better performance compared to random forests
+-   By focusing on correcting mistakes and optimizing the model iteratively, boosted trees can achieve better performance compared to random forests
 
-- Boosted trees offer more hyperparameters to fine-tune, such as learning rate and tree depth --- which can be challenging
-
+-   Boosted trees offer more hyperparameters to fine-tune, such as learning rate and tree depth --- which can be challenging
 :::
 
 # Discussion 2
 
-::: {.panel-tabset}
+::: panel-tabset
 ## Reflecting
 
-- Why is resampling (cross-validation) important?
+-   Why is resampling (cross-validation) important?
 
 ## Applying
 
-- Which feature engineering steps might you need to take with the data (or kind of data) you plan to use?
-
+-   Which feature engineering steps might you need to take with the data (or kind of data) you plan to use?
 :::
 
 # Introduction to the other parts of this module
 
-::: {.panel-tabset}
+::: panel-tabset
 ## Readings
-    
+
 > Baker, R. S., Esbenshade, L., Vitale, J., & Karumbaiah, S. (2023). Using demographic data as predictor variables: A questionable choice. *Journal of Educational Data Mining, 15*(2), 22-52.
 
 > Bosch, N. (2021). AutoML feature engineering for student modeling yields high accuracy, but limited interpretability. Journal of Educational Data Mining, 13(2), 55-79.
@@ -240,20 +234,18 @@ As you can imagine, with many variables, these trees can become very complex
 
 ## Case Study
 
-- Using (filtered) interaction data (whole data [here](https://analyse.kmi.open.ac.uk/open_dataset))
-- Adding features related to _activity type_
-- Once again interpreting the change in our predictions
-(a bit more on the bias-variance trade-off [here](https://jrosen48.github.io/ML-in-Science-Education-Workshop-Materials/#23)) (through slide 30)
+-   Using (filtered) interaction data (whole data [here](https://analyse.kmi.open.ac.uk/open_dataset))
+-   Adding features related to *activity type*
+-   Once again interpreting the change in our predictions (a bit more on the bias-variance trade-off [here](https://jrosen48.github.io/ML-in-Science-Education-Workshop-Materials/#23)) (through slide 30)
 
 ## Badge
 
-- Considering the use of demographic data as features 
-- Adding _activity-specific_ interaction types
-
+-   Considering the use of demographic data as features
+-   Adding *activity-specific* interaction types
 :::
 
 # *fin*
 
-- *Dr. Joshua Rosenberg* (jmrosenberg@utk.edu; https://joshuamrosenberg.com)
+-   *Dr. Joshua Rosenberg* (jmrosenberg\@utk.edu; https://joshuamrosenberg.com)
 
 [General troubleshooting tips for R and RStudio](https://docs.google.com/document/d/14Jc-KG3m5k1BvyKWqw7KmDD21IugU5nV5edfJkZyspY/edit)
