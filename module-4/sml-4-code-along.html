@@ -1,21 +1,21 @@
 <!DOCTYPE html>
 <html lang="en"><head>
-<script src="sml-4-conceptual-overview_files/libs/clipboard/clipboard.min.js"></script>
-<script src="sml-4-conceptual-overview_files/libs/quarto-html/tabby.min.js"></script>
-<script src="sml-4-conceptual-overview_files/libs/quarto-html/popper.min.js"></script>
-<script src="sml-4-conceptual-overview_files/libs/quarto-html/tippy.umd.min.js"></script>
-<link href="sml-4-conceptual-overview_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="sml-4-conceptual-overview_files/libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="sml-4-conceptual-overview_files/libs/quarto-html/quarto-html.min.css" rel="stylesheet" data-mode="light">
-<link href="sml-4-conceptual-overview_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+<script src="sml-4-code-along_files/libs/clipboard/clipboard.min.js"></script>
+<script src="sml-4-code-along_files/libs/quarto-html/tabby.min.js"></script>
+<script src="sml-4-code-along_files/libs/quarto-html/popper.min.js"></script>
+<script src="sml-4-code-along_files/libs/quarto-html/tippy.umd.min.js"></script>
+<link href="sml-4-code-along_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="sml-4-code-along_files/libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="sml-4-code-along_files/libs/quarto-html/quarto-html.min.css" rel="stylesheet" data-mode="light">
+<link href="sml-4-code-along_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
   <meta name="generator" content="quarto-1.3.450">
 
-  <title>Predicting Better with Random Forests</title>
+  <title>How to Cross-Validate and Change the Model</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
-  <link rel="stylesheet" href="sml-4-conceptual-overview_files/libs/revealjs/dist/reset.css">
-  <link rel="stylesheet" href="sml-4-conceptual-overview_files/libs/revealjs/dist/reveal.css">
+  <link rel="stylesheet" href="sml-4-code-along_files/libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="sml-4-code-along_files/libs/revealjs/dist/reveal.css">
   <style>
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
@@ -94,13 +94,13 @@
     code span.vs { color: #20794d; } /* VerbatimString */
     code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
-  <link rel="stylesheet" href="sml-4-conceptual-overview_files/libs/revealjs/dist/theme/quarto.css">
-  <link href="sml-4-conceptual-overview_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
-  <link href="sml-4-conceptual-overview_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
-  <link href="sml-4-conceptual-overview_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
-  <link href="sml-4-conceptual-overview_files/libs/revealjs/plugin/reveal-chalkboard/font-awesome/css/all.css" rel="stylesheet">
-  <link href="sml-4-conceptual-overview_files/libs/revealjs/plugin/reveal-chalkboard/style.css" rel="stylesheet">
-  <link href="sml-4-conceptual-overview_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <link rel="stylesheet" href="sml-4-code-along_files/libs/revealjs/dist/theme/quarto.css">
+  <link href="sml-4-code-along_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="sml-4-code-along_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="sml-4-code-along_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="sml-4-code-along_files/libs/revealjs/plugin/reveal-chalkboard/font-awesome/css/all.css" rel="stylesheet">
+  <link href="sml-4-code-along_files/libs/revealjs/plugin/reveal-chalkboard/style.css" rel="stylesheet">
+  <link href="sml-4-code-along_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
   <style type="text/css">
 
   .callout {
@@ -391,327 +391,226 @@
     <div class="slides">
 
 <section id="title-slide" class="quarto-title-block center">
-  <h1 class="title">Predicting Better with Random Forests</h1>
-  <p class="subtitle">Conceptual Overview</p>
+  <h1 class="title">How to Cross-Validate and Change the Model</h1>
+  <p class="subtitle">Code Along</p>
 
 <div class="quarto-title-authors">
 </div>
 
 </section>
 <section>
-<section id="purpose-and-agenda" class="title-slide slide level1 center">
-<h1>Purpose and Agenda</h1>
-<p>Having fit and interpreted our machine learning model, how do we make our model better? That’s the focus of this learning lab. There are three core ideas, pertaining to feature engineering, resampling, and the random forest algorithm. We again use the OULAD data.</p>
-<aside class="notes">
-<p>A point of emphasis now is that this lab is similar in its use of OULAD data, but different in key ways — namely, the use of cross-validation and a different algorithm, or model, the Random Forest. Plus, we do more with feature engineering! The Random Forest is considerably more complex than the logistic regression model we have been using, and the change to this model and the other additions make this a conceptually complex module. Still, in principle, the process is the same one we have followed throughout these modules. Get ready!</p>
-<style type="text/css">
-        span.MJX_Assistive_MathML {
-          position:absolute!important;
-          clip: rect(1px, 1px, 1px, 1px);
-          padding: 1px 0 0 0!important;
-          border: 0!important;
-          height: 1px!important;
-          width: 1px!important;
-          overflow: hidden!important;
-          display:block!important;
-      }</style></aside>
+<section id="getting-started" class="title-slide slide level1 center">
+<h1>Getting started</h1>
+
 </section>
-<section id="what-well-do-in-this-presentation" class="slide level2">
-<h2>What we’ll do in this presentation</h2>
+<section id="process" class="slide level2">
+<h2>Process</h2>
 <ul>
-<li>Discussion 1</li>
-<li>Key Concept: Feature Engineering (Part B)</li>
-<li>Key Concept: Resampling and cross-validation</li>
-<li>Key Concept: The Random Forest algorithm</li>
-<li>Discussion 2</li>
-<li>Introduction to the other parts of this learning lab</li>
+<li>Again, create a .R file in <code>/module-4</code></li>
+<li>Then, run copy and paste the code in this presentation as we talk through each step</li>
+</ul>
+</section>
+<section id="quick-discussion" class="slide level2">
+<h2>Quick discussion</h2>
+<ul>
+<li>Which feature engineering steps do you think are most important for the OULAD data we have been using?</li>
 </ul>
 </section></section>
-<section id="discussion-1" class="title-slide slide level1 center">
-<h1>Discussion 1</h1>
+<section id="code-along-r" class="title-slide slide level1 center">
+<h1>Code-along: R</h1>
 <div class="panel-tabset">
-<ul id="tabset-1" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-1-1">Background</a></li><li><a href="#tabset-1-2">Conceptual Overview</a></li></ul>
+<ul id="tabset-1" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-1-1">ggplot2</a></li><li><a href="#tabset-1-2">ggplot2 (2)</a></li><li><a href="#tabset-1-3">0. Setup</a></li><li><a href="#tabset-1-4">1. Split data</a></li><li><a href="#tabset-1-5">1. Split data (KFCV)</a></li><li><a href="#tabset-1-6">2. Engineer features</a></li><li><a href="#tabset-1-7">3. Specify model</a></li><li><a href="#tabset-1-8">4. Fit model</a></li><li><a href="#tabset-1-9">5. Evaluate accuracy (training)</a></li><li><a href="#tabset-1-10">5. Evaluate accuracy (VIP)</a></li><li><a href="#tabset-1-11">5. Evaluate accuracy (testing)</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1">
-<ul>
-<li>Having discussed ways of interpreting how good a predictive model is, we can consider how to make our model better, having a rigorous framework for answering that question.</li>
-</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">library</span>(ggrepel)</span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-3"><a href="#cb1-3"></a></span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="fu">ggplot</span>(starwars, <span class="fu">aes</span>(<span class="at">x =</span> height, <span class="at">label =</span> name)) <span class="sc">+</span></span>
+<span id="cb1-5"><a href="#cb1-5"></a>    <span class="fu">geom_histogram</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </div>
 <div id="tabset-1-2">
-<ul>
-<li>How good is a good enough model <em>for which metrics</em>?</li>
-</ul>
-</div>
-</div>
-</div>
-</section>
-
-<section>
-<section id="key-concept-1" class="title-slide slide level1 center">
-<h1>Key Concept #1</h1>
-
-</section>
-<section id="feature-engineering-part-b" class="slide level2">
-<h2>Feature Engineering (Part B)</h2>
-<div class="panel-tabset">
-<ul id="tabset-2" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-2-1">How?</a></li><li><a href="#tabset-2-2">More Techniques</a></li></ul>
-<div class="tab-content">
-<div id="tabset-2-1">
-<ul>
-<li>Well, what if we just add the values for these variables directly</li>
-<li>But, that ignores that they are at different time points
-<ul>
-<li>We could include the time point variable, but that is (about) the same for every student</li>
-</ul></li>
-<li>OULAD interaction data is this way: the number of <em>clicks</em> per day</li>
-<li>This data is sometimes called <em>log-trace</em> or <em>clickstream</em> data</li>
-<li>In this module, we focus on using <a href="https://analyse.kmi.open.ac.uk/open_dataset">OULAD data</a> on interactions data, the most fine-grained data**</li>
-</ul>
-</div>
-<div id="tabset-2-2">
-<ul>
-<li>Removing those with “near-zero variance”</li>
-<li>Removing ID variables and others that <em>should not be</em> informative</li>
-<li>Imputing missing values</li>
-<li>Extract particular elements (i.e., particular <em>days</em> or <em>times</em>) from time-related data</li>
-<li>Categorical variables: Dummy coding, combining categories</li>
-<li>Numeric variables: Normalizing (“standardizing”)</li>
-</ul>
-</div>
-</div>
-</div>
-</section></section>
-<section>
-<section id="key-concept-2" class="title-slide slide level1 center">
-<h1>Key Concept # 2</h1>
-
-</section>
-<section id="resampling-and-cross-validation" class="slide level2">
-<h2>Resampling and cross-validation</h2>
-<div class="panel-tabset">
-<ul id="tabset-3" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-3-1">Training data</a></li><li><a href="#tabset-3-2">Resampling</a></li><li><a href="#tabset-3-3">Resampling Process</a></li><li><a href="#tabset-3-4"><em>k</em>-folds cross validation (KFCV)</a></li><li><a href="#tabset-3-5">KFCV Example</a></li><li><a href="#tabset-3-6">Determining k</a></li></ul>
-<div class="tab-content">
-<div id="tabset-3-1">
-<ul>
-<li><p>In earlier modules, we fit and interpreted a single <em>fit of our model</em> (80% training, 20% testing). What if we decided to <em>add new features</em> or <em>change existing features</em>?</p></li>
-<li><p>We’d need to use the same training data to tune a new model—and the same testing data to evaluate its performance. <strong>But</strong>, this could lead to fitting a model based on how well we predict the data that happened to end up in the test set.</p></li>
-<li><p>We could be optimizing our model for our testing data; when used with new data, our model could make poor predictions.</p></li>
-</ul>
-</div>
-<div id="tabset-3-2">
-<ul>
-<li><p>In short, a challenges arises when we wish to use our training data <em>more than once</em></p></li>
-<li><p>Namely, if we repeatedly training an algorithm on the same data and then make changes, we may be tailoring our model to specific features of the testing data</p></li>
-<li><p>Resampling conserves our testing data; we don’t have to spend it until we’ve finalized our model!</p></li>
-</ul>
-</div>
-<div id="tabset-3-3">
-<ul>
-<li><p>Resampling involves blurring the boundaries between training and testing data, <em>but only for the training split of the data</em></p></li>
-<li><p>Specifically, it involves combining these two portions of our data into one, iteratively considering some of the data to be for “training” and some for “testing”</p></li>
-<li><p>Then, fit measures are <strong>averaged</strong> across these different samples</p></li>
-</ul>
-</div>
-<div id="tabset-3-4">
-<ul>
-<li>One of the most common forms of resampling is <em>k</em>-folds cross validation
-<ul>
-<li>Here, some of the data is considered to be a part of the <em>training</em> set</li>
-<li>The remaining data is a part of the <em>testing</em> set</li>
-</ul></li>
-<li>How many sets (samples taken through resampling)?
-<ul>
-<li>This is determined by <em>k</em>, number of times the data is resampled</li>
-<li>When <em>k</em> is equivalent to the number of rows in the data, i.e.&nbsp;“Leave One Out Cross-Validation” (LOOCV) — typically not recommended</li>
-</ul></li>
-</ul>
-</div>
-<div id="tabset-3-5">
 <div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 2 × 3
-     id var_a var_b
-  &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
-1     1 0.466 0.257
-2     2 0.713 0.207</code></pre>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="fu">library</span>(ggrepel)</span>
+<span id="cb2-2"><a href="#cb2-2"></a></span>
+<span id="cb2-3"><a href="#cb2-3"></a><span class="fu">ggplot</span>(starwars, <span class="fu">aes</span>(<span class="at">x =</span> height, <span class="at">y =</span> mass, <span class="at">label =</span> name)) <span class="sc">+</span></span>
+<span id="cb2-4"><a href="#cb2-4"></a>    <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb2-5"><a href="#cb2-5"></a>    <span class="fu">geom_label_repel</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
-<p>Using <em>k</em> = 10, how can we split <em>n</em> = 100 cases into ten distinct training and testing sets?</p>
-<p><em>First resampling</em></p>
+<div id="tabset-1-3">
+<p><strong>Loading, setting up: create a .R file in /module-4 and run this code</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>train <span class="ot">&lt;-</span> d[<span class="dv">1</span><span class="sc">:</span><span class="dv">90</span>, ]</span>
-<span id="cb2-2"><a href="#cb2-2"></a>test <span class="ot">&lt;-</span> d[<span class="dv">91</span><span class="sc">:</span><span class="dv">100</span>, ]</span>
-<span id="cb2-3"><a href="#cb2-3"></a><span class="co"># then, train the model (using train) and calculate a fit measure (using test)</span></span>
-<span id="cb2-4"><a href="#cb2-4"></a><span class="co"># repeat for train: 1:80, 91:100, test: 81:90, etc.</span></span>
-<span id="cb2-5"><a href="#cb2-5"></a><span class="co"># ... through the tenth resampling, after which the fit measures are averaged</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb3-2"><a href="#cb3-2"></a><span class="fu">library</span>(tidymodels)</span>
+<span id="cb3-3"><a href="#cb3-3"></a></span>
+<span id="cb3-4"><a href="#cb3-4"></a>starwars_recoded <span class="ot">&lt;-</span> starwars <span class="sc">%&gt;%</span> <span class="co"># built-in data available just by typing</span></span>
+<span id="cb3-5"><a href="#cb3-5"></a>    <span class="fu">mutate</span>(<span class="at">species_human =</span> <span class="fu">ifelse</span>(species <span class="sc">==</span> <span class="st">"Human"</span>, <span class="st">"human"</span>, <span class="st">"not human"</span>))</span>
+<span id="cb3-6"><a href="#cb3-6"></a></span>
+<span id="cb3-7"><a href="#cb3-7"></a>starwars_recoded <span class="sc">%&gt;%</span> </span>
+<span id="cb3-8"><a href="#cb3-8"></a>    <span class="fu">count</span>(species_human) <span class="co"># how many humans are there?</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
-<div id="tabset-3-6">
-<section id="but-how-do-you-determine-what-k-should-be" class="title-slide slide level1 center">
-<h1>But how do you determine what <em>k</em> should be?</h1>
-<ul>
-<li>A <em>historically common value</em> for <em>k</em> has been 10</li>
-<li>But, as computers have grown in processing power, setting <em>k</em> equal to the number of rows in the data has become more common
-<ul>
-<li>Though, again, LOOCV (<em>k</em> = to the number or rows) is typically not recommended, as it can take considerable time and may have some undesired statistical properties</li>
-</ul></li>
-</ul>
+<div id="tabset-1-4">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a>train_test_split <span class="ot">&lt;-</span> <span class="fu">initial_split</span>(starwars_recoded, <span class="at">prop =</span> .<span class="dv">70</span>)</span>
+<span id="cb4-2"><a href="#cb4-2"></a></span>
+<span id="cb4-3"><a href="#cb4-3"></a>data_train <span class="ot">&lt;-</span> <span class="fu">training</span>(train_test_split)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-1-5">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="co"># during Step 1</span></span>
+<span id="cb5-2"><a href="#cb5-2"></a>kfcv <span class="ot">&lt;-</span> <span class="fu">vfold_cv</span>(data_train, <span class="at">v =</span> <span class="dv">10</span>) <span class="co"># this differentiates this from what we did before</span></span>
+<span id="cb5-3"><a href="#cb5-3"></a><span class="co"># before, we simple used data_train to fit our model</span></span>
+<span id="cb5-4"><a href="#cb5-4"></a>kfcv</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-1-6">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="co"># predicting humans based on the variables we used in LL1 + birth_year and homeworld</span></span>
+<span id="cb6-2"><a href="#cb6-2"></a>my_rec <span class="ot">&lt;-</span> <span class="fu">recipe</span>(species_human <span class="sc">~</span> height <span class="sc">+</span> mass <span class="sc">+</span> birth_year <span class="sc">+</span> eye_color, <span class="at">data =</span> data_train) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-3"><a href="#cb6-3"></a>    <span class="fu">step_novel</span>(eye_color) <span class="co"># need to dummy code</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-1-7">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb7-2"><a href="#cb7-2"></a><span class="co">#| echo: true</span></span>
+<span id="cb7-3"><a href="#cb7-3"></a><span class="co"># during step 3</span></span>
+<span id="cb7-4"><a href="#cb7-4"></a>my_mod <span class="ot">&lt;-</span> <span class="fu">rand_forest</span>() <span class="sc">%&gt;%</span> <span class="co"># different</span></span>
+<span id="cb7-5"><a href="#cb7-5"></a>    <span class="fu">set_engine</span>(<span class="st">"ranger"</span>, <span class="at">importance =</span> <span class="st">"impurity"</span>) <span class="sc">%&gt;%</span> <span class="co"># different and with importance</span></span>
+<span id="cb7-6"><a href="#cb7-6"></a>    <span class="fu">set_mode</span>(<span class="st">"classification"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-1-8">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>class_metrics <span class="ot">&lt;-</span> <span class="fu">metric_set</span>(accuracy, sensitivity, specificity, ppv, npv, kap) <span class="co"># this is new</span></span>
+<span id="cb8-2"><a href="#cb8-2"></a></span>
+<span id="cb8-3"><a href="#cb8-3"></a>fitted_model_resamples <span class="ot">&lt;-</span> <span class="fu">fit_resamples</span>(my_wf, </span>
+<span id="cb8-4"><a href="#cb8-4"></a>                                        <span class="at">resamples =</span> kfcv, <span class="co"># different</span></span>
+<span id="cb8-5"><a href="#cb8-5"></a>                                        <span class="at">metrics =</span> class_metrics)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-1-9">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="fu">collect_metrics</span>(fitted_model_resamples)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-1-10">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a>final_fit <span class="sc">%&gt;%</span> </span>
+<span id="cb10-2"><a href="#cb10-2"></a>    <span class="fu">pluck</span>(<span class="st">".workflow"</span>, <span class="dv">1</span>) <span class="sc">%&gt;%</span>   </span>
+<span id="cb10-3"><a href="#cb10-3"></a>    <span class="fu">pull_workflow_fit</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb10-4"><a href="#cb10-4"></a>    <span class="fu">vip</span>(<span class="at">num_features =</span> <span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-1-11">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a>final_fit <span class="ot">&lt;-</span> <span class="fu">last_fit</span>(my_wf, train_test_split, <span class="at">metrics =</span> class_metrics)</span>
+<span id="cb11-2"><a href="#cb11-2"></a><span class="fu">collect_metrics</span>(final_fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
 </section>
 
-</div>
-</div>
-</div>
-</section></section>
 <section>
-<section id="key-concept-3" class="title-slide slide level1 center">
-<h1>Key Concept #3</h1>
-
+<section id="code-along-python" class="title-slide slide level1 center">
+<h1>Code-along: python</h1>
+<p>::: panel-tabset</p>
 </section>
-<section id="random-forests" class="slide level2">
-<h2>Random Forests</h2>
-<div class="panel-tabset">
-<ul id="tabset-4" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-4-1">Background</a></li><li><a href="#tabset-4-2">Algorithm</a></li><li><a href="#tabset-4-3">More Complexity</a></li><li><a href="#tabset-4-4">Tuning</a></li><li><a href="#tabset-4-5">Key Points</a></li><li><a href="#tabset-4-6">Boosting</a></li></ul>
-<div class="tab-content">
-<div id="tabset-4-1">
-<ul>
-<li><em>Random forests</em> are extensions of classification trees</li>
-<li><em>Classification trees</em> are a type of algorithm that use conditional logic (“if-then” statements) in a <em>nested</em> manner
-<ul>
-<li>For instance, here’s a <em>very, very</em> simple tree (from <a href="https://link.springer.com/book/10.1007/978-1-4614-6849-3">APM</a>):</li>
-</ul></li>
-</ul>
-</div>
-<div id="tabset-4-2">
-<pre><code>if Predictor B &gt;= 0.197 then
-| if Predictor A &gt;= 0.13 then Class = 1
-| else Class = 2
-else Class = 2</code></pre>
-<ul>
-<li>Measures are used to determine the splits in such a way that classifies observations into small, homogeneous groups (using measures such as the Gini index and entropy measure)</li>
-</ul>
-</div>
-<div id="tabset-4-3">
-<pre><code>if Predictor B &gt;= 0.197 then
-| if Predictor A &gt;= 0.13 then
-    | if Predictor C &lt; -1.04 then Class = 1
-    | else Class = 2
-else Class = 3</code></pre>
-<p>As you can imagine, with many variables, these trees can become very complex</p>
-</div>
-<div id="tabset-4-4">
-<ul>
-<li>There are several important tuning parameters for these models:
-<ul>
-<li>the number of predictor variables that are randomly sampled for each split (<code>mtry</code>)</li>
-<li>the minimum number of data points required to execute a split into branches (<code>min_n</code>)</li>
-<li>the number of trees estimated as a part of the “forest” (<code>trees</code>)</li>
-</ul></li>
-<li>These tuning parameters, broadly, balance predictive performance with the training data with how well the model will perform on new data</li>
-<li>A boosted tree may achieve ev</li>
-</ul>
-</div>
-<div id="tabset-4-5">
-<ul>
-<li>A Random forest is an extension of decision tree modeling whereby a collection of decision trees are sequentially <strong>estimated using training data</strong> - and <strong>validated/tested using testing data</strong></li>
-<li>Different <em>samples</em> of predictors are sampled for inclusion in each individual tree</li>
-<li>Highly complex and non-linear relationships between variables can be estimated</li>
-<li>Each tree is independent of every other tree<br>
-</li>
-<li>For classification ML, the final output is the category/group/class selected by individual trees</li>
-<li>For regression ML, the mean or average prediction of the individual trees is returned</li>
-</ul>
-</div>
-<div id="tabset-4-6">
-<ul>
-<li><p>Boosted trees, like those created using the xgboost package (<strong>engine</strong>), sequentially build trees where each new tree attempts to correct the errors made by the previous ones</p></li>
-<li><p>By focusing on correcting mistakes and optimizing the model iteratively, boosted trees can achieve better performance compared to random forests</p></li>
-<li><p>Boosted trees offer more hyperparameters to fine-tune, such as learning rate and tree depth — which can be challenging</p></li>
-</ul>
-</div>
-</div>
-</div>
-</section></section>
-<section id="discussion-2" class="title-slide slide level1 center">
-<h1>Discussion 2</h1>
-<div class="panel-tabset">
-<ul id="tabset-5" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-5-1">Reflecting</a></li><li><a href="#tabset-5-2">Applying</a></li></ul>
-<div class="tab-content">
-<div id="tabset-5-1">
-<ul>
-<li>Why is resampling (cross-validation) important?</li>
-</ul>
-</div>
-<div id="tabset-5-2">
-<ul>
-<li>Which feature engineering steps might you need to take with the data (or kind of data) you plan to use?</li>
-</ul>
-</div>
-</div>
+<section id="loading-setting-up" class="slide level2">
+<h2>Loading, setting up</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1"></a><span class="co">#</span></span>
+<span id="cb12-2"><a href="#cb12-2"></a><span class="co"># Imports for visualization and modeling</span></span>
+<span id="cb12-3"><a href="#cb12-3"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb12-4"><a href="#cb12-4"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb12-5"><a href="#cb12-5"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> cross_val_score, KFold</span>
+<span id="cb12-6"><a href="#cb12-6"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> RandomForestClassifier</span>
+<span id="cb12-7"><a href="#cb12-7"></a><span class="im">import</span> shap</span>
+<span id="cb12-8"><a href="#cb12-8"></a></span>
+<span id="cb12-9"><a href="#cb12-9"></a><span class="co"># Star Wars data</span></span>
+<span id="cb12-10"><a href="#cb12-10"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb12-11"><a href="#cb12-11"></a>starwars <span class="op">=</span> sns.load_dataset(<span class="st">'starwars'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-
-<section id="introduction-to-the-other-parts-of-this-module" class="title-slide slide level1 center">
-<h1>Introduction to the other parts of this module</h1>
-<div class="panel-tabset">
-<ul id="tabset-6" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-6-1">Readings</a></li><li><a href="#tabset-6-2">Case Study</a></li><li><a href="#tabset-6-3">Badge</a></li></ul>
-<div class="tab-content">
-<div id="tabset-6-1">
-<blockquote>
-<p>Baker, R. S., Esbenshade, L., Vitale, J., &amp; Karumbaiah, S. (2023). Using demographic data as predictor variables: A questionable choice. <em>Journal of Educational Data Mining, 15</em>(2), 22-52.</p>
-</blockquote>
-<blockquote>
-<p>Bosch, N. (2021). AutoML feature engineering for student modeling yields high accuracy, but limited interpretability. Journal of Educational Data Mining, 13(2), 55-79.</p>
-</blockquote>
-<blockquote>
-<p>Rodriguez, F., Lee, H. R., Rutherford, T., Fischer, C., Potma, E., &amp; Warschauer, M. (2021, April). Using clickstream data mining techniques to understand and support first-generation college students in an online chemistry course. In LAK21: 11th International Learning Analytics and Knowledge Conference (pp.&nbsp;313-322).</p>
-</blockquote>
-</div>
-<div id="tabset-6-2">
-<ul>
-<li>Using (filtered) interaction data (whole data <a href="https://analyse.kmi.open.ac.uk/open_dataset">here</a>)</li>
-<li>Adding features related to <em>activity type</em></li>
-<li>Once again interpreting the change in our predictions (a bit more on the bias-variance trade-off <a href="https://jrosen48.github.io/ML-in-Science-Education-Workshop-Materials/#23">here</a>) (through slide 30)</li>
-</ul>
-</div>
-<div id="tabset-6-3">
-<ul>
-<li>Considering the use of demographic data as features</li>
-<li>Adding <em>activity-specific</em> interaction types</li>
-</ul>
-</div>
-</div>
+<section id="plotting-with-matplotlib" class="slide level2">
+<h2>Plotting with matplotlib</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1"></a><span class="co"># Star Wars data</span></span>
+<span id="cb13-2"><a href="#cb13-2"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb13-3"><a href="#cb13-3"></a>starwars <span class="op">=</span> sns.load_dataset(<span class="st">'starwars'</span>)</span>
+<span id="cb13-4"><a href="#cb13-4"></a></span>
+<span id="cb13-5"><a href="#cb13-5"></a><span class="co"># Plot 1: Histogram</span></span>
+<span id="cb13-6"><a href="#cb13-6"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">6</span>))</span>
+<span id="cb13-7"><a href="#cb13-7"></a>sns.histplot(starwars[<span class="st">'height'</span>], kde<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb13-8"><a href="#cb13-8"></a>plt.xlabel(<span class="st">'Height'</span>)</span>
+<span id="cb13-9"><a href="#cb13-9"></a>plt.ylabel(<span class="st">'Count'</span>)</span>
+<span id="cb13-10"><a href="#cb13-10"></a>plt.title(<span class="st">'Distribution of Heights'</span>)</span>
+<span id="cb13-11"><a href="#cb13-11"></a>plt.show()</span>
+<span id="cb13-12"><a href="#cb13-12"></a></span>
+<span id="cb13-13"><a href="#cb13-13"></a><span class="co"># Plot 2: Scatter plot with labels</span></span>
+<span id="cb13-14"><a href="#cb13-14"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">6</span>))</span>
+<span id="cb13-15"><a href="#cb13-15"></a>sns.scatterplot(data<span class="op">=</span>starwars, x<span class="op">=</span><span class="st">'height'</span>, y<span class="op">=</span><span class="st">'mass'</span>)</span>
+<span id="cb13-16"><a href="#cb13-16"></a><span class="cf">for</span> i, txt <span class="kw">in</span> <span class="bu">enumerate</span>(starwars[<span class="st">'name'</span>]):</span>
+<span id="cb13-17"><a href="#cb13-17"></a>    plt.annotate(txt, (starwars[<span class="st">'height'</span>][i], starwars[<span class="st">'mass'</span>][i]), fontsize<span class="op">=</span><span class="dv">9</span>)</span>
+<span id="cb13-18"><a href="#cb13-18"></a>plt.xlabel(<span class="st">'Height'</span>)</span>
+<span id="cb13-19"><a href="#cb13-19"></a>plt.ylabel(<span class="st">'Mass'</span>)</span>
+<span id="cb13-20"><a href="#cb13-20"></a>plt.title(<span class="st">'Height vs Mass with Labels'</span>)</span>
+<span id="cb13-21"><a href="#cb13-21"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-
-<section id="fin" class="title-slide slide level1 center">
-<h1><em>fin</em></h1>
-<ul>
-<li><em>Dr.&nbsp;Joshua Rosenberg</em> (jmrosenberg@utk.edu; https://joshuamrosenberg.com)</li>
-</ul>
-<p><a href="https://docs.google.com/document/d/14Jc-KG3m5k1BvyKWqw7KmDD21IugU5nV5edfJkZyspY/edit">General troubleshooting tips for R and RStudio</a></p>
+<section id="cross-validation-and-rf-modeling" class="slide level2">
+<h2>Cross-validation and RF modeling</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1"></a><span class="co"># Cross-validation setup (v-fold)</span></span>
+<span id="cb14-2"><a href="#cb14-2"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> make_classification</span>
+<span id="cb14-3"><a href="#cb14-3"></a>X, y <span class="op">=</span> make_classification(n_samples<span class="op">=</span><span class="dv">1000</span>, n_features<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb14-4"><a href="#cb14-4"></a>kf <span class="op">=</span> KFold(n_splits<span class="op">=</span><span class="dv">20</span>, shuffle<span class="op">=</span><span class="va">True</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb14-5"><a href="#cb14-5"></a>kf_splits <span class="op">=</span> <span class="bu">list</span>(kf.split(X))</span>
+<span id="cb14-6"><a href="#cb14-6"></a></span>
+<span id="cb14-7"><a href="#cb14-7"></a><span class="co"># Random Forest Model</span></span>
+<span id="cb14-8"><a href="#cb14-8"></a>model <span class="op">=</span> RandomForestClassifier(n_estimators<span class="op">=</span><span class="dv">100</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb14-9"><a href="#cb14-9"></a></span>
+<span id="cb14-10"><a href="#cb14-10"></a><span class="co"># Cross-validation and metric collection</span></span>
+<span id="cb14-11"><a href="#cb14-11"></a>cv_scores <span class="op">=</span> cross_val_score(model, X, y, cv<span class="op">=</span>kf, scoring<span class="op">=</span><span class="st">'accuracy'</span>)</span>
+<span id="cb14-12"><a href="#cb14-12"></a><span class="bu">print</span>(<span class="st">'Cross-validation accuracy scores:'</span>, cv_scores)</span>
+<span id="cb14-13"><a href="#cb14-13"></a><span class="bu">print</span>(<span class="st">'Mean cross-validation accuracy:'</span>, cv_scores.mean())</span>
+<span id="cb14-14"><a href="#cb14-14"></a></span>
+<span id="cb14-15"><a href="#cb14-15"></a><span class="co"># Fit the model on the entire dataset for feature importance</span></span>
+<span id="cb14-16"><a href="#cb14-16"></a>model.fit(X, y)</span>
+<span id="cb14-17"><a href="#cb14-17"></a>explainer <span class="op">=</span> shap.TreeExplainer(model)</span>
+<span id="cb14-18"><a href="#cb14-18"></a>shap_values <span class="op">=</span> explainer.shap_values(X)</span>
+<span id="cb14-19"><a href="#cb14-19"></a></span>
+<span id="cb14-20"><a href="#cb14-20"></a><span class="co"># Plot feature importance</span></span>
+<span id="cb14-21"><a href="#cb14-21"></a>shap.summary_plot(shap_values, X, plot_type<span class="op">=</span><span class="st">"bar"</span>, max_display<span class="op">=</span><span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 
 <img src="img/LASERLogoB.png" class="slide-logo r-stretch"><div class="footer footer-default">
 <p><a href="https://www.go.ncsu.edu/laser-institute">go.ncsu.edu/laser-institute</a></p><a href="https://www.go.ncsu.edu/laser-institute">
 </a></div><a href="https://www.go.ncsu.edu/laser-institute">
-</a></section><a href="https://www.go.ncsu.edu/laser-institute">
+</a></section></section><a href="https://www.go.ncsu.edu/laser-institute">
     </a></div><a href="https://www.go.ncsu.edu/laser-institute">
   </a></div><a href="https://www.go.ncsu.edu/laser-institute">
 
   <script>window.backupDefine = window.define; window.define = undefined;</script>
-  <script src="sml-4-conceptual-overview_files/libs/revealjs/dist/reveal.js"></script>
+  <script src="sml-4-code-along_files/libs/revealjs/dist/reveal.js"></script>
   <!-- reveal.js plugins -->
-  <script src="sml-4-conceptual-overview_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
-  <script src="sml-4-conceptual-overview_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
-  <script src="sml-4-conceptual-overview_files/libs/revealjs/plugin/reveal-menu/menu.js"></script>
-  <script src="sml-4-conceptual-overview_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
-  <script src="sml-4-conceptual-overview_files/libs/revealjs/plugin/reveal-chalkboard/plugin.js"></script>
-  <script src="sml-4-conceptual-overview_files/libs/revealjs/plugin/quarto-support/support.js"></script>
+  <script src="sml-4-code-along_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="sml-4-code-along_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="sml-4-code-along_files/libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="sml-4-code-along_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="sml-4-code-along_files/libs/revealjs/plugin/reveal-chalkboard/plugin.js"></script>
+  <script src="sml-4-code-along_files/libs/revealjs/plugin/quarto-support/support.js"></script>
   
 
-  <script src="sml-4-conceptual-overview_files/libs/revealjs/plugin/notes/notes.js"></script>
-  <script src="sml-4-conceptual-overview_files/libs/revealjs/plugin/search/search.js"></script>
-  <script src="sml-4-conceptual-overview_files/libs/revealjs/plugin/zoom/zoom.js"></script>
-  <script src="sml-4-conceptual-overview_files/libs/revealjs/plugin/math/math.js"></script>
+  <script src="sml-4-code-along_files/libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="sml-4-code-along_files/libs/revealjs/plugin/search/search.js"></script>
+  <script src="sml-4-code-along_files/libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="sml-4-code-along_files/libs/revealjs/plugin/math/math.js"></script>
   <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
 
   <script>

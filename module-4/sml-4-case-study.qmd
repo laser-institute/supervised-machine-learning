@@ -186,7 +186,6 @@ This is a good start - we've created our first feature based upon the log data, 
 
 We'll take one last step here -- creating individual *slopes* of students' clicks over time. This code is a bit more involved, and so is annotated for you below; feel free to modify and re-use this.
 
-
 First, we use a custom function that can deal with cases where the fitting of the slopes fails (e.g., for students with only a single data point, or some other unanticipated issue with the model estimation).
 
 ```{r}
@@ -240,10 +239,7 @@ Please rename the resulting intercept and date, changing them`intercept` and `sl
 
 After running this code, we will have intercepts, linear slopes, and quadratic terms for each students' clickstream pattern over the semester.
 
-Let's join together several files. First, let's join all our features
-into a single file. Please use `left_join()` to join
-`interactions_summarized` and `interactions_slopes`, assigning the
-resulting output the name `interactions_summarized_and_slopes`.
+Let's join together several files. First, let's join all our features into a single file. Please use `left_join()` to join `interactions_summarized` and `interactions_slopes`, assigning the resulting output the name `interactions_summarized_and_slopes`.
 
 #### [Your Turn]{style="color: green;"} ⤵
 
@@ -346,8 +342,7 @@ Then, please *add to* the following code by completing three steps, building on 
 
 1.  Please normalize all numeric predictors.
 2.  Please dummy code the following three variables: `disability`, `gender`, and `code_module`.
-3.  Please impute missing values using the nearest neighbors method for
-the `mean_weighted_score`, `sum_clicks`, `sd_clicks`, `mean_clicks`, `intercept`, `slope`, and `date_registration` variables.
+3.  Please impute missing values using the nearest neighbors method for the `mean_weighted_score`, `sum_clicks`, `sd_clicks`, `mean_clicks`, `intercept`, `slope`, and `date_registration` variables.
 
 ```{r}
 

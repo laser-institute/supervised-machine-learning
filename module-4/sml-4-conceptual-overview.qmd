@@ -66,40 +66,7 @@ A point of emphasis now is that this lab is similar in its use of OULAD data, bu
     - We could include the time point variable, but that is (about) the same for every student
 - OULAD interaction data is this way: the number of _clicks_ per day 
 - This data is sometimes called _log-trace_ or _clickstream_ data
-    
-*What are some other ideas?*
-
-::: {.notes}
-This can be a very fun discussion - lean into weird ideas! Writing these out on a whiteboard may help to facilitate sharing and discussion.
-:::
-
-## Other Options
-
-**A few (other) options**
-
-- Raw data points
-- Their mean
-- Their maximum
-- Their variability (standard deviation)
-- Their linear slope
-- Their quadratic slope
-
-::: {.notes}
-You can lean into other ideaes - writing other ideas (e.g., do moon phases matter for certain RQs!) on the whiteboard.
-:::
-
-**Each of these may derive from a single _variable_ but may offer predictive utility as distinct _features_**
-
-## Time Stamps
-
-Here's a time stamp:
-
-```{r}
-#| echo: false
-Sys.time()
-```
-
-**How could this variable be used as a predictor variable?**
+- In this module, we focus on using [OULAD data](https://analyse.kmi.open.ac.uk/open_dataset) on interactions data, the most fine-grained data**
 
 ## More Techniques
 
@@ -110,12 +77,6 @@ Sys.time()
 - Categorical variables: Dummy coding, combining categories
 - Numeric variables: Normalizing ("standardizing")
 
-**In this lab, we focus on using [OULAD data](https://analyse.kmi.open.ac.uk/open_dataset) on interactions data, the most fine-grained data**
-
-::: {.notes}
-You can emphasize here that the interactions data is emblematic of much learning analyitcs data. You may want to open the data here to view it together, getting a sense of its size and contents in terms of rows (observations) and columns (variables).
-:::
-
 :::
 
 # Key Concept # 2 
@@ -124,21 +85,13 @@ You can emphasize here that the interactions data is emblematic of much learning
 
 ::: {.panel-tabset}
 
-## The importance of training data
+## Training data
 
-- Training data is what we use to "learn" from data
-- A "check" on your work is your predictions on _test_ set data
-  - *Train data*: Outcome data that you use to fit your model
-  - *Validation data<sup>1</sup>*: Data you use to select a particular algorithm (not often used, as we'll discuss!)
-  - *Test ("hold-out") data*: Data that you do not use in any way to train your model
+- In earlier modules, we fit and interpreted a single _fit of our model_ (80% training, 20% testing). What if we decided to _add new features_ or _change existing features_?
 
-## Challenges
+- We'd need to use the same training data to tune a new model---and the same testing data to evaluate its performance. **But**, this could lead to fitting a model based on how well we predict the data that happened to end up in the test set. 
 
-In module 1, we fit and interpreted a single _fit of our model_ (80% training, 20% testing). What if we decided to _add new features_ or _change existing features_?
-
-We'd need to use the same training data to tune a new model---and the same testing data to evaluate its performance. **But**, this could lead to fitting a model based on how well we predict the data that happened to end up in the test set. 
-
-We could be optimizing our model for our testing data; when used with new data, our model could make poor predictions.
+- We could be optimizing our model for our testing data; when used with new data, our model could make poor predictions.
 
 ## Resampling
 
@@ -146,9 +99,7 @@ We could be optimizing our model for our testing data; when used with new data, 
 
 - Namely, if we repeatedly training an algorithm on the same data and then make changes, we may be tailoring our model to specific features of the testing data
 
-- This is a _very common and pervasive problem_ in machine learning applications
-
-- Resampling conserves our testing data; we don't have to spend it until we've finalized our model
+- Resampling conserves our testing data; we don't have to spend it until we've finalized our model!
 
 ## Resampling Process
 
@@ -255,11 +206,11 @@ As you can imagine, with many variables, these trees can become very complex
 
 ## Boosting
 
-- Boosted trees, like those created using the xgboost package, sequentially build trees where each new tree attempts to correct the errors made by the previous ones, effectively reducing bias and improving accuracy.
+- Boosted trees, like those created using the xgboost package (**engine**), sequentially build trees where each new tree attempts to correct the errors made by the previous ones
 
-- By focusing on correcting mistakes and optimizing the model iteratively, boosted trees can achieve better performance compared to random forests, which average the predictions of many uncorrelated trees, potentially reducing variance but not necessarily bias.
+- By focusing on correcting mistakes and optimizing the model iteratively, boosted trees can achieve better performance compared to random forests
 
-- Boosted trees offer more hyperparameters to fine-tune, such as learning rate and tree depth, providing greater flexibility and potential for optimization, often leading to superior performance on complex datasets.
+- Boosted trees offer more hyperparameters to fine-tune, such as learning rate and tree depth --- which can be challenging
 
 :::
 

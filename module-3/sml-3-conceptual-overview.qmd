@@ -180,6 +180,44 @@ d <- tibble(student_id = "janyia", time_point = 1:10, var_b = c(12, 10, 35, 3, 4
 d %>% head(3)
 ```
 
+::: {.notes}
+You can emphasize here that the interactions data is emblematic of much learning analyitcs data. You may want to open the data here to view it together, getting a sense of its size and contents in terms of rows (observations) and columns (variables).
+:::
+
+*What are some other ideas?*
+
+::: {.notes}
+This can be a very fun discussion - lean into weird ideas! Writing these out on a whiteboard may help to facilitate sharing and discussion.
+:::
+
+## Other Options
+
+**A few (other) options**
+
+- Raw data points
+- Their mean
+- Their maximum
+- Their variability (standard deviation)
+- Their linear slope
+- Their quadratic slope
+
+::: {.notes}
+You can lean into other ideas - writing other ideas (e.g., do moon phases matter for certain RQs!) on the whiteboard.
+:::
+
+**Each of these may derive from a single _variable_ but may offer predictive utility as distinct _features_**
+
+## Time Stamps
+
+Here's a time stamp:
+
+```{r}
+#| echo: false
+Sys.time()
+```
+
+**How could this variable be used as a predictor variable?**
+
 ## How?
 
 - We can do all of these things **manually**
