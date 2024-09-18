@@ -181,15 +181,15 @@ Do you not yet have codes/outcomes -- and do you want to?
 
 Do you want to say something about one or several variables' relations with an outcome?
 
--   Understand whether an intervention was effective
--   See how one or more variables relates to an outcome
+-   See how one or more variables _relates_ to an outcome
+-   Understand whether a key variable is _has a statistically significantly coefficient_ in terms of its realtion with an outcome of interest
 
 **Traditional, inferential statistics *i.e., regression* may be best**
 
 ## How do I select a model?
 
 One general principle is to **start with the simplest useful model** and to _build toward
-more complex models as helpfuL_.
+more complex models as helpful_.
 
 This principle applies in multiple ways:
 
@@ -359,19 +359,10 @@ ggsave("img/bias-variance-data-6.png")
 
 - *Definition*: Using a different sample of data, the difference in $\hat{y}$ values
 - How sensitive our predictions are to the specific sample on which we trained the model
-- Models with high variance can fail to predict different data well—they can be *over-fit* to our data
+- Models with high variance can fail to predict different data well
 - In short, how stable the predictions of our model are
 
 #### <center>Regardless of model, we often wish to balance between bias and variance—to balance between under- and over-fitting a model to our data</center>
-
-## Examples
-
-**Combining best practices in assessment with supervised ML**
-
-> Maestrales, S., Zhai, X., Touitou, I., Baker, Q., Schneider, B., & Krajcik, J. (2021). Using machine learning to score multi-dimensional assessments of chemistry and physics. Journal of Science Education and Technology, 30(2), 239-254.
-
--   Carrying out a careful process of qualitative coding (and the establishment of validity and interrater reliability) of students' written constructed responses
--   Training a supervised ML algorithm in advance of being able to **scale up** their coding to a larger number of responses
 
 ## Discussion 2
 
@@ -429,16 +420,19 @@ A key point to make here is that each lab introduces a tension/issue that is res
 
 ### Code-along
 
-Using *built-in* data
+- Uses built-in data (from the General Social Survey)
+- Compares the use of the same logistic regression model in a regression and SML "mode"
+- Introduces the modeling cycle and process
+
 ### Readings
 
 **Please see `sml-1-readings.qmd`**
 
-> Brooks, C., & Thompson, C. (2017). Predictive modelling in teaching and learning. Handbook of learning analytics, 61-68.
+> Brooks, C., & Thompson, C. (2017). Predictive modelling in teaching and learning. *Handbook of Learning Analytics*, 61-68.
 
-> Jaquette, O., & Parra, E. E. (2013). Using IPEDS for panel analyses: Core concepts, data challenges, and empirical applications. In Higher Education: Handbook of Theory and Research: Volume 29 (pp. 467-533). Dordrecht: Springer Netherlands.
+> Jaquette, O., & Parra, E. E. (2013). Using IPEDS for panel analyses: Core concepts, data challenges, and empirical applications. In *Higher Education: Handbook of Theory and Research: Volume 29 (pp. 467-533)*. Dordrecht: Springer Netherlands.
 
-> Zong, C., & Davis, A. (2022). Modeling university retention and graduation rates using IPEDS. Journal of College Student Retention: Research, Theory & Practice, 15210251221074379.
+> Zong, C., & Davis, A. (2022). Modeling university retention and graduation rates using IPEDS. *Journal of College Student Retention: *Research, Theory & Practice*. https://journals.sagepub.com/doi/full/10.1177/15210251221074379
 
 ### Case Study
 
@@ -455,8 +449,6 @@ Using *built-in* data
 
 -   Involves applying what you have done through this point in the module to a) extending our model and b) reflecting and planning, after which you will knit and submit your work by publishing to Posit Cloud.
 :::
-
-## Troubleshooting and setup
 
 ## Troubleshooting
 
