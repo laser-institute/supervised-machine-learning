@@ -209,10 +209,7 @@ This isn't just for beginners or science education researchers; [most spam filte
 
 - An important way to achieve good performance with test data is to balance between the inherent _bias_ in your algorithm and the _variance_ in the predictions of your algorithm; this is referred to as the **bias-variance** trade-off of _all_ models
 
-.footnote[
 [1] not always/often used, for reasons we'll discuss later
-
-]
 
 ## Illustrating the bias-variance tradeoff
 
@@ -351,23 +348,19 @@ ggsave("img/bias-variance-data-6.png")
 
 ## The bias-variance tradeoff
 
-::: {.pull-left}
 #### Bias
 
 - *Definition*: Difference between our known codes/outcomes and our predicted codes/outcomes; difference between $y$ and $\hat{y}$
 - How (in)correct our models' (algorithms') predictions are
 - Models with high bias can fail to capture important relationships—they can be *under-fit* to our data
 - In short, how well our model reflects the patterns in the data
-:::
 
-::: {.pull-right}
 #### Variance
 
 - *Definition*: Using a different sample of data, the difference in $\hat{y}$ values
 - How sensitive our predictions are to the specific sample on which we trained the model
 - Models with high variance can fail to predict different data well—they can be *over-fit* to our data
 - In short, how stable the predictions of our model are
-:::
 
 #### <center>Regardless of model, we often wish to balance between bias and variance—to balance between under- and over-fitting a model to our data</center>
 
@@ -380,7 +373,7 @@ ggsave("img/bias-variance-data-6.png")
 -   Carrying out a careful process of qualitative coding (and the establishment of validity and interrater reliability) of students' written constructed responses
 -   Training a supervised ML algorithm in advance of being able to **scale up** their coding to a larger number of responses
 
-# Discussion 2
+## Discussion 2
 
 ::: panel-tabset
 
