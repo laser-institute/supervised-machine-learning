@@ -48,6 +48,8 @@ pacman::p_load(pacman, knitr, tidyverse, readxl)
 
 ## 0
 
+Our aim: How well can we predict penguins' species based on their measured characteristics? Let's simplify our task (for now) to just distinguishing between Adelie and Gentoo.
+
 **Loading, setting up**
 
 ```{r}
@@ -56,14 +58,13 @@ pacman::p_load(pacman, knitr, tidyverse, readxl)
 library(tidyverse)
 library(tidymodels)
 
-starwars <- starwars %>% # built-in data available just by typing
-    mutate(species_human = ifelse(species == "Human", "Human", "Not human")) # recoding species to create a categorical variable
+gss_cat # this is built-in data, so it's loaded differently than typical data
 
-starwars <- starwars %>% 
-    mutate(species_human = as.factor(species_human))
+gss_cat %>% 
+    count(marital)
 
-starwars %>% 
-    count(species_human) # how many humans are there?
+gss_cat <- gss_cat %>% 
+    mutate(is_married = if_else(marital == "Married", 1, 0))
 ```
 
 ## 1
@@ -74,7 +75,9 @@ starwars %>%
 #| eval: false
 #| echo: true
 
-m1 <- glm(species_human ~ height + mass, data = starwars, family = "binomial")
+m1 <- glm(is_married ~ age + tvhours, # a very simple model!
+          data = gss_cat, 
+          family = "binomial")
 ```
 
 ## 2
@@ -91,6 +94,8 @@ summary(m1)
 :::
 
 ## python code
+
+*just example code*
 
 ```{python}
 #| eval: false
@@ -127,7 +132,10 @@ print(reg_model.summary())
 #| eval: false
 #| echo: true
 
-# Same as step 1 for regression!
+gss_cat # this is built-in data, so it's loaded differently than typical data
+
+gss_cat <- gss_cat %>% 
+    mutate(is_married = as.factor(if_else(marital == "Married", 1, 0))) # as a factor
 ```
 
 ## 1
@@ -148,8 +156,9 @@ print(reg_model.summary())
 ```{r}
 #| echo: true
 #| eval: false
-# predicting humans based on the independent effects of height and mass
-my_rec <- recipe(species_human ~ height + mass, data = starwars)
+# predicting marital status based on the effects of age and tvhours
+
+my_rec <- recipe(is_married ~ age + tvhours, data = gss_cat) 
 ```
 
 ## 3
@@ -178,7 +187,7 @@ my_wf <- workflow() %>%
 #| echo: true
 #| eval: false
 
-fit_model <- fit(my_wf, data = starwars)
+fit_model <- fit(my_wf, data = gss_cat)
 ```
 
 ## 5
@@ -189,21 +198,23 @@ fit_model <- fit(my_wf, data = starwars)
 #| echo: true
 #| eval: false
 
-predictions <- predict(fit_model, starwars) %>% 
-    bind_cols(starwars) %>% 
-    mutate(species_human = as.factor(species_human))
+predictions <- predict(fit_model, gss_cat) %>% 
+    bind_cols(gss_cat) %>% 
+    mutate(is_married = as.factor(is_married))
 
 predictions %>% 
-    select(.pred_class, species_human)
+    select(.pred_class, is_married)
 
 predictions %>%
-  metrics(species_human, .pred_class) %>%
+  metrics(is_married, .pred_class) %>%
   filter(.metric == "accuracy")
 ```
 
 :::
 
 ## python code
+
+*just example code*
 
 ```{python}
 #| eval: false

@@ -429,22 +429,27 @@
 <ul id="tabset-1" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-1-1">0</a></li><li><a href="#tabset-1-2">1</a></li><li><a href="#tabset-1-3">2</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1">
+<p>Our aim: How well can we predict penguins’ species based on their measured characteristics? Let’s simplify our task (for now) to just distinguishing between Adelie and Gentoo.</p>
 <p><strong>Loading, setting up</strong></p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb1-2"><a href="#cb1-2"></a><span class="fu">library</span>(tidymodels)</span>
 <span id="cb1-3"><a href="#cb1-3"></a></span>
-<span id="cb1-4"><a href="#cb1-4"></a>starwars_recoded <span class="ot">&lt;-</span> starwars <span class="sc">%&gt;%</span> <span class="co"># built-in data available just by typing</span></span>
-<span id="cb1-5"><a href="#cb1-5"></a>    <span class="fu">mutate</span>(<span class="at">species_human =</span> <span class="fu">ifelse</span>(species <span class="sc">==</span> <span class="st">"Human"</span>, <span class="st">"Human"</span>, <span class="st">"Not human"</span>)) <span class="co"># recoding species to create a categorical variable</span></span>
-<span id="cb1-6"><a href="#cb1-6"></a></span>
-<span id="cb1-7"><a href="#cb1-7"></a>starwars_recoded <span class="sc">%&gt;%</span> </span>
-<span id="cb1-8"><a href="#cb1-8"></a>    <span class="fu">count</span>(species) <span class="co"># how many humans are there?</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-4"><a href="#cb1-4"></a>gss_cat <span class="co"># this is built-in data, so it's loaded differently than typical data</span></span>
+<span id="cb1-5"><a href="#cb1-5"></a></span>
+<span id="cb1-6"><a href="#cb1-6"></a>gss_cat <span class="sc">%&gt;%</span> </span>
+<span id="cb1-7"><a href="#cb1-7"></a>    <span class="fu">count</span>(marital)</span>
+<span id="cb1-8"><a href="#cb1-8"></a></span>
+<span id="cb1-9"><a href="#cb1-9"></a>gss_cat <span class="ot">&lt;-</span> gss_cat <span class="sc">%&gt;%</span> </span>
+<span id="cb1-10"><a href="#cb1-10"></a>    <span class="fu">mutate</span>(<span class="at">is_married =</span> <span class="fu">if_else</span>(marital <span class="sc">==</span> <span class="st">"Married"</span>, <span class="dv">1</span>, <span class="dv">0</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div id="tabset-1-2">
 <p><strong>Fit model</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>m1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(species_human <span class="sc">~</span> height <span class="sc">+</span> mass, <span class="at">data =</span> starwars)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>m1 <span class="ot">&lt;-</span> <span class="fu">glm</span>(is_married <span class="sc">~</span> age <span class="sc">+</span> tvhours, <span class="co"># a very simple model!</span></span>
+<span id="cb2-2"><a href="#cb2-2"></a>          <span class="at">data =</span> gss_cat, </span>
+<span id="cb2-3"><a href="#cb2-3"></a>          <span class="at">family =</span> <span class="st">"binomial"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div id="tabset-1-3">
@@ -458,6 +463,7 @@
 </section>
 <section id="python-code" class="slide level2">
 <h2>python code</h2>
+<p><em>just example code</em></p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb4-2"><a href="#cb4-2"></a><span class="im">import</span> statsmodels.api <span class="im">as</span> sm</span>
@@ -489,14 +495,10 @@
 <div id="tabset-2-1">
 <p><strong>Loading, setting up</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb5-2"><a href="#cb5-2"></a><span class="fu">library</span>(tidymodels)</span>
-<span id="cb5-3"><a href="#cb5-3"></a></span>
-<span id="cb5-4"><a href="#cb5-4"></a>starwars_recoded <span class="ot">&lt;-</span> starwars <span class="sc">%&gt;%</span> <span class="co"># built-in data available just by typing</span></span>
-<span id="cb5-5"><a href="#cb5-5"></a>    <span class="fu">mutate</span>(<span class="at">species_human =</span> <span class="fu">ifelse</span>(species <span class="sc">==</span> <span class="st">"Human"</span>, <span class="st">"Human"</span>, <span class="st">"Not human"</span>)) <span class="co"># recoding species to create a categorical variable</span></span>
-<span id="cb5-6"><a href="#cb5-6"></a></span>
-<span id="cb5-7"><a href="#cb5-7"></a>starwars_recoded <span class="sc">%&gt;%</span> </span>
-<span id="cb5-8"><a href="#cb5-8"></a>    <span class="fu">count</span>(species) <span class="co"># how many humans are there?</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>gss_cat <span class="co"># this is built-in data, so it's loaded differently than typical data</span></span>
+<span id="cb5-2"><a href="#cb5-2"></a></span>
+<span id="cb5-3"><a href="#cb5-3"></a>gss_cat <span class="ot">&lt;-</span> gss_cat <span class="sc">%&gt;%</span> </span>
+<span id="cb5-4"><a href="#cb5-4"></a>    <span class="fu">mutate</span>(<span class="at">is_married =</span> <span class="fu">as.factor</span>(<span class="fu">if_else</span>(marital <span class="sc">==</span> <span class="st">"Married"</span>, <span class="dv">1</span>, <span class="dv">0</span>))) <span class="co"># as a factor</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div id="tabset-2-2">
@@ -508,8 +510,9 @@
 <div id="tabset-2-3">
 <p><strong>Engineer features</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="co"># predicting humans based on the independent effects of height and mass</span></span>
-<span id="cb7-2"><a href="#cb7-2"></a>my_rec <span class="ot">&lt;-</span> <span class="fu">recipe</span>(species_human <span class="sc">~</span> height <span class="sc">+</span> mass, <span class="at">data =</span> data_train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="co"># predicting marital status based on the effects of age and tvhours</span></span>
+<span id="cb7-2"><a href="#cb7-2"></a></span>
+<span id="cb7-3"><a href="#cb7-3"></a>my_rec <span class="ot">&lt;-</span> <span class="fu">recipe</span>(is_married <span class="sc">~</span> age <span class="sc">+</span> tvhours, <span class="at">data =</span> gss_cat) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div id="tabset-2-4">
@@ -529,19 +532,22 @@
 <div id="tabset-2-5">
 <p><strong>Fit model</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a>fit_model <span class="ot">&lt;-</span> <span class="fu">fit</span>(my_wf, <span class="at">data =</span> starwars_recoded)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a>fit_model <span class="ot">&lt;-</span> <span class="fu">fit</span>(my_wf, <span class="at">data =</span> gss_cat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div id="tabset-2-6">
 <p><strong>Evaluate accuracy</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a>predictions <span class="ot">&lt;-</span> <span class="fu">predict</span>(fit_model, starwars_recoded) <span class="sc">%&gt;%</span> </span>
-<span id="cb10-2"><a href="#cb10-2"></a>    <span class="fu">bind_cols</span>(starwars_recoded) <span class="sc">%&gt;%</span> </span>
-<span id="cb10-3"><a href="#cb10-3"></a>    <span class="fu">mutate</span>(<span class="at">species_human =</span> <span class="fu">as.factor</span>(species_human))</span>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a>predictions <span class="ot">&lt;-</span> <span class="fu">predict</span>(fit_model, gss_cat) <span class="sc">%&gt;%</span> </span>
+<span id="cb10-2"><a href="#cb10-2"></a>    <span class="fu">bind_cols</span>(gss_cat) <span class="sc">%&gt;%</span> </span>
+<span id="cb10-3"><a href="#cb10-3"></a>    <span class="fu">mutate</span>(<span class="at">is_married =</span> <span class="fu">as.factor</span>(is_married))</span>
 <span id="cb10-4"><a href="#cb10-4"></a></span>
-<span id="cb10-5"><a href="#cb10-5"></a>predictions <span class="sc">%&gt;%</span></span>
-<span id="cb10-6"><a href="#cb10-6"></a>  <span class="fu">metrics</span>(species_human, .pred_class) <span class="sc">%&gt;%</span></span>
-<span id="cb10-7"><a href="#cb10-7"></a>  <span class="fu">filter</span>(.metric <span class="sc">==</span> <span class="st">"accuracy"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb10-5"><a href="#cb10-5"></a>predictions <span class="sc">%&gt;%</span> </span>
+<span id="cb10-6"><a href="#cb10-6"></a>    <span class="fu">select</span>(.pred_class, is_married)</span>
+<span id="cb10-7"><a href="#cb10-7"></a></span>
+<span id="cb10-8"><a href="#cb10-8"></a>predictions <span class="sc">%&gt;%</span></span>
+<span id="cb10-9"><a href="#cb10-9"></a>  <span class="fu">metrics</span>(is_married, .pred_class) <span class="sc">%&gt;%</span></span>
+<span id="cb10-10"><a href="#cb10-10"></a>  <span class="fu">filter</span>(.metric <span class="sc">==</span> <span class="st">"accuracy"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
@@ -549,6 +555,7 @@
 </section>
 <section id="python-code-1" class="slide level2">
 <h2>python code</h2>
+<p><em>just example code</em></p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb11-2"><a href="#cb11-2"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LogisticRegression</span>

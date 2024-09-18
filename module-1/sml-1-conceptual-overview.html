@@ -367,7 +367,7 @@
 <h2>Purpose (All Modules!)</h2>
 <p>Machine learning is increasingly prevalent in our lives—and in educational contexts. Its role in educational research and practice is growing, albeit with some challenges and even controversy. These modules are designed to familiarize you with supervised machine learning and its applications in STEM education research. Throughout the module, we’ll explore four key questions that correspond to the focus of each of the four modules. By the end, you will have a deep understanding of the key characteristics of supervised machine learning and how to implement supervised machine learning workflows in R and Python.</p>
 <aside class="notes">
-<p>This is from the overview of the module – it is jsut a high-level overview of the topic.</p>
+<p>This is from the overview of the module – it is just a high-level overview of the topic.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -539,9 +539,9 @@
 <li><a href="https://web.stanford.edu/~hastie/ElemStatLearn/">Principle Components Analysis (really!)</a></li>
 </ul></li>
 </ul>
-</section></section>
-<section id="what-technique-should-i-choose" class="title-slide slide level1 center">
-<h1>What technique should I choose?</h1>
+</section>
+<section id="which-technique-should-i-choose" class="slide level2">
+<h2>Which technique should I choose?</h2>
 <p>Do you have coded data or data with a known outcome – let’s say about K-12 students – and, do you want to:</p>
 <ul>
 <li><em>Predict</em> how other students with similar data (but without a known outcome) perform?</li>
@@ -550,10 +550,8 @@
 </ul>
 <p><strong>Supervised methods may be your best bet</strong></p>
 </section>
-
-<section>
-<section id="what-technique-should-i-choose-1" class="title-slide slide level1 center">
-<h1>What technique should I choose?</h1>
+<section id="which-technique-should-i-choose-1" class="slide level2">
+<h2>Which technique should I choose?</h2>
 <p>Do you not yet have codes/outcomes – and do you want to?</p>
 <ul>
 <li><em>Achieve a starting point</em> for qualitative coding, perhaps in a <a href="https://journals.sagepub.com/doi/full/10.1177/0049124117729703">“computational grounded theory”</a> mode?</li>
@@ -562,7 +560,7 @@
 </ul>
 <p><strong>Unsupervised methods may be helpful</strong></p>
 </section>
-<section id="which-technique-should-i-choose" class="slide level2">
+<section id="which-technique-should-i-choose-2" class="slide level2">
 <h2>Which technique should I choose?</h2>
 <p>Do you want to say something about one or several variables’ relations with an outcome?</p>
 <ul>
@@ -571,8 +569,129 @@
 </ul>
 <p><strong>Traditional, inferential statistics <em>i.e., regression</em> may be best</strong></p>
 </section>
-<section id="example-of-supervised-machine-learning-in-stem-ed-research" class="slide level2">
-<h2>Example of supervised machine learning in STEM Ed Research</h2>
+<section id="how-do-i-select-a-model" class="slide level2">
+<h2>How do I select a model?</h2>
+<p>One general principle is to <strong>start with the simplest useful model</strong> and to <em>build toward more complex models as helpfuL</em>.</p>
+<p>This principle applies in multiple ways:</p>
+<ul>
+<li>To choose an algorithm, start with simpler models that you can efficiently use and understand</li>
+<li>To carry out feature engineering, understand your predictors well by starting with a subset</li>
+<li>To tune an algorithm, start with a relatively simple set of tuning parameters</li>
+</ul>
+<p>This isn’t just for beginners or science education researchers; <a href="https://vas3k.com/blog/machine_learning/">most spam filters use Support Vector Machines (and used Naive Bayes until recently)</a> due to their combination of effectiveness and efficiency “in production.”</p>
+</section>
+<section id="whats-stopping-me-from-specifying-a-complex-model" class="slide level2">
+<h2>What’s stopping me from specifying a complex model?</h2>
+<ul>
+<li>Nothing too much, apart from computing power, time, and concerns of</li>
+<li>A “check” on your work is your predictions on <em>test</em> set data
+<ul>
+<li><em>Train data</em>: Coded/outcome data that you use to train (“estimate”) your model</li>
+<li><em>Validation data<sup>1</sup></em>: Data you use to select a particular algorithm</li>
+<li><em>Test (“hold-out”) data</em>: Data that you do not use in any way to train your data</li>
+</ul></li>
+<li>An important way to achieve good performance with test data is to balance between the inherent <em>bias</em> in your algorithm and the <em>variance</em> in the predictions of your algorithm; this is referred to as the <strong>bias-variance</strong> trade-off of <em>all</em> models</li>
+</ul>
+<p>.footnote[ [1] not always/often used, for reasons we’ll discuss later</p>
+<p>]</p>
+</section>
+<section id="illustrating-the-bias-variance-tradeoff" class="slide level2">
+<h2>Illustrating the bias-variance tradeoff</h2>
+
+<img data-src="sml-1-conceptual-overview_files/figure-revealjs/unnamed-chunk-2-1.png" width="960" class="r-stretch quarto-figure-center"></section>
+<section id="a-strongly-biased-algorithm-linear-model" class="slide level2">
+<h2>A strongly biased algorithm (linear model)</h2>
+
+<img data-src="sml-1-conceptual-overview_files/figure-revealjs/unnamed-chunk-3-1.png" width="960" class="r-stretch quarto-figure-center"></section>
+<section id="a-much-less-biased-algorithm-gamspline" class="slide level2">
+<h2>A much less-biased algorithm (GAM/spline)</h2>
+
+<img data-src="sml-1-conceptual-overview_files/figure-revealjs/unnamed-chunk-4-1.png" width="960" class="r-stretch quarto-figure-center"></section>
+<section id="slightly-different-data-right-pane" class="slide level2">
+<h2>Slightly different data (right pane)</h2>
+<div class="pull-left">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="img/bias-variance-data-1.png" width="900"></p>
+<figcaption>Bias Variance Data 1</figcaption>
+</figure>
+</div>
+</div>
+<div class="pull-right">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="img/bias-variance-data-2.png" width="900"></p>
+<figcaption>Bias Variance Data 2</figcaption>
+</figure>
+</div>
+</div>
+</section>
+<section id="still-strong-bias-but-low-variance" class="slide level2">
+<h2>Still strong bias, but low variance</h2>
+<div class="pull-left">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="img/bias-variance-data-3.png" width="900"></p>
+<figcaption>Bias Variance Data 3</figcaption>
+</figure>
+</div>
+</div>
+<div class="pull-right">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="img/bias-variance-data-4.png" width="900"></p>
+<figcaption>Bias Variance Data 4</figcaption>
+</figure>
+</div>
+</div>
+</section>
+<section id="low-bias-but-very-high-variance" class="slide level2">
+<h2>Low bias, but very high variance</h2>
+<div class="pull-left">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="img/bias-variance-data-5.png" width="900"></p>
+<figcaption>Bias Variance Data 5</figcaption>
+</figure>
+</div>
+</div>
+<div class="pull-right">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="img/bias-variance-data-6.png" width="900"></p>
+<figcaption>Bias Variance Data 6</figcaption>
+</figure>
+</div>
+</div>
+</section>
+<section id="the-bias-variance-tradeoff" class="slide level2">
+<h2>The bias-variance tradeoff</h2>
+<p>.pull-left[</p>
+<section id="bias" class="pull-left">
+<h4>Bias</h4>
+<ul>
+<li><em>Definition</em>: Difference between our known codes/outcomes and our predicted codes/outcomes; difference between <span class="math inline">\(y\)</span> and <span class="math inline">\(\hat{y}\)</span></li>
+<li>How (in)correct our models’ (algorithms’) predictions are</li>
+<li>Models with high bias can fail to capture important relationships—they can be <em>under-fit</em> to our data</li>
+<li>In short, how well our model reflects the patterns in the data</li>
+</ul>
+</section>
+<section id="variance" class="pull-right">
+<h4>Variance</h4>
+<ul>
+<li><em>Definition</em>: Using a different sample of data, the difference in <span class="math inline">\(\hat{y}\)</span> values</li>
+<li>How sensitive our predictions are to the specific sample on which we trained the model</li>
+<li>Models with high variance can fail to predict different data well—they can be <em>over-fit</em> to our data</li>
+<li>In short, how stable the predictions of our model are</li>
+</ul>
+</section>
+####
+<center>
+Regardless of model, we often wish to balance between bias and variance—to balance between under- and over-fitting a model to our data
+</center>
+</section>
+<section id="examples" class="slide level2">
+<h2>Examples</h2>
 <p><strong>Combining best practices in assessment with supervised ML</strong></p>
 <blockquote>
 <p>Maestrales, S., Zhai, X., Touitou, I., Baker, Q., Schneider, B., &amp; Krajcik, J. (2021). Using machine learning to score multi-dimensional assessments of chemistry and physics. Journal of Science Education and Technology, 30(2), 239-254.</p>
@@ -655,14 +774,11 @@
 <section>
 <section id="other-parts-of-this-module" class="title-slide slide level1 center">
 <h1>Other parts of this module</h1>
-
-</section>
-<section id="overview" class="slide level2">
-<h2>Overview</h2>
 <div class="panel-tabset">
-<ul id="tabset-4" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-4-1">Readings</a></li><li><a href="#tabset-4-2">Case Study</a></li><li><a href="#tabset-4-3">Badge</a></li></ul>
+<ul id="tabset-4" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-4-1">Code-along</a></li><li><a href="#tabset-4-2">Case Study</a></li><li><a href="#tabset-4-3">Badge</a></li></ul>
 <div class="tab-content">
 <div id="tabset-4-1">
+<p>Using <em>built-in</em> data ### Readings</p>
 <p><strong>Please see <code>sml-1-readings.qmd</code></strong></p>
 <blockquote>
 <p>Brooks, C., &amp; Thompson, C. (2017). Predictive modelling in teaching and learning. Handbook of learning analytics, 61-68.</p>
@@ -678,7 +794,7 @@
 <p><strong>Please see <code>sml-1-case-study.qmd</code></strong></p>
 <ul>
 <li>Building a prediction model for graduate rates using data from National Center for Education Statistics data — IPEDS&lt; specifically</li>
-<li>We’ll use not only the same <em>data</em> but also the same <em>model</em> in two modes - inferential regression modeling and predicitive SML, seeing how the key is in how we use the model, not the model type</li>
+<li>We’ll use not only the same <em>data</em> but also the same <em>model</em> in two modes - inferential regression modeling and predictive SML, seeing how the key is in how we use the model, not the model type</li>
 <li>Work with peers to complete this, reading the text, following links to resources (and the reading), and then completing the required 👉 Your Turn ⤵ tasks</li>
 <li>A key is available, but we strongly encourage you to use it only at the end to check your work, or if you are completely stuck and have tried our recommended troubleshooting steps: https://docs.google.com/document/d/14Jc-KG3m5k1BvyKWqw7KmDD21IugU5nV5edfJkZyspY/edit</li>
 </ul>
