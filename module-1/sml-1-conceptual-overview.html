@@ -564,14 +564,14 @@
 <h2>Which technique should I choose?</h2>
 <p>Do you want to say something about one or several variables’ relations with an outcome?</p>
 <ul>
-<li>Understand whether an intervention was effective</li>
-<li>See how one or more variables relates to an outcome</li>
+<li>See how one or more variables <em>relates</em> to an outcome</li>
+<li>Understand whether a key variable is <em>has a statistically significantly coefficient</em> in terms of its realtion with an outcome of interest</li>
 </ul>
 <p><strong>Traditional, inferential statistics <em>i.e., regression</em> may be best</strong></p>
 </section>
 <section id="how-do-i-select-a-model" class="slide level2">
 <h2>How do I select a model?</h2>
-<p>One general principle is to <strong>start with the simplest useful model</strong> and to <em>build toward more complex models as helpfuL</em>.</p>
+<p>One general principle is to <strong>start with the simplest useful model</strong> and to <em>build toward more complex models as helpful</em>.</p>
 <p>This principle applies in multiple ways:</p>
 <ul>
 <li>To choose an algorithm, start with simpler models that you can efficiently use and understand</li>
@@ -646,24 +646,13 @@
 <ul>
 <li><em>Definition</em>: Using a different sample of data, the difference in <span class="math inline">\(\hat{y}\)</span> values</li>
 <li>How sensitive our predictions are to the specific sample on which we trained the model</li>
-<li>Models with high variance can fail to predict different data well—they can be <em>over-fit</em> to our data</li>
+<li>Models with high variance can fail to predict different data well</li>
 <li>In short, how stable the predictions of our model are</li>
 </ul>
 ####
 <center>
 Regardless of model, we often wish to balance between bias and variance—to balance between under- and over-fitting a model to our data
 </center>
-</section>
-<section id="examples" class="slide level2">
-<h2>Examples</h2>
-<p><strong>Combining best practices in assessment with supervised ML</strong></p>
-<blockquote>
-<p>Maestrales, S., Zhai, X., Touitou, I., Baker, Q., Schneider, B., &amp; Krajcik, J. (2021). Using machine learning to score multi-dimensional assessments of chemistry and physics. Journal of Science Education and Technology, 30(2), 239-254.</p>
-</blockquote>
-<ul>
-<li>Carrying out a careful process of qualitative coding (and the establishment of validity and interrater reliability) of students’ written constructed responses</li>
-<li>Training a supervised ML algorithm in advance of being able to <strong>scale up</strong> their coding to a larger number of responses</li>
-</ul>
 </section>
 <section id="discussion-2" class="slide level2">
 <h2>Discussion 2</h2>
@@ -738,22 +727,28 @@ Regardless of model, we often wish to balance between bias and variance—to bal
 <section id="other-parts-of-this-module" class="title-slide slide level1 center">
 <h1>Other parts of this module</h1>
 <div class="panel-tabset">
-<ul id="tabset-4" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-4-1">Code-along</a></li><li><a href="#tabset-4-2">Case Study</a></li><li><a href="#tabset-4-3">Badge</a></li></ul>
+<ul id="tabset-4" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-4-1">Code-along</a></li><li><a href="#tabset-4-2">Readings</a></li><li><a href="#tabset-4-3">Case Study</a></li><li><a href="#tabset-4-4">Badge</a></li></ul>
 <div class="tab-content">
 <div id="tabset-4-1">
-<p>Using <em>built-in</em> data ### Readings</p>
-<p><strong>Please see <code>sml-1-readings.qmd</code></strong></p>
-<blockquote>
-<p>Brooks, C., &amp; Thompson, C. (2017). Predictive modelling in teaching and learning. Handbook of learning analytics, 61-68.</p>
-</blockquote>
-<blockquote>
-<p>Jaquette, O., &amp; Parra, E. E. (2013). Using IPEDS for panel analyses: Core concepts, data challenges, and empirical applications. In Higher Education: Handbook of Theory and Research: Volume 29 (pp.&nbsp;467-533). Dordrecht: Springer Netherlands.</p>
-</blockquote>
-<blockquote>
-<p>Zong, C., &amp; Davis, A. (2022). Modeling university retention and graduation rates using IPEDS. Journal of College Student Retention: Research, Theory &amp; Practice, 15210251221074379.</p>
-</blockquote>
+<ul>
+<li>Uses built-in data (from the General Social Survey)</li>
+<li>Compares the use of the same logistic regression model in a regression and SML “mode”</li>
+<li>Introduces the modeling cycle and process</li>
+</ul>
 </div>
 <div id="tabset-4-2">
+<p><strong>Please see <code>sml-1-readings.qmd</code></strong></p>
+<blockquote>
+<p>Brooks, C., &amp; Thompson, C. (2017). Predictive modelling in teaching and learning. <em>Handbook of Learning Analytics</em>, 61-68.</p>
+</blockquote>
+<blockquote>
+<p>Jaquette, O., &amp; Parra, E. E. (2013). Using IPEDS for panel analyses: Core concepts, data challenges, and empirical applications. In <em>Higher Education: Handbook of Theory and Research: Volume 29 (pp.&nbsp;467-533)</em>. Dordrecht: Springer Netherlands.</p>
+</blockquote>
+<blockquote>
+<p>Zong, C., &amp; Davis, A. (2022). Modeling university retention and graduation rates using IPEDS. <em>Journal of College Student Retention: </em>Research, Theory &amp; Practice*. https://journals.sagepub.com/doi/full/10.1177/15210251221074379</p>
+</blockquote>
+</div>
+<div id="tabset-4-3">
 <p><strong>Please see <code>sml-1-case-study.qmd</code></strong></p>
 <ul>
 <li>Building a prediction model for graduate rates using data from National Center for Education Statistics data — IPEDS&lt; specifically</li>
@@ -762,7 +757,7 @@ Regardless of model, we often wish to balance between bias and variance—to bal
 <li>A key is available, but we strongly encourage you to use it only at the end to check your work, or if you are completely stuck and have tried our recommended troubleshooting steps: https://docs.google.com/document/d/14Jc-KG3m5k1BvyKWqw7KmDD21IugU5nV5edfJkZyspY/edit</li>
 </ul>
 </div>
-<div id="tabset-4-3">
+<div id="tabset-4-4">
 <p><strong>Please see <code>sml-1-badge.qmd</code></strong></p>
 <ul>
 <li>Involves applying what you have done through this point in the module to a) extending our model and b) reflecting and planning, after which you will knit and submit your work by publishing to Posit Cloud.</li>
@@ -770,9 +765,6 @@ Regardless of model, we often wish to balance between bias and variance—to bal
 </div>
 </div>
 </div>
-</section>
-<section id="troubleshooting-and-setup" class="slide level2">
-<h2>Troubleshooting and setup</h2>
 </section>
 <section id="troubleshooting" class="slide level2">
 <h2>Troubleshooting</h2>
