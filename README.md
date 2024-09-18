@@ -21,3 +21,11 @@ How can we improve our predictions? This lab introduces the concept of feature e
 ## Microcredential
 
 To earn the SML micro-credential, you will carry out an SML analysis using data of your choosing and report the results in a Quarto document. Emphasize *why* you are using SML (relative to regression or another approach) and use feature engineering and cross-validation to refine your model. Lastly, interpret your model carefully by going beyond reporting accuracy to report the specific metrics for the strength of your SML model's predictions, given the particular aims of your analysis. 
+
+**Resources**
+
+- [R4DS](https://r4ds.had.co.nz/)
+- [HMLR](https://bradleyboehmke.github.io/HOML/)
+- [DSIEUR](https://datascienceineducation.com/)
+- [SMLTAR](https://smltar.com/)
+- [TMWR](https://www.tmwr.org/)
