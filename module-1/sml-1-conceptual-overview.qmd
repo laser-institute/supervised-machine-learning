@@ -271,7 +271,7 @@ ggplot(dat, aes(x = x, y = yobs)) +
 ggsave("img/bias-variance-data-5.png")
 ```
 
-## Slightly different data (right pane)
+## Slightly different data (bottom)
 
 ```{r, echo = FALSE, echo = FALSE, message = FALSE, include = FALSE}
 dat = data.frame(x = runif(1000, 0, 12))
@@ -289,11 +289,11 @@ ggsave("img/bias-variance-data-2.png")
 ```
 
 ::: {.pull-left}
-![Bias Variance Data 1](img/bias-variance-data-1.png){width=900}
+![](img/bias-variance-data-1.png){width=900}
 :::
 
 ::: {.pull-right}
-![Bias Variance Data 2](img/bias-variance-data-2.png){width=900}
+![](img/bias-variance-data-2.png){width=900}
 
 :::
 
@@ -316,11 +316,11 @@ ggsave("img/bias-variance-data-4.png")
 ```
 
 ::: {.pull-left}
-![Bias Variance Data 3](img/bias-variance-data-3.png){width=900}
+![](img/bias-variance-data-3.png){width=900}
 :::
 
 ::: {.pull-right}
-![Bias Variance Data 4](img/bias-variance-data-4.png){width=900}
+![](img/bias-variance-data-4.png){width=900}
 :::
 
 ## Low bias, but very high variance
@@ -342,16 +342,14 @@ ggsave("img/bias-variance-data-6.png")
 ```
 
 ::: {.pull-left}
-![Bias Variance Data 5](img/bias-variance-data-5.png){width=900}
+![](img/bias-variance-data-5.png){width=900}
 :::
 
 ::: {.pull-right}
-![Bias Variance Data 6](img/bias-variance-data-6.png){width=900}
+![](img/bias-variance-data-6.png){width=900}
 :::
 
 ## The bias-variance tradeoff
-
-.pull-left[
 
 ::: {.pull-left}
 #### Bias
