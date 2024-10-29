@@ -336,7 +336,7 @@
 <section>
 <section id="purpose-and-agenda" class="title-slide slide level1 center">
 <h1>Purpose and Agenda</h1>
-<p>We have some data and want to develop a prediction model. Supervised machine learning is suited to this aim. In particular, in this learning lab, we explore how we can train a computer to predict students’ passing a course. We use a large data set, the Open University Learning Analytics Dataset (OULAD), focusing on student data at this point. Our model at this point is relatively simple, a generalized linear model.</p>
+<p>We have some data and want to develop a prediction model. Supervised machine learning is suited to this aim. In particular, in this module, we explore how we can train a computer to predict students’ passing a course. We use a large data set, the Open University Learning Analytics Dataset (OULAD), focusing on student data at this point. Our model at this point is relatively simple, a generalized linear model.</p>
 </section>
 <section id="what-well-do-in-this-presentation" class="slide level2">
 <h2>What we’ll do in this presentation</h2>
@@ -345,7 +345,7 @@
 <li>Key Concept #1: Our framework</li>
 <li>Key Concept #2: Training and testing data</li>
 <li>Discussion 2</li>
-<li>Introduction to the other parts of this learning lab</li>
+<li>Introduction to the other parts of this module</li>
 </ul>
 </section></section>
 <section>
@@ -401,7 +401,7 @@
 <ul>
 <li>studentInfo, courses, and studentRegistration</li>
 </ul>
-<p>These are joined together (see <code>oulad.R</code>) for this learning lab. You’ll be doing more joining later!</p>
+<p>These are joined together (see <code>oulad.R</code>) for this module. You’ll be doing more joining later!</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 3 × 15
@@ -437,7 +437,7 @@
 <li><strong>Fit model</strong> (Model)</li>
 <li><strong>Evaluate accuracy</strong> (Communicate)</li>
 </ol>
-<p><strong>This is the fundamental process we’ll follow for this and the next two learning labs focused on supervised ML</strong></p>
+<p><strong>This is the fundamental process we’ll follow for this and the next two modules focused on supervised ML</strong></p>
 </div>
 </div>
 </div>
@@ -455,7 +455,7 @@
 <div id="tabset-3-1">
 <ul>
 <li>Algorithms (or estimation procedures - or <em>models</em>) refer to the <em>structure</em> and <em>process</em> of estimating the <em>parameters</em> of a model</li>
-<li>This definition provides a wide range of options for what kinds of algorithms we use (from simple to very complex, as we discuss in a later learning lab)</li>
+<li>This definition provides a wide range of options for what kinds of algorithms we use (from simple to very complex, as we discuss in a later module)</li>
 <li>For now, we focus on a familiar, easy to interpret algorithm (e.g., <a href="https://dl.acm.org/doi/abs/10.1145/3448139.3448154?casa_token=skmk5XGbDOUAAAAA:Z0Kl4nyjpOGFA6RuFTiiLWaC_KxH1vkQ72Kr0hetXcumRdvu8tPYlCX12AgHr9aS0Fp3L-Uu0p4">1</a>, also <a href="https://linkinghub.elsevier.com/retrieve/pii/S0895435618310813">this</a>), <em>logistic regression</em></li>
 <li>This is a linear model with a binary (<em>“yes”</em> or <em>“no”</em>) outcome</li>
 <li>It will be a <em>bad model</em> to start us off!</li>
@@ -463,7 +463,7 @@
 </div>
 <div id="tabset-3-2">
 <ul>
-<li>When doing supervised ML, we focus on predicting an outcome: how well we do this overall and for particular cases (more on how in the next learning lab)</li>
+<li>When doing supervised ML, we focus on predicting an outcome: how well we do this overall and for particular cases (more on how in the next module)</li>
 <li>We <em>do not</em> focus on inference or explanation (i.e., an “explanatory” model): model fit, statistical significance, effect sizes, etc.</li>
 <li><strong>This is a really key difference – we use different metrics to evaluate what makes for a good model</strong></li>
 </ul>
@@ -472,7 +472,7 @@
 <ul>
 <li>A key concept in the context of supervised machine learning is training vs.&nbsp;testing data:</li>
 <li>Training data: Data we use to <strong>fit</strong> (or train, AKA estimate) a supervised machine learning <strong>model</strong> (AKA algorithm)</li>
-<li>Testing data: Data we use to see how well our model didnot used to fit the model</li>
+<li>Testing data: Data we use to see how well our model not used to fit the model</li>
 <li>By splitting out data into training and testing <em>sets</em>, we can obtain unbiased metrics for how good our model is at predicting</li>
 </ul>
 </div>
@@ -515,8 +515,8 @@
 </div>
 </section>
 
-<section id="introduction-to-the-other-parts-of-this-learning-lab" class="title-slide slide level1 center">
-<h1>Introduction to the other parts of this learning lab</h1>
+<section id="introduction-to-the-other-parts-of-this-module" class="title-slide slide level1 center">
+<h1>Introduction to the other parts of this module</h1>
 <div class="panel-tabset">
 <ul id="tabset-5" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-5-1">Readings</a></li><li><a href="#tabset-5-2">Case study</a></li><li><a href="#tabset-5-3">Badge</a></li></ul>
 <div class="tab-content">
@@ -537,7 +537,7 @@
 </div>
 <div id="tabset-5-3">
 <ul>
-<li>Involves applying what you have done through this point in the learning lab to a) extending our model and b) reflecting and planning, after which you will knit and submit your work by publishing to Posit Cloud.</li>
+<li>Involves applying what you have done through this point in the module to a) extending our model and b) reflecting and planning, after which you will knit and submit your work by publishing to Posit Cloud.</li>
 </ul>
 </div>
 </div>

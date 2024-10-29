@@ -23,7 +23,7 @@ pacman::p_load(pacman, knitr, tidyverse, readxl)
 
 # Purpose and Agenda
 
-We have some data and want to develop a prediction model. Supervised machine learning is suited to this aim. In particular, in this learning lab, we explore how we can train a computer to predict students' passing a course. We use a large data set, the Open University Learning Analytics Dataset (OULAD), focusing on student data at this point. Our model at this point is relatively simple, a generalized linear model.
+We have some data and want to develop a prediction model. Supervised machine learning is suited to this aim. In particular, in this module, we explore how we can train a computer to predict students' passing a course. We use a large data set, the Open University Learning Analytics Dataset (OULAD), focusing on student data at this point. Our model at this point is relatively simple, a generalized linear model.
 
 ## What we'll do in this presentation
 
@@ -31,7 +31,7 @@ We have some data and want to develop a prediction model. Supervised machine lea
 - Key Concept #1: Our framework
 - Key Concept #2: Training and testing data
 - Discussion 2
-- Introduction to the other parts of this learning lab
+- Introduction to the other parts of this module
 
 # Discussion 1
 
@@ -74,7 +74,7 @@ We'll be focusing on three files:
 
 - studentInfo, courses, and studentRegistration
 
-These are joined together (see `oulad.R`) for this learning lab. You'll be doing more joining later!
+These are joined together (see `oulad.R`) for this module. You'll be doing more joining later!
 
 ```{r, message = FALSE, echo=FALSE}
 students <- read_csv("data/oulad-students.csv")
@@ -97,7 +97,7 @@ students %>% head(3)
 4. **Fit model** (Model)
 5. **Evaluate accuracy** (Communicate)
 
-**This is the fundamental process we'll follow for this and the next two learning labs focused on supervised ML**
+**This is the fundamental process we'll follow for this and the next two modules focused on supervised ML**
 
 :::
 
@@ -110,21 +110,21 @@ students %>% head(3)
 ## Algorithms
 
 - Algorithms (or estimation procedures - or *models*) refer to the _structure_ and _process_ of estimating the _parameters_ of a model
-- This definition provides a wide range of options for what kinds of algorithms we use (from simple to very complex, as we discuss in a later learning lab)
+- This definition provides a wide range of options for what kinds of algorithms we use (from simple to very complex, as we discuss in a later module)
 - For now, we focus on a familiar, easy to interpret algorithm (e.g., [1](https://dl.acm.org/doi/abs/10.1145/3448139.3448154?casa_token=skmk5XGbDOUAAAAA:Z0Kl4nyjpOGFA6RuFTiiLWaC_KxH1vkQ72Kr0hetXcumRdvu8tPYlCX12AgHr9aS0Fp3L-Uu0p4), also [this](https://linkinghub.elsevier.com/retrieve/pii/S0895435618310813)), _logistic regression_
 - This is a linear model with a binary (*"yes"* or *"no"*) outcome
 - It will be a _bad model_ to start us off!
 
 ## Predictions
 
-- When doing supervised ML, we focus on predicting an outcome: how well we do this overall and for particular cases (more on how in the next learning lab)
+- When doing supervised ML, we focus on predicting an outcome: how well we do this overall and for particular cases (more on how in the next module)
 - We _do not_ focus on inference or explanation (i.e., an "explanatory" model): model fit, statistical significance, effect sizes, etc.
 - **This is a really key difference -- we use different metrics to evaluate what makes for a good model**
 
 ## Train vs. test
 - A key concept in the context of supervised machine learning is training vs. testing data:
 - Training data: Data we use to **fit** (or train, AKA estimate) a supervised machine learning **model** (AKA algorithm)
-- Testing data: Data we use to see how well our model didnot used to fit the model
+- Testing data: Data we use to see how well our model not used to fit the model
 - By splitting out data into training and testing _sets_, we can obtain unbiased metrics for how good our model is at predicting
 
 ## How does this avoid bias?
@@ -156,7 +156,7 @@ students %>% head(3)
 
 :::
 
-# Introduction to the other parts of this learning lab
+# Introduction to the other parts of this module
 
 ::: panel-tabset
 
@@ -174,7 +174,7 @@ students %>% head(3)
 
 ## Badge
 
-- Involves applying what you have done through this point in the learning lab to a) extending our model and b) reflecting and planning, after which you will knit and submit your work by publishing to Posit Cloud.
+- Involves applying what you have done through this point in the module to a) extending our model and b) reflecting and planning, after which you will knit and submit your work by publishing to Posit Cloud.
 
 :::
 

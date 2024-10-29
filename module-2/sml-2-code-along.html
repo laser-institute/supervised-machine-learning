@@ -406,14 +406,13 @@
 <section id="process" class="slide level2">
 <h2>Process</h2>
 <ul>
-<li>Again, create a .R file in <code>/module-2</code></li>
+<li>Again, create a .R file — this time in <code>/module-2</code></li>
 <li>Then, run copy and paste the code in this presentation as we talk through each step</li>
 </ul>
 </section>
 <section id="quick-discussion" class="slide level2">
 <h2>Quick discussion</h2>
 <ul>
-<li>What’s the function of the training data relative to the testing data?</li>
 <li>Which parts of the supervised machine learning process is most unclear?</li>
 </ul>
 </section></section>
@@ -433,17 +432,19 @@
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb1-2"><a href="#cb1-2"></a><span class="fu">library</span>(tidymodels)</span>
 <span id="cb1-3"><a href="#cb1-3"></a></span>
-<span id="cb1-4"><a href="#cb1-4"></a>starwars_recoded <span class="ot">&lt;-</span> starwars <span class="sc">%&gt;%</span> <span class="co"># built-in data available just by typing</span></span>
-<span id="cb1-5"><a href="#cb1-5"></a>    <span class="fu">mutate</span>(<span class="at">species_human =</span> <span class="fu">ifelse</span>(species <span class="sc">==</span> <span class="st">"Human"</span>, <span class="st">"Human"</span>, <span class="st">"Not human"</span>)) <span class="co"># recoding species to create a categorical variable</span></span>
-<span id="cb1-6"><a href="#cb1-6"></a></span>
-<span id="cb1-7"><a href="#cb1-7"></a>starwars_recoded <span class="sc">%&gt;%</span> </span>
-<span id="cb1-8"><a href="#cb1-8"></a>    <span class="fu">count</span>(species) <span class="co"># how many humans are there?</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-4"><a href="#cb1-4"></a>gss_cat <span class="co"># this is built-in data, so it's loaded differently than typical data</span></span>
+<span id="cb1-5"><a href="#cb1-5"></a></span>
+<span id="cb1-6"><a href="#cb1-6"></a>gss_cat <span class="ot">&lt;-</span> gss_cat <span class="sc">%&gt;%</span> </span>
+<span id="cb1-7"><a href="#cb1-7"></a>    <span class="fu">mutate</span>(<span class="at">is_married =</span> <span class="fu">as.factor</span>(<span class="fu">if_else</span>(marital <span class="sc">==</span> <span class="st">"Married"</span>, <span class="dv">1</span>, <span class="dv">0</span>))) <span class="co"># as a factor</span></span>
+<span id="cb1-8"><a href="#cb1-8"></a></span>
+<span id="cb1-9"><a href="#cb1-9"></a>gss_cat <span class="sc">%&gt;%</span> </span>
+<span id="cb1-10"><a href="#cb1-10"></a>    <span class="fu">count</span>(is_married)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div id="tabset-1-2">
 <p><strong>Split data</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>train_test_split <span class="ot">&lt;-</span> <span class="fu">initial_split</span>(starwars_recoded, <span class="at">prop =</span> .<span class="dv">80</span>, <span class="at">strata =</span> <span class="st">"species_human"</span>)</span>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>train_test_split <span class="ot">&lt;-</span> <span class="fu">initial_split</span>(gss_cat, <span class="at">prop =</span> .<span class="dv">80</span>, <span class="at">strata =</span> <span class="st">"is_married"</span>)</span>
 <span id="cb2-2"><a href="#cb2-2"></a>data_train <span class="ot">&lt;-</span> <span class="fu">training</span>(train_test_split)</span>
 <span id="cb2-3"><a href="#cb2-3"></a>data_test <span class="ot">&lt;-</span> <span class="fu">testing</span>(train_test_split)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -452,7 +453,7 @@
 <p><strong>Engineer features</strong></p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="co"># predicting humans based on the independent effects of height and mass</span></span>
-<span id="cb3-2"><a href="#cb3-2"></a>my_rec <span class="ot">&lt;-</span> <span class="fu">recipe</span>(species_human <span class="sc">~</span> height <span class="sc">+</span> mass, <span class="at">data =</span> data_train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-2"><a href="#cb3-2"></a>my_rec <span class="ot">&lt;-</span> <span class="fu">recipe</span>(is_married <span class="sc">~</span> age <span class="sc">+</span> tvhours, <span class="at">data =</span> gss_cat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div id="tabset-1-4">
@@ -472,14 +473,19 @@
 <div id="tabset-1-5">
 <p><strong>Fit model</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>final_fit <span class="ot">&lt;-</span> <span class="fu">last_fit</span>(my_wf, train_test_split)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>fit_model <span class="ot">&lt;-</span> <span class="fu">fit</span>(my_wf, <span class="at">data =</span> gss_cat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div id="tabset-1-6">
 <p><strong>Evaluate accuracy</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a>final_fit <span class="sc">%&gt;%</span></span>
-<span id="cb6-2"><a href="#cb6-2"></a>   <span class="fu">collect_metrics</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a>predictions <span class="ot">&lt;-</span> <span class="fu">predict</span>(fit_model, gss_cat) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-2"><a href="#cb6-2"></a>    <span class="fu">bind_cols</span>(gss_cat) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-3"><a href="#cb6-3"></a>    <span class="fu">mutate</span>(<span class="at">is_married =</span> <span class="fu">as.factor</span>(is_married))</span>
+<span id="cb6-4"><a href="#cb6-4"></a></span>
+<span id="cb6-5"><a href="#cb6-5"></a>predictions <span class="sc">%&gt;%</span></span>
+<span id="cb6-6"><a href="#cb6-6"></a>  <span class="fu">metrics</span>(is_married, .pred_class) <span class="sc">%&gt;%</span></span>
+<span id="cb6-7"><a href="#cb6-7"></a>  <span class="fu">filter</span>(.metric <span class="sc">==</span> <span class="st">"accuracy"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
@@ -514,8 +520,7 @@
 <section id="discussion" class="title-slide slide level1 center">
 <h1>Discussion</h1>
 <ul>
-<li>What do you notice about the differences in the output between regression and SML?</li>
-<li>What do you notice is different about the modeling approach?</li>
+<li>In the big picture, what is the use of the training data relative to the testing data?</li>
 </ul>
 
 <img src="img/LASERLogoB.png" class="slide-logo r-stretch"><div class="footer footer-default">

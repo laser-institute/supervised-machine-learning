@@ -53,11 +53,13 @@ pacman::p_load(pacman, knitr, tidyverse, readxl)
 library(tidyverse)
 library(tidymodels)
 
-starwars_recoded <- starwars %>% # built-in data available just by typing
-    mutate(species_human = ifelse(species == "Human", "Human", "Not human")) # recoding species to create a categorical variable
+gss_cat # this is built-in data, so it's loaded differently than typical data
 
-starwars_recoded %>% 
-    count(species) # how many humans are there?
+gss_cat <- gss_cat %>% 
+    mutate(is_married = as.factor(if_else(marital == "Married", 1, 0))) # as a factor
+
+gss_cat %>% 
+    count(is_married)
 ```
 
 ## 1
@@ -67,7 +69,7 @@ starwars_recoded %>%
 ```{r}
 #| echo: true
 #| eval: false
-train_test_split <- initial_split(starwars_recoded, prop = .80, strata = "species_human")
+train_test_split <- initial_split(gss_cat, prop = .80, strata = "is_married")
 data_train <- training(train_test_split)
 data_test <- testing(train_test_split)
 ```
@@ -80,7 +82,7 @@ data_test <- testing(train_test_split)
 #| echo: true
 #| eval: false
 # predicting humans based on the independent effects of height and mass
-my_rec <- recipe(species_human ~ height + mass, data = data_train)
+my_rec <- recipe(is_married ~ age + tvhours, data = gss_cat)
 ```
 
 ## 3
@@ -109,7 +111,7 @@ my_wf <- workflow() %>%
 #| echo: true
 #| eval: false
 
-final_fit <- last_fit(my_wf, train_test_split)
+fit_model <- fit(my_wf, data = gss_cat)
 ```
 
 ## 5
@@ -119,8 +121,13 @@ final_fit <- last_fit(my_wf, train_test_split)
 ```{r}
 #| echo: true
 #| eval: false
-final_fit %>%
-   collect_metrics()
+predictions <- predict(fit_model, gss_cat) %>% 
+    bind_cols(gss_cat) %>% 
+    mutate(is_married = as.factor(is_married))
+
+predictions %>%
+  metrics(is_married, .pred_class) %>%
+  filter(.metric == "accuracy")
 ```
 
 :::
