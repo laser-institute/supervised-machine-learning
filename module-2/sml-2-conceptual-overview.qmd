@@ -107,6 +107,14 @@ students %>% head(3)
 
 ::: panel-tabset
 
+## Train vs. test data
+
+- *Train data*: Coded/outcome data that you use to train ("estimate") your model
+- *Validation data<sup>1</sup>*: Data you use to select a particular algorithm
+- *Test ("hold-out") data*: Data that you do not use in any way to train your data
+
+[1] not always/often used, for reasons we'll discuss later
+
 ## Algorithms
 
 - Algorithms (or estimation procedures - or *models*) refer to the _structure_ and _process_ of estimating the _parameters_ of a model

@@ -115,7 +115,7 @@ The *aim* is different, the algorithms and methods of estimation are not (or, ar
 
 In a linear regression, our aim is to estimate parameters, such as $\beta_0$ (intercept) and $\beta_1$ (slope), and to make inferences about them that are not biased by our particular sample.
 
-In an ML approach, we can use the same linear regression model, but with a goal other than making unbiased inferences about the $\beta$ parameters:
+In a SML approach, we can use the same linear regression model, but with a goal other than making unbiased inferences about the $\beta$ parameters:
 
 In supervised ML, our goal is to minimize the difference between a known $y$ and our predictions, $\hat{y}$.
 
@@ -157,6 +157,15 @@ This *predictive goal* means that we can do things differently:
   - Cluster analysis and Latent Profile Analysis
   - [Principle Components Analysis (really!)](https://web.stanford.edu/~hastie/ElemStatLearn/)
 
+## Inferential statistics
+
+- Principally concerned about making inferences about parameters (e.g., $B$ coefficients)
+- Also involved with building a model that explains variation in the outcome
+- Examples:
+    - Linear regression
+    - Multi-level models
+    - Structural equation models
+
 ## Which technique should I choose?
 
 Do you have coded data or data with a known outcome -- let's say about K-12 students -- and, do you want to:
@@ -184,7 +193,7 @@ Do you want to say something about one or several variables' relations with an o
 -   See how one or more variables _relates_ to an outcome
 -   Understand whether a key variable is _has a statistically significantly coefficient_ in terms of its realtion with an outcome of interest
 
-**Traditional, inferential statistics *i.e., regression* may be best**
+**Traditional, inferential statistics may be best**
 
 ## How do I select a model?
 
@@ -202,14 +211,8 @@ This isn't just for beginners or science education researchers; [most spam filte
 ## What's stopping me from specifying a complex model?
 
 - Nothing too much, apart from computing power, time, and concerns of 
-- A "check" on your work is your predictions on _test_ set data
-  - *Train data*: Coded/outcome data that you use to train ("estimate") your model
-  - *Validation data<sup>1</sup>*: Data you use to select a particular algorithm
-  - *Test ("hold-out") data*: Data that you do not use in any way to train your data
-
-- An important way to achieve good performance with test data is to balance between the inherent _bias_ in your algorithm and the _variance_ in the predictions of your algorithm; this is referred to as the **bias-variance** trade-off of _all_ models
-
-[1] not always/often used, for reasons we'll discuss later
+- A "check" on your work is your predictions on _test_ set data (but, more on this later)
+    - An important way to achieve good performance with test data is to balance between the inherent _bias_ in your algorithm and the _variance_ in the predictions of your algorithm; this is referred to as the **bias-variance** trade-off of _all_ models
 
 ## Illustrating the bias-variance tradeoff
 
