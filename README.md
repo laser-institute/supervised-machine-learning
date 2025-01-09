@@ -14,7 +14,7 @@ Building on the foundations from Lab 1, this session delves deeper into the work
 
 How is the interpretation of SML models different from more familiar models? In this lab, we'll explore and work to understand the confusion matrix that can and the various metrics (e.g., precision, recall, PPV, NPV, F-score, and AUC) that are used to interpret how good at making dichotomous predictions SML models are. We'll again use the OULAD, augmenting the variables we used in Lab 1, and we'll introduce a more complex model---the random forest model---as an alternative to the regression models used in previous labs.
 
-## Module 4: Improving Predictions Through Feature Engineering
+## Module 4: Better Predictions Through Feature Engineering
 
 How can we improve our predictions? This lab introduces the concept of feature engineering to enhance model performance. We'll explore techniques for creating new variables and refining existing ones to improve prediction accuracy. We also explore cross-validation to revise and refine our model without biasing its predictions. We'll work with the finest-grained OULAD data—interaction data—to demonstrate key feature engineering steps.
 
