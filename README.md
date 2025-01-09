@@ -6,7 +6,7 @@ Machine learning is increasingly prevalent in our lives---and in educational con
 
 How is prediction different from explanation? This lab provides a gentle introduction to supervised machine learning by drawing out similarities to and differences from a regression modeling approach. The case study will involve modeling the graduation rate across 1000s of higher education institutions in the United States using data from the Integrated Postsecondary Education Data System (IPEDS).
 
-## Module 2: Workflows With Training and Testing Data
+## Module 2: Using Workflows With Training and Testing Data
 
 Building on the foundations from Lab 1, this session delves deeper into the workflows we will use when we are using a SML approach. Particularly, we'll explore the roles of training and testing data and when to use them in a SML workflow. We'll predict students' withdrawal from a course using the Open University Learning Analytics Dataset (OULAD).
 
