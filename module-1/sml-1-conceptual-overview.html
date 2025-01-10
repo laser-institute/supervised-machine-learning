@@ -489,7 +489,7 @@
 <h2>How is this different from regression?</h2>
 <p>The <em>aim</em> is different, the algorithms and methods of estimation are not (or, are differences in degree, rather than in kind).</p>
 <p>In a linear regression, our aim is to estimate parameters, such as <span class="math inline">\(\beta_0\)</span> (intercept) and <span class="math inline">\(\beta_1\)</span> (slope), and to make inferences about them that are not biased by our particular sample.</p>
-<p>In an ML approach, we can use the same linear regression model, but with a goal other than making unbiased inferences about the <span class="math inline">\(\beta\)</span> parameters:</p>
+<p>In a SML approach, we can use the same linear regression model, but with a goal other than making unbiased inferences about the <span class="math inline">\(\beta\)</span> parameters:</p>
 <p>In supervised ML, our goal is to minimize the difference between a known <span class="math inline">\(y\)</span> and our predictions, <span class="math inline">\(\hat{y}\)</span>.</p>
 </section>
 <section id="its-the-same" class="slide level2">
@@ -540,6 +540,19 @@
 </ul></li>
 </ul>
 </section>
+<section id="inferential-statistics" class="slide level2">
+<h2>Inferential statistics</h2>
+<ul>
+<li>Principally concerned about making inferences about parameters (e.g., <span class="math inline">\(B\)</span> coefficients)</li>
+<li>Also involved with building a model that explains variation in the outcome</li>
+<li>Examples:
+<ul>
+<li>Linear regression</li>
+<li>Multi-level models</li>
+<li>Structural equation models</li>
+</ul></li>
+</ul>
+</section>
 <section id="which-technique-should-i-choose" class="slide level2">
 <h2>Which technique should I choose?</h2>
 <p>Do you have coded data or data with a known outcome – let’s say about K-12 students – and, do you want to:</p>
@@ -567,7 +580,7 @@
 <li>See how one or more variables <em>relates</em> to an outcome</li>
 <li>Understand whether a key variable is <em>has a statistically significantly coefficient</em> in terms of its realtion with an outcome of interest</li>
 </ul>
-<p><strong>Traditional, inferential statistics <em>i.e., regression</em> may be best</strong></p>
+<p><strong>Traditional, inferential statistics may be best</strong></p>
 </section>
 <section id="how-do-i-select-a-model" class="slide level2">
 <h2>How do I select a model?</h2>
@@ -584,15 +597,11 @@
 <h2>What’s stopping me from specifying a complex model?</h2>
 <ul>
 <li>Nothing too much, apart from computing power, time, and concerns of</li>
-<li>A “check” on your work is your predictions on <em>test</em> set data
+<li>A “check” on your work is your predictions on <em>test</em> set data (but, more on this later)
 <ul>
-<li><em>Train data</em>: Coded/outcome data that you use to train (“estimate”) your model</li>
-<li><em>Validation data<sup>1</sup></em>: Data you use to select a particular algorithm</li>
-<li><em>Test (“hold-out”) data</em>: Data that you do not use in any way to train your data</li>
-</ul></li>
 <li>An important way to achieve good performance with test data is to balance between the inherent <em>bias</em> in your algorithm and the <em>variance</em> in the predictions of your algorithm; this is referred to as the <strong>bias-variance</strong> trade-off of <em>all</em> models</li>
+</ul></li>
 </ul>
-<p>[1] not always/often used, for reasons we’ll discuss later</p>
 </section>
 <section id="illustrating-the-bias-variance-tradeoff" class="slide level2">
 <h2>Illustrating the bias-variance tradeoff</h2>

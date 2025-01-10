@@ -191,7 +191,7 @@ Do you not yet have codes/outcomes -- and do you want to?
 Do you want to say something about one or several variables' relations with an outcome?
 
 -   See how one or more variables _relates_ to an outcome
--   Understand whether a key variable is _has a statistically significantly coefficient_ in terms of its realtion with an outcome of interest
+-   Understand whether a key variable is _has a statistically significantly coefficient_ in terms of its relation with an outcome of interest
 
 **Traditional, inferential statistics may be best**
 

@@ -242,7 +242,7 @@ Here, add a reason or two for how and why you picked the number you did:
 
 Now, we reach a fork in the road. Recall from our first reading that there are two general types of modeling approaches: unsupervised and supervised machine learning. In Part 4, we focus on supervised learning models, which are used to quantify relationships between features (e.g., motivation and performance) and a known outcome (e.g., student drop out). These models can be used for classification of binary or categorical outcomes, as we'll illustrate in this section, or regression as we'll demonstrate in modules 2 and 3.
 
-Please write our preliminary, draft research questions for both a regression (RQ A) and supervised machine learning (RQ B) analysis. It may help to review the readings for this module; you can find them in the `lit` folder; they are listed in `sml-1-readings.qmd`, too. There aren't right or wrong answers here; the point is to try to draw out what question might accompany these different analyses (or vice versa - what research questions are feasible to answer using different analyses).
+Please write out preliminary, draft research questions for both a regression (RQ A) and supervised machine learning (RQ B) analysis. It may help to review the readings for this module; you can find them in the `lit` folder; they are listed in `sml-1-readings.qmd`, too. There aren't right or wrong answers here; the point is to try to draw out what question might accompany these different analyses (or vice versa - what research questions are feasible to answer using different analyses).
 
 #### **👉 Your Turn** **⤵**
 
