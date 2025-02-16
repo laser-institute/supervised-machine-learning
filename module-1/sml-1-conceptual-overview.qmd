@@ -71,22 +71,24 @@ Like the above, this is meant to elicit thoughts on SML - try to draw those out,
 
 :::
 
-# Key Concept #1
+## Let's get a "feel" for SML, first
 
-## Machine learning
+Google's Teachable Machine!
 
-![](img/gpt-4.png){fig-align="center"}
+https://teachablemachine.withgoogle.com/
 
-*Builds upon supervised machine learning models--namely, deep neural networks, the likes of which can be estimated within R; the big advance has to do with the transformer architecture that allows for the fitting of more complex models. It is still important (maybe necessary) to learn about the foundational techniques and methodologies underlying GPT-4.*
+*What's going on here?*
 
-## Defining ML
+*How might this work*?
+
+## Defining AI and ML
 
 -   *Artificial Intelligence (AI)* (i.e., [GPT-4](https://openai.com/api/)): Simulating human intelligence through the use of computers
 -   *Machine learning (ML)*: A subset of AI focused on how computers acquire new information/knowledge
 
 This definition leaves a lot of space for a range of approaches to ML
 
-## Supervised ML
+## Supervised ML, or SML
 
 -   Requires coded data or data with a known outcome
 -   Uses coded/outcome data to train an algorithm
