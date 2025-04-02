@@ -15,7 +15,7 @@ editor: visual
 ---
 
 ```{r setup, include=FALSE}
-set.seed(20240706) # so the results are readily reproducible
+set.seed(20250706) # so the results are readily reproducible
 ```
 
 ## 1. PREPARE
@@ -279,16 +279,9 @@ my_wf <- workflow() %>% # this starts a workflow, which will stitch together the
     add_model(my_mod) %>% # adds the model
     add_recipe(my_rec) # adds the recipe
 
-fit_model <- fit(my_wf, ipeds) # fits the model
+fit_model <- last_fit(my_wf, ipeds) # fits the model
 
-predictions <- predict(fit_model, ipeds) %>% # predicts the value of the dependent variable using only the predictors' values and our trained model
-  bind_cols(ipeds) # this adds the original data back to the predicted values, so everything is together
-
-accuracy <- predictions %>% # this and the next two steps calculate the accuracy of our predictions
-  metrics(truth = good_grad_rate, estimate = .pred_class) %>%
-  filter(.metric == "accuracy")
-
-accuracy # print the accuracy
+collect_metrics(fit_model) # examines accuracy
 ```
 
 The key to observe at this point is what is similar and different between the two approaches (regression and supervised machine learning). Both used the same underlying statistical model, but had some stark differences. Add two or more similarities and two or more differences (no wrong answers!) below.

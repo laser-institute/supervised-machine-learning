@@ -4,7 +4,7 @@ Machine learning is increasingly prevalent in our lives---and in educational con
 
 ## Module 1: Supervised Machine Learning Foundations
 
-How is prediction different from explanation? This lab provides a gentle introduction to supervised machine learning by drawing out similarities to and differences from a regression modeling approach. The case study will involve modeling the graduation rate across 1000s of higher education institutions in the United States using data from the Integrated Postsecondary Education Data System (IPEDS).
+How is prediction different from explanation? This lab provides a gentle introduction to supervised machine learning by drawing out similarities to and differences from a regression modeling approach. The case study will involve modeling the graduation rate across 1,000s of higher education institutions in the United States using data from the Integrated Postsecondary Education Data System (IPEDS).
 
 ## Module 2: Using Workflows With Training and Testing Data
 

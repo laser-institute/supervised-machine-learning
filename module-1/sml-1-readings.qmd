@@ -20,38 +20,32 @@ The goal of this module is to begin to understand how a supervised machine learn
 
 ## Readings
 
-**These readings are all in the `/lit` folder.**
+**These readings are all in the `/lit` folder in the main directory for supervised-machine-learning.**
 
-> Brooks, C., & Thompson, C. (2017). Predictive modelling in teaching and learning. Handbook of learning analytics, 61-68.
+> Brooks, C., & Thompson, C. (2017). Predictive modelling in teaching and learning. In C. Lang, G. Siemens, A. F. Wise, & D. Gašević (Eds.), *Handbook of learning analytics* (pp. 61–68). Society for Learning Analytics Research (SoLAR). https://doi.org/10.18608/hla17.005
 
-> Jaquette, O., & Parra, E. E. (2013). Using IPEDS for panel analyses: Core concepts, data challenges, and empirical applications. In Higher Education: Handbook of Theory and Research: Volume 29 (pp. 467-533). Dordrecht: Springer Netherlands.
+> Jaquette, O., & Parra, E. E. (2013). Using IPEDS for panel analyses: Core concepts, data challenges, and empirical applications. In M. B. Paulsen (Ed.), *Higher education: Handbook of theory and research* (Vol. 28, pp. 467–533). Dordrecht, Netherlands: Springer.
 
-> Zong, C., & Davis, A. (2022). Modeling university retention and graduation rates using IPEDS. *Journal of College Student Retention: Research, Theory & Practice*, 15210251221074379.
+> Zong, C., & Davis, A. (2022). Modeling university retention and graduation rates using IPEDS. *Journal of College Student Retention: Research, Theory & Practice.* Advance online publication. https://doi.org/10.1177/15210251221074379
 
 ## Reflection
 
-To help guide your reflecchattion on the readings, a set of guiding questions are provided below. After you have had a chance to work through one or more of the readings, **we encourage you to contribute to our learning community by creating a new post to our machine-learning channel on [Slack](http://laser-scholars.slack.com/)**. Your post might contain a response to one or more of the guiding questions, questions you still have about the topics addressed, or insights gained into your own research.
+To help guide your reflection on the readings, a set of guiding questions are provided below. After you have had a chance to work through one or more of the readings, **we encourage you to contribute to our learning community by creating a new post to our supervised-machine-learning channel on [Slack](http://laser-scholars.slack.com/)**. Your post might contain a response to one or more of the guiding questions, questions you still have about the topics addressed, or insights gained into your own research.
 
 ### Brooks & Thompson (2017)
 
 -   The authors distinguish between explanatory and predictive modeling. Discuss the key differences between these two approaches and provide examples of how each can be applied in educational settings.
 
--   The chapter outlines several common challenges associated with predictive modeling in education, such as data sparsity and noisy data. How can researchers mitigate these challenges to improve the accuracy and reliability of their predictive models?
-
--   Reflect on the ethical considerations of deploying predictive models in educational environments. What are the potential risks, and how can institutions ensure that their use of predictive analytics promotes equity and fairness among students?
+-   Reflect on the ethical considerations of using supervised machine learning in educational contexts. What are the potential ethics-related risks, and how can institutions ensure that their use of predictive analytics promotes equity and fairness among students?
 
 ### Jaquette & Parra (2013)
 
 -   What are some of the attributes of IPEDS that make it useful for research?
-
--   What are key considerations to keep in mind when using IPEDS data?
 
 -   How could you use data to answer a question related to your research interests?
 
 ### Zong and Davis (2022)
 
 -   Zong and Davis utilize the Integrated Postsecondary Education Data System (IPEDS) to model university retention and graduation rates. What are the strengths and limitations of using IPEDS data for this purpose, and how might these affect the study's conclusions?
-
--   Examine the variables selected by Zong and Davis in their predictive models. How do these variables compare to those used in K-12 dropout prediction models, and what unique factors might influence retention and graduation at the university level?
 
 -   Discuss the potential impact of predictive modeling on university policy and student support services. How can universities implement these findings to enhance student retention and graduation rates effectively?

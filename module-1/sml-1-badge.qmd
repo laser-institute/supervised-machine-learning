@@ -16,11 +16,7 @@ As a reminder, to earn a badge for each lab, you are required to respond to a se
 
 Part A:
 
-1.  What were some key differences between the regression (inferential) and supervised machine learning (predictive) models?
-
--   
-
--   
+1.  What are one or more key differences between regression (inferential) and supervised machine learning models?
 
 -   
 
@@ -46,13 +42,9 @@ Part B: Use institutional library access (e.g. [NCSU Library](https://www.lib.nc
 
     -   
 
-4.  Lastly, what value might a Computational Grounded Theory analysis have in the context of their analysis?
+### Part II: Interpret our Supervised Machine Learning Model
 
-    -   
-
-### Part II: Interpret our Predictive Model
-
-Here, we are going to interpret our predictive model in a very precursory way. Later, you will have the opportunity to dive deep into metrics for interpreting supervised machine learning models. Now, just interpret the output of the supervised machine learning model from the case study on its face. What does this model seem to tell us? How useful is this predictive model? You may find the readings helpful for this task - particularly, the Baker et al. (2023) paper.
+Here, we are going to interpret our supervised machine learning model in a very precursory way. Later, you will have the opportunity to dive deep into metrics for interpreting supervised machine learning models. What does this model seem to tell us? How useful is this predictive model? How could it be useful to educational stakeholders?
 
 -   
 

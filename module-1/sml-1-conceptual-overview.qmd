@@ -29,9 +29,9 @@ pacman::p_load(pacman, knitr, tidyverse, readxl)
 -   Key Concept: Machine Learning
 -   Discussion 2
 -   Modules Overview
--   Introduction to the other parts of this module
+-   What's Next
 
-::: {.notes}
+::: notes
 This is the rough structure used for all four module's conceptual overview presentations.
 :::
 
@@ -41,56 +41,64 @@ This is the rough structure used for all four module's conceptual overview prese
 
 Machine learning is increasingly prevalent in our lives---and in educational contexts. Its role in educational research and practice is growing, albeit with some challenges and even controversy. These modules are designed to familiarize you with supervised machine learning and its applications in STEM education research. Throughout the module, we'll explore four key questions that correspond to the focus of each of the four modules. By the end, you will have a deep understanding of the key characteristics of supervised machine learning and how to implement supervised machine learning workflows in R and Python.
 
-::: {.notes}
+::: notes
 This is from the overview of the module -- it is just a high-level overview of the topic.
 :::
 
 # Discussion 1
 
-::: {.notes}
+## Discussion Questions
+
+::: notes
 The discussions that follow are optional, but they can be really rich.
 :::
 
 ::: panel-tabset
-
 ## Getting Started
 
-- Explain why are you interested in machine learning.
+-   Explain why are you interested in machine learning.
 
-::: {.notes}
-This is really just to get people talking - low stakes! Look for ideas related to SML.
+::: notes
+This is really just to get people talking - low stakes! Look for ideas related to supervised ML.
 :::
 
 ## Digging Deeper
 
-- Is there a specific use case of machine learning in which you are especially interested? Consider the data and purpose.
+-   Is there a specific use case of machine learning in which you are especially interested? Consider the data and purpose.
 
-::: {.notes}
+::: notes
 Like the above, this is meant to elicit thoughts on SML - try to draw those out, or point out cases of unsupervised ML or regression and try to contrast those.
 :::
-
 :::
 
-## Let's get a "feel" for SML, first
+# Key Concept: Machine Learning
+
+## Let's get a "feel" for it machine learning
 
 Google's Teachable Machine!
 
-https://teachablemachine.withgoogle.com/
+<https://teachablemachine.withgoogle.com/>
 
 *What's going on here?*
 
-*How might this work*?
+::: notes
+This is meant to give learners a sense for how SML can work in a very simple way - by training a model on video you can record directly through your computer. Some ideas: can you train a model to identify a pen and a pencil? A thumbs up and a thumbs down? A smile or a frown? The flexibility is the fun part! Try it out first.
+:::
 
 ## Defining AI and ML
 
 -   *Artificial Intelligence (AI)* (i.e., [GPT-4](https://openai.com/api/)): Simulating human intelligence through the use of computers
 -   *Machine learning (ML)*: A subset of AI focused on how computers acquire new information/knowledge
 
-This definition leaves a lot of space for a range of approaches to ML
+This definition leaves a lot of space for a range of approaches to ML.
 
-## Supervised ML, or SML
+::: notes
+There are other definitions, but these are generally helpful and fairly pragmatic.
+:::
 
--   Requires coded data or data with a known outcome
+## Supervised ML (or SML)
+
+-   Requires *coded data*, or data with a known outcome
 -   Uses coded/outcome data to train an algorithm
 -   Uses that algorithm to **predict the codes/outcomes for new data** (data not used during the training)
 -   Can take the form of a *classification* (predicting a dichotomous or categorical outcome) or a *regression* (predicting a continuous outcome)
@@ -99,6 +107,10 @@ This definition leaves a lot of space for a range of approaches to ML
     -   Logistic regression
     -   Random forest
     -   Neural network
+    
+::: notes
+A key here is that SML is not about the algorithm, it's more about the aim and use.
+:::
 
 ## What kind of coded data?
 
@@ -111,6 +123,10 @@ In educational research:
 -   Open-ended written responses (e.g., [1](https://link.springer.com/article/10.1007/s10956-020-09889-7), [2](https://doi.org/10.1007/s11423-020-09761-w))
 -   Achievement data (i.e., end-of-course grades) (e.g., [1](https://link.springer.com/article/10.1007/s10956-020-09888-8), [2](https://search.proquest.com/docview/2343734516?pq-origsite=gscholar&fromopenview=true))
 
+::: notes
+These are all different examples of using SML.
+:::
+
 ## How is this different from regression?
 
 The *aim* is different, the algorithms and methods of estimation are not (or, are differences in degree, rather than in kind).
@@ -121,60 +137,150 @@ In a SML approach, we can use the same linear regression model, but with a goal 
 
 In supervised ML, our goal is to minimize the difference between a known $y$ and our predictions, $\hat{y}$.
 
+::: notes
+The key point remains that it's not about the algorithm, but rather about the intended use.
+:::
+
+---
+
 ## It's the same!
 
-We can use the same model for an inferential or a predictive approach:
+We can use the same model for an inferential **or** an SML approach:
 
 $y$ = $b_0$ + $b_1$ + ... + $e$
 
-If we are interested in making inferences about a particular $b$ (e.g., $b_1$), we can use theory and prior research to include particular predictors
+If we are interested in making inferences about a particular $b$ (e.g., $b_1$), we can use theory and prior research to include particular predictors. This often favors **transparent models** where we understand *how* predictors relate to $y$.
 
-If we are interested in making the best possible predictions, we can add a *bunch* of predictors and see how much we can minimize the prediction error
+If we are interested in making the best possible predictions, we can add a *bunch* of predictors and see how much we can minimize the prediction error.
+
+::: notes
+The same algorithm can be used for both inferential or SML approaches.
+:::
+
+---
 
 ## But different!
 
-This *predictive goal* means that we can do things differently:
+This *predictive goal of SML* means that we can do things differently:
 
--   Multicollinearity is not an issue because we do not care to make inferences about parameters
--   Because interpreting specific parameters is less of an interest, we can use a great deal more predictors
--   We focus on how accurately a *trained* model can predict the values in *test* data (though, we'll only use one data set only in this module)
--   We can make our models very complex - we can choose different models!
+-   Multicollinearity is not necessarily an issue because we do not care *as much* to make inferences about individual parameters.
+-   Because interpreting specific parameters is *less* of a primary interest (though often still valuable!), we can use a great deal more predictors.
+-   We focus on how accurately a *trained* model can predict the values in *test* data.
+-   We can make our models very complex - leading to different levels of interpretability.
+
+::: notes
+Here, the key point is that we can do things a bit differently given our different goal.
+:::
+
+---
+
+## A Spectrum of Interpretability
+
+The choice of model often involves a trade-off between predictive power and how easily we can understand its inner workings:
+
+-   **Transparent Box:** Models where the relationship between inputs and outputs is clear.
+    -   *Example:* Linear Regression (coefficients have direct meaning).
+    -   Often preferred for *inference*.
+
+-   **Black Box:** Models where the internal logic is complex and opaque.
+    -   *Example:* Deep Neural Networks.
+    -   Often used when *predictive accuracy* is the absolute priority.
+
+-   **Gray Box:** Models offering some insight, but less direct than transparent ones.
+    -   *Example:* Decision Trees, Random Forests (can see feature importance).
+    -   Represents a middle ground.
+
+::: notes
+This is meant to open teh door a bit to models that blend between inferential and SML approaches.
+:::
+
+---
 
 ## Okay, *really* complex
 
--   Neutral/deep networks
-    -   i.e., GPT-3 (175 B parameters), GPT-4 (\>1 T parameters)
--   And, some models can take a different form than familiar regressions:
-    -   *k*-nearest neighbors
-    -   Decision trees (and their extensions of bagged and random forests)
--   Last, the modeling process can look different:
-    -   Ensemble models that combine or improve on ("boosting") the predictions of individual models
+The focus on prediction opens the door to highly complex models:
+
+-   **Often "Black Box":**
+    -   Neural/deep networks (e.g., GPT-4 with >1 Trillion parameters)
+
+-   **Often "Gray Box" (can vary):**
+    -   Decision trees (interpretable path, but complex forests)
+    -   Extensions: Bagging (Bootstrap Aggregating), Random Forests
+    -   Boosting methods (combining weak learners)
+
+-   **Different Forms:**
+    -   *k*-nearest neighbors (instance-based, less of a "model" in the traditional sense)
+
+-   **Different Processes:**
+    -   Ensemble models (combining predictions from multiple models)
+
+::: notes
+This expands on the points on the last slide and includes algorithms that are fundamentally different -- they aren't really "boxes" in the sense the models are - they're rules-based, and while the rules can be interrogated, the process is fairly scrutinizable (but really complex!).
+:::
+
+---
+
+## Choose Your Approach Wisely
+
+There's no single "best" way; the right tools depend on your goals:
+
+-   **What is your ultimate aim?**
+    -   Understanding specific relationships (inference -> lean transparent)?
+    -   Making the most accurate predictions possible (prediction -> maybe black box is okay)?
+    -   A balance of both (prediction + some explanation -> gray box)?
+
+-   **Don't look for a magic answer!** No model perfectly reflects reality. Resist the urge to let the model "tell you the answer" without critical thought.
+
+-   **Understand your tools:** Even if prediction is the goal, knowing *how* your chosen model works (its assumptions, strengths, weaknesses) helps you:
+    -   Troubleshoot problems.
+    -   Interpret results appropriately (even if it's just performance metrics).
+    -   Build *better*, more reliable predictive systems.
+
+::: notes
+This invites students to really think hard about what they are trying to do.
+:::
+
+## The SML workflow
+
+![](https://sbkellogg.github.io/eci-589/unit-1/img/workflow.png){alt="" width="80%"}
+
+::: notes
+We expand on this in the case study.
+:::
 
 ## Unsupervised ML
 
-- Does not require coded data; one way to think about unsupervised ML is that its purpose is to discover codes/labels
-- Can be used in an _exploratory mode_ (see [Nelson, 2020](https://journals.sagepub.com/doi/full/10.1177/0049124118769114?casa_token=EV5XH31qbyAAAAAA%3AFg09JQ1XHOOzlxYT2SSJ06vZv0jG-s4Qfz8oDIQwh2jrZ-jrHNr7xZYL2FwnZtZiokhPalvV1RL2Bw)) 
-- **Warning**: The results of unsupervised ML _cannot_ directly be used to provide codes/outcomes for supervised ML techniques 
-- Algorithms include:
-  - Cluster analysis and Latent Profile Analysis
-  - [Principle Components Analysis (really!)](https://web.stanford.edu/~hastie/ElemStatLearn/)
+-   Does not require coded data; one way to think about unsupervised ML is that its purpose is to discover codes/labels
+-   Can be used in an *exploratory mode* (see [Nelson, 2020](https://journals.sagepub.com/doi/full/10.1177/0049124118769114?casa_token=EV5XH31qbyAAAAAA%3AFg09JQ1XHOOzlxYT2SSJ06vZv0jG-s4Qfz8oDIQwh2jrZ-jrHNr7xZYL2FwnZtZiokhPalvV1RL2Bw))
+-   **Warning**: The results of unsupervised ML *cannot* directly be used to provide codes/outcomes for supervised ML techniques
+-   Algorithms include:
+    -   Cluster analysis and [Latent Profile Analysis](https://cran.r-project.org/web/packages/tidyLPA/vignettes/Introduction_to_tidyLPA.html)
+    -   [Principle Components Analysis (really!)](https://web.stanford.edu/~hastie/ElemStatLearn/)
+
+::: notes
+This is _not_ the focus of any of the materials for SML, but students can pursue these techniques outside of LASER, of course, and the basis in SML can help.
+:::
 
 ## Inferential statistics
 
-- Principally concerned about making inferences about parameters (e.g., $B$ coefficients)
-- Also involved with building a model that explains variation in the outcome
-- Examples:
-    - Linear regression
-    - Multi-level models
-    - Structural equation models
+-   Principally concerned about making inferences about parameters (e.g., $B$ coefficients)
+-   Also involved with building a model that explains variation in the outcome
+-   Examples:
+    -   Linear regression
+    -   Multi-level models
+    -   Structural equation models
+
+::: notes
+Many students will be familiar with regression, and it's a nice touch point here.
+:::
 
 ## Which technique should I choose?
 
 Do you have coded data or data with a known outcome -- let's say about K-12 students -- and, do you want to:
 
-- _Predict_ how other students with similar data (but without a known outcome) perform?
-- _Scale_ coding that you have done for a sample of data to a larger sample?
-- _Provide timely or instantaneous feedback_, like in many learning analytics systems?
+-   *Predict* how other students with similar data (but without a known outcome) perform?
+-   *Scale* coding that you have done for a sample of data to a larger sample?
+-   *Provide timely or instantaneous feedback*, like in many learning analytics systems?
 
 **Supervised methods may be your best bet**
 
@@ -182,9 +288,9 @@ Do you have coded data or data with a known outcome -- let's say about K-12 stud
 
 Do you not yet have codes/outcomes -- and do you want to?
 
-- _Achieve a starting point_ for qualitative coding, perhaps in a ["computational grounded theory"](https://journals.sagepub.com/doi/full/10.1177/0049124117729703) mode?
-- _Discover groups or patterns in your data_ that may be of interest?
-- _Reduce the number of variables in your dataset_ to a smaller, but perhaps nearly as explanatory/predictive - set of variables?
+-   *Achieve a starting point* for qualitative coding, perhaps in a ["computational grounded theory"](https://journals.sagepub.com/doi/full/10.1177/0049124117729703) mode?
+-   *Discover groups or patterns in your data* that may be of interest?
+-   *Reduce the number of variables in your dataset* to a smaller, but perhaps nearly as explanatory/predictive - set of variables?
 
 **Unsupervised methods may be helpful**
 
@@ -192,187 +298,42 @@ Do you not yet have codes/outcomes -- and do you want to?
 
 Do you want to say something about one or several variables' relations with an outcome?
 
--   See how one or more variables _relates_ to an outcome
--   Understand whether a key variable is _has a statistically significantly coefficient_ in terms of its relation with an outcome of interest
+-   See how one or more variables *relates* to an outcome
+-   Understand whether a key variable is *has a statistically significantly coefficient* in terms of its relation with an outcome of interest
 
-**Traditional, inferential statistics may be best**
+**Inferential statistics may be best**
+
+## In short
+
+- If you're interested in explaining relations, choose inferential statistics
+- If you're itnerested in making predictions, choose SML
+- If you're interested in exploring patterns in data, choose unsupervised ML
+
+::: footer
+Some models *blend* between inferential and SML -- we'll talk about these as we proceed!
+:::
 
 ## How do I select a model?
 
-One general principle is to **start with the simplest useful model** and to _build toward
-more complex models as helpful_.
+One general principle is to **start with the simplest useful model** and to *build toward more complex models as helpful*.
 
 This principle applies in multiple ways:
 
-- To choose an algorithm, start with simpler models that you can efficiently use and understand
-- To carry out feature engineering, understand your predictors well by starting with a subset
-- To tune an algorithm, start with a relatively simple set of tuning parameters
+-   To choose an algorithm, start with simpler models that you can efficiently use and understand
+-   To carry out feature engineering, understand your predictors well by starting with a subset
+-   To tune an algorithm, start with a relatively simple set of tuning parameters
 
 This isn't just for beginners or science education researchers; [most spam filters use Support Vector Machines (and used Naive Bayes until recently)](https://vas3k.com/blog/machine_learning/) due to their combination of effectiveness and efficiency "in production."
 
-## What's stopping me from specifying a complex model?
-
-- Nothing too much, apart from computing power, time, and concerns of 
-- A "check" on your work is your predictions on _test_ set data (but, more on this later)
-    - An important way to achieve good performance with test data is to balance between the inherent _bias_ in your algorithm and the _variance_ in the predictions of your algorithm; this is referred to as the **bias-variance** trade-off of _all_ models
-
-## Illustrating the bias-variance tradeoff
-
-```{r, echo = FALSE, fig.align="center", message = FALSE}
-library(ggplot2)
-
-set.seed(5)
-dat = data.frame(x = runif(1000, 0, 12))
-dat$x = sort(dat$x)
-dat$y = with(dat, sin(x * 1.3) * 15 + 3 * (x - 4)^2)
-sigma = with(dat, (exp(x - 5)/(1 + exp(x - 5)) - exp(x - 7)/(1 + exp(x - 7)) * 
-    2) + 1.4) * 6
-dat$yobs = dat$y + rnorm(nrow(dat), mean = 0, sd = sigma)
-
-ggplot(dat, aes(x = x, y = yobs)) +
-  geom_point(color = "darkgray") +
-  ylab("pred")
-
-ggsave("img/bias-variance-data-1.png")
-```
-
-## A strongly biased algorithm (linear model)
-
-```{r, echo = FALSE, fig.align="center", message = FALSE}
-dat = data.frame(x = runif(1000, 0, 12))
-dat$x = sort(dat$x)
-dat$y = with(dat, sin(x * 1.3) * 15 + 3 * (x - 4)^2)
-sigma = with(dat, (exp(x - 5)/(1 + exp(x - 5)) - exp(x - 7)/(1 + exp(x - 7)) * 
-    2) + 1.4) * 6
-dat$yobs = dat$y + rnorm(nrow(dat), mean = 0, sd = sigma)
-
-ggplot(dat, aes(x = x, y = yobs)) +
-  geom_point(color = "darkgray") +
-  geom_smooth(method = "lm") +
-  ylab("pred")
-
-ggsave("img/bias-variance-data-3.png")
-```
-
-## A much less-biased algorithm (GAM/spline)
-
-```{r, echo = FALSE, fig.align="center", message = FALSE}
-set.seed(5)
-dat = data.frame(x = runif(1000, 0, 12))
-dat$x = sort(dat$x)
-dat$y = with(dat, sin(x * 1.3) * 15 + 3 * (x - 4)^2)
-sigma = with(dat, (exp(x - 5)/(1 + exp(x - 5)) - exp(x - 7)/(1 + exp(x - 7)) * 
-    2) + 1.4) * 6
-dat$yobs = dat$y + rnorm(nrow(dat), mean = 0, sd = sigma)
-
-ggplot(dat, aes(x = x, y = yobs)) +
-  geom_point(color = "darkgray") +
-  geom_smooth(method = lm, formula = y ~ splines::bs(x, 10), se = FALSE) +
-  ylab("pred")
-
-ggsave("img/bias-variance-data-5.png")
-```
-
-## Slightly different data (bottom)
-
-```{r, echo = FALSE, echo = FALSE, message = FALSE, include = FALSE}
-dat = data.frame(x = runif(1000, 0, 12))
-dat$x = sort(dat$x)
-dat$y = with(dat, sin(x * 2.3) * 25 + 3 * (x - 3)^2)
-sigma = with(dat, (exp(x - 5)/(1 + exp(x - 5)) - exp(x - 7)/(1 + exp(x - 7)) * 
-    2) + 1.4) * 6
-dat$yobs = dat$y + rnorm(nrow(dat), mean = 0, sd = sigma)
-
-ggplot(dat, aes(x = x, y = yobs)) +
-  geom_point(color = "darkgray") +
-  ylab("pred")
-
-ggsave("img/bias-variance-data-2.png")
-```
-
-::: {.pull-left}
-![](img/bias-variance-data-1.png){width=900}
+::: notes
+This is a fairly general point, but a helpful one and one that guides this and the following three modules - we start simple and build complexity, as students will see! This helps us understand the model and how and why it's performing well (or not)!
 :::
 
-::: {.pull-right}
-![](img/bias-variance-data-2.png){width=900}
+# Discussion 2
 
-:::
-
-## Still strong bias, but low variance
-
-```{r, echo = FALSE, fig.align="center", message = FALSE, include = FALSE}
-dat = data.frame(x = runif(1000, 0, 12))
-dat$x = sort(dat$x)
-dat$y = with(dat, sin(x * 2.3) * 25 + 3 * (x - 3)^2)
-sigma = with(dat, (exp(x - 5)/(1 + exp(x - 5)) - exp(x - 7)/(1 + exp(x - 7)) * 
-    2) + 1.4) * 6
-dat$yobs = dat$y + rnorm(nrow(dat), mean = 0, sd = sigma)
-
-ggplot(dat, aes(x = x, y = yobs)) +
-  geom_point(color = "darkgray") +
-  geom_smooth(method = "lm") +
-  ylab("pred")
-
-ggsave("img/bias-variance-data-4.png")
-```
-
-::: {.pull-left}
-![](img/bias-variance-data-3.png){width=900}
-:::
-
-::: {.pull-right}
-![](img/bias-variance-data-4.png){width=900}
-:::
-
-## Low bias, but very high variance
-
-```{r, echo = FALSE, fig.align="center", message = FALSE, include = FALSE}
-dat = data.frame(x = runif(1000, 0, 12))
-dat$x = sort(dat$x)
-dat$y = with(dat, sin(x * 2.3) * 25 + 3 * (x - 3)^2)
-sigma = with(dat, (exp(x - 5)/(1 + exp(x - 5)) - exp(x - 7)/(1 + exp(x - 7)) * 
-    2) + 1.4) * 6
-dat$yobs = dat$y + rnorm(nrow(dat), mean = 0, sd = sigma)
-
-ggplot(dat, aes(x = x, y = yobs)) +
-  geom_point(color = "darkgray") +
-  geom_smooth(method = lm, formula = y ~ splines::bs(x, 10), se = FALSE) +
-  ylab("pred")
-
-ggsave("img/bias-variance-data-6.png")
-```
-
-::: {.pull-left}
-![](img/bias-variance-data-5.png){width=900}
-:::
-
-::: {.pull-right}
-![](img/bias-variance-data-6.png){width=900}
-:::
-
-## The bias-variance tradeoff
-
-#### Bias
-
-- *Definition*: Difference between our known codes/outcomes and our predicted codes/outcomes; difference between $y$ and $\hat{y}$
-- How (in)correct our models' (algorithms') predictions are
-- Models with high bias can fail to capture important relationships—they can be *under-fit* to our data
-- In short, how well our model reflects the patterns in the data
-
-#### Variance
-
-- *Definition*: Using a different sample of data, the difference in $\hat{y}$ values
-- How sensitive our predictions are to the specific sample on which we trained the model
-- Models with high variance can fail to predict different data well
-- In short, how stable the predictions of our model are
-
-#### <center>Regardless of model, we often wish to balance between bias and variance—to balance between under- and over-fitting a model to our data</center>
-
-## Discussion 2
+## Discussion Questions
 
 ::: panel-tabset
-
 ## Reflecting
 
 -   When might you use SML, in general?
@@ -382,11 +343,13 @@ ggsave("img/bias-variance-data-6.png")
 -   Think back to the use case you mentioned earlier. How does (or could) SML be an appropriate technique to use?
 :::
 
-::: {.notes}
+::: notes
 This is meant to elicit thoughts from learners on SML, now that we are beginning to develop a language. Learners may mention research questions that sound like they could be answered using traditional inferential methods - lean into those discussions and be open to the possibility that interesting questions do *not* require SML, and use these conversations to try to shape inferential (i.e., those answerable with regression models and their extensions) questions into predictive (i.e., those answerable with SML) ones.
 :::
 
 # Modules Overview
+
+## Overview
 
 ::: panel-tabset
 ## Module 1
@@ -414,20 +377,20 @@ How is the interpretation of SML models different from more familiar models? In 
 How can we improve our predictions? This lab introduces the concept of feature engineering to enhance model performance. We'll explore techniques for creating new variables and refining existing ones to improve prediction accuracy. We also explore cross-validation to revise and refine our model without biasing its predictions. We'll work with the finest-grained OULAD data—interaction data—to demonstrate key feature engineering steps.
 :::
 
-::: {.notes}
+::: notes
 A key point to make here is that each lab introduces a tension/issue that is resolved by the subsequent labs - the first doesn't use training data, which can lead to over-confident (i.e., biased) metrics of predictive accuracy; the second introduces testing data, but only naively interprets the predictive goodness of the models; the third includes the major components apart from feature engineering and resampling (feature engineering), which is the focus of the fourth. By the fourth, learners will engage will all of the fundamental elements of a supervised machine learning analysis.
 :::
 
+# What's Next
 
-# Other parts of this module
+## Other parts of this module
 
 ::: panel-tabset
-
 ### Code-along
 
-- Uses built-in data (from the General Social Survey)
-- Compares the use of the same logistic regression model in a regression and SML "mode"
-- Introduces the modeling cycle and process
+-   Uses built-in data (from the General Social Survey)
+-   Compares the use of the same logistic regression model in a regression and SML "mode"
+-   Introduces the modeling cycle and process
 
 ### Readings
 
@@ -437,14 +400,14 @@ A key point to make here is that each lab introduces a tension/issue that is res
 
 > Jaquette, O., & Parra, E. E. (2013). Using IPEDS for panel analyses: Core concepts, data challenges, and empirical applications. In *Higher Education: Handbook of Theory and Research: Volume 29 (pp. 467-533)*. Dordrecht: Springer Netherlands.
 
-> Zong, C., & Davis, A. (2022). Modeling university retention and graduation rates using IPEDS. *Journal of College Student Retention: *Research, Theory & Practice*. https://journals.sagepub.com/doi/full/10.1177/15210251221074379
+> Zong, C., & Davis, A. (2022). Modeling university retention and graduation rates using IPEDS. *Journal of College Student Retention:* Research, Theory & Practice\*. https://journals.sagepub.com/doi/full/10.1177/15210251221074379
 
 ### Case Study
 
 **Please see `sml-1-case-study.qmd`**
 
--   Building a prediction model for graduate rates using data from National Center for Education Statistics data --- IPEDS< specifically
--   We'll use not only the same _data_ but also the same _model_ in two modes - inferential regression modeling and predictive SML, seeing how the key is in how we use the model, not the model type
+-   Building a prediction model for graduate rates using data from National Center for Education Statistics data --- IPEDS\< specifically
+-   We'll use not only the same *data* but also the same *model* in two modes - inferential regression modeling and predictive SML, seeing how the key is in how we use the model, not the model type
 -   Work with peers to complete this, reading the text, following links to resources (and the reading), and then completing the required 👉 Your Turn ⤵ tasks
 -   A key is available, but we strongly encourage you to use it only at the end to check your work, or if you are completely stuck and have tried our recommended troubleshooting steps: https://docs.google.com/document/d/14Jc-KG3m5k1BvyKWqw7KmDD21IugU5nV5edfJkZyspY/edit
 

@@ -103,7 +103,7 @@ For now, please read in the \`ipeds-all-title-9-2022-data.csv\` file. Use the `r
 ipeds <- read_csv("data/ipeds-all-title-9-2022-data.csv")
 ```
 
-We'll then use a handy function from janitor, `clean_names()`. It does what it seems like it should - it cleans the names of variables, making them easy to view and type. Run this next code chunk. 
+We'll then use a handy function from janitor, `clean_names()`. It does what it seems like it should - it cleans the names of variables, making them easy to view and type. Run this next code chunk.
 
 ```{r}
 ipeds <- janitor::clean_names(ipeds)
@@ -127,7 +127,7 @@ Write down a few observations after inspecting the data - and any all observatio
 
 ## 2. WRANGLE
 
-Even though we cleaned the names to make them easier to view and type (thanks, `clean_names()`), they are still pretty long. 
+Even though we cleaned the names to make them easier to view and type (thanks, `clean_names()`), they are still pretty long.
 
 The code chunk below uses a very handy function, `select()`. This allows you to simultaneously choose and rename variables, returning a data frame with only the variables you have selected --- named as you like. For now, we'll just run this code. Later in your analyses, you'll almost certainly use `select()` to get a more manageable dataset.
 
@@ -168,9 +168,9 @@ ipeds %>%
 
 ### Filtering
 
-`filter()` is a very handy function that is part of the tidyverse; it filters to _include_ (or _exclude_) observations in your data based upon logical conditions (e.g., `==`, `>`, `<=`, etc.). See more [here](https://dplyr.tidyverse.org/reference/filter.html) if interested.
+`filter()` is a very handy function that is part of the tidyverse; it filters to *include* (or *exclude*) observations in your data based upon logical conditions (e.g., `==`, `>`, `<=`, etc.). See more [here](https://dplyr.tidyverse.org/reference/filter.html) if interested.
 
-Below, we filter the data to include only Title IV postsecondary institutions. 
+Below, we filter the data to include only Title IV postsecondary institutions.
 
 ```{r}
 ipeds <- ipeds %>% 
@@ -179,7 +179,7 @@ ipeds <- ipeds %>%
 
 #### **👉 Your Turn** **⤵**
 
-Can you filter the data again, this time to _only_ include institutions with a carnegie classification?
+Can you filter the data again, this time to *only* include institutions with a carnegie classification?
 
 In other words, can you exclude those institutions with a value for the `carnegie_class` variable that is "Not applicable, not in Carnegie universe (not accredited or nondegree-granting)")? A little hint: whereas the logical operator `==` is used to include only matching conditions, the logical operator `!=` excludes matching conditions.
 
@@ -198,9 +198,9 @@ glimpse(ipeds)
 
 ## 3. EXPLORE
 
-One key step in most analyses is to explore the data. Here, we conduct an exploratory data analysis with the IPEDS data, focusing on the key outcome of graduate rate. 
+One key step in most analyses is to explore the data. Here, we conduct an exploratory data analysis with the IPEDS data, focusing on the key outcome of graduate rate.
 
-Below, we use the ggplot2 package (part of the tidyverse) to visualize the _spread_ of the values of our dependent variable, `grad_rate`, which represents institutions' graduation rate. There is a _lot_ to ggplot2, and data visualizations are not the focus of this module, but [this web page](https://ggplot2.tidyverse.org/) has a lot of information you can use to learn more, if you are interested. ggplot2 is fantastic for creating publication-ready visualizations!
+Below, we use the ggplot2 package (part of the tidyverse) to visualize the *spread* of the values of our dependent variable, `grad_rate`, which represents institutions' graduation rate. There is a *lot* to ggplot2, and data visualizations are not the focus of this module, but [this web page](https://ggplot2.tidyverse.org/) has a lot of information you can use to learn more, if you are interested. ggplot2 is fantastic for creating publication-ready visualizations!
 
 ```{r}
 ipeds %>% 
@@ -231,7 +231,7 @@ We'll next do a little additional data wrangling. For now, we'll model our depen
 
 #### **👉 Your Turn** **⤵**
 
-Your next task is to decide what constitutes a good graduation rate. Our only suggestion - don't pick a number _too_ close to 0% or 100%. Otherwise, please replace XXX below with the number from 0-100 that represents the graduation rate percentage. Just add the number --- don't add the percentage symbol.
+Your next task is to decide what constitutes a good graduation rate. Our only suggestion - don't pick a number *too* close to 0% or 100%. Otherwise, please replace XXX below with the number from 0-100 that represents the graduation rate percentage. Just add the number --- don't add the percentage symbol.
 
 ```{r}
 ipeds <- ipeds %>% 
@@ -241,8 +241,9 @@ ipeds <- ipeds %>%
 
 Here, add a reason or two for how and why you picked the number you did:
 
-- 
-- 
+-   
+
+-   
 
 ## 4. MODEL
 
@@ -285,16 +286,9 @@ my_wf <- workflow() %>% # this starts a workflow, which will stitch together the
     add_model(my_mod) %>% # adds the model
     add_recipe(my_rec) # adds the recipe
 
-fit_model <- fit(my_wf, ipeds) # fits the model
+fit_model <- last_fit(my_wf, ipeds) # fits the model
 
-predictions <- predict(fit_model, ipeds) %>% # predicts the value of the dependent variable using only the predictors' values and our trained model
-  bind_cols(ipeds) # this adds the original data back to the predicted values, so everything is together
-
-accuracy <- predictions %>% # this and the next two steps calculate the accuracy of our predictions
-  metrics(truth = good_grad_rate, estimate = .pred_class) %>%
-  filter(.metric == "accuracy")
-
-accuracy # print the accuracy
+collect_metrics(fit_model) # examines accuracy
 ```
 
 The key to observe at this point is what is similar and different between the two approaches (regression and supervised machine learning). Both used the same underlying statistical model, but had some stark differences. Add two or more similarities and two or more differences (no wrong answers!) below.
@@ -303,14 +297,14 @@ The key to observe at this point is what is similar and different between the tw
 
 Similarities:
 
-- XX
-- XX
+-   XX
+-   XX
 
 Differences:
 
-- 
-- 
+-   
 
+-   
 
 ## 5. COMMUNICATE
 
@@ -330,12 +324,11 @@ Now, let's return to our research questions. What did we find? This (especially 
 
 -   ADD YOUR RESPONSE HERE
 
-### RQ 
+### RQ
 
 -   ADD YOUR RESPONSE HERE
 
 -   ADD YOUR RESPONSE HERE
-
 
 ### 🧶 Knit & Check ✅
 

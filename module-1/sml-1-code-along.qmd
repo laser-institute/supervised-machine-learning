@@ -26,29 +26,49 @@ format:
 pacman::p_load(pacman, knitr, tidyverse, readxl)
 ```
 
-# Getting started
-
 ## Process
 
-- Create a .R file in `/module-1`
-- Then, run copy and paste the code in this presentation as we talk through each step
+-   Create a .R file in `/module-1`
+-   Then, run copy and paste the code in this presentation as we talk through each step
 
 ## Quick discussion
 
-- How comfortable are you with using RStudio? 
-- What concerns do you have about coding?
+-   What concerns do you have about coding in R (or python)?
 
 **We'll take this part easily!**
 
 # Code-along - Regression
 
+Our aim: What relates to whether a Pokemon is *legendary* -- one that is ["incredibly rare and often very powerful Pokémon"](https://bulbapedia.bulbagarden.net/wiki/Legendary_Pok%C3%A9mon)?
+
+## Data Dictionary
+
+::: {style="font-size: 60%;"}
+
+| **Column**     | **Type**          | **Description**                                                                         | **Example Values**           |
+|----------------|-------------------|-----------------------------------------------------------------------------------------|-----------------------------|
+| **name**       | Character         | The official name of the Pokémon.                                                       | Pikachu, Bulbasaur          |
+| **type_1**     | Categorical       | The primary elemental type. Determines many battle strengths/weaknesses.                | Water, Fire, Grass, Electric|
+| **type_2**     | Categorical       | The secondary elemental type, if applicable (often missing/NA for single-type Pokémon). | Flying, Poison, NA          |
+| **hp**         | Numeric           | Base “Health Points” indicating how much damage a Pokémon can take before fainting.     | 35, 60, 100                 |
+| **attack**     | Numeric           | Base Attack stat. Affects damage dealt by Physical moves.                               | 55, 82, 134                 |
+| **defense**    | Numeric           | Base Defense stat. Affects damage received from Physical moves.                         | 40, 80, 95                  |
+| **sp_atk**     | Numeric           | Base Special Attack stat. Affects damage dealt by Special moves (e.g., Flamethrower).   | 50, 90, 120                 |
+| **sp_def**     | Numeric           | Base Special Defense stat. Affects damage received from Special moves.                  | 50, 85, 125                 |
+| **speed**      | Numeric           | Base Speed stat, determining which Pokémon moves first in battle.                       | 35, 100, 130                |
+| **generation** | Integer or Factor | Numerical indicator of the game generation the Pokémon was introduced (1, 2, 3, etc.).  | 1, 2, 3                     |
+| **legendary**  | Boolean           | Indicates if the Pokémon is Legendary (TRUE/FALSE, 1/0).                                | FALSE, TRUE                 |
+| **total**      | Numeric           | Sum of all base stats (HP + Attack + Defense + Sp. Atk + Sp. Def + Speed).              | 320, 540, 680               |
+| **height**     | Numeric           | Pokémon’s approximate height (units vary by dataset, often meters).                     | 0.4, 1.7, 2.0               |
+| **weight**     | Numeric           | Pokémon’s approximate weight (units vary by dataset, often kilograms).                  | 6.0, 90.5, 210.0            |
+| **early_gen**  | Numeric           | Whether or not a Pokemon is 1st or 2nd gen                  | 1, 0            |
+
+:::
+
 ## R Code
 
-::: {.panel-tabset}
-
+::: panel-tabset
 ## 0
-
-Our aim: How well can we predict penguins' species based on their measured characteristics? Let's simplify our task (for now) to just distinguishing between Adelie and Gentoo.
 
 **Loading, setting up**
 
@@ -56,27 +76,23 @@ Our aim: How well can we predict penguins' species based on their measured chara
 #| eval: false
 #| echo: true
 library(tidyverse)
-library(tidymodels)
 
-gss_cat # this is built-in data, so it's loaded differently than typical data
+pokemon <- read_csv("data/pokemon-data.csv")
 
-gss_cat %>% 
-    count(marital)
-
-gss_cat <- gss_cat %>% 
-    mutate(is_married = if_else(marital == "Married", 1, 0))
+pokemon %>% 
+    glimpse()
 ```
 
 ## 1
 
-**Fit model**
+**Fit model -- we'll just use three variables to begin with a very simple model - how do several variables relate to a Pokemon being 1st or 2nd gen relative to 3rd-6th**
 
 ```{r}
 #| eval: false
 #| echo: true
 
-m1 <- glm(is_married ~ age + tvhours, # a very simple model!
-          data = gss_cat, 
+m1 <- glm(early_gen ~ height_m + weight_kg + hp,
+          data = pokemon,
           family = "binomial")
 ```
 
@@ -88,42 +104,28 @@ m1 <- glm(is_married ~ age + tvhours, # a very simple model!
 #| eval: false
 #| echo: true
 
-summary(m1)
+summary(m1) # what do you notice about the coefficients?
 ```
-
 :::
 
 ## python code
 
-*just example code*
+*AR edit based on the above regression, and comment*
 
 ```{python}
 #| eval: false
 #| echo: true
 
-import pandas as pd
-import statsmodels.api as sm
 
-# Load and preprocess the data
-starwars = pd.read_csv('path_to_starwars.csv')  # Load your data file
-starwars['species_human'] = starwars['species'].apply(lambda x: 'Human' if x == 'Human' else 'Not human')
-starwars['species_human'] = starwars['species_human'].astype('category').cat.codes
-
-# Regression model
-X_reg = starwars[['height', 'mass']]
-y_reg = starwars['species_human']
-X_reg = sm.add_constant(X_reg)  # Add a constant term for the intercept
-
-reg_model = sm.Logit(y_reg, X_reg).fit()
-print(reg_model.summary())
 ```
 
 # Code-along - SML
 
+Our aim: How well can we predict whether a Pokemon is *legendary* -- one that is ["incredibly rare and often very powerful Pokémon"](https://bulbapedia.bulbagarden.net/wiki/Legendary_Pok%C3%A9mon)?
+
 ## R Code
 
-::: {.panel-tabset}
-
+::: panel-tabset
 ## 0
 
 **Loading, setting up**
@@ -132,10 +134,7 @@ print(reg_model.summary())
 #| eval: false
 #| echo: true
 
-gss_cat # this is built-in data, so it's loaded differently than typical data
-
-gss_cat <- gss_cat %>% 
-    mutate(is_married = as.factor(if_else(marital == "Married", 1, 0))) # as a factor
+library(tidymodels)
 ```
 
 ## 1
@@ -146,19 +145,21 @@ gss_cat <- gss_cat %>%
 #| echo: true
 #| eval: false
 
-# We will skip this step for now, but know this is common!
+pokemon_split <- initial_split(pokemon, prop = 0.8)
+train <- training(pokemon_split)
+test <- testing(pokemon_split)
 ```
 
 ## 2
 
-**Engineer features**
+**Engineer features and specify recipe**
 
 ```{r}
 #| echo: true
 #| eval: false
-# predicting marital status based on the effects of age and tvhours
 
-my_rec <- recipe(is_married ~ age + tvhours, data = gss_cat) 
+pokemon_recipe <- recipe(early_gen ~ height_m + weight_kg + hp, data = train) %>% 
+    step_mutate(early_gen = as.factor(early_gen))
 ```
 
 ## 3
@@ -168,15 +169,14 @@ my_rec <- recipe(is_married ~ age + tvhours, data = gss_cat)
 ```{r}
 #| echo: true
 #| eval: false
-# specify model
+
 my_mod <- logistic_reg() %>%
     set_engine("glm") %>%
     set_mode("classification")
 
-# specify workflow
 my_wf <- workflow() %>%
-   add_model(my_mod) %>% 
-    add_recipe(my_rec)
+    add_recipe(pokemon_recipe) %>%
+    add_model(my_mod)
 ```
 
 ## 4
@@ -187,7 +187,7 @@ my_wf <- workflow() %>%
 #| echo: true
 #| eval: false
 
-fit_model <- fit(my_wf, data = gss_cat)
+log_reg_fit <- last_fit(my_wf, pokemon_split)
 ```
 
 ## 5
@@ -198,50 +198,22 @@ fit_model <- fit(my_wf, data = gss_cat)
 #| echo: true
 #| eval: false
 
-predictions <- predict(fit_model, gss_cat) %>% 
-    bind_cols(gss_cat) %>% 
-    mutate(is_married = as.factor(is_married))
-
-predictions %>% 
-    select(.pred_class, is_married)
-
-predictions %>%
-  metrics(is_married, .pred_class) %>%
-  filter(.metric == "accuracy")
+collect_metrics(log_reg_fit)
 ```
-
 :::
 
 ## python code
 
-*just example code*
+*AR edit*
 
 ```{python}
 #| eval: false
 #| echo: true
 
-import pandas as pd
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import classification_report
 
-# Load and preprocess the data
-starwars = pd.read_csv('path_to_starwars.csv')  # Load your data file
-starwars['species_human'] = starwars['species'].apply(lambda x: 'Human' if x == 'Human' else 'Not human')
-
-# Prepare the features and target
-X = starwars[['height', 'mass']]
-y = starwars['species_human']
-
-# Specify model and fit
-clf = LogisticRegression()
-clf.fit(X, y)
-
-# Evaluate accuracy on the training data
-y_pred = clf.predict(X)
-print(classification_report(y, y_pred))
 ```
 
-# Discussion
+## Discussion
 
-- What do you notice about the differences in the output between regression and SML?
-- What do you notice is different about the modeling approach?
+-   What do you notice about the differences in the output between regression and SML?
+-   What went well? What was frustrating?
