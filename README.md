@@ -6,15 +6,15 @@ Machine learning is increasingly prevalent in our lives---and in educational con
 
 How is prediction different from explanation? This lab provides a gentle introduction to supervised machine learning by drawing out similarities to and differences from a regression modeling approach. The case study will involve modeling the graduation rate across 1000s of higher education institutions in the United States using data from the Integrated Postsecondary Education Data System (IPEDS).
 
-## Module 2: Workflows With Training and Testing Data
+## Module 2: Using Workflows With Training and Testing Data
 
 Building on the foundations from Lab 1, this session delves deeper into the workflows we will use when we are using a SML approach. Particularly, we'll explore the roles of training and testing data and when to use them in a SML workflow. We'll predict students' withdrawal from a course using the Open University Learning Analytics Dataset (OULAD).
 
-## Module 3: Interpreting Metrics
+## Module 3: Interpreting Prediction Metrics
 
 How is the interpretation of SML models different from more familiar models? In this lab, we'll explore and work to understand the confusion matrix that can and the various metrics (e.g., precision, recall, PPV, NPV, F-score, and AUC) that are used to interpret how good at making dichotomous predictions SML models are. We'll again use the OULAD, augmenting the variables we used in Lab 1, and we'll introduce a more complex model---the random forest model---as an alternative to the regression models used in previous labs.
 
-## Module 4: Improving Predictions Through Feature Engineering
+## Module 4: Better Predictions Through Feature Engineering
 
 How can we improve our predictions? This lab introduces the concept of feature engineering to enhance model performance. We'll explore techniques for creating new variables and refining existing ones to improve prediction accuracy. We also explore cross-validation to revise and refine our model without biasing its predictions. We'll work with the finest-grained OULAD data—interaction data—to demonstrate key feature engineering steps.
 
