@@ -191,7 +191,7 @@ The choice of model often involves a trade-off between predictive power and how 
     -   Represents a middle ground.
 
 ::: notes
-This is meant to open teh door a bit to models that blend between inferential and SML approaches.
+This is meant to open the door a bit to models that blend between inferential and SML approaches.
 :::
 
 ---
