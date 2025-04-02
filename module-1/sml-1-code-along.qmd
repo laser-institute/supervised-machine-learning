@@ -158,13 +158,14 @@ test <- testing(pokemon_split)
 #| echo: true
 #| eval: false
 
-pokemon_recipe <- recipe(early_gen ~ height_m + weight_kg + hp, data = train) %>% 
+pokemon_recipe <- recipe(early_gen ~ height_m + weight_kg + hp, 
+                         data = train) %>% 
     step_mutate(early_gen = as.factor(early_gen))
 ```
 
 ## 3
 
-**Specify recipe, model, and workflow**
+**Specify rå
 
 ```{r}
 #| echo: true
