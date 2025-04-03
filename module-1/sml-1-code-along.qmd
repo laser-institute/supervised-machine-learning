@@ -278,7 +278,7 @@ y_train, y_test = train_df[dependent_col], test_df[dependent_col]
 ```{python}
 #| echo: true
 #| eval: false
-model = LogisticRegression()  # Here is where we would set hyperparameters
+model = LogisticRegression()
 model.fit(X=X_train, y=y_train)
 ```
 
