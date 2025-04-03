@@ -19,6 +19,7 @@ reticulate::py_install("pandas")
 reticulate::py_install("numpy")
 reticulate::py_install("statsmodels")
 reticulate::py_install("scikit-learn")
+reticulate::py_install("matplotlib")
 ```
 
 ## 1. PREPARE
@@ -213,13 +214,15 @@ We're cruising! Let's take another peak at our data - using `.head()` or another
 
 One key step in most analyses is to explore the data. Here, we conduct an exploratory data analysis with the IPEDS data, focusing on the key outcome of graduate rate.
 
-Below, we use the matplotlib package (part of base Python) to visualize the *spread* of the values of our dependent variable, `grad_rate`, which represents institutions' graduation rate. There is a *lot* to matplotlib, and data visualizations are not the focus of this module. While useful for quickly validating data, consider exploring more advanced Python data visualization libraries such as [seaborn](https://seaborn.pydata.org/) and [plotly](https://plotly.com/).
+Below, we use the [matplotlib](https://matplotlib.org) package (part of base Python) to visualize the *spread* of the values of our dependent variable, `grad_rate`, which represents institutions' graduation rate. There is a *lot* to matplotlib, and data visualizations are not the focus of this module. While useful for quickly validating data, consider exploring more advanced Python data visualization libraries such as [seaborn](https://seaborn.pydata.org/) and [plotly](https://plotly.com/).
 
 ```{python}
 import matplotlib.pyplot as plt 
 
-plt.style.use('ggplot')  # optional for beauty
-ipeds_df['grad_rate'].hist(bins=30, edgecolor='white', color='skyblue')
+plt.style.use('ggplot')  # optional for beautification
+
+plt.hist(ipeds_df['grad_rate'].values, bins=30, edgecolor='white', color='skyblue')
+# ipeds_df['grad_rate'].hist(bins=30, edgecolor='white', color='skyblue')
 plt.xlabel('Graduation Rate (%)')
 plt.ylabel('Number of Institutions')
 plt.show()
@@ -232,9 +235,9 @@ What do you notice about this graph -- and about graduation rate?
 
 #### **👉 Your Turn** **⤵**
 
-Below, can you add one ggplot2 plot with a different variable/variables? Use the ggplot2 page linked above (also [here](https://ggplot2.tidyverse.org/)) or the code above as a starting point (another histogram is fine!) for your visualization.
+Below, can you add one matplotlib plot with a different variable/variables? Use the matplotlib page linked above (also [here](https://matplotlib.org/stable/plot_types/index.html)) or the code above as a starting point (another histogram is fine!) for your visualization.
 
-```{r}
+```{python}
 
 ```
 
@@ -242,12 +245,12 @@ We'll next do a little additional data wrangling. For now, we'll model our depen
 
 #### **👉 Your Turn** **⤵**
 
-Your next task is to decide what constitutes a good graduation rate. Our only suggestion - don't pick a number *too* close to 0% or 100%. Otherwise, please replace XXX below with the number from 0-100 that represents the graduation rate percentage. Just add the number --- don't add the percentage symbol.
+Your next task is to decide what constitutes a good graduation rate. Our only suggestion - don't pick a number *too* close to 0% or 100%. Otherwise, please replace XXX below with the number from 0-100 that represents the graduation rate percentage. Just add the number --- don't add the percentage symbol. This code uses a common Python library used in data wrangling [NumPy](https://numpy.org/). 
 
-```{r}
-ipeds <- ipeds %>% 
-    mutate(good_grad_rate = if_else(grad_rate > XXX, 1, 0),
-           good_grad_rate = as.factor(good_grad_rate))
+```{python}
+import numpy as np 
+
+ipeds_df['good_grad_rate'] = np.where(ipeds_df['grad_rate'] > XXX, 1, 0)
 ```
 
 Here, add a reason or two for how and why you picked the number you did:
