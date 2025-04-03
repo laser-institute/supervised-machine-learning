@@ -50,7 +50,7 @@ In this module, we will be using data from the [IPEDS, the Integrated Postsecond
 
 ### Loading packages
 
-As highlighted in [Chapter 6 of Data Science in Education Using R](https://datascienceineducation.com/c06.html) (DSIEUR), one of the first steps of every workflow should be to set up your "Project" within RStudio. Recall that:
+As highlighted in [Chapter 6 of Data Science in Education Using R](https://datascienceineducation.com/c06.html) (DSIEUR), one of the first steps of every workflow should be to set up your "Project" structure. Recall that:
 
 > A **Project** is the home for all of the files, images, reports, and code that are used in any given project
 
@@ -65,9 +65,13 @@ Since we are working from a Python project cloned from [GitHub](https://github.c
 One of the core libraries we’ll use throughout LASER is **`pandas`**, Python’s go-to toolkit for working with data in tabular form. The `pandas` library provides powerful, flexible data structures — especially the `DataFrame`, which is similar to R’s `tibble`.
 
 With `pandas`, you can:
-- read and write data from a variety of formats (like CSV, Excel, and SQL),
-- filter, reshape, and summarize datasets,
-- and perform complex data transformations with concise, readable code.
+
+- read and write data from a variety of formats (like CSV, Excel, and SQL)
+
+- filter, reshape, and summarize datasets
+
+- and perform complex data transformations with concise, readable code
+
 
 Think of `pandas` as the Python equivalent of the tidyverse’s **data wrangling** toolkit.
 
@@ -86,10 +90,14 @@ import pandas as pd
 [`scikit-learn`](https://scikit-learn.org/) is Python’s most widely used library for machine learning and statistical modeling. It provides a consistent and intuitive API for building and evaluating models — similar in spirit to R’s `tidymodels`.
 
 With `scikit-learn`, you can:
-- split data into training and test sets,
-- preprocess features with pipelines,
-- train a wide variety of models (regression, classification, clustering, etc.),
-- tune hyperparameters and evaluate performance.
+
+- split data into training and test sets
+
+- preprocess features with pipelines
+
+- train a wide variety of models (regression, classification, clustering, etc.)
+
+- tune hyperparameters and evaluate performance
 
 It’s designed to be modular and composable, making it easy to build repeatable workflows that integrate cleanly with `pandas` and other scientific Python libraries.
 
@@ -104,7 +112,8 @@ import pandas as pd
 import statsmodels.formula.api as smf
 ```
 
-Tip: Avoid using wildcard imports (like `from module import *`) when loading a library. Instead, import the full library or use a clear alias (e.g., `import statsmodels.formula.api as smf`). This helps keep your namespace clean, avoids conflicts, and makes your code easier to read and maintain.
+Tip: Avoid using wildcard imports (like `from module import *`) when loading a library. Instead, import the full library, import a specific function (`from sklearn.model_selection import train_test_split` -- we'll use this later!) or use a clear alias (`import statsmodels.formula.api as smf`). This helps keep your namespace clean, avoids conflicts, and makes your code easier to read and maintain.
+
 
 ### Loading data
 
@@ -114,13 +123,12 @@ For now, please read in the \`ipeds-all-title-9-2022-data.csv\` file. Use the `r
 
 ```{python}
 ipeds_df = pd.read_csv("data/ipeds-all-title-9-2022-data.csv")
-ipeds_df.columns
 ```
 
 
 #### **👉 Your Turn** **⤵**
 
-In the chunk below, examine the data set using a function or means of your choice (such as just *printing* the data set by typing its name or using the `glimpse()` function). Do this in the code chunk below! Note its dimensions --- especially how many rows it has!
+In the chunk below, examine the data set using a function or means of your choice (such as just *printing* the data set by typing its name or using the `head()` function). Do this in the code chunk below! Note its dimensions --- especially how many rows it has!
 
 ```{python}
 
@@ -140,8 +148,6 @@ These code names are pretty long. Let's clean them up by mapping them and then s
 
 
 ```{python}
-#| eval: true
-
 column_map = {
     'institution name': 'name',
     'HD2022.Postsecondary and Title IV institution indicator': 'title_iv',  # is the university a title IV university?
@@ -165,9 +171,7 @@ ipeds_df = ipeds_df[column_map.values()]  # then select the columns it mapped.
 A useful method for exploring data is `.value_counts()`; it does what it sounds like! It operates on a column of a DataFrame and counts how many times values for a variable appear.
 
 ```{python}
-ipeds_df['title_iv'].value_counts()
-
-#if you want to know proportions of each value you can use the normalize=True parameter; e.g, `.value_counts(normalize=True)`
+ipeds_df['title_iv'].value_counts()  # if you want to know proportions of each value you can use the normalize=True parameter like `.value_counts(normalize=True)`
 ```
 
 This suggests we may wish to filter the 30 non-Title IV institutions --- something we'll do shortly.
@@ -222,7 +226,6 @@ import matplotlib.pyplot as plt
 plt.style.use('ggplot')  # optional for beautification
 
 plt.hist(ipeds_df['grad_rate'].values, bins=30, edgecolor='white', color='skyblue')
-# ipeds_df['grad_rate'].hist(bins=30, edgecolor='white', color='skyblue')
 plt.xlabel('Graduation Rate (%)')
 plt.ylabel('Number of Institutions')
 plt.show()
@@ -248,6 +251,7 @@ We'll next do a little additional data wrangling. For now, we'll model our depen
 Your next task is to decide what constitutes a good graduation rate. Our only suggestion - don't pick a number *too* close to 0% or 100%. Otherwise, please replace XXX below with the number from 0-100 that represents the graduation rate percentage. Just add the number --- don't add the percentage symbol. This code uses a common Python library used in data wrangling [NumPy](https://numpy.org/). 
 
 ```{python}
+
 import numpy as np 
 
 ipeds_df['good_grad_rate'] = np.where(ipeds_df['grad_rate'] > XXX, 1, 0)
@@ -277,32 +281,50 @@ Please write out preliminary, draft research questions for both a regression (RQ
 
 Now, we will proceed to the analyses.
 
-We'll first conduct a regression analysis, like in the code-along. We use a generalized linear model due to the dependent variable being dichotomous. The code is relatively straightforward; the comments explain each step.
+We'll first conduct a regression analysis, like in the code-along. We use a logistic regression (`smf.logit`) due to the dependent variable being dichotomous. The code is relatively straightforward; the comments explain each step.
 
-```{r}
-m1 <- glm(good_grad_rate ~ total_enroll + pct_admitted + n_bach + n_mast + n_doc + tuition_fees + percent_fin_aid + avg_salary, data = ipeds, family = "binomial") # to the left of the ~ is our dependent variable; to the right are the independent variables; family = "binomial" is to specify the correct model type for the dichotomous dependent variable
+```{python}
+import statsmodels.formula.api as smf  # load the statsmodels formula API as smf
 
-summary(m1) # summary table of model output
+model = smf.logit(
+    formula='good_grad_rate ~ total_enroll + pct_admitted + n_bach + n_mast + n_doc + tuition_fees + percent_fin_aid + avg_salary',  # define the formula
+    data=ipeds_df  # provide the dataset that contains those columns
+).fit()  # train the model on the entire dataset
+
+model.summary()  # print the statistical summary for the regression analysis
 ```
 
-Then, we'll conduct a supervised machine learning analysis (with a simple but still commonly used model - in fact, the same model we used for the regression, a generalized linear model!). Again, for now, you'll run this code; later, you'll work through each step in detail.
+Then, we'll conduct a supervised machine learning analysis (with a simple but still commonly used model - in fact, the same model we used for the regression, a logistic regression model!). Again, for now, you'll run this code; later, you'll work through each step in detail.
 
-```{r}
-my_rec <- recipe(good_grad_rate ~ total_enroll + pct_admitted + n_bach + n_mast + n_doc + tuition_fees + percent_fin_aid + avg_salary, data = ipeds) # same as above; this sets up what predicts the outcome
+```{python}
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score
 
-# specify model
-my_mod <-
-    logistic_reg() %>% # specifies a logistic regression
-    set_engine("glm") %>% # specifies the specific package used to estimate the logistic regression
-    set_mode("classification") # specifies that our outcome is a dichotomous or categorical variable
+ipeds_df = ipeds_df.dropna()  # Todo(josh and aaron): discuss dropping vs imputation
+train_df, test_df = train_test_split(ipeds_df, test_size=0.2, random_state=42)  # splitting the data and sedding a random state so this is reproducible.
 
-my_wf <- workflow() %>% # this starts a workflow, which will stitch together the steps in our analysis
-    add_model(my_mod) %>% # adds the model
-    add_recipe(my_rec) # adds the recipe
+dependent_col = 'good_grad_rate'  # the name of the value that we are modeling - the 1/0 column for a good graduation rate
+independent_cols = [  # the independent columns to predict the dependent column
+    'total_enroll',
+    'pct_admitted',
+    'n_bach',
+    'n_mast',
+    'n_doc',
+    'tuition_fees',
+    'percent_fin_aid',
+    'avg_salary'
+]
 
-fit_model <- last_fit(my_wf, ipeds) # fits the model
+X_train, X_test = train_df[independent_cols], test_df[independent_cols]  # split our dataset between dependent and independent columns
+y_train, y_test = train_df[dependent_col], test_df[dependent_col]
 
-collect_metrics(fit_model) # examines accuracy
+model = LogisticRegression()  # Define the model object. Here is where we coul set any model parameters in the future
+model.fit(X=X_train, y=y_train)  # Train the model using the training dataset
+
+y_preds = model.predict(X_test)  # Make predictions on the test dataset
+accuracy = accuracy_score(y_test, y_preds)  # use sklearn built in functions to 
+print('accuracy:', round(accuracy, 2))
 ```
 
 The key to observe at this point is what is similar and different between the two approaches (regression and supervised machine learning). Both used the same underlying statistical model, but had some stark differences. Add two or more similarities and two or more differences (no wrong answers!) below.
