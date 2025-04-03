@@ -314,15 +314,19 @@ independent_cols = [  # the independent columns to predict the dependent column
     'avg_salary'
 ]
 
-X_train, X_test = train_df[independent_cols], test_df[independent_cols]  # split our dataset between dependent and independent columns
-y_train, y_test = train_df[dependent_col], test_df[dependent_col]
+X_train = train_df[independent_cols]  # split our dataset between dependent and independent columns
+y_train = train_df[dependent_col]
+
+X_test = test_df[independent_cols]
+y_test = test_df[dependent_col]
 
 model = LogisticRegression()  # Define the model object. Here is where we coul set any model parameters in the future
-model.fit(X=X_train, y=y_train)  # Train the model using the training dataset
+model.fit(X=X_train, y=y_train)  # Fit the model on the training dataset
 
 y_preds = model.predict(X_test)  # Make predictions on the test dataset
-accuracy = accuracy_score(y_test, y_preds)  # use sklearn built in functions to 
-print('accuracy:', round(accuracy, 2))
+accuracy = accuracy_score(y_test, y_preds)  # use sklearn built in functions to evaluate accuracy
+
+print('accuracy:', round(accuracy, 3))
 ```
 
 The key to observe at this point is what is similar and different between the two approaches (regression and supervised machine learning). Both used the same underlying statistical model, but had some stark differences. Add two or more similarities and two or more differences (no wrong answers!) below.
