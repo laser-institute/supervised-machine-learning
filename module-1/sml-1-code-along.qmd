@@ -267,8 +267,12 @@ train_df, test_df = train_test_split(pokemon_df, test_size=0.2, random_state=42)
 dependent_col = 'early_gen'
 independent_cols = ['height_m', 'weight_kg', 'hp']
 
-X_train, X_test = train_df[independent_cols], test_df[independent_cols]
-y_train, y_test = train_df[dependent_col], test_df[dependent_col]
+X_train = train_df[independent_cols]
+y_train= train_df[dependent_col]
+
+X_test = test_df[independent_cols]
+y_test = test_df[dependent_col]
+
 ```
 
 ## 2
@@ -279,7 +283,7 @@ y_train, y_test = train_df[dependent_col], test_df[dependent_col]
 #| echo: true
 #| eval: false
 model = LogisticRegression()
-model.fit(X=X_train, y=y_train)
+model.fit(X_train, y_train)  # Fit the model on the training data
 ```
 
 ## 3
@@ -290,8 +294,8 @@ model.fit(X=X_train, y=y_train)
 #| echo: true
 #| eval: false
 
-y_preds = model.predict(X_test)
-accuracy = accuracy_score(y_test, y_preds)
+y_preds = model.predict(X_test)  # Then predict on the test data
+accuracy = accuracy_score(y_test, y_preds)  # Compare your predictions vs the actual y's
 
 round(accuracy, 3)
 ```

@@ -56,7 +56,7 @@ As highlighted in [Chapter 6 of Data Science in Education Using R](https://data
 
 Since we are working from a Python project cloned from [GitHub](https://github.com/laser-institute), a Project has already been set up for you. Instead, we will focus on getting our project set up with the requisite Python Libraries we'll need for analysis.
 
-**Libraries**, are shareable collections of Python code that can contain functions, data, and/or documentation and extend the functionality of the base Python language. Libraries are loaded with the "import" keyword often with a namespace; e.g., `import pandas as pd`. 
+**Libraries**, are shareable collections of Python code that can contain functions, data, and/or documentation and extend the functionality of the base Python language. Libraries are loaded with the "import" keyword often with a namespace; e.g., `import pandas as pd`.
 
 #### pandas 🐼
 
@@ -66,12 +66,11 @@ One of the core libraries we’ll use throughout LASER is **`pandas`**, Python�
 
 With `pandas`, you can:
 
-- read and write data from a variety of formats (like CSV, Excel, and SQL)
+-   read and write data from a variety of formats (like CSV, Excel, and SQL)
 
-- filter, reshape, and summarize datasets
+-   filter, reshape, and summarize datasets
 
-- and perform complex data transformations with concise, readable code
-
+-   and perform complex data transformations with concise, readable code
 
 Think of `pandas` as the Python equivalent of the tidyverse’s **data wrangling** toolkit.
 
@@ -82,7 +81,6 @@ To get started, you can import the library like this:
 import pandas as pd
 ```
 
-
 #### scikit-learn 🤖
 
 [![](img/sklearn_logo.png){width="20%"}](https://scikit-learn.org/)
@@ -91,18 +89,18 @@ import pandas as pd
 
 With `scikit-learn`, you can:
 
-- split data into training and test sets
+-   split data into training and test sets
 
-- preprocess features with pipelines
+-   preprocess features with pipelines
 
-- train a wide variety of models (regression, classification, clustering, etc.)
+-   train a wide variety of models (regression, classification, clustering, etc.)
 
-- tune hyperparameters and evaluate performance
+-   tune hyperparameters and evaluate performance
 
 It’s designed to be modular and composable, making it easy to build repeatable workflows that integrate cleanly with `pandas` and other scientific Python libraries.
 
-
 #### **👉 Your Turn** **⤵**
+
 In addition to pandas and sci-kit learn (sklearn) we will also use the statsmodels library to do regression analysis with its formula interface.
 
 Use the code chunk below to load pandas and statsmodels.
@@ -114,7 +112,6 @@ import statsmodels.formula.api as smf
 
 Tip: Avoid using wildcard imports (like `from module import *`) when loading a library. Instead, import the full library, import a specific function (`from sklearn.model_selection import train_test_split` -- we'll use this later!) or use a clear alias (`import statsmodels.formula.api as smf`). This helps keep your namespace clean, avoids conflicts, and makes your code easier to read and maintain.
 
-
 ### Loading data
 
 Next, we'll read in data. We'll use the pandas `read_csv()` function to load the data file.
@@ -125,10 +122,9 @@ For now, please read in the \`ipeds-all-title-9-2022-data.csv\` file. Use the `r
 ipeds_df = pd.read_csv("data/ipeds-all-title-9-2022-data.csv")
 ```
 
-
 #### **👉 Your Turn** **⤵**
 
-In the chunk below, examine the data set using a function or means of your choice (such as just *printing* the data set by typing its name or using the `head()` function). Do this in the code chunk below! Note its dimensions --- especially how many rows it has!
+In the chunk below, examine the data set using a function or means of your choice (such as just *printing* the data set by typing its name or using the `.head()` method). Do this in the code chunk below! Note its dimensions --- especially how many rows it has!
 
 ```{python}
 
@@ -145,7 +141,6 @@ Write down a few observations after inspecting the data - and any all observatio
 ## 2. WRANGLE
 
 These code names are pretty long. Let's clean them up by mapping them and then selecting only the columns we need.
-
 
 ```{python}
 column_map = {
@@ -202,7 +197,7 @@ Can you filter the data again, this time to *only* include institutions with a c
 
 In other words, can you exclude those institutions with a value for the `carnegie_class` variable that is "Not applicable, not in Carnegie universe (not accredited or nondegree-granting)")? A little hint: whereas the logical operator `==` is used to include only matching conditions, the logical operator `!=` excludes matching conditions.
 
-```{r}
+```{python}
 
 ```
 
@@ -248,7 +243,7 @@ We'll next do a little additional data wrangling. For now, we'll model our depen
 
 #### **👉 Your Turn** **⤵**
 
-Your next task is to decide what constitutes a good graduation rate. Our only suggestion - don't pick a number *too* close to 0% or 100%. Otherwise, please replace XXX below with the number from 0-100 that represents the graduation rate percentage. Just add the number --- don't add the percentage symbol. This code uses a common Python library used in data wrangling [NumPy](https://numpy.org/). 
+Your next task is to decide what constitutes a good graduation rate. Our only suggestion - don't pick a number *too* close to 0% or 100%. Otherwise, please replace XXX below with the number from 0-100 that represents the graduation rate percentage. Just add the number --- don't add the percentage symbol. This code uses a common Python library used in data wrangling [NumPy](https://numpy.org/).
 
 ```{python}
 
@@ -316,15 +311,19 @@ independent_cols = [  # the independent columns to predict the dependent column
     'avg_salary'
 ]
 
-X_train, X_test = train_df[independent_cols], test_df[independent_cols]  # split our dataset between dependent and independent columns
-y_train, y_test = train_df[dependent_col], test_df[dependent_col]
+X_train = train_df[independent_cols]  # split our dataset between dependent and independent columns
+y_train = train_df[dependent_col]
+
+X_test = test_df[independent_cols]
+y_test = test_df[dependent_col]
 
 model = LogisticRegression()  # Define the model object. Here is where we coul set any model parameters in the future
-model.fit(X=X_train, y=y_train)  # Train the model using the training dataset
+model.fit(X=X_train, y=y_train)  # Fit the model on the training dataset
 
 y_preds = model.predict(X_test)  # Make predictions on the test dataset
-accuracy = accuracy_score(y_test, y_preds)  # use sklearn built in functions to 
-print('accuracy:', round(accuracy, 2))
+accuracy = accuracy_score(y_test, y_preds)  # use sklearn built in functions to evaluate accuracy
+
+print('accuracy:', round(accuracy, 3))
 ```
 
 The key to observe at this point is what is similar and different between the two approaches (regression and supervised machine learning). Both used the same underlying statistical model, but had some stark differences. Add two or more similarities and two or more differences (no wrong answers!) below.

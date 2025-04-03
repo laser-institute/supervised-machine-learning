@@ -252,7 +252,7 @@ Your next task is to decide what constitutes a good graduation rate. Our only su
 
 import numpy as np 
 
-ipeds_df['good_grad_rate'] = np.where(ipeds_df['grad_rate'] > XXX, 1, 0)
+ipeds_df['good_grad_rate'] = np.where(ipeds_df['grad_rate'] > 75, 1, 0)
 ```
 
 Here, add a reason or two for how and why you picked the number you did:
