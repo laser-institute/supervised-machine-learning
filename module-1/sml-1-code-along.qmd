@@ -21,6 +21,7 @@ format:
 reticulate::py_install("pandas")
 reticulate::py_install("numpy")
 reticulate::py_install("statsmodels")
+reticulate::py_install("scikit-learn")
 ```
 
 ```{r}
@@ -235,16 +236,68 @@ collect_metrics(log_reg_fit)
 ```
 :::
 
-## python code
+## Python code
 
-*AR edit*
+::: panel-tabset
+## 0
+
+**Loading, setting up**
 
 ```{python}
 #| eval: false
 #| echo: true
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score
 
+pokemon_df = pokemon_df.dropna()  # sci-kit learn won't work with rows that have nulls 
 
+#Todo(Josh): Determine if we want to talk about imputation; e.g., median filling
 ```
+
+## 1
+
+**Split data**
+
+```{python}
+#| echo: true
+#| eval: false
+train_df, test_df = train_test_split(pokemon_df, test_size=0.2, random_state=42)  # random state is set to give reproducible results
+
+dependent_col = 'early_gen'
+independent_cols = ['height_m', 'weight_kg', 'hp']
+
+X_train, X_test = train_df[independent_cols], test_df[independent_cols]
+y_train, y_test = train_df[dependent_col], test_df[dependent_col]
+```
+
+## 2
+
+**Define and train model**
+
+```{python}
+#| echo: true
+#| eval: false
+model = LogisticRegression()  # Here is where we would set hyperparameters
+model.fit(X=X_train, y=y_train)
+```
+
+## 3
+
+**Predict and Evaluate**
+
+```{python}
+#| echo: true
+#| eval: false
+
+y_preds = model.predict(X_test)
+accuracy = accuracy_score(y_test, y_preds)
+
+round(accuracy, 3)
+```
+
+:::
+
 
 ## Discussion
 
