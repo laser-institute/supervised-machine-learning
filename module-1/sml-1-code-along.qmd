@@ -18,6 +18,9 @@ format:
 
 ```{r}
 #| include: false
+reticulate::py_install("pandas")
+reticulate::py_install("numpy")
+reticulate::py_install("statsmodels")
 ```
 
 ```{r}
@@ -108,16 +111,45 @@ summary(m1) # what do you notice about the coefficients?
 ```
 :::
 
-## python code
+## Python Code
 
-*AR edit based on the above regression, and comment*
+::: panel-tabset
+
+## 0
+
+**Loading, setting up**
 
 ```{python}
 #| eval: false
 #| echo: true
+import pandas as pd 
 
+pokemon_df = pd.read_csv('data/pokemon-data.csv')
 
+pokemon_df.head()
 ```
+
+## 1
+
+**fit model**
+```{python}
+#| eval: false
+#| echo: true
+import statsmodels.formula.api as smf
+
+model = smf.logit('early_gen ~ height_m + weight_kg + hp', data=pokemon_df).fit()
+```
+
+## 2
+
+**evaluate model**
+```{python}
+#| eval: false
+#| echo: true 
+model.summary()
+```
+
+:::
 
 # Code-along - SML
 
