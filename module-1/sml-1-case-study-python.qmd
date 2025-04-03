@@ -296,8 +296,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 
-ipeds_df = ipeds_df.dropna()
-train_df, test_df = train_test_split(ipeds_df, test_size=0.2, random_state=42)  # splitting the data and sedding a random state so this is reproducible.
+ipeds_df = ipeds_df.dropna()  # Scikit-learn does not support null values, so we’ll drop them for now. In later modules, we’ll explore imputation techniques to handle missing data
+train_df, test_df = train_test_split(ipeds_df, test_size=0.2, random_state=42)  # splitting the data and sedding a random state so this is reproducible
 
 dependent_col = 'good_grad_rate'  # the name of the value that we are modeling - the 1/0 column for a good graduation rate
 independent_cols = [  # the independent columns to predict the dependent column
