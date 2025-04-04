@@ -266,7 +266,13 @@ summary(m1) # summary table of model output
 
 Then, we'll conduct a supervised machine learning analysis (with a simple but still commonly used model - in fact, the same model we used for the regression, a generalized linear model!). Again, for now, you'll run this code; later, you'll work through each step in detail.
 
+One note – you'll see here we use a value of .20 for the proportion of the data in the test set (and .80 in the training data set). For now, know that this isn't a hard rule, but, rather, the "best" split depends on a few considerations that we'll discuss in a later module.
+
 ```{r}
+ipeds_split <- initial_split(ipeds, prop = 0.8)
+train <- training(ipeds_split)
+test <- testing(ipeds_split)
+
 my_rec <- recipe(good_grad_rate ~ total_enroll + pct_admitted + n_bach + n_mast + n_doc + tuition_fees + percent_fin_aid + avg_salary, data = ipeds) # same as above; this sets up what predicts the outcome
 
 # specify model
@@ -279,7 +285,7 @@ my_wf <- workflow() %>% # this starts a workflow, which will stitch together the
     add_model(my_mod) %>% # adds the model
     add_recipe(my_rec) # adds the recipe
 
-fit_model <- last_fit(my_wf, ipeds) # fits the model
+fit_model <- last_fit(my_wf, ipeds_split) # fits the model
 
 collect_metrics(fit_model) # examines accuracy
 ```

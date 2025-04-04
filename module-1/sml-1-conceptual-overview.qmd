@@ -151,7 +151,7 @@ $y$ = $b_0$ + $b_1$ + ... + $e$
 
 If we are interested in making inferences about a particular $b$ (e.g., $b_1$), we can use theory and prior research to include particular predictors. This often favors **transparent models** where we understand *how* predictors relate to $y$.
 
-If we are interested in making the best possible predictions, we can add a *bunch* of predictors and see how much we can minimize the prediction error.
+If we are interested in making the best possible predictions, we can potentially add more predictor variables than is common when using traditional (i.e., inferential) models
 
 ::: notes
 The same algorithm can be used for both inferential or SML approaches.
@@ -323,8 +323,6 @@ This principle applies in multiple ways:
 -   To carry out feature engineering, understand your predictors well by starting with a subset
 -   To tune an algorithm, start with a relatively simple set of tuning parameters
 
-This isn't just for beginners or science education researchers; [most spam filters use Support Vector Machines (and used Naive Bayes until recently)](https://vas3k.com/blog/machine_learning/) due to their combination of effectiveness and efficiency "in production."
-
 ::: notes
 This is a fairly general point, but a helpful one and one that guides this and the following three modules - we start simple and build complexity, as students will see! This helps us understand the model and how and why it's performing well (or not)!
 :::
@@ -388,7 +386,7 @@ A key point to make here is that each lab introduces a tension/issue that is res
 ::: panel-tabset
 ### Code-along
 
--   Uses built-in data (from the General Social Survey)
+-   Uses built-in data (on Pokemon!) to demonstrate the SML workflow
 -   Compares the use of the same logistic regression model in a regression and SML "mode"
 -   Introduces the modeling cycle and process
 

@@ -294,6 +294,8 @@ model.summary()  # print the statistical summary for the regression analysis
 
 Then, we'll conduct a supervised machine learning analysis (with a simple but still commonly used model - in fact, the same model we used for the regression, a logistic regression model!). Again, for now, you'll run this code; later, you'll work through each step in detail.
 
+One note – you'll see here we use a value of .20 for the proportion of the data in the test set (and .80 in the training data set). For now, know that this isn't a hard rule, but, rather, the "best" split depends on a few considerations that we'll discuss in a later module.
+
 ```{python}
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
