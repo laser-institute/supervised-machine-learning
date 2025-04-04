@@ -18,6 +18,10 @@ format:
 
 ```{r}
 #| include: false
+reticulate::py_install("pandas")
+reticulate::py_install("numpy")
+reticulate::py_install("statsmodels")
+reticulate::py_install("scikit-learn")
 ```
 
 ```{r}
@@ -108,16 +112,45 @@ summary(m1) # what do you notice about the coefficients?
 ```
 :::
 
-## python code
+## Python Code
 
-*AR edit based on the above regression, and comment*
+::: panel-tabset
+
+## 0
+
+**Loading, setting up**
 
 ```{python}
 #| eval: false
 #| echo: true
+import pandas as pd 
 
+pokemon_df = pd.read_csv('data/pokemon-data.csv')
 
+pokemon_df.head()
 ```
+
+## 1
+
+**fit model**
+```{python}
+#| eval: false
+#| echo: true
+import statsmodels.formula.api as smf
+
+model = smf.logit('early_gen ~ height_m + weight_kg + hp', data=pokemon_df).fit()
+```
+
+## 2
+
+**evaluate model**
+```{python}
+#| eval: false
+#| echo: true 
+model.summary()
+```
+
+:::
 
 # Code-along - SML
 
@@ -203,16 +236,72 @@ collect_metrics(log_reg_fit)
 ```
 :::
 
-## python code
+## Python code
 
-*AR edit*
+::: panel-tabset
+## 0
+
+**Loading, setting up**
 
 ```{python}
 #| eval: false
 #| echo: true
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score
 
+pokemon_df = pokemon_df.dropna()  # sci-kit learn won't work with rows that have nulls 
+
+#Todo(Josh): Determine if we want to talk about imputation; e.g., median filling
+```
+
+## 1
+
+**Split data**
+
+```{python}
+#| echo: true
+#| eval: false
+train_df, test_df = train_test_split(pokemon_df, test_size=0.2, random_state=42)  # random state is set to give reproducible results
+
+dependent_col = 'early_gen'
+independent_cols = ['height_m', 'weight_kg', 'hp']
+
+X_train = train_df[independent_cols]
+y_train= train_df[dependent_col]
+
+X_test = test_df[independent_cols]
+y_test = test_df[dependent_col]
 
 ```
+
+## 2
+
+**Define and train model**
+
+```{python}
+#| echo: true
+#| eval: false
+model = LogisticRegression()
+model.fit(X_train, y_train)  # Fit the model on the training data
+```
+
+## 3
+
+**Predict and Evaluate**
+
+```{python}
+#| echo: true
+#| eval: false
+
+y_preds = model.predict(X_test)  # Then predict on the test data
+accuracy = accuracy_score(y_test, y_preds)  # Compare your predictions vs the actual y's
+
+round(accuracy, 3)
+```
+
+:::
+
 
 ## Discussion
 
