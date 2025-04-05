@@ -26,6 +26,7 @@ pacman::p_load(pacman, knitr, tidyverse, readxl)
 
 -   Purpose and Agenda
 -   Discussion 1
+-   Key Concept: LASER framework
 -   Key Concept: Machine Learning
 -   Discussion 2
 -   Modules Overview
@@ -69,7 +70,28 @@ This is really just to get people talking - low stakes! Look for ideas related t
 ::: notes
 Like the above, this is meant to elicit thoughts on SML - try to draw those out, or point out cases of unsupervised ML or regression and try to contrast those.
 :::
+
+# Key Concept: LASER frame
+
+## Overview
+
+![](https://sbkellogg.github.io/eci-589/unit-1/img/workflow.png){alt="" width="80%"}
+
+::: notes
+Note that we go into more depth in the case study, but we present this here as the common framework used across all of the modules (not only SML).
 :::
+
+## The Five Steps
+
+1.  **Prepare**: Prior to analysis, we'll look at the context from which our data came, formulate a basic research question, and get introduced the {tidymodels} packages for machine learning.
+
+2.  **Wrangle**: Wrangling data entails the work of cleaning, transforming, and merging data. In Part 2 we focus on importing CSV files and modifying some of our variables.
+
+3.  **Explore**: We take a quick look at our variables of interest and do some basic "feature engineering" by creating some new variables we think will be predictive of students at risk.
+
+4.  **Model:** We dive deeper into the five steps in our supervised machine learning process, focusing on the mechanics of **making predictions**.
+
+5.  **Communicate:** To wrap up our case study, we'll create our first "data product" and share our analyses and findings by creating our first web page using R Markdown.
 
 # Key Concept: Machine Learning
 
@@ -354,29 +376,29 @@ This is meant to elicit thoughts from learners on SML, now that we are beginning
 
 **SML Module 1: Foundations**
 
-How is prediction different from explanation? This lab provides a gentle introduction to supervised machine learning by drawing out similarities to and differences from a regression modeling approach. The case study will involve modeling the graduation rate across 1000s of higher education institutions in the United States using data from the Integrated Postsecondary Education Data System (IPEDS).
+How is prediction different from explanation? This module provides a gentle introduction to supervised machine learning by drawing out similarities to and differences from a regression modeling approach. The case study will involve modeling the graduation rate across 1,000s of higher education institutions in the United States using data from the Integrated Postsecondary Education Data System (IPEDS).
 
 ## Module 2
 
 **SML Module 2: Workflows With Training and Testing Data**
 
-Building on the foundations from Lab 1, this session delves deeper into the workflows we will use when we are using a SML approach. Particularly, we'll explore the roles of training and testing data and when to use them in a SML workflow. We'll predict students' withdrawal from a course using the Open University Learning Analytics Dataset (OULAD).
+Building on the foundations from Module 1, this session delves deeper into the workflows we will use when we are using a SML approach. Particularly, we'll explore the roles of training and testing data and when to use them in a SML workflow. We'll predict students' withdrawal from a course again using the Integrated Postsecondary Education Data System (IPEDS) data.
 
 ## Module 3
 
 **SML Module 3: Interpreting SML Metrics**
 
-How is the interpretation of SML models different from more familiar models? In this lab, we'll explore and work to understand the confusion matrix that can and the various metrics (e.g., precision, recall, PPV, NPV, F-score, and AUC) that are used to interpret how good at making dichotomous predictions SML models are. We'll again use the OULAD, augmenting the variables we used in Lab 1, and we'll introduce a more complex model---the random forest model---as an alternative to the regression models used in previous labs.
+How is the interpretation of SML models different from more familiar models? In this module, we'll explore and work to understand the confusion matrix that can and the various metrics (e.g., precision, recall, PPV, NPV, F-score, and AUC) that are used to interpret how good at making dichotomous predictions SML models are. We'll again use the OULAD, augmenting the variables we used in Module 1, and we'll introduce a more complex model---the random forest model---as an alternative to the regression models used in previous modules
 
 ## Module 4
 
 **SML Module 4: Improving Predictions Through Feature Engineering**
 
-How can we improve our predictions? This lab introduces the concept of feature engineering to enhance model performance. We'll explore techniques for creating new variables and refining existing ones to improve prediction accuracy. We also explore cross-validation to revise and refine our model without biasing its predictions. We'll work with the finest-grained OULAD data—interaction data—to demonstrate key feature engineering steps.
+How can we improve our predictions? This module introduces the concept of feature engineering to enhance model performance. We'll explore techniques for creating new variables and refining existing ones to improve prediction accuracy. We also explore cross-validation to revise and refine our model without biasing its predictions. We'll work with the finest-grained OULAD data—interaction data—to demonstrate key feature engineering steps.
 :::
 
 ::: notes
-A key point to make here is that each lab introduces a tension/issue that is resolved by the subsequent labs - the first doesn't use training data, which can lead to over-confident (i.e., biased) metrics of predictive accuracy; the second introduces testing data, but only naively interprets the predictive goodness of the models; the third includes the major components apart from feature engineering and resampling (feature engineering), which is the focus of the fourth. By the fourth, learners will engage will all of the fundamental elements of a supervised machine learning analysis.
+A key point to make here is that each module introduces a tension/issue that is resolved by the subsequent modules - the first doesn't use training data, which can lead to over-confident (i.e., biased) metrics of predictive accuracy; the second introduces testing data, but only naively interprets the predictive goodness of the models; the third includes the major components apart from feature engineering and resampling (feature engineering), which is the focus of the fourth. By the fourth, learners will engage will all of the fundamental elements of a supervised machine learning analysis.
 :::
 
 # What's Next

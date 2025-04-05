@@ -23,13 +23,14 @@ pacman::p_load(pacman, knitr, tidyverse, readxl)
 
 # Purpose and Agenda
 
-We have some data and want to develop a prediction model. Supervised machine learning is suited to this aim. In particular, in this module, we explore how we can train a computer to predict students' passing a course. We use a large data set, the Open University Learning Analytics Dataset (OULAD), focusing on student data at this point. Our model at this point is relatively simple, a generalized linear model.
+Building on the foundations from Module 1, this session delves deeper into the workflows we will use when we are using a SML approach. Particularly, we'll explore the roles of training and testing data and when to use them in a SML workflow. We'll predict students' withdrawal from a course again using the Integrated Postsecondary Education Data System (IPEDS) data.
 
 ## What we'll do in this presentation
 
 - Discussion 1
-- Key Concept #1: Our framework
+- Key Concept #1: Our SML framework
 - Key Concept #2: Training and testing data
+- Key Concept #2: Bias-variance trade-off
 - Discussion 2
 - Introduction to the other parts of this module
 
@@ -49,39 +50,14 @@ We have some data and want to develop a prediction model. Supervised machine lea
 
 :::
 
-# Key Concept #1
-
-## Our framework
-
-::: panel-tabset
+# Key Concept #1: Our SML framework
 
 ### Overview
 
-- We want to make predictions about an outcome of interest based on predictor variables that we think are related to the outcome.
-- We'll be using a widely-used data set in the learning analytics field: the [Open University Learning Analytics Dataset (OULAD)](https://analyse.kmi.open.ac.uk/open_dataset).
-- The OULAD was created by learning analytics researchers at the United Kingdom-based Open University.
-- It includes data from post-secondary learners participation in one of several Massive Open Online Courses (called *modules* in the OULAD).
+- We want to make predictions about an outcome of interest based on predictor (or indendent) variable(s) that we think are related to the outcome (or dependent variable).
+- We'll again be using [IPEDS, the Integrated Postsecondary Education Data System](https://nces.ed.gov/ipeds/) data.
 
-### OULAD (1)
-
-- Many students pass these courses, but not all do
-- We have data on students' initial characteristics and their interactions in the course
-- If we could develop a good prediction model, we could provide additional supports to students--and maybe move the needle on some students succeeding who might not otherwise
-
-### OULAD (2)
-
-We'll be focusing on three files:
-
-- studentInfo, courses, and studentRegistration
-
-These are joined together (see `oulad.R`) for this module. You'll be doing more joining later!
-
-```{r, message = FALSE, echo=FALSE}
-students <- read_csv("data/oulad-students.csv")
-students %>% head(3)
-```
-
-### LASER Frame
+### LASER Frame (reminder)
 
 1. **Prepare**: Prior to analysis, we'll take a look at the context from which our data came, formulate some questions, and load R packages.
 2. **Wrangle**: In the wrangling section, we will learn some basic techniques for manipulating, cleaning, transforming, and merging data.
@@ -89,7 +65,7 @@ students %>% head(3)
 4. **Model**: In this step, we carry out the analysis - here, supervised machine learning.
 5. **Communicate**: Interpreting and communicating the results of our findings is the last step.
 
-### Supervised ML Frame
+### SML Frame (mostly new!)
 
 1. **Split data** (Prepare)  
 2. **Engineer features and write down the recipe** (Wrangle and Explore)  
@@ -99,13 +75,11 @@ students %>% head(3)
 
 **This is the fundamental process we'll follow for this and the next two modules focused on supervised ML**
 
+::: notes
+While students used the SML frame in Module 1, it was sort of glossed over. We go into more depth in the case study.
 :::
 
-# Key Concept #2
-
-## Training and testing
-
-::: panel-tabset
+# Key Concept #2: Training and testing data
 
 ## Train vs. test data
 
@@ -115,7 +89,7 @@ students %>% head(3)
 
 [1] not always/often used, for reasons we'll discuss later
 
-## Algorithms
+## Algorithms (reminder)
 
 - Algorithms (or estimation procedures - or *models*) refer to the _structure_ and _process_ of estimating the _parameters_ of a model
 - This definition provides a wide range of options for what kinds of algorithms we use (from simple to very complex, as we discuss in a later module)
@@ -123,13 +97,14 @@ students %>% head(3)
 - This is a linear model with a binary (*"yes"* or *"no"*) outcome
 - It will be a _bad model_ to start us off!
 
-## Predictions
+## Predictions (reminder)
 
 - When doing supervised ML, we focus on predicting an outcome: how well we do this overall and for particular cases (more on how in the next module)
 - We _do not_ focus on inference or explanation (i.e., an "explanatory" model): model fit, statistical significance, effect sizes, etc.
 - **This is a really key difference -- we use different metrics to evaluate what makes for a good model**
 
 ## Train vs. test
+
 - A key concept in the context of supervised machine learning is training vs. testing data:
 - Training data: Data we use to **fit** (or train, AKA estimate) a supervised machine learning **model** (AKA algorithm)
 - Testing data: Data we use to see how well our model not used to fit the model
@@ -148,9 +123,7 @@ students %>% head(3)
 - It is often valuable to conduct a _stratified_ split, based on the proportion or distribution of the dependent variables' values in the dataset
     - this ensures our training and testing data will not have a misbalance in the dependent variable
 
-:::
-
-## Key concept #3 - Bias - Variance 
+## Key concept #3 - Bias - Variance
 
 ## What's stopping me from specifying a complex model?
 

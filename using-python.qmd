@@ -1,0 +1,108 @@
+---
+title: "Best Practices for Python Package Installation in Quarto"
+author: "Your Name"
+date: "2025-04-04"
+format: html
+---
+
+## Introduction
+
+It can be tempting to install Python packages inline within your Quarto document (e.g., via `pip install` in a code chunk). While this *works* for quick demos, **it's generally discouraged** for production or long-term research workflows.
+
+**Why?**
+
+1. **Reproducibility**: Inline installs don't pin versions by default. Over time, libraries may update, causing your code to break or produce different results.
+2. **Environment Consistency**: Inline installs only solve part of the environment problem. A collaborator (or your future self) might run the code on a different system or environment and encounter conflicts or missing dependencies.
+3. **Performance**: Installing packages on every render can slow things down, especially if you're using CI/CD or frequently rebuilding the document.
+
+## Quick Demo: Inline Installation
+
+If you just need a quick test or are sharing a one-off demonstration, you can do something like:
+
+```{python}
+import sys
+# Inline installation (not recommended for production)
+!{sys.executable} -m pip install requests==2.27.1
+# Now it's available within this environment
+import requests
+print(f"Requests version: {requests.__version__}")
+```
+
+This chunk installs a specific pinned version of requests (pinned at 2.27.1). While pinning a version is better than not pinning at all, the overall inline strategy remains less robust than using an external environment file.
+
+## Recommended Best Practice: Dedicated Environment
+
+### 1. Use a Conda Environment (example)
+
+Create an environment.yml file in the same project folder. It might look like this:
+
+```yaml
+name: my-quarto-env
+channels:
+  - conda-forge
+dependencies:
+  - python=3.9
+  - requests=2.27.1
+  - pip
+```
+
+Instruct collaborators (or your future self) to run:
+
+```bash
+conda env create -f environment.yml
+conda activate my-quarto-env
+quarto render installing_python_packages.qmd
+```
+
+In your code chunks, just use the packages. For example:
+
+```{python}
+import requests
+print("Hello from requests version:", requests.__version__)
+```
+
+### 2. Use a requirements.txt (if you prefer pip/venv)
+
+Create a file named requirements.txt:
+
+```ini
+requests==2.27.1
+```
+
+Create and activate a virtual environment, then install:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate   # (On Windows: .venv\Scripts\activate)
+pip install -r requirements.txt
+quarto render installing_python_packages.qmd
+```
+
+Again, simply import and use your packages in your .qmd:
+
+```{python}
+import requests
+print("Hello from requests version:", requests.__version__)
+```
+
+## Key Considerations & Tips
+
+- **Pin Versions**: Whether you use conda or pip, explicitly specify versions in environment.yml or requirements.txt. This protects you against unintentional upgrades or backward-incompatible changes.
+- **Document Your Setup**: In README.md (or within the Quarto doc itself), explain how to set up the environment. For example:
+
+```bash
+conda env create -f environment.yml
+conda activate my-quarto-env
+quarto render installing_python_packages.qmd
+```
+
+- **Automate via CI**: If you use continuous integration, configure your CI to install your environment the same way. This ensures consistent builds and helps detect dependency issues early.
+- **Avoid Inline Installs in Production**: Inline pip install is convenient but leads to inconsistent and hard-to-reproduce projects when used at scale or in a team environment.
+
+## Summary
+
+- Inline installation in a code chunk is acceptable for quick demos or ephemeral notebooks.
+- For robust, long-term, or shared projects, always define your dependencies in an external environment file like environment.yml or requirements.txt.
+- Pin your versions to ensure reproducible results over time.
+
+Thank you for reading! Happy Quarto-ing.

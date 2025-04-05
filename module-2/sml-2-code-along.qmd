@@ -30,7 +30,7 @@ pacman::p_load(pacman, knitr, tidyverse, readxl)
 
 ## Process
 
-- Again, create a .R file --- this time in `/module-2`
+- Again, create an `.R` (or `.py`) file --- this time in `/module-2`
 - Then, run copy and paste the code in this presentation as we talk through each step
 
 ## Quick discussion
@@ -53,13 +53,10 @@ pacman::p_load(pacman, knitr, tidyverse, readxl)
 library(tidyverse)
 library(tidymodels)
 
-gss_cat # this is built-in data, so it's loaded differently than typical data
+pokemon <- read_csv("data/pokemon-data.csv")
 
-gss_cat <- gss_cat %>% 
-    mutate(is_married = as.factor(if_else(marital == "Married", 1, 0))) # as a factor
-
-gss_cat %>% 
-    count(is_married)
+pokemon %>% 
+    glimpse()
 ```
 
 ## 1
@@ -69,9 +66,10 @@ gss_cat %>%
 ```{r}
 #| echo: true
 #| eval: false
-train_test_split <- initial_split(gss_cat, prop = .80, strata = "is_married")
-data_train <- training(train_test_split)
-data_test <- testing(train_test_split)
+
+pokemon_split <- initial_split(pokemon, prop = 0.8)
+train <- training(pokemon_split)
+test <- testing(pokemon_split)
 ```
 
 ## 2
@@ -81,8 +79,10 @@ data_test <- testing(train_test_split)
 ```{r}
 #| echo: true
 #| eval: false
-# predicting humans based on the independent effects of height and mass
-my_rec <- recipe(is_married ~ age + tvhours, data = gss_cat)
+
+pokemon_recipe <- recipe(early_gen ~ height_m + weight_kg + hp, 
+                         data = train) %>% 
+    step_mutate(early_gen = as.factor(early_gen))
 ```
 
 ## 3
@@ -92,15 +92,14 @@ my_rec <- recipe(is_married ~ age + tvhours, data = gss_cat)
 ```{r}
 #| echo: true
 #| eval: false
-# specify model
+
 my_mod <- logistic_reg() %>%
     set_engine("glm") %>%
     set_mode("classification")
 
-# specify workflow
 my_wf <- workflow() %>%
-   add_model(my_mod) %>% 
-    add_recipe(my_rec)
+    add_recipe(pokemon_recipe) %>%
+    add_model(my_mod)
 ```
 
 ## 4
@@ -111,7 +110,7 @@ my_wf <- workflow() %>%
 #| echo: true
 #| eval: false
 
-fit_model <- fit(my_wf, data = gss_cat)
+log_reg_fit <- last_fit(my_wf, pokemon_split)
 ```
 
 ## 5
@@ -121,44 +120,21 @@ fit_model <- fit(my_wf, data = gss_cat)
 ```{r}
 #| echo: true
 #| eval: false
-predictions <- predict(fit_model, gss_cat) %>% 
-    bind_cols(gss_cat) %>% 
-    mutate(is_married = as.factor(is_married))
 
-predictions %>%
-  metrics(is_married, .pred_class) %>%
-  filter(.metric == "accuracy")
+collect_metrics(log_reg_fit)
 ```
 
 :::
 
 ## python code
 
+*AR edit*
+
 ```{python}
 #| eval: false
 #| echo: true
 
-import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import classification_report
 
-# Load and preprocess the data
-starwars = pd.read_csv('path_to_starwars.csv')  # Load your data file
-starwars['species_human'] = starwars['species'].apply(lambda x: 'Human' if x == 'Human' else 'Not human')
-
-# Split data
-train, test = train_test_split(starwars, test_size=0.2, random_state=42)
-X_train, y_train = train[['height', 'mass']], train['species_human']
-X_test, y_test = test[['height', 'mass']], test['species_human']
-
-# Specify model and fit
-clf = LogisticRegression()
-clf.fit(X_train, y_train)
-
-# Evaluate accuracy
-y_pred = clf.predict(X_test)
-print(classification_report(y_test, y_pred))
 ```
 
 # Discussion
