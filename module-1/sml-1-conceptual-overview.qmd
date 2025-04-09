@@ -296,6 +296,23 @@ This is _not_ the focus of any of the materials for SML, but students can pursue
 Many students will be familiar with regression, and it's a nice touch point here.
 :::
 
+## Reinforcement Learning
+
+- **What It Is:**  
+  A framework where an agent learns to make decisions by interacting with an environment.
+
+- **Core Components:**  
+  - **Agent:** The decision-maker.  
+  - **Environment:** Where the agent operates.  
+  - **Actions & Rewards:** Choices made by the agent and feedback (reward or penalty) from the environment.
+
+- **Key Idea:**  
+  Learning through trial and error to maximize long-term rewards.
+
+- **Why It Matters:**  
+  Provides the basis for adaptive systems in fields like robotics, gaming, and intelligent educational technologies.
+
+
 ## Which technique should I choose?
 
 Do you have coded data or data with a known outcome -- let's say about K-12 students -- and, do you want to:
