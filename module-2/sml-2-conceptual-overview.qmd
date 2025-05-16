@@ -23,14 +23,14 @@ pacman::p_load(pacman, knitr, tidyverse, readxl)
 
 # Purpose and Agenda
 
-Building on the foundations from Module 1, this session delves deeper into the workflows we will use when we are using a SML approach. Particularly, we'll explore the roles of training and testing data and when to use them in a SML workflow. We'll predict students' withdrawal from a course again using the Integrated Postsecondary Education Data System (IPEDS) data.
+Building on the foundations from Module 1, this session delves deeper into the workflows we will use when we are using a SML approach. Particularly, we'll explore the roles of training and testing data and when to use them in a SML workflow. Continuing with the IPEDS data we explored in Module 1, we'll build on our predictions of institutional graduation rates.
 
 ## What we'll do in this presentation
 
 - Discussion 1
 - Key Concept #1: Our SML framework
 - Key Concept #2: Training and testing data
-- Key Concept #2: Bias-variance trade-off
+- Key Concept #3: Bias-variance trade-off
 - Discussion 2
 - Introduction to the other parts of this module
 
@@ -54,8 +54,8 @@ Building on the foundations from Module 1, this session delves deeper into the w
 
 ### Overview
 
-- We want to make predictions about an outcome of interest based on predictor (or indendent) variable(s) that we think are related to the outcome (or dependent variable).
-- We'll again be using [IPEDS, the Integrated Postsecondary Education Data System](https://nces.ed.gov/ipeds/) data.
+- We want to make predictions about an outcome of interest based on predictor (or independent) variable(s) that we think are related to the outcome (or dependent variable).
+- We'll continue using [IPEDS, the Integrated Postsecondary Education Data System](https://nces.ed.gov/ipeds/) data to predict institutional graduation rates.
 
 ### LASER Frame (reminder)
 
@@ -75,10 +75,6 @@ Building on the foundations from Module 1, this session delves deeper into the w
 
 **This is the fundamental process we'll follow for this and the next two modules focused on supervised ML**
 
-::: notes
-While students used the SML frame in Module 1, it was sort of glossed over. We go into more depth in the case study.
-:::
-
 # Key Concept #2: Training and testing data
 
 ## Train vs. test data
@@ -95,7 +91,7 @@ While students used the SML frame in Module 1, it was sort of glossed over. We g
 - This definition provides a wide range of options for what kinds of algorithms we use (from simple to very complex, as we discuss in a later module)
 - For now, we focus on a familiar, easy to interpret algorithm (e.g., [1](https://dl.acm.org/doi/abs/10.1145/3448139.3448154?casa_token=skmk5XGbDOUAAAAA:Z0Kl4nyjpOGFA6RuFTiiLWaC_KxH1vkQ72Kr0hetXcumRdvu8tPYlCX12AgHr9aS0Fp3L-Uu0p4), also [this](https://linkinghub.elsevier.com/retrieve/pii/S0895435618310813)), _logistic regression_
 - This is a linear model with a binary (*"yes"* or *"no"*) outcome
-- It will be a _bad model_ to start us off!
+- It will be a _basic model_ to start us off!
 
 ## Predictions (reminder)
 
@@ -107,8 +103,8 @@ While students used the SML frame in Module 1, it was sort of glossed over. We g
 
 - A key concept in the context of supervised machine learning is training vs. testing data:
 - Training data: Data we use to **fit** (or train, AKA estimate) a supervised machine learning **model** (AKA algorithm)
-- Testing data: Data we use to see how well our model not used to fit the model
-- By splitting out data into training and testing _sets_, we can obtain unbiased metrics for how good our model is at predicting
+- Testing data: Data we use to see how well our model performs on data not used to fit the model
+- By splitting our data into training and testing _sets_, we can obtain unbiased metrics for how good our model is at predicting
 
 ## How does this avoid bias?
 
@@ -123,7 +119,7 @@ While students used the SML frame in Module 1, it was sort of glossed over. We g
 - It is often valuable to conduct a _stratified_ split, based on the proportion or distribution of the dependent variables' values in the dataset
     - this ensures our training and testing data will not have a misbalance in the dependent variable
 
-## Key concept #3 - Bias - Variance
+# Key concept #3 - Bias - Variance
 
 ## What's stopping me from specifying a complex model?
 
@@ -307,11 +303,11 @@ ggsave("img/bias-variance-data-6.png")
 
 > Breiman, L. (2001). Statistical modeling: The two cultures (with comments and a rejoinder by the author). Statistical science, 16(3), 199-231.
 
-> Estrellado, R. A., Freer, E. A., Mostipak, J., Rosenberg, J. M., & Velásquez, I. C. (2020). *Data science in education using R. Routledge* (c14), Predicting students’ final grades using machine learning methods with online course data. http://www.datascienceineducation.com/
+> Estrellado, R. A., Freer, E. A., Mostipak, J., Rosenberg, J. M., & Velásquez, I. C. (2020). *Data science in education using R. Routledge* (c14), Predicting students' final grades using machine learning methods with online course data. http://www.datascienceineducation.com/
 
 ## Case study
 
-- Building a prediction model for students passing the class based just on student data.
+- Building a prediction model for institutional graduation rates based on IPEDS data
 - Work with peers to complete this, reading the text, following links to resources (and the reading), and then completing the required 👉 Your Turn ⤵ tasks
 - A key is available, but we strongly encourage you to use it only at the end to check your work, or if you are completely stuck and have tried our recommended troubleshooting steps: https://docs.google.com/document/d/14Jc-KG3m5k1BvyKWqw7KmDD21IugU5nV5edfJkZyspY/edit
 
