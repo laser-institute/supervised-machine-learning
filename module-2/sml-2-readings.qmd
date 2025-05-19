@@ -15,7 +15,7 @@ editor: visual
 
 ## Overview
 
-These readings principally highlight what makes supervised machine learning distinct from other analytic approaches. The Breiman paper is a classic that provides a high-level introduction to how the *goals* of the analyst or scholar using supervised machine learning may be similar to and different from those using more traditional (i.e., inferential) models. The Estrellado et al. (2020) chapter provides an example similar to that which we undertook in this chapter, but with a different data set and set of packages (caret) that you may encounter when using R for supervised machine learning; though the code is different in some key places, consider how the modeling process is similar. Kuzilek et al. (2017) provides an overview of the OULAD dataset, if interested in using it for research (or any other purpose).
+These readings principally highlight what makes supervised machine learning distinct from other analytic approaches. The Breiman paper is a classic that provides a high-level introduction to how the *goals* of the analyst or scholar using supervised machine learning may be similar to and different from those using more traditional (i.e., inferential) models. The Estrellado et al. (2020) chapter provides an example similar to that which we undertook in this chapter, but with a different data set and set of packages (caret) that you may encounter when using R for supervised machine learning; though the code is different in some key places, consider how the modeling process is similar.
 
 ## Readings
 
@@ -24,8 +24,6 @@ These readings principally highlight what makes supervised machine learning dist
 > Breiman, L. (2001). Statistical modeling: The two cultures (with comments and a rejoinder by the author). *Statistical science*, *16*(3), 199-231.
 
 > Estrellado, R. A., Freer, E. A., Mostipak, J., Rosenberg, J. M., & Velásquez, I. C. (2020). *Data science in education using R*. Routledge (c14), Predicting students' final grades using machine learning methods with online course data. http://www.datascienceineducation.com/
-
-> Kuzilek, J., Hlosta, M., & Zdrahal, Z. (2017). Data descriptor: Open University learning analytics dataset. Scientific Data, 4, 1-8.
 
 ## Reflection
 

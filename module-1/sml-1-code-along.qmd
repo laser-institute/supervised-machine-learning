@@ -48,25 +48,23 @@ Our aim: What relates to whether a Pokemon is *legendary* -- one that is ["incre
 ## Data Dictionary
 
 ::: {style="font-size: 60%;"}
-
 | **Column**     | **Type**          | **Description**                                                                         | **Example Values**           |
-|----------------|-------------------|-----------------------------------------------------------------------------------------|-----------------------------|
-| **name**       | Character         | The official name of the Pokémon.                                                       | Pikachu, Bulbasaur          |
-| **type_1**     | Categorical       | The primary elemental type. Determines many battle strengths/weaknesses.                | Water, Fire, Grass, Electric|
-| **type_2**     | Categorical       | The secondary elemental type, if applicable (often missing/NA for single-type Pokémon). | Flying, Poison, NA          |
-| **hp**         | Numeric           | Base “Health Points” indicating how much damage a Pokémon can take before fainting.     | 35, 60, 100                 |
-| **attack**     | Numeric           | Base Attack stat. Affects damage dealt by Physical moves.                               | 55, 82, 134                 |
-| **defense**    | Numeric           | Base Defense stat. Affects damage received from Physical moves.                         | 40, 80, 95                  |
-| **sp_atk**     | Numeric           | Base Special Attack stat. Affects damage dealt by Special moves (e.g., Flamethrower).   | 50, 90, 120                 |
-| **sp_def**     | Numeric           | Base Special Defense stat. Affects damage received from Special moves.                  | 50, 85, 125                 |
-| **speed**      | Numeric           | Base Speed stat, determining which Pokémon moves first in battle.                       | 35, 100, 130                |
-| **generation** | Integer or Factor | Numerical indicator of the game generation the Pokémon was introduced (1, 2, 3, etc.).  | 1, 2, 3                     |
-| **legendary**  | Boolean           | Indicates if the Pokémon is Legendary (TRUE/FALSE, 1/0).                                | FALSE, TRUE                 |
-| **total**      | Numeric           | Sum of all base stats (HP + Attack + Defense + Sp. Atk + Sp. Def + Speed).              | 320, 540, 680               |
-| **height**     | Numeric           | Pokémon’s approximate height (units vary by dataset, often meters).                     | 0.4, 1.7, 2.0               |
-| **weight**     | Numeric           | Pokémon’s approximate weight (units vary by dataset, often kilograms).                  | 6.0, 90.5, 210.0            |
-| **early_gen**  | Numeric           | Whether or not a Pokemon is 1st or 2nd gen                  | 1, 0            |
-
+|-------------|-------------|-----------------------------------|-------------|
+| **name**       | Character         | The official name of the Pokémon.                                                       | Pikachu, Bulbasaur           |
+| **type_1**     | Categorical       | The primary elemental type. Determines many battle strengths/weaknesses.                | Water, Fire, Grass, Electric |
+| **type_2**     | Categorical       | The secondary elemental type, if applicable (often missing/NA for single-type Pokémon). | Flying, Poison, NA           |
+| **hp**         | Numeric           | Base “Health Points” indicating how much damage a Pokémon can take before fainting.     | 35, 60, 100                  |
+| **attack**     | Numeric           | Base Attack stat. Affects damage dealt by Physical moves.                               | 55, 82, 134                  |
+| **defense**    | Numeric           | Base Defense stat. Affects damage received from Physical moves.                         | 40, 80, 95                   |
+| **sp_atk**     | Numeric           | Base Special Attack stat. Affects damage dealt by Special moves (e.g., Flamethrower).   | 50, 90, 120                  |
+| **sp_def**     | Numeric           | Base Special Defense stat. Affects damage received from Special moves.                  | 50, 85, 125                  |
+| **speed**      | Numeric           | Base Speed stat, determining which Pokémon moves first in battle.                       | 35, 100, 130                 |
+| **generation** | Integer or Factor | Numerical indicator of the game generation the Pokémon was introduced (1, 2, 3, etc.).  | 1, 2, 3                      |
+| **legendary**  | Boolean           | Indicates if the Pokémon is Legendary (TRUE/FALSE, 1/0).                                | FALSE, TRUE                  |
+| **total**      | Numeric           | Sum of all base stats (HP + Attack + Defense + Sp. Atk + Sp. Def + Speed).              | 320, 540, 680                |
+| **height**     | Numeric           | Pokémon’s approximate height (units vary by dataset, often meters).                     | 0.4, 1.7, 2.0                |
+| **weight**     | Numeric           | Pokémon’s approximate weight (units vary by dataset, often kilograms).                  | 6.0, 90.5, 210.0             |
+| **early_gen**  | Numeric           | Whether or not a Pokemon is 1st or 2nd gen                                              | 1, 0                         |
 :::
 
 ## R Code
@@ -115,7 +113,6 @@ summary(m1) # what do you notice about the coefficients?
 ## Python Code
 
 ::: panel-tabset
-
 ## 0
 
 **Loading, setting up**
@@ -133,6 +130,7 @@ pokemon_df.head()
 ## 1
 
 **fit model**
+
 ```{python}
 #| eval: false
 #| echo: true
@@ -144,12 +142,12 @@ model = smf.logit('early_gen ~ height_m + weight_kg + hp', data=pokemon_df).fit(
 ## 2
 
 **evaluate model**
+
 ```{python}
 #| eval: false
 #| echo: true 
 model.summary()
 ```
-
 :::
 
 # Code-along - SML
@@ -178,9 +176,7 @@ library(tidymodels)
 #| echo: true
 #| eval: false
 
-pokemon_split <- initial_split(pokemon, prop = 0.8)
-train <- training(pokemon_split)
-test <- testing(pokemon_split)
+# skipped for now, to be introduced in the next module!
 ```
 
 ## 2
@@ -198,7 +194,7 @@ pokemon_recipe <- recipe(early_gen ~ height_m + weight_kg + hp,
 
 ## 3
 
-**Specify rå
+**Set model and workflow**
 
 ```{r}
 #| echo: true
@@ -221,7 +217,7 @@ my_wf <- workflow() %>%
 #| echo: true
 #| eval: false
 
-log_reg_fit <- last_fit(my_wf, pokemon_split)
+log_reg_fit <- fit(my_wf, pokemon_split)
 ```
 
 ## 5
@@ -232,7 +228,10 @@ log_reg_fit <- last_fit(my_wf, pokemon_split)
 #| echo: true
 #| eval: false
 
-collect_metrics(log_reg_fit)
+pokemon_preds <- predict(log_reg_fit, pokemon, type = "class") %>% 
+  bind_cols(pokemon %>% select(early_gen))
+
+metrics(pokemon_preds, truth = early_gen, estimate = .pred_class)
 ```
 :::
 
@@ -299,9 +298,7 @@ accuracy = accuracy_score(y_test, y_preds)  # Compare your predictions vs the ac
 
 round(accuracy, 3)
 ```
-
 :::
-
 
 ## Discussion
 

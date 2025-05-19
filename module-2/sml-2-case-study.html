@@ -59,18 +59,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </style>
 
 
-<script src="sml-2-case-study-key_files/libs/clipboard/clipboard.min.js"></script>
-<script src="sml-2-case-study-key_files/libs/quarto-html/quarto.js"></script>
-<script src="sml-2-case-study-key_files/libs/quarto-html/popper.min.js"></script>
-<script src="sml-2-case-study-key_files/libs/quarto-html/tippy.umd.min.js"></script>
-<script src="sml-2-case-study-key_files/libs/quarto-html/anchor.min.js"></script>
-<link href="sml-2-case-study-key_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="sml-2-case-study-key_files/libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="sml-2-case-study-key_files/libs/quarto-html/quarto-syntax-highlighting-dark-8ea72dc5fed832574809a9c94082fbbb.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<script src="sml-2-case-study-key_files/libs/bootstrap/bootstrap.min.js"></script>
-<link href="sml-2-case-study-key_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="sml-2-case-study-key_files/libs/bootstrap/bootstrap-00d65cf21f174b4516a2e66297fda939.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="sml-2-case-study-key_files/libs/bootstrap/bootstrap-dark-c849bbedd074e1c235909309894d6680.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script src="sml-2-case-study_files/libs/clipboard/clipboard.min.js"></script>
+<script src="sml-2-case-study_files/libs/quarto-html/quarto.js"></script>
+<script src="sml-2-case-study_files/libs/quarto-html/popper.min.js"></script>
+<script src="sml-2-case-study_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="sml-2-case-study_files/libs/quarto-html/anchor.min.js"></script>
+<link href="sml-2-case-study_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="sml-2-case-study_files/libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="sml-2-case-study_files/libs/quarto-html/quarto-syntax-highlighting-dark-8ea72dc5fed832574809a9c94082fbbb.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="sml-2-case-study_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="sml-2-case-study_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="sml-2-case-study_files/libs/bootstrap/bootstrap-00d65cf21f174b4516a2e66297fda939.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="sml-2-case-study_files/libs/bootstrap/bootstrap-dark-c849bbedd074e1c235909309894d6680.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 
 
 </head>
@@ -182,7 +182,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <blockquote class="blockquote">
 <p>How well can we predict which institutions have higher graduation rates?</p>
 </blockquote>
-<p>This builds directly on the work from Module 1, where we started investigating this question. In this module, we’ll properly implement a training and testing workflow to evaluate our predictions more rigorously. We’ll also investigate our data set further to ensure that we understand what goes into the model!</p>
+<p>This builds directly on the work from Module 1, where we started investigating this question. In this module, we’ll properly implement a training and testing workflow to evaluate our predictions more rigorously.</p>
 <section id="reading-statistical-modeling-the-two-cultures" class="level4">
 <h4 class="anchored" data-anchor-id="reading-statistical-modeling-the-two-cultures">Reading: Statistical modeling: The two cultures</h4>
 <blockquote class="blockquote">
@@ -234,7 +234,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 ✖ dplyr::lag()      masks stats::lag()
 ✖ yardstick::spec() masks readr::spec()
 ✖ recipes::step()   masks stats::step()
-• Search for functions across packages at https://www.tidymodels.org/find/</code></pre>
+• Dig deeper into tidy modeling with R at https://www.tmwr.org</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(janitor)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -403,7 +403,7 @@ $ avg_salary      &lt;dbl&gt; 77824, 106434, 36637, 92561, 72635, 97394, 63494, 
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="sml-2-case-study-key_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="sml-2-case-study_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -741,7 +741,7 @@ $ avg_salary      &lt;dbl&gt; 77824, 106434, 36637, 92561, 72635, 97394, 63494, 
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="sml-2-case-study-key_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="sml-2-case-study_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -790,7 +790,7 @@ $ avg_salary      &lt;dbl&gt; 77824, 106434, 36637, 92561, 72635, 97394, 63494, 
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="sml-2-case-study-key_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="sml-2-case-study_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -921,17 +921,15 @@ $ avg_salary      &lt;dbl&gt; 77824, 106434, 36637, 92561, 72635, 97394, 63494, 
 <li><code>tuition_fees</code></li>
 <li><code>avg_salary</code></li>
 <li><code>percent_fin_aid</code></li>
-<li><code>tuition_to_salary_ratio</code> (the variable we created based on two of the above variables)</li>
 </ul>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>my_rec <span class="ot">&lt;-</span> <span class="fu">recipe</span>(good_grad_rate <span class="sc">~</span> </span>
 <span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>                     tuition_fees <span class="sc">+</span></span>
 <span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>                     avg_salary <span class="sc">+</span></span>
-<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>                     tuition_to_salary_ratio <span class="sc">+</span></span>
-<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>                     percent_fin_aid,</span>
-<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>                 <span class="at">data =</span> ipeds) </span>
-<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>my_rec</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>                     percent_fin_aid,</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>                 <span class="at">data =</span> ipeds) </span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>my_rec</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code></code></pre>
 </div>
@@ -949,7 +947,7 @@ $ avg_salary      &lt;dbl&gt; 77824, 106434, 36637, 92561, 72635, 97394, 63494, 
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>outcome:   1
-predictor: 4</code></pre>
+predictor: 3</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>skimr<span class="sc">::</span><span class="fu">skim</span>(ipeds)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
@@ -1385,7 +1383,7 @@ Computational engine: glm </code></pre>
   .metric     .estimator .estimate .config             
   &lt;chr&gt;       &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
 1 accuracy    binary         0.843 Preprocessor1_Model1
-2 roc_auc     binary         0.844 Preprocessor1_Model1
+2 roc_auc     binary         0.842 Preprocessor1_Model1
 3 brier_class binary         0.118 Preprocessor1_Model1</code></pre>
 </div>
 </div>

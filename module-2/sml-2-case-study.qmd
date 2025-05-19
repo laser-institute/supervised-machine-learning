@@ -1,5 +1,5 @@
 ---
-title: "Who Drops Online Courses? An Analysis Using the OULAD"
+title: "Predicting Institutional Graduation Rates Using Testing and Training Data"
 subtitle: "Case Study"
 author: "LASER Institute"
 date: today 
@@ -16,13 +16,11 @@ editor: visual
 
 ## 1. PREPARE
 
-Conceptually, we focus on prediction and how it differs from the goals of description or explanation. We have two readings in Learning Lab 1 that accompany this. The first reading introduced below focuses on this distinction between prediction and description or explanation. It is one of the most widely-read papers in machine learning and articulates how machine learning differs from other kinds of statistical models. Breiman describes the difference in terms of *data modeling* (models for description and explanation) and *algorithmic modeling* (what we call prediction or machine learning models)\*
+We'll focus on the core parts of doing a machine learning analysis in R, this time bringing into the picture the key concept of training and testing data, which we deliberately omitted from the last case study. We'll use the {[tidymodels](https://www.tidymodels.org/)} set of R packages (add-ons) to do so, like in the first module. However, to help anchor our analysis and provide us with some direction, we'll focus on the following research question as we explore this new approach:
 
-#### Research Question
+> How well can we predict which institutions have higher graduation rates?
 
-Technically, we'll focus on the core parts of doing a machine learning analysis in R. We'll use the {[tidymodels](https://www.tidymodels.org/)} set of R packages (add-ons) to do so, like in the first module. However, to help anchor our analysis and provide us with some direction, we'll focus on the following research question as we explore this new:
-
-> How well can we predict students who are at risk of dropping a course?
+This builds directly on the work from Module 1, where we started investigating this question. In this module, we'll properly implement a training and testing workflow to evaluate our predictions more rigorously. We'll also investigate our data set further to ensure that we understand what goes into the model!
 
 #### Reading: Statistical modeling: The two cultures
 
@@ -30,7 +28,7 @@ Technically, we'll focus on the core parts of doing a machine learning analysis 
 
 **👉 Your Turn** **⤵**
 
-You'll be asked to reflect more deeply on this article later on (in the badge activity); but for now, open up the article and take quick scan of the article and note below an observation or question you have about the article.
+You'll be asked to reflect more deeply on this article later on (in the badge activity); but for now, open up the article and take a quick scan of the article and note below an observation or question you have about the article.
 
 -   YOUR RESPONSE HERE
 
@@ -42,89 +40,79 @@ Please review this chapter, focusing on the overall goals of the analysis and ho
 
 ### 1b. Load Packages
 
-Like in the last module, please load the tidyverse package. Also, please load the tidymodels and janitor packages in the code chunk below.
+#### **👉 Your Turn** **⤵**
 
-```{r load-tidyverse}
+Like in the last module, please load the tidyverse package. Also, please load the tidymodels and janitor packages in the code chunk below. Also, add another package we'll use, skimr. Install it if you need.
 
-library(tidyverse)
+```{r load-packages}
 
 ```
 
 ## 2. WRANGLE
 
-In general, data wrangling involves some combination of cleaning, reshaping, transforming, and merging data (Wickham & Grolemund, 2017). The importance of data wrangling is difficult to overstate, as it involves the initial steps of going from raw data to a dataset that can be explored and modeled (Krumm et al, 2018). In Part 2, we focus on the the following wrangling processes to:
+In general, data wrangling involves some combination of cleaning, reshaping, transforming, and merging data (Wickham & Grolemund, 2017). The importance of data wrangling is difficult to overstate, as it involves the initial steps of going from raw data to a dataset that can be explored and modeled (Krumm et al, 2018). In Part 2, we focus on the following wrangling processes to:
 
 1.  **Importing and Inspecting Data**. In this section, we will "read" in our CSV data file and take a quick look at what our file contains.
 
-2.  **Mutate Variables**. We use the `mutate()` function to create a dichotomous variable for whether or not the student withdrew from the course.
+2.  **Transform Variables**. We use the `mutate()` function to create a dichotomous variable for whether or not the institution has a "good" graduation rate, building on what we did in Module 1.
 
-### 1a. Import and Inspect Data
-
-For learning labs 1-3, we'll be using a widely-used data set in the learning analytics field: the [Open University Learning Analytics Dataset (OULAD)](https://analyse.kmi.open.ac.uk/open_dataset). The OULAD was created by learning analytics researchers at the United Kingdom-based Open University. It includes data from post-secondary learners participation in one of several Massive Open Online Courses (called *modules* in the OULAD).
-
-> Kuzilek, J., Hlosta, M., & Zdrahal, Z. (2017). Open university learning analytics dataset. *Scientific Data, 4(*1), 1-8. <https://www.nature.com/articles/sdata2017171>
-
-**Abstract**
-
-Learning Analytics focuses on the collection and analysis of learners' data to improve their learning experience by providing informed guidance and to optimise learning materials. To support the research in this area we have developed a dataset, containing data from courses presented at the Open University (OU). What makes the dataset unique is the fact that it contains demographic data together with aggregated clickstream data of students' interactions in the Virtual Learning Environment (VLE). This enables the analysis of student behavior, represented by their actions. The dataset contains the information about 22 courses, 32,593 students, their assessment results, and logs of their interactions with the VLE represented by daily summaries of student clicks (10,655,280 entries). The dataset is freely available at <https://analyse.kmi.open.ac.uk/open_dataset> under a CC-BY 4.0 license.
+### 2a. Import and Inspect Data
 
 #### **👉 Your Turn** **⤵**
 
-You don't need to read the entire article yet, but please open this article, scan the sections, and write down two things you notice or wonder about the dataset.
-
-1.  YOUR RESPONSE HERE
-
-2.  YOUR RESPONSE HERE
-
-#### Read CSV Data File
-
-Like in the last module, read in the data using `read_csv()`. Note: we have done some minimal processing of these files to make getting us started easier. If you're interested in what we've done, check out the `oulad.R` file in the `module-2` folder.
+For this module, we'll be working with the same IPEDS (Integrated Postsecondary Education Data System) dataset we used in Module 1. Let's read it in - check the code from the last module if you need it:
 
 ```{r}
-students <- read_csv("data/oulad-students.csv")
+ipeds <- read_csv("data/ipeds-all-title-9-2022-data.csv")
 ```
-
-You can see a description of the data [here](https://analyse.kmi.open.ac.uk/open_dataset#description). The students file includes three files joined together: studentInfo, courses, and studentRegistration. Take a look at the data description to get a sense for what variables are in which data frame.
-
 #### **👉 Your Turn** **⤵**
 
-#### Inspect Data
-
-Use the `glimpse()` function we used in the first module.
+We'll use the same data cleaning steps from Module 1. Below, use the `clean_names()` function we used in module 1.
 
 ```{r}
-
+ipeds <- clean_names(ipeds)
 ```
 
-### 2b. "Mutate" Variables
-
-We're going to do a few more steps related to data wrangling here, noting we could also do these at later stages of our process (namely, in the feature engineering stage).
-
-First, since we are interested in developing a model that can predict whether a student is at risk of dropping a course, and so we can intervene before that happens, we need an outcome variable that let's us know if they have passed.
-
-To create this variable, let's use the `mutate()` function to create a dichotomous variable for whether or not the student withdrew from the course. Here's a way we can do this, using `if_else()` and `as.factor()`. This will be our *outcome* variable, or the predicted variable.
+Then run this code to clean the names up further.
 
 ```{r}
-students <- students %>%
-    mutate(pass = ifelse(final_result == "Pass", 1, 0)) %>% # creates a new variable named "pass" and a dummy code of 1 if value of final_result equals "pass" and 0 if not
-    mutate(pass = as.factor(pass)) # makes the variable a factor, helping later steps
-
-```
-
-**Note**: The [`mutate()` function](https://dplyr.tidyverse.org/reference/mutate.html#:~:text=mutate()%20creates%20new%20columns,setting%20their%20value%20to%20NULL%20).) is a critical function to learn and is used to create new columns that are functions of existing variables. It can also modify (if the name is the same as an existing column) and delete columns (by setting their value to `NULL`).
-
-Next, let's do something similar for whether a student identifies as having a disability. In this case, there are only two values for the disability variable, so we can simply convert it directly to a factor. Look at the code you used above, *modifying* it for the disability variable. This will be an *independent variable*, or a predictor variable.
-
-```{r}
-students <- students %>% 
-    mutate(disability = as.factor(disability))
+ipeds <- ipeds %>% 
+    select(name = institution_name, 
+           title_iv = hd2022_postsecondary_and_title_iv_institution_indicator, # is the university a title IV university?
+           carnegie_class = hd2022_carnegie_classification_2021_basic, # which carnegie classification
+           state = hd2022_state_abbreviation, # state
+           total_enroll = drvef2022_total_enrollment, # total enrollment
+           pct_admitted = drvadm2022_percent_admitted_total, # percentage of applicants admitted
+           n_bach = drvc2022_bachelors_degree, # number of students receiving a bachelor's degree
+           n_mast = drvc2022_masters_degree, # number receiving a master's
+           n_doc = drvc2022_doctors_degree_research_scholarship, # number receive a doctoral degree
+           tuition_fees = drvic2022_tuition_and_fees_2021_22, # total cost of tuition and fees
+           grad_rate = drvgr2022_graduation_rate_total_cohort, # graduation rate
+           percent_fin_aid = sfa2122_percent_of_full_time_first_time_undergraduates_awarded_any_financial_aid, # percent of students receive financial aid
+           avg_salary = drvhr2022_average_salary_equated_to_9_months_of_full_time_instructional_staff_all_ranks) # average salary of instructional staff
 ```
 
 #### **👉 Your Turn** **⤵**
 
-In the chunk below, use the `view()` function to manually check and see if our new variable has indeed been added to our data frame.
+Just as we did in Module 1, let's filter the data to include only Title IV postsecondary institutions.
 
-```{r, eval=FALSE}
+```{r}
+
+```
+
+#### **👉 Your Turn** **⤵**
+
+Now, filter the data again to *only* include institutions with a carnegie classification. Specifically, exclude those institutions with a value for the `carnegie_class` variable that is "Not applicable, not in Carnegie universe (not accredited or nondegree-granting)". As a hint: whereas the logical operator `==` is used to include only matching conditions, the logical operator `!=` excludes matching conditions.
+
+```{r}
+
+```
+
+#### **👉 Your Turn** **⤵**
+
+Let's inspect our data - using `glimpse()` or another means of your choosing below.
+
+```{r}
 
 ```
 
@@ -132,34 +120,77 @@ Write down a few observations after inspecting the data:
 
 -   YOUR RESPONSE HERE
 -   YOUR RESPONSE HERE
--   YOUR RESPONSE HERE
 
-**Note**: The [`mutate()` function](https://dplyr.tidyverse.org/reference/mutate.html#:~:text=mutate()%20creates%20new%20columns,setting%20their%20value%20to%20NULL%20).) is a critical function to learn and is used to create new columns that are functions of existing variables. It can also modify (if the name is the same as an existing column) and delete columns (by setting their value to `NULL`).
+### 2b. Transform Variables
 
-Next, let's do something similar for whether a student identifies as having a disability. In this case, there are only two values for the disability variable, so we can simply convert it directly to a factor. Look at the code you used above, *modifying* it for the disability variable. This will be an *independent variable*, or a predictor variable.
-
-```{r}
-students <- students %>% 
-    mutate(disability = as.factor(disability))
-```
-
-## 3. EXPLORE
-
-As noted by Krumm et al. (2018), exploratory data analysis often involves some combination of data visualization and *feature engineering*. In Part 3, we will create a quick visualization to help us spot any potential issues with our data and engineer new predictive variables or "features" that we will use in our predictive models. Specifically, in Part 3 we will:
-
-1.  **Examine Outcomes** by taking a quick `count()` of the number of students and the number of specific offerings of each course module.
-
-2.  **Engineer Predictors** by creating one more predictor variable based on a measure of socioeconomic resources--the index of multiple depravity variable.
+We'll now transform our graduation rate variable into a binary outcome for our classification task, just as we did in Module 1.
 
 #### **👉 Your Turn** **⤵**
 
-### 3a. Examine Variables
-
-Referring to the [data description](https://analyse.kmi.open.ac.uk/open_dataset#description), in the chunk below, count the number of students. Also, count the number of courses (modules) and specific offerings (as modules can be offered multiple times per year). Learn more about `count()` [here](https://dplyr.tidyverse.org/reference/count.html).
+Create a binary variable called `good_grad_rate` that indicates whether an institution has a graduation rate above a certain threshold. Choose a threshold that seems reasonable to you. Then coerce the variable to be a factor. 
 
 ```{r}
 
 ```
+
+Here, add a reason or two for how and why you picked the threshold you did:
+
+-   YOUR RESPONSE HERE
+
+## 3. EXPLORE
+
+As noted by Krumm et al. (2018), exploratory data analysis often involves some combination of data visualization and *feature engineering*. In Part 3, we will create a quick visualization to help us spot any potential issues with our data and engineer new predictive variables or "features" that we will use in our predictive models.
+
+### 3a. Examine Variables
+
+#### **👉 Your Turn** **⤵**
+
+Let's take a closer look at our institutional data. In the chunk below, count the number of institutions with good and poor graduation rates.
+
+```{r}
+
+```
+
+What does this tell us?
+
+We can use the `tabyl` function (instead of `count()`) to explore a bit further:
+
+```{r}
+
+```
+We can see how many institutions have good and not-so-good graduations rates -- and what percentage of the data is missing.
+
+#### **👉 Your Turn** **⤵**
+
+Next, let's visualize the distribution of graduation rates to better understand our data. Change the color (specified with `fill =`) to one of those here: https://sites.stat.columbia.edu/tzheng/files/Rcolor.pdf
+
+```{r}
+ipeds %>% 
+    ggplot(aes(x = grad_rate)) +
+    geom_histogram(binwidth = 5, fill = "CHANGE THIS TO A COLOR", color = "white") +
+    labs(title = "Distribution of Graduation Rates",
+         x = "Graduation Rate (%)",
+         y = "Number of Institutions")
+```
+
+#### **👉 Your Turn** **⤵**
+
+Create another visualization that explores the relationship between two variables in our dataset. For example, you might want to look at the relationship between tuition fees and graduation rates, or enrollment and graduation rates.
+
+```{r}
+# Add your visualization code here
+
+```
+
+One last, critical step is understanding missingness in our data. The `skim()` function from the {skimr} package is fantastic for this --- it tells us the number and percentage of missing values for each variable in our data set.
+
+```{r}
+skim(ipeds)
+```
+
+From this, we can see that several variables have considerable missingness. For example, the `pct_admitted` variable has more than half of its values missing! There are ways to deal with this (real-life datasets, including the IPEDS data, are rife with missing values for a whole host of reasons). We will address those (e.g., imputation) later.
+
+For this analysis, though, we'll focus on the variables that have relatively few missing values - `tuition_fees`, `percent_fin_aid`, `avg_salary`, and our dependent variable, `good_grad_rate`. This will be a simple model --- simpler in terms of the features than the model in the first analysis, but with the knowledge that we are using variables that are more complete.
 
 ### 3b. Feature Engineering
 
@@ -169,36 +200,55 @@ As defined by Krumm, Means, and Bienkowski (2018) in *Learning Analytics Goes to
 
 The authors note that feature engineering draws on substantive knowledge from theory or practice, experience with a particular data system, and general experience in data-intensive research. Moreover, these features can be used not only in machine learning models, but also in visualizations and tables comprising descriptive statistics.
 
-Though not often discussed, feature engineering is an important element of data-intensive research that can generate new insights and improve predictive models. You can read more about feature engineering [here](https://www.tmwr.org/recipes.html).
+Though not as often discussed as other steps, feature engineering is an important step. You can read more about feature engineering [here](https://www.tmwr.org/recipes.html).
 
-#### Student Socioeconomic Index
+For this module, we'll create a new feature that might help predict graduation rates. Let's create a derived variable representing the ratio of tuition and fees to average salary, which could indicate the institution's value proposition.
 
-For our first lab, we'll engage in a very basic feature engineering step, though we'll do this *much* more in the next learning lab.
-
-To do feature engineering, let's create one more predictor variable based on a measure of socioeconomic resources--the index of multiple depravity variable. The process we take here is to turn this variable that is a character string into a number by creating a factor and then *coercing* it to an integer.
+```{r}
+ipeds <- ipeds %>% 
+    mutate(tuition_to_salary_ratio = tuition_fees / avg_salary)
+```
 
 #### **👉 Your Turn** **⤵**
 
-Please replace the \_\_\_ values in the code below with the correct variable.
+Let's examine this new feature with a histogram or density plot. Write that code below --- referencing the code above if you need it.
 
 ```{r}
-students <- students %>% 
-    mutate(___ = factor(___, levels = c("0-10%",
-                                        "10-20%",
-                                        "20-30%",
-                                        "30-40%",
-                                        "40-50%",
-                                        "50-60%",
-                                        "60-70%",
-                                        "70-80%",
-                                        "80-90%",
-                                        "90-100%"))) %>% # this creates a factor with ordered levels
-    mutate(___ = as.integer(___)) # this changes the levels into integers based on the order of the factor levels
 
-students
 ```
 
-We're now ready to proceed to the five machine learning steps!
+Something is very not right. It seems like there may be some number that is way off -- and that's skewing the plot in a weird way.
+
+What's going on? In this case, it can be helpful to get eyes on the data to see if anything funny seems to be going on. Let's take a look at the relevant variables:
+
+```{r}
+select(ipeds, name, tuition_fees, avg_salary, tuition_to_salary_ratio) %>% 
+    arrange((desc(tuition_to_salary_ratio)))
+```
+
+Do you spot the problem? Add a note below about what it might be:
+
+-  YOUR RESPONSE HERE
+
+As you likely noticed, it looks like one institution - Beckfield College-Florence - has an average salary of $1 for their graduates. As a result, the ratio of tuition and fees relative to salary is _huge_ -- far larger than for any other institutions! What to do here? This seems almost certain to be an error in data reporting or recording. We can safely filter out this one row with some simple logic.
+
+```{r}
+ipeds <- ipeds %>% 
+    filter(avg_salary > 1)
+```
+
+#### **👉 Your Turn** **⤵**
+
+Let's try to create that plot again - copy your code from above here:
+
+```{r}
+
+```
+That's better! Add a note on what this graph might mean below:
+
+- YOUR RESPONSE HERE
+
+We're now ready to proceed to the five machine learning (modeling) steps!
 
 ## 4. MODEL
 
@@ -216,7 +266,11 @@ In this step, we will dive into the SML modeling process in much more depth than
 
 ### Step 1. Split data
 
-The authors of Data Science in Education Using R (Estrellado et al.,2020) remind us that:
+We didn't split the data we used in the first module. Instead, we used data to _train_ our model, and then we used the same data set to evaluate _how good our model performed_, i.e., to _test_ our model. This raises an issue: using the same data to train and test our model can lead to something called overfitting, which is when a model learns the specifics in the training data rather than the underlying pattern. 
+
+This is related to the bias-variance trade off introduced in the conceptual overview: by using the same data to train and test our model, we run the risk of developing a model with low bias, but high variance. Any changes in the training data could result in a very different model (with far higher bias), which is not ideal. In other words, we want to develop a model that is generalizable to new data, not just the data we used to train it.
+
+The authors of Data Science in Education Using R (Estrellado et al., 2020) remind us that:
 
 > At its core, machine learning is the process of "showing" your statistical model only some of the data at once and training the model to predict accurately on that training dataset (this is the "learning" part of machine learning). Then, the model as developed on the training data is shown new data - data you had all along, but hid from your computer initially - and you see how well the model that you developed on the training data performs on this new testing data. Eventually, you might use the model on entirely new data.
 
@@ -228,7 +282,7 @@ It is therefore common when beginning a modeling project to [separate the data s
 
 -   The *test set* is held in reserve until the end of the project, at which point there should only be one or two models under serious consideration. It is used as an unbiased source for measuring final model performance.
 
-There are different ways to create these partitions of the data and there is no uniform guideline for determining how much data should be set aside for testing. The proportion of data can be driven by many factors, including the size of the original pool of samples and the total number of predictors. 
+There are different ways to create these partitions of the data and there is no uniform guideline for determining how much data should be set aside for testing. The proportion of data can be driven by many factors, including the size of the original pool of samples and the total number of predictors.
 
 After you decide how much to set aside, the most common approach for actually partitioning your data is to use a random sample. For our purposes, we'll use random sampling to select 20% for the test set and use the remainder for the training set, which are the defaults for the {[rsample](https://tidymodels.github.io/rsample/)} package.
 
@@ -238,14 +292,14 @@ To split our data, we will be using our first {tidymodels} function - `initial_s
 
 The function `initial_split()` function from the {rsample} package takes the original data and saves the information on how to make the partitions. The {rsample} package has two aptly named functions for created a training and testing data set called `training()` and `testing()`, respectively.
 
-We also specify the strata to ensure there is not misbalance in the dependent variable (pass).
+We also specify the strata to ensure there is not misbalance in the dependent variable (good_grad_rate).
 
 Run the following code to split the data:
 
 ```{r}
-set.seed(20230712)
+set.seed(20250712)
 
-train_test_split <- initial_split(students, prop = .80, strata = "pass")
+train_test_split <- initial_split(ipeds, prop = .80, strata = "good_grad_rate")
 
 data_train <- training(train_test_split)
 
@@ -276,27 +330,34 @@ In this section, we introduce another tidymodels package named {[recipes](https:
 
 If you are familiar with R's formula interface, a lot of this might sound familiar and like what a formula already does. Recipes can be used to do many of the same things, but they have a much wider range of possibilities.
 
+We'll dive more into the above steps in later modules, focusing on the formula for our model at this point. So, for now, we'll simply add the features we used in the last module, adding the new feature we created above.
+
 #### **Add a formula**
 
 To get started, let's create a recipe for a simple logistic regression model. Before training the model, we can use a recipe.
 
 The [`recipe()`function](https://recipes.tidymodels.org/reference/recipe.html) as we used it here has two arguments:
 
--   A **formula**. Any variable on the left-hand side of the tilde (`~`) is considered the model outcome (`code`, in our present case). On the right-hand side of the tilde are the predictors. Variables may be listed by name, or you can use the dot (`.`) to indicate all other variables as predictors.
+-   A **formula**. Any variable on the left-hand side of the tilde (`~`) is considered the model outcome (`code`, in our present case). On the right-hand side of the tilde are the predictors. Variables may be listed by name, or you can use the dot (`.`) to indicate all other variables as predictors. This is where we can add functions to automate some of the feature engineering steps (in later modules).
 
 -   The **data**. A recipe is associated with the data set used to create the model. This will typically be the *training* set, so `data = train_data` here. Naming a data set doesn't actually change the data itself; it is only used to catalog the names of the variables and their types, like factors, integers, dates, etc.
 
-Let's create a recipe where we predict `pass` (the outcome variable) on the basis of the `disability` and `imd_band` (predictor) variables. Add these two variables to your recipe, below, replacing \_\_\_ below with that code.
+#### **👉 Your Turn** **⤵**
+
+Let's create a recipe where we predict `good_grad_rate` (the outcome variable) on the basis of several variables:
+
+- `tuition_fees`
+- `avg_salary`
+- `percent_fin_aid`
+- `tuition_to_salary_ratio` (the variable we created based on two of the above variables)
 
 ```{r}
-my_rec <- recipe(pass ~ ___, data = data_train)
 
-my_rec
 ```
 
 ### Step 3: Specify the model and workflow
 
-With tidymodels, we start building a model by specifying the *functional form* of the model that we want using the [{parsnip} package](https://tidymodels.github.io/parsnip/). Since our outcome is binary, the model type we will use is "[logistic regression](https://parsnip.tidymodels.org/reference/logistic_reg.html)." We can declare this with `logistic_reg()` and assign to an object we will later use in our workflow:
+With tidymodels, we start building a model by specifying the *functional form* of the model that we want using the [{parsnip} package](https://tidymodels.github.io/parsnip/). Since our outcome is binary, the model type we will use is "[logistic regression](https://parsnip.tidymodels.org/reference/logistic_reg.html)." We can declare this with `logistic_reg()` and assign to an object we will later use in our workflow:
 
 Run the following code to finish specifying our model:
 
@@ -306,19 +367,21 @@ my_mod <-
     logistic_reg()
 ```
 
-That is pretty underwhelming since, on its own, it doesn't really do much. However, now that the type of model has been specified, a method for *fitting* or training the model can be stated using the **engine**.
+That is pretty underwhelming since, on its own, it doesn't really do much. However, now that the type of model has been specified, a method for *fitting* or training the model can be stated using the **engine**.
 
 #### **Start your engine**
 
 To set the *engine,* let's rewrite the code above and "pipe" in the `set_engine("glm")` function and `set_mode("classification"))` to set the "*mode*" to classification. Note that this could also be changed to regression for a continuous/numeric outcome.
+
+#### **👉 Your Turn** **⤵**
 
 Below, specify a glm engine, and a classification mode, replacing the placeholder text below.
 
 ```{r}
 my_mod <-
     logistic_reg() %>% 
-    set_engine("XXX") %>% # generalized linear model
-    set_mode("YYY") # since we are predicting a dichotomous outcome, specify classification; for a number, specify regression
+    set_engine("ADD YOUR VALUE HERE") %>% # generalized linear model
+    set_mode("ADD YOUR VALUE HERE") # since we are predicting a dichotomous outcome, specify classification; for a number, specify regression
 
 my_mod
 ```
@@ -333,20 +396,12 @@ This is a straightforward approach because different recipes are often needed fo
 
 We'll use the{[workflows](https://workflows.tidymodels.org/)} package from tidymodels to bundle our parsnip model (`lr_mod`) with our first recipe (`lr_recipe_1`).
 
-Add your model and recipe (see their names above), again. replacing the placeholders below.
+Add your model and recipe (see their names above)! Check your code from the last module if you need help.
+
+#### **👉 Your Turn** **⤵**
 
 ```{r}
-my_wf <-
-    workflow() %>% # create a workflow
-    add_model(MODEL) %>% # add the model we wrote above
-    add_recipe(RECIPE) # add our recipe we wrote above
-```
 
-```{r}
-my_wf <-
-    workflow() %>% # create a workflow
-    add_model(my_mod) %>% # add the model we wrote above
-    add_recipe(my_rec) # add our recipe we wrote above
 ```
 
 ### Step 4: Fit model
@@ -358,12 +413,12 @@ Finally, we'll use the `last_fit` function, which is the key here: note that it 
 Here, then, we fit the data *using the training data set* and evaluate its accuracy using the *testing data set* (which is not used to train the model), passing the `my_wf` object as the first argument, and the split as the second.
 
 ```{r}
-final_fit <- last_fit(fitted_model, train_test_split)
+final_fit <- last_fit(my_wf, train_test_split)
 ```
 
 #### **👉 Your Turn** **⤵**
 
-Type `final_fit` below; this is the final, fitted model---one that can be interpreted further in the next step!
+Type the output of the above function (the name you assigned the output to) below; this is the final, fitted model---one that can be interpreted further in the next step!
 
 ```{r}
 
@@ -378,28 +433,23 @@ Importantly, we can *summarize* across all of these codes. One way to do this is
 ```{r}
 final_fit %>% 
     collect_predictions() %>% # see test set predictions
-    select(.pred_class, pass) %>% # just to make the output easier to view 
-    mutate(correct = .pred_class == pass) # create a new variable, correct, telling us when the model was and was not correct
+    select(.pred_class, good_grad_rate) %>% # just to make the output easier to view 
+    mutate(correct = .pred_class == good_grad_rate) # create a new variable, co
 ```
 
 You may notice some of the rows may be missing values. This is because there were some missing values in the `imd_band` variable, and for this machine learning algorithm (the generalized linear model), missing values result in row-wise deletion.
 
 When these are **the same**, the model predicted the code *correctly*; when they aren't the same, the model was incorrect.
 
-How accurate was our predictive model? Consider how well our model would have done by chance alone -- what would the accuracy be in that case (with the model predicting pass one-half of the time)?
+We can also tabulate these using the `tabyl` function:
 
 ```{r}
-students %>% 
-    count(pass)
-
-students %>% 
-    mutate(prediction = sample(c(0, 1), nrow(students), replace = TRUE)) %>% 
-    mutate(correct = if_else(prediction == 1 & pass == 1 |
-                                 prediction == 0 & pass == 0, 1, 0)) %>% 
+final_fit %>% 
+    collect_predictions() %>% # see test set predictions
+    select(.pred_class, good_grad_rate) %>% # just to make the output easier to view 
+    mutate(correct = .pred_class == good_grad_rate) %>%  # create a new variable, co
     tabyl(correct)
 ```
-
-Curiously, randomly picking a 0 (did not pass) or a 1 (passed) will *always* lead to around a 50% accuracy, regardless of how many observations are actually associated with a 0 or a 1.
 
 #### **👉 Your Turn** **⤵**
 
@@ -409,7 +459,7 @@ A short-cut to the above is to simply use the `collect_metrics()` function, taki
 
 ```
 
-Let's step back a bit. How well *could* we do if we include more data? And how *useful* could such a model be in the real world? We'll dive into these questions more over the forthcoming learning labs.
+Let's step back a bit. How well *could* we do if we include more data? And how *useful* could such a model be in the real world? We'll dive into these questions more over the forthcoming modules.
 
 That's it for now; the core parts of machine learning are used in the above steps you took; what we'll do after this leaning lab only adds nuance and complexity to what we've already done.
 

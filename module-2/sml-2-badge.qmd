@@ -13,9 +13,9 @@ theme:
 editor: visual
 ---
 
-The final activity for each learning lab provides space to work with data and to reflect on how the concepts and techniques introduced in each lab might apply to your own research.
+The final activity for eacprovides space to work with data and to reflect on how the concepts and techniques introduced in each lab might apply to your own research.
 
-To earn a badge for each lab, you are required to respond to a set of prompts for two parts:
+To earn a badge for each lab, there are two parts to complete:
 
 -   In Part I, you will extend our model by adding another variable.
 
@@ -97,7 +97,7 @@ Complete the following steps to knit and publish your work:
 
 ### Your Second Machine Learning Badge
 
-Congratulations, you've completed your second badge activity! To receive credit, again, please share the link to published webpage under the next incomplete badge artifact column on the 2023 LASER Scholar Information and Documents spreadsheet: <https://go.ncsu.edu/laser-sheet>. We recommend bookmarking this spreadsheet as we'll be using it throughout the year to keep track of your progress.
+Congratulations, you've completed your second badge activity! To receive credit, again, please share the link to published webpage under the next incomplete badge artifact column on the LASER Scholar Information and Documents spreadsheet: <https://go.ncsu.edu/laser-sheet>. We recommend bookmarking this spreadsheet as we'll be using it throughout the year to keep track of your progress.
 
 Once your instructor has checked your link, you will be provided a physical version of the badge below!
 

@@ -1,5 +1,5 @@
 ---
-title: "Predicting Institutional Graduation Rates Using IPEDS Data"
+title: "Predicting Institutional Graduation Rates Using Testing and Training Data"
 subtitle: "Case Study"
 author: "LASER Institute"
 date: today 
@@ -16,11 +16,7 @@ editor: visual
 
 ## 1. PREPARE
 
-Conceptually, we focus on prediction and how it differs from the goals of description or explanation. We have two readings in Learning Lab 1 that accompany this. The first reading introduced below focuses on this distinction between prediction and description or explanation. It is one of the most widely-read papers in machine learning and articulates how machine learning differs from other kinds of statistical models. Breiman describes the difference in terms of *data modeling* (models for description and explanation) and *algorithmic modeling* (what we call prediction or machine learning models).
-
-#### Research Question
-
-Technically, we'll focus on the core parts of doing a machine learning analysis in R. We'll use the {[tidymodels](https://www.tidymodels.org/)} set of R packages (add-ons) to do so, like in the first module. However, to help anchor our analysis and provide us with some direction, we'll focus on the following research question as we explore this new approach:
+We'll focus on the core parts of doing a machine learning analysis in R, this time bringing into the picture the key concept of training and testing data, which we deliberately omitted from the last case study. We'll use the {[tidymodels](https://www.tidymodels.org/)} set of R packages (add-ons) to do so, like in the first module. However, to help anchor our analysis and provide us with some direction, we'll focus on the following research question as we explore this new approach:
 
 > How well can we predict which institutions have higher graduation rates?
 
