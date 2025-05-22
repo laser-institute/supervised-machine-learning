@@ -23,7 +23,7 @@ pacman::p_load(pacman, knitr, tidyverse, readxl)
 
 # Purpose and Agenda
 
-How do we interpret a machine learning model? What else can we say, besides how accurate a model this? This learning lab is intended to help you to answer these questions by examining output from a classification and a regression model. We again use the OULAD, but add an assessment file.
+How do we interpret a machine learning model? What else can we say, besides how accurate a model this? This module is intended to help you to answer these questions by examining output from a classification and a regression model. We use a large data set, the Open University Learning Analytics Dataset (OULAD).
 
 ::: {.notes}
 The key point to make here is that we will go well beyond the relatiely simplistic "Accuracy" metric, which is used to simply represent the proportion of the predictions that are correct. While useful, there are many other metrics that can give us a better sense of _for which cases_ our SML model is making good predictions (e.g., just the "true" cases in a binary classification model, but not the "false" cases -- or vice versa). You can make the point that this is especially important in our field, as different incorrect predictions may have different stakes (i.e., incorrectly classifying a student as needing additional support may not be directly harmful, but incorrectly predicting that a in fact student cheated may have substantial consequences). Metrics and interpreting them given the specifics of a particular analysis and context can help to avoid these harms, and to build the best performing models possible.
@@ -32,11 +32,12 @@ The key point to make here is that we will go well beyond the relatiely simplist
 ## What we'll do in this presentation
 
 - Discussion 1
-- Key Concept: Accuracy
-- Key Concept: Feature Engineering (part A)
+- Introducing the OULAD
+- Key Concept #1: Accuracy
+- Key Concept #2: Feature Engineering (part A)
+- Key Concept #3: Metrics and their real-world interpretation
 - Discussion 2
-- Introduction to the other parts of this learning lab
-
+- Introduction to the other parts of this module
 
 ::: {.notes}
 Make the point that we will engage _much_ more deeply about feature engineering in the next module; we do this here to start the conversation and to open up some space in the next module for the complexity of cross-validation and a new type of model that we will use --- a random forest.
@@ -62,7 +63,7 @@ Make the point that we will engage _much_ more deeply about feature engineering 
 
 ## Digging Deeper
 
-- After having worked through the first learning lab, have your thoughts on what data you might use for a machine learning study evolved? If so, in what ways? If not, please elaborate on your initial thoughts and plans.
+- After having worked through the first module, have your thoughts on what data you might use for a machine learning study evolved? If so, in what ways? If not, please elaborate on your initial thoughts and plans.
 
 ::: {.notes}
 This can connect back to the purpose at the beginning --- try to elicit ideas that go beyond simple "Accuracy" to other, broader ideas about what makes a model good. These ideas can even extend beyond metrics (e.g., a learner may mention that the data is collected ethically) - these can be rich conversations to have here, but try to focus the conversation back on metrics as a nexus and tool for thinking about what makes an SML model a good one.
@@ -70,11 +71,33 @@ This can connect back to the purpose at the beginning --- try to elicit ideas th
 
 :::
 
+# Introducing the OULAD
+
+## OULAD 
+
+- The Open University Learning Analytics Dataset (OULAD) is a publicly available dataset from the Open University in the UK
+- It contains data on students enrolled in online courses, including their demographics, course interactions, and final grades
+- Many students pass these courses, but not all do
+- We have data on students' initial characteristics and their interactions in the course
+- If we could develop a good prediction model, we could provide additional supports to students--and maybe move the needle on some students succeeding who might not otherwise
+
+## OULAD files
+
+We'll be focusing on three files:
+
+- studentInfo, courses, and studentRegistration
+
+These are joined together (see `oulad.R`) for this module. 
+
+## OULAD data
+
+```{r, message = FALSE, echo=FALSE}
+students <- read_csv("data/oulad-students.csv")
+students %>% head(3)
+```
+
 # Key Concept #1 
 
-## Accuracy
-
-::: {.panel-tabset}
 ## Accuracy
 
 Let's start with accuracy and a simple confusion matrix; what is the **Accuracy**?
@@ -104,9 +127,56 @@ data_for_conf_mat %>%
     tabyl(correct)
 ```
 
+
+## The limitation of accuracy
+
+```{r, echo=FALSE, fig.align="center", message=FALSE, warning=FALSE}
+# Create sample data
+set.seed(123)
+model_a <- data.frame(
+  actual = c(rep("Good", 85), rep("Poor", 15)),
+  predicted = c(rep("Good", 70), rep("Poor", 15), rep("Good", 5), rep("Poor", 10))
+)
+
+model_b <- data.frame(
+  actual = c(rep("Good", 15), rep("Poor", 85)),
+  predicted = c(rep("Good", 10), rep("Poor", 5), rep("Good", 25), rep("Poor", 60))
+)
+
+# Calculate accuracy
+accuracy_a <- sum(model_a$actual == model_a$predicted) / nrow(model_a)
+accuracy_b <- sum(model_b$actual == model_b$predicted) / nrow(model_b)
+
+# Display accuracies
+results <- data.frame(
+  Model = c("Model A", "Model B"),
+  Accuracy = c(accuracy_a, accuracy_b),
+  Class_Distribution = c("85% Good, 15% Poor", "15% Good, 85% Poor")
+)
+
+knitr::kable(results, digits = 2)
+```
+
+**Both models have 80% accuracy, but are they equally good?**
+
+## Beyond accuracy: The need for nuance
+
+- **Accuracy is insufficient when:**
+  - Class distributions are imbalanced
+  - Different types of errors have different consequences
+  - You need to tune your model for specific objectives
+
+- **Example from OULAD data:**
+  - What if only 20% of students pass a class?
+  - A model that always predicts "not pass" would have 80% accuracy, but is useless for identifying successful students
+
+- **We need metrics that tell us:**
+  - How well we identify positive cases (pass) and negative cases (fail)
+  - How reliable our positive and negative predictions are
+
 ## Confusion Matrix
 
-Now, let's create a confusion matrix based on this data:
+Now, let's create a confusion matrix based on this data - this lets us dive deeper into how good our models' predictions are:
 
 ```{r}
 #| echo: true
@@ -145,8 +215,6 @@ This and the next slide can take awhile to work through --- it may be helpful to
 Please note that Precision goes by the name Positive Predictive Value, whereas Negative Predictive Value does not have another commonly used name.
 :::
 
-:::
-
 
 ## AUC-ROC
 
@@ -159,7 +227,6 @@ Please note that Precision goes by the name Positive Predictive Value, whereas N
 
 ## Feature Engineering (Part A)
 
-::: {.panel-tabset}
 ## Why?
 
 Let's consider a very simple data set, `d`, one with _time_point_ data, `var_a`, for a single student. *How do we add this to our model?* Focus on the time element; how could you account for this?
@@ -230,12 +297,305 @@ Sys.time()
     - `step_date()`
     - `step_holiday()`
 
-:::
-
 
 ::: {.notes}
 Emphasize this very brief introduction is to just begin to explore these topics (that we'll explore in more depth in the next module), and to make our more sophisticated modeling possible
 :::
+
+
+# Key Concept #3: Metrics and their real-world interpretation
+
+## From confusion matrix to metrics
+
+```{r, echo=FALSE, fig.align="center", message=FALSE}
+# Create metrics data
+metrics <- data.frame(
+  Metric = c("Accuracy", "Sensitivity/Recall", "Specificity", "Precision/PPV", "NPV", "F1 Score"),
+  Formula = c("(TP + TN) / (TP + TN + FP + FN)", 
+              "TP / (TP + FN)", 
+              "TN / (TN + FP)", 
+              "TP / (TP + FP)",
+              "TN / (TN + FN)",
+              "2 * (Precision * Recall) / (Precision + Recall)"),
+  Question = c("Overall, how often is the model correct?",
+               "When an institution actually has good graduation rates, how often does the model predict this?",
+               "When an institution actually has poor graduation rates, how often does the model predict this?",
+               "When the model predicts good graduation rates, how often is it correct?",
+               "When the model predicts poor graduation rates, how often is it correct?",
+               "What is the harmonic mean of precision and recall?"),
+  Value = c("80%", "80%", "80%", "71%", "87%", "75%")
+)
+
+knitr::kable(metrics)
+```
+
+## Sensitivity vs. Specificity
+
+```{r, echo=FALSE, fig.width=10, fig.height=6, fig.align="center"}
+# Create data for visualization
+sensitivity_data <- data.frame(
+  Category = c(rep("Actual: Good", 150)),
+  Prediction = c(rep("True Positive", 120), rep("False Negative", 30)),
+  Type = c(rep("Correct", 120), rep("Missed", 30))
+)
+
+specificity_data <- data.frame(
+  Category = c(rep("Actual: Poor", 250)),
+  Prediction = c(rep("True Negative", 200), rep("False Positive", 50)),
+  Type = c(rep("Correct", 200), rep("Missed", 50))
+)
+
+# Create the sensitivity plot
+p1 <- ggplot(sensitivity_data, aes(x=Category, fill=Type)) +
+  geom_bar() +
+  scale_fill_manual(values=c("Correct"="#7DCEA0", "Missed"="#F1948A")) +
+  theme_minimal(base_size=14) +
+  labs(title="Sensitivity: 80%",
+       subtitle="Among institutions with good graduation rates,\nhow many did we correctly identify?",
+       y="Count") +
+  theme(legend.position="bottom",
+        plot.title=element_text(hjust=0.5, size=16, face="bold"),
+        plot.subtitle=element_text(hjust=0.5))
+
+# Create the specificity plot
+p2 <- ggplot(specificity_data, aes(x=Category, fill=Type)) +
+  geom_bar() +
+  scale_fill_manual(values=c("Correct"="#7DCEA0", "Missed"="#F1948A")) +
+  theme_minimal(base_size=14) +
+  labs(title="Specificity: 80%",
+       subtitle="Among institutions with poor graduation rates,\nhow many did we correctly identify?",
+       y="Count") +
+  theme(legend.position="bottom",
+        plot.title=element_text(hjust=0.5, size=16, face="bold"),
+        plot.subtitle=element_text(hjust=0.5))
+
+# Display plots side by side
+gridExtra::grid.arrange(p1, p2, ncol=2)
+```
+
+## Precision vs. Recall (Sensitivity)
+
+```{r, echo=FALSE, fig.width=10, fig.height=6, fig.align="center"}
+# Create data for visualization
+precision_data <- data.frame(
+  Category = c(rep("Predicted: Good", 170)),
+  Actual = c(rep("True Positive", 120), rep("False Positive", 50)),
+  Type = c(rep("Correct", 120), rep("Incorrect", 50))
+)
+
+recall_data <- sensitivity_data
+recall_data$Type <- ifelse(recall_data$Type == "Missed", "Incorrect", recall_data$Type)
+
+# Create the precision plot
+p1 <- ggplot(precision_data, aes(x=Category, fill=Type)) +
+  geom_bar() +
+  scale_fill_manual(values=c("Correct"="#7DCEA0", "Incorrect"="#F1948A")) +
+  theme_minimal(base_size=14) +
+  labs(title="Precision (PPV): 71%",
+       subtitle="When we predict good graduation rates,\nhow often are we correct?",
+       y="Count") +
+  theme(legend.position="bottom",
+        plot.title=element_text(hjust=0.5, size=16, face="bold"),
+        plot.subtitle=element_text(hjust=0.5))
+
+# Create the recall plot
+p2 <- ggplot(recall_data, aes(x=Category, fill=Type)) +
+  geom_bar() +
+  scale_fill_manual(values=c("Correct"="#7DCEA0", "Incorrect"="#F1948A")) +
+  theme_minimal(base_size=14) +
+  labs(title="Recall (Sensitivity): 80%",
+       subtitle="Among institutions with good graduation rates,\nhow many did we correctly identify?",
+       y="Count") +
+  theme(legend.position="bottom",
+        plot.title=element_text(hjust=0.5, size=16, face="bold"),
+        plot.subtitle=element_text(hjust=0.5))
+
+# Display plots side by side
+gridExtra::grid.arrange(p1, p2, ncol=2)
+```
+
+## Metrics in Context: What Matters for OULAD?
+
+When using the Open University Learning Analytics Dataset (OULAD) to build models that predict student outcomes at the module level (e.g., pass, fail, or withdrawal), the choice of which performance metrics to prioritize depends heavily on the specific goals of your analysis and the interventions or actions that will follow.
+
+## **High Precision (Positive Predictive Value - PPV)**
+
+Is crucial if:
+    * You aim to reliably identify students who are **genuinely at high risk of failing or withdrawing**, and interventions are costly or intensive. The focus is on minimizing false positives (wrongly labeling a student as at-risk when they are not).
+    * You are allocating limited, high-impact support resources (e.g., one-on-one tutoring, intensive counseling) and want to ensure they reach students who truly need them.
+    * The "cost" of a false positive is high (e.g., causing unnecessary anxiety for a student flagged as at-risk, or misdirecting scarce resources).
+
+## **High Recall (Sensitivity)**
+
+Is crucial if:
+    * Your primary goal is to **identify as many students at risk of failing or withdrawing as possible**, even if it means some students who would have ultimately passed are also flagged. The focus is on minimizing false negatives (failing to identify a student who will struggle).
+    * You are implementing broad, lower-cost interventions (e.g., sending encouraging emails, pointing to general study resources, offering optional workshops) where wider reach is beneficial.
+    * The "cost" of a false negative is high (e.g., missing the opportunity to support a student who subsequently fails or withdraws).
+
+## **High Specificity**
+
+Is crucial if:
+
+    * You want to accurately identify students who are **not at risk** and are likely to pass or achieve distinction, perhaps to study their successful learning patterns or to avoid unnecessary interventions.
+    * You are trying to minimize the number of students incorrectly flagged for intervention who would have succeeded on their own (reducing "false alarms" for students not needing support).
+    * Resources for "non-intervention" or "positive pathway" studies are limited, and you need to be sure you are focusing on genuinely low-risk students.
+:::
+
+## In Essence for OULAD:
+
+-   Prioritize **Precision** when targeted, resource-intensive interventions for at-risk students are planned.
+-   Prioritize **Recall** when broad, less costly interventions are available, and the main aim is to catch every potentially struggling student.
+-   Prioritize **Specificity** when the goal is to correctly identify students *not* needing intervention, or to study successful student cohorts with high confidence.
+
+## The precision-recall tradeoff
+
+```{r, echo=FALSE, fig.width=10, fig.height=6, fig.align="center", message=FALSE, warning=FALSE}
+# Create data for ROC curve
+set.seed(123)
+n <- 500
+true_prob <- c(rbeta(n/2, 2, 5), rbeta(n/2, 5, 2))
+actual <- ifelse(true_prob > 0.5, 1, 0)
+noise <- rnorm(n, 0, 0.2)
+pred_prob <- pmin(pmax(true_prob + noise, 0), 1)
+
+results <- data.frame(actual = factor(actual), 
+                     pred_prob = pred_prob)
+
+# Calculate metrics at different thresholds
+thresholds <- seq(0.1, 0.9, by=0.1)
+pr_data <- data.frame()
+
+for(t in thresholds) {
+  results$predicted <- factor(ifelse(results$pred_prob > t, 1, 0))
+  
+  # Calculate confusion matrix values
+  cm <- table(predicted = results$predicted, actual = results$actual)
+  if(nrow(cm) < 2 || ncol(cm) < 2) next
+  
+  TP <- cm[2,2]
+  FP <- cm[2,1]
+  FN <- cm[1,2]
+  TN <- cm[1,1]
+  
+  # Calculate metrics
+  precision <- TP / (TP + FP)
+  recall <- TP / (TP + FN)
+  
+  pr_data <- rbind(pr_data, data.frame(
+    threshold = t,
+    precision = precision,
+    recall = recall
+  ))
+}
+
+# Create precision-recall curve
+ggplot(pr_data, aes(x=recall, y=precision)) +
+  geom_line(size=1.5, color="#3498DB") +
+  geom_point(aes(color=threshold), size=4) +
+  scale_color_viridis_c() +
+  theme_minimal(base_size=14) +
+  labs(title="Precision-Recall Tradeoff",
+       x="Recall (Sensitivity)",
+       y="Precision",
+       color="Threshold") +
+  theme(plot.title=element_text(hjust=0.5, size=18, face="bold"),
+        legend.position="right") +
+  annotate("text", x=0.7, y=0.65, 
+           label="Each point represents a different\nclassification threshold", 
+           size=5, hjust=0) +
+  annotate("segment", x=0.67, y=0.65, xend=0.62, yend=0.7, 
+           arrow=arrow(length=unit(0.3,"cm")), size=1)
+```
+
+## The ROC curve and AUC
+
+```{r, echo=FALSE, fig.width=10, fig.height=6, fig.align="center", message=FALSE, warning=FALSE}
+# Calculate metrics for ROC curve
+roc_data <- data.frame()
+
+for(t in seq(0, 1, by=0.01)) {
+  results$predicted <- factor(ifelse(results$pred_prob > t, 1, 0))
+  
+  # Calculate confusion matrix values
+  cm <- table(predicted = results$predicted, actual = results$actual)
+  if(nrow(cm) < 2 || ncol(cm) < 2) {
+    # Handle edge cases where the confusion matrix doesn't have all cells
+    if(t <= 0.01) {
+      tpr <- 1
+      fpr <- 1
+    } else {
+      tpr <- 0
+      fpr <- 0
+    }
+  } else {
+    TP <- cm[2,2]
+    FP <- cm[2,1]
+    FN <- cm[1,2]
+    TN <- cm[1,1]
+    
+    # Calculate metrics
+    tpr <- TP / (TP + FN)  # True Positive Rate (Sensitivity)
+    fpr <- FP / (FP + TN)  # False Positive Rate (1-Specificity)
+  }
+  
+  roc_data <- rbind(roc_data, data.frame(
+    threshold = t,
+    tpr = tpr,
+    fpr = fpr
+  ))
+}
+
+# Calculate AUC using trapezoidal rule
+roc_data <- roc_data[order(roc_data$fpr), ]
+auc_value <- 0
+for(i in 2:nrow(roc_data)) {
+  auc_value <- auc_value + (roc_data$fpr[i] - roc_data$fpr[i-1]) * (roc_data$tpr[i] + roc_data$tpr[i-1]) / 2
+}
+
+# Create ROC curve
+ggplot(roc_data, aes(x=fpr, y=tpr)) +
+  geom_abline(intercept=0, slope=1, linetype="dashed", color="gray50") +
+  geom_line(size=1.5, color="#E74C3C") +
+  geom_point(data=roc_data[seq(1, nrow(roc_data), 10), ], aes(color=threshold), size=3) +
+  scale_color_viridis_c() +
+  theme_minimal(base_size=14) +
+  labs(title=paste("ROC Curve (AUC =", round(auc_value, 2), ")"),
+       x="False Positive Rate (1-Specificity)",
+       y="True Positive Rate (Sensitivity)",
+       color="Threshold") +
+  theme(plot.title=element_text(hjust=0.5, size=18, face="bold"),
+        legend.position="right") +
+  annotate("text", x=0.75, y=0.25, 
+           label="Diagonal line represents\na random classifier (AUC = 0.5)", 
+           size=5, hjust=0) +
+  annotate("text", x=0.25, y=0.75, 
+           label="Better models push toward\nthe upper-left corner", 
+           size=5, hjust=0) +
+  annotate("segment", x=0.25, y=0.73, xend=0.15, yend=0.85, 
+           arrow=arrow(length=unit(0.3,"cm")), size=1)
+```
+
+## Choosing the right classification threshold
+
+The choice of threshold depends on your specific needs and priorities:
+
+::: {.incremental}
+- **Default threshold (0.5)**: Balanced, but often not optimal
+  
+- **Lower threshold**: Increases sensitivity, decreases specificity
+  - *Pro*: Identifies more institutions with good graduation rates
+  - *Con*: More false positives (incorrectly labeled as good)
+  
+- **Higher threshold**: Increases specificity, decreases sensitivity
+  - *Pro*: More confident in positive predictions (high precision)
+  - *Con*: Misses more institutions with good graduation rates
+  
+- **Optimal threshold depends on:**
+  - The relative costs of false positives vs. false negatives
+  - Available resources for intervention
+  - Stakeholder priorities
+:::
+
 
 # Discussion 2
 
@@ -250,7 +610,7 @@ Emphasize this very brief introduction is to just begin to explore these topics 
 
 :::
 
-# Introduction to the other parts of this learning lab
+# Introduction to the other parts of this module
 
 ::: {.panel-tabset}
 ## Readings
