@@ -55,7 +55,6 @@ A point of emphasis now is that this lab is similar in its use of OULAD data, bu
 
 ## Feature Engineering (Part B)
 
-::: panel-tabset
 ## How?
 
 -   Well, what if we just add the values for these variables directly
@@ -73,13 +72,11 @@ A point of emphasis now is that this lab is similar in its use of OULAD data, bu
 -   Extract particular elements (i.e., particular *days* or *times*) from time-related data
 -   Categorical variables: Dummy coding, combining categories
 -   Numeric variables: Normalizing ("standardizing")
-:::
 
 # Key Concept \# 2
 
 ## Resampling and cross-validation
 
-::: panel-tabset
 ## Training data
 
 -   In earlier modules, we fit and interpreted a single *fit of our model* (80% training, 20% testing). What if we decided to *add new features* or *change existing features*?
@@ -207,7 +204,6 @@ As you can imagine, with many variables, these trees can become very complex
 -   By focusing on correcting mistakes and optimizing the model iteratively, boosted trees can achieve better performance compared to random forests
 
 -   Boosted trees offer more hyperparameters to fine-tune, such as learning rate and tree depth --- which can be challenging
-:::
 
 # Discussion 2
 
