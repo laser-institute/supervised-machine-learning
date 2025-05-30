@@ -24,7 +24,7 @@ pacman::p_load(pacman, knitr, tidyverse, readxl)
 
 # Purpose and Agenda
 
-Having fit and interpreted our machine learning model, how do we make our model better? That's the focus of this learning lab. There are three core ideas, pertaining to feature engineering, resampling, and the random forest algorithm. We again use the OULAD data.
+Having fit and interpreted our machine learning model, how do we make our model better? That's the focus of this module. There are three core ideas, pertaining to feature engineering, resampling, and the random forest algorithm. We again use the OULAD data.
 
 ::: notes
 A point of emphasis now is that this lab is similar in its use of OULAD data, but different in key ways --- namely, the use of cross-validation and a different algorithm, or model, the Random Forest. Plus, we do more with feature engineering! The Random Forest is considerably more complex than the logistic regression model we have been using, and the change to this model and the other additions make this a conceptually complex module. Still, in principle, the process is the same one we have followed throughout these modules. Get ready!
@@ -37,7 +37,7 @@ A point of emphasis now is that this lab is similar in its use of OULAD data, bu
 -   Key Concept: Resampling and cross-validation
 -   Key Concept: The Random Forest algorithm
 -   Discussion 2
--   Introduction to the other parts of this learning lab
+-   Introduction to the other parts of this module
 
 # Discussion 1
 
@@ -49,33 +49,203 @@ A point of emphasis now is that this lab is similar in its use of OULAD data, bu
 ## Conceptual Overview
 
 -   How good is a good enough model *for which metrics*?
+
+::: notes
+This is a refresher from the last module.
 :::
 
-# Key Concept #1
+:::
 
-## Feature Engineering (Part B)
+# Key Concept #2: Feature Engineering (Part B)
+
+::: {.notes}
+Here, we build on the feature engineering we started in the last module.
+:::
 
 ## How?
 
--   Well, what if we just add the values for these variables directly
--   But, that ignores that they are at different time points
-    -   We could include the time point variable, but that is (about) the same for every student
--   OULAD interaction data is this way: the number of *clicks* per day
--   This data is sometimes called *log-trace* or *clickstream* data
--   In this module, we focus on using [OULAD data](https://analyse.kmi.open.ac.uk/open_dataset) on interactions data, the most fine-grained data\*\*
+- Well, what if we just add the values for these variables directly
+- But, that ignores that they are at different time points
+  - We could include the time point variable, but that is (about) the same for every student
+- OULAD interaction data is this way: the number of *clicks* per day
+- This data is sometimes called *log-trace* or *clickstream* data
+- In this module, we focus on using [OULAD data](https://analyse.kmi.open.ac.uk/open_dataset) on interactions data, the most fine-grained data
 
 ## More Techniques
 
--   Removing those with "near-zero variance"
--   Removing ID variables and others that *should not be* informative
--   Imputing missing values
--   Extract particular elements (i.e., particular *days* or *times*) from time-related data
--   Categorical variables: Dummy coding, combining categories
--   Numeric variables: Normalizing ("standardizing")
+- Removing those with "near-zero variance"
+- Removing ID variables and others that *should not be* informative
+- Imputing missing values
+- Extract particular elements (i.e., particular *days* or *times*) from time-related data
+- Categorical variables: Dummy coding, combining categories
+- Numeric variables: Normalizing ("standardizing")
 
-# Key Concept \# 2
+## Creating Features from Time Series Data
 
-## Resampling and cross-validation
+**Example: Student click data over time**
+
+```{r}
+#| echo: true
+# Sample clickstream data for one student
+clicks_data <- tibble(
+  student_id = "student_001",
+  day = 1:30,
+  clicks = c(12, 15, 8, 22, 18, 5, 0, 25, 30, 28, 
+             20, 15, 10, 35, 40, 18, 12, 8, 45, 50,
+             22, 18, 15, 38, 42, 25, 20, 15, 48, 55)
+)
+
+# Create summary features
+student_features <- clicks_data %>%
+  summarize(
+    total_clicks = sum(clicks),
+    mean_clicks = mean(clicks),
+    max_clicks = max(clicks),
+    sd_clicks = sd(clicks),
+    days_active = sum(clicks > 0),
+    early_activity = mean(clicks[1:10]),  # First 10 days
+    late_activity = mean(clicks[21:30])   # Last 10 days
+  )
+
+student_features
+```
+
+## Recipe-Based Feature Engineering
+
+**Using {recipes} for systematic feature engineering**
+
+```{r}
+#| echo: true
+library(tidymodels)
+
+# Create simulated OULAD-style data
+set.seed(123)
+simulated_oulad <- tibble(
+  id_student = paste0("S", 1:500),
+  code_module = sample(c("AAA", "BBB", "CCC"), 500, replace = TRUE),
+  code_presentation = sample(c("2023J", "2023B"), 500, replace = TRUE),
+  gender = sample(c("M", "F"), 500, replace = TRUE),
+  region = sample(c("North", "South", "East", "West"), 500, replace = TRUE),
+  age_band = sample(c("0-35", "35-55", "55<="), 500, replace = TRUE),
+  num_of_prev_attempts = sample(0:3, 500, replace = TRUE),
+  total_clicks = rpois(500, 150),
+  assessment_score = rnorm(500, 65, 15),
+  final_result = sample(c("Pass", "Fail", "Withdrawn"), 500, 
+                       replace = TRUE, prob = c(0.6, 0.25, 0.15))
+)
+
+# Create a recipe for feature engineering
+feature_recipe <- recipe(final_result ~ ., data = simulated_oulad) %>%
+  # Remove ID variables that shouldn't be predictive
+  step_rm(id_student, code_module, code_presentation) %>%
+  
+  # Handle missing values
+  step_impute_median(all_numeric_predictors()) %>%
+  step_impute_mode(all_nominal_predictors()) %>%
+  
+  # Create dummy variables for categorical predictors
+  step_dummy(all_nominal_predictors()) %>%
+  
+  # Remove near-zero variance predictors
+  step_nzv(all_predictors()) %>%
+  
+  # Normalize numeric predictors
+  step_normalize(all_numeric_predictors())
+
+# Prep and view the recipe
+prepped_recipe <- prep(feature_recipe)
+prepped_recipe
+```
+
+## Advanced Time-Based Features
+
+**Extracting temporal patterns from timestamps**
+
+```{r}
+#| echo: true
+# Sample data with timestamps
+time_data <- tibble(
+  student_id = rep("student_001", 100),
+  timestamp = seq(from = as_datetime("2023-09-01 08:00:00"), 
+                  by = "2 hours", length.out = 100),
+  activity_type = sample(c("forum", "quiz", "resource"), 100, replace = TRUE)
+)
+
+# Recipe for time-based feature engineering
+time_recipe <- recipe(~ ., data = time_data) %>%
+  # Extract date components
+  step_date(timestamp, features = c("dow", "month", "decimal")) %>%
+  
+  # Extract time components (hour of day)
+  step_time(timestamp, features = c("hour")) %>%
+  
+  # Create holiday indicators (if relevant)
+  step_holiday(timestamp, holidays = timeDate::listHolidays("US")) %>%
+  
+  # Remove original timestamp
+  step_rm(timestamp)
+
+# Prep and bake to see results
+time_features <- time_recipe %>%
+  prep() %>%
+  bake(new_data = time_data)
+
+# Show first 5 rows
+time_features %>% head(5)
+```
+
+## Putting It All Together: OULAD Feature Pipeline
+
+**Complete feature engineering workflow**
+
+```{r}
+#| echo: true
+# Split our simulated data for training
+oulad_split <- initial_split(simulated_oulad, prop = 0.8, strata = final_result)
+oulad_training <- training(oulad_split)
+oulad_testing <- testing(oulad_split)
+
+# Comprehensive OULAD feature engineering recipe
+oulad_recipe <- recipe(final_result ~ ., data = oulad_training) %>%
+  
+  # Remove non-predictive variables
+  step_rm(id_student, code_module, code_presentation) %>%
+  
+  # Handle missing values
+  step_impute_median(all_numeric_predictors()) %>%
+  step_impute_mode(all_nominal_predictors()) %>%
+  
+  # Create interaction features (if relevant)
+  step_interact(terms = ~ gender:age_band) %>%
+  
+  # Handle categorical variables
+  step_dummy(all_nominal_predictors(), one_hot = FALSE) %>%
+  
+  # Feature selection and preprocessing
+  step_nzv(all_predictors()) %>%
+  step_corr(all_numeric_predictors(), threshold = 0.9) %>%
+  
+  # Final standardization
+  step_normalize(all_numeric_predictors())
+
+# Create workflow combining recipe and model
+oulad_workflow <- workflow() %>%
+  add_recipe(oulad_recipe) %>%
+  add_model(multinom_reg() %>% set_engine("nnet"))
+
+# Fit the workflow
+oulad_fit <- fit(oulad_workflow, data = oulad_training)
+```
+
+::: {.notes}
+Emphasize that feature engineering is often iterative - you create features, evaluate model performance, and refine based on what you learn. The recipe approach makes this process reproducible and systematic.
+:::
+
+# Key Concept \# 2: Resampling and cross-validation
+
+::: notes
+Here, we go deeper into how we "use" our training data repeatedly - using resampling and cross-validation.
+:::
 
 ## Training data
 
@@ -141,13 +311,9 @@ test <- d[91:100, ]
 -   A *historically common value* for *k* has been 10
 -   But, as computers have grown in processing power, setting *k* equal to the number of rows in the data has become more common
     -   Though, again, LOOCV (*k* = to the number or rows) is typically not recommended, as it can take considerable time and may have some undesired statistical properties
-:::
 
-# Key Concept #3
+# Key Concept #3: Random Forests
 
-## Random Forests
-
-::: panel-tabset
 ## Background
 
 -   *Random forests* are extensions of classification trees
@@ -226,13 +392,13 @@ As you can imagine, with many variables, these trees can become very complex
 
 > Bosch, N. (2021). AutoML feature engineering for student modeling yields high accuracy, but limited interpretability. Journal of Educational Data Mining, 13(2), 55-79.
 
-> Rodriguez, F., Lee, H. R., Rutherford, T., Fischer, C., Potma, E., & Warschauer, M. (2021, April). Using clickstream data mining techniques to understand and support first-generation college students in an online chemistry course. In LAK21: 11th International Learning Analytics and Knowledge Conference (pp. 313-322).
+> Rodriguez, F., Lee, H. R., Rutherford, T., Fischer, C., Potma, E., & Warschauer, M. (2021, April). Using clickstream data mining techniques to understand and support first-generation college students in an online chemistry course. 11th International Learning Analytics and Knowledge Conference (pp. 313-322).
 
 ## Case Study
 
 -   Using (filtered) interaction data (whole data [here](https://analyse.kmi.open.ac.uk/open_dataset))
 -   Adding features related to *activity type*
--   Once again interpreting the change in our predictions (a bit more on the bias-variance trade-off [here](https://jrosen48.github.io/ML-in-Science-Education-Workshop-Materials/#23)) (through slide 30)
+-   Once again interpreting the change in our predictions
 
 ## Badge
 
