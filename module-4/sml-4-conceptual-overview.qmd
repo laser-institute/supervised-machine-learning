@@ -33,9 +33,9 @@ A point of emphasis now is that this lab is similar in its use of OULAD data, bu
 ## What we'll do in this presentation
 
 -   Discussion 1
--   Key Concept: Feature Engineering (Part B)
--   Key Concept: Resampling and cross-validation
--   Key Concept: The Random Forest algorithm
+-   Key Concept #1: Feature Engineering (Part B)
+-   Key Concept #2: Resampling and cross-validation
+-   Key Concept #3: Random Forest and Boosting
 -   Discussion 2
 -   Introduction to the other parts of this module
 
@@ -312,7 +312,7 @@ test <- d[91:100, ]
 -   But, as computers have grown in processing power, setting *k* equal to the number of rows in the data has become more common
     -   Though, again, LOOCV (*k* = to the number or rows) is typically not recommended, as it can take considerable time and may have some undesired statistical properties
 
-# Key Concept #3: Random Forests
+# Key Concept #3: Random Forest and Boosting
 
 ## Background
 
@@ -352,7 +352,15 @@ As you can imagine, with many variables, these trees can become very complex
     -   the minimum number of data points required to execute a split into branches (`min_n`)
     -   the number of trees estimated as a part of the "forest" (`trees`)
 -   These tuning parameters, broadly, balance predictive performance with the training data with how well the model will perform on new data
--   A boosted tree may achieve ev
+-   A boosted tree may achieve even better performance
+
+## Tuning starting points
+
+| Tuning knob | What it controls | Typical starting point |
+|-------------|------------------|------------------------|
+| `trees` | How many trees to grow (more = lower variance) | 500–1,000 |
+| `mtry`  | How many predictors each split can peek at | √ p (classification) or p/3 (regression) |
+| `min_n` | Smallest allowed group size to keep splitting | 1–10 |
 
 ## Key Points
 
@@ -362,14 +370,46 @@ As you can imagine, with many variables, these trees can become very complex
 -   Each tree is independent of every other tree\
 -   For classification ML, the final output is the category/group/class selected by individual trees
 -   For regression ML, the mean or average prediction of the individual trees is returned
+- Works well “out of the box,” handles quirky patterns, and is hard to over‑fit when you grow enough trees.
 
-## Boosting
+## What Makes Boosting Different?
+- Instead of *independent* trees, boosting builds trees **one‑after‑another**.  
+- Each new tree focuses on the records the previous trees got wrong—like a tutor giving extra help where you struggled.  
+- When done carefully (small steps, many trees) the model can become very accurate.
 
--   Boosted trees, like those created using the xgboost package (**engine**), sequentially build trees where each new tree attempts to correct the errors made by the previous ones
+## Boosting in Four Plain Steps
+1. **Start simple:** Make a tiny tree (a “stump”) that gives rough predictions.  
+2. **Check mistakes:** See which cases were predicted poorly.  
+3. **New tree, new focus:** Build another small tree that tries to fix those mistakes.  
+4. **Repeat & combine:** Add hundreds or thousands of these small‑step improvements.  
+   - A *learning rate* decides how big each correction is (small rate = safer, needs more trees).
 
--   By focusing on correcting mistakes and optimizing the model iteratively, boosted trees can achieve better performance compared to random forests
+## Common XGBoost Settings to Try
+| Parameter | Meaning | Safe first guess |
+|-----------|---------|------------------|
+| `trees` / `n_estimators` | How many rounds of boosting | 300–1000 |
+| `learn_rate`             | How big each correction step is | 0.05 |
+| `max_depth`              | Depth of each small tree        | 3–6 |
+| `subsample`              | Fraction of rows used per tree  | 0.7–1.0 |
+| `colsample_bytree`       | Fraction of columns (predictors) per tree | 0.7–1.0 |
 
--   Boosted trees offer more hyperparameters to fine-tune, such as learning rate and tree depth --- which can be challenging
+> **Rule of thumb:** Lower `learn_rate` → use more trees; higher `learn_rate` → fewer trees (riskier).
+
+## Random Forest vs. Boosted Trees
+
+| Question | Random Forest | Boosted Trees |
+|----------|---------------|---------------|
+| **Speed to get a decent model** | Very quick | Slower (needs tuning) |
+| **Risk of over‑fitting** | Low | Medium–high if you crank settings |
+| **Best raw accuracy** | Strong baseline | Often wins once tuned |
+| **Parallel training** | Easy (trees independent) | Harder (sequence) |
+| **When to pick** | Need robust, “just work” model | Willing to tune for top performance |
+
+## Take‑Home Messages
+- **Random forests** fight over‑fit by averaging many diverse trees.  
+- **Boosted trees** fight errors by *learning from them* in a smart sequence.  
+- Both models need cross‑validation, but boosting needs more patience with hyper‑parameter tuning.  
+- Start with a random forest as a baseline; move to boosting if you need extra accuracy and can spend some tuning time.
 
 # Discussion 2
 
