@@ -1,6 +1,6 @@
 ---
-title: 'Modeling Interactions Data with Boosted Trees'
-subtitle: "Case Study"
+title: 'Modeling Interactions Data with Random Forests'
+subtitle: "Case Study Key"
 author: "LASER Institute"
 date: today 
 format:
@@ -23,23 +23,21 @@ knitr::opts_chunk$set(echo = TRUE, eval = TRUE)
 
 ## 1. PREPARE
 
-After interpreting our last model, it is easy to think we can do a little better. But, how? In this module, we attempt to improve our predictive performance by **switching from a random‑forest model to a boosted‑tree model (using *xgboost*)** and by carrying out some targeted feature engineering.
-
-Boosted trees (gradient boosting) build a *sequence* of small trees, each one focusing on the records the previous trees struggled with. When tuned carefully (small learning rate, many trees) the ensemble can outperform bagged methods such as random forests.
+After interpreting our last model, it is easy to think we can do a little better. But, how? In this module, we will answer this question will building a better model.
 
 Feature engineering is a rich topic in machine learning research, including in the learning analytics and educational data mining communities.
 
-Consider research on online learning and the work of Rodriguez et al. (2021). In these two studies, *digital trace data*, data generated through users' interactions with digital technologies. Optionally, review this paper -- specifically how they processed the "clickstream" data. As this paper illustrates, there is not one way to use such data.
+Consider research on online learning and the work of Rodriguez et al. (2021). In these two studies, *digital trace data*, data generated through users' interactions with digital technologies. Review this paper -- specifically how they processed the "clickstream" data. As this paper illustrates, there is not one way to use such data.
 
-> Rodriguez, F., Lee, H. R., Rutherford, T., Fischer, C., Potma, E., & Warschauer, M. (2021, April). Using clickstream data mining techniques to understand and support first-generation college students in an online chemistry course. In *LAK21: 11th International Learning Analytics and Knowledge Conference* (pp. 313-322).
+> Rodriguez, F., Lee, H. R., Rutherford, T., Fischer, C., Potma, E., & Warschauer, M. (2021, April). Using clickstream data mining techniques to understand and support first-generation college students in an online chemistry course. In LAK21: 11th International Learning Analytics and Knowledge Conference (pp. 313-322).
 
-Notably, the authors took several steps to prepare the data so that it could be validly interpreted. The same is true here in the context of machine learning. In a different context, the work of Gobert et al. (2013) is a great example of using data from educational simulations. Optionally review this paper, too, focused on their use of a technique they called *replay tagging* to conduct feature engineering.
+Last, we note that there are methods that intended to automated the process of feature engineering (Bosch et al., 2021), though such processes are not necessarily interpretable and they usually require some degree of tailoring to your particular context. Review this paper on this topic
 
-> Gobert, J. D., Sao Pedro, M., Raziuddin, J., & Baker, R. S. (2013). From log files to assessment metrics: Measuring students' science inquiry skills using educational data mining. *Journal of the Learning Sciences, 22*(4), 521-563.
+> Bosch, N. (2021). AutoML Feature Engineering for Student Modeling Yields High Accuracy, but Limited Interpretability. *Journal of Educational Data Mining, 13*(2), 55-79.
 
-Even after feature engineering, machine learning approaches can often (but not always) be improved by choosing a more sophisticated model type. Note how we used a regression model in the first two case studies; here, we explore a considerably more sophisticated model, a boosted tree. Feature engineering and choosing a more sophisticated model adds some complexity to the modeling. As we have discussed, it is easy to bias our results if we repeatedly check the performance of *different model fits* with the same test data. Cross-validation is one commonly used solution for this problem.
+Even after feature engineering, machine learning approaches can often (but not always) be improved by choosing a more sophisticated model type. Note how we used a regression model in the first two case studies; here, we explore a considerably more sophisticated model, a random forest. Feature engineering and choosing a more sophisticated model adds some complexity to the modeling. As we have discussed, it is easy to bias our results if we repeatedly check the performance of *different model fits* with the same test data. Cross-validation is one commonly used solution for this problem.
 
-Our driving question is: **How much can we improve our model?** Looking back to our predictive model from LL 2, we can see that our accuracy was okay. Can we improve on that? Let's dive in!
+Our driving question is: **How much can we improve our model?** Looking back to our predictive model from Module 3, we can see that our accuracy was okay. Can we improve on that? Let's dive in!
 
 ## 2. WRANGLE
 
@@ -47,39 +45,32 @@ Our driving question is: **How much can we improve our model?** Looking back to 
 
 First, let's load the packages we'll use---the familiar {tidyverse} and several others focused on modeling.
 
-#### **👉 Your Turn** **⤵**
+#### [Your Turn]{style="color: green;"} ⤵
 
-Add to the chunk below code to load:
+Please add to the chunk below code to load three packages we've used before -- tidyverse, janitor, and tidymodels.
 
--   **tidyverse**, **janitor**, **tidymodels**
--   **xgboost** (boosted‑tree engine)
--   **vip** (variable importance plots)
-
-Load these with the library function, per usual.
+Please install and add two additional packages: {ranger}, for one implementation of random forest modeling, and {vip}, for variable importance metrics.
 
 ```{r}
-
-
+library(janitor)
+library(tidyverse)
+library(tidymodels)
+library(vip) # a new package we're adding for variable importance measures
+library(ranger) # this is needed for the random forest algorithm
 ```
 
-Next, we'll load a new file --- one with *interactions* (or log-trace) data. Please find that in the `data` folder for this lab, read that in and assign it the name `interactions`.
-
-```{r}
-
-```
+Next, we'll load a new file --- one with *interactions* (or log-trace) data.
 
 We have to do the same processing we did in the third module, to obtain cut-off dates. As a reminder, the purpose of this is to train the model on data from the first one-third of the class, with the reasoning being this is a good time to intervene--far enough into the class to make an appreciable impact, but not too late to have a limited chance of being able to change students' trajectory in the class.
 
 We'll repeat the procedure we carried out with the assessments data --- calculating a cut-off for each class and then filtering the data based upon this cut-off. But, since we've already done this for the assessment data, to allow us to focus more on some new feature engineering steps in this module, we are providing you with the already-filtered interactions data. *Note*: you can find the code used to carry out these steps in the Module 4 folder in `process-interactions-data.R`.
 
-Please load `oulad-interactions-filtered.csv` into R, assigning the resulting data frame the name `interactions`.
+Please load `oulad-interactions-filtered.csv` into R, assigning the resulting data frame the name `interactions`. Note, you may need to unzip this file!
 
-#### **👉 Your Turn** **⤵**
+#### [Your Turn]{style="color: green;"} ⤵
 
 ```{r}
-
-
-
+interactions <- read_csv("data/oulad-interactions-filtered.csv")
 ```
 
 In the OULAD documentation, this is called the VLE (virtual learning environment) data source. Please review the description of the variables in the *studentVLE* and *VLE* sources (which are joined together for this module) [here](https://analyse.kmi.open.ac.uk/open_dataset#description). Then, read in the `oulad-interactions.csv` file.
@@ -94,36 +85,40 @@ Woah, even filtered, this is a large file! Let's start to explore it a bit. Plea
 
 ## 3. EXPLORE
 
-#### **👉 Your Turn** **⤵**
+#### [Your Turn]{style="color: green;"} ⤵
 
 *First*, `count()` the `activity_type` variable and *sort* the resulting output by frequency.
 
 ```{r}
-
+interactions %>% 
+    count(activity_type)
 ```
 
 What does this tell you? Consulting the codebook and your output, please add at least two notes on what you are noticing:
 
--   ADD YOUR RESPONSE HERE
+-   
 
-#### **👉 Your Turn** **⤵**
+#### [Your Turn]{style="color: green;"} ⤵
 
 *Second*, please create a histogram of the `date` variable.
 
 ```{r}
-
+interactions %>% 
+    ggplot(aes(x = date)) +
+    geom_histogram()
 ```
 
 What does this tell you? Add one or more notes:
 
--   ADD YOUR RESPONSE HERE
+-   
 
-#### **👉 Your Turn** **⤵**
+#### [Your Turn]{style="color: green;"} ⤵
 
-*Third*, please conduct one other data exploration step of your choosing. Options include creating simple graphgs or calculating descriptive, summary statistics.
+*Third*, please conduct one other data exploration step of your choosing. Options include creating simple graphs or calculating descriptive, summary statistics.
 
 ```{r}
-
+library(skimr)
+skim(interactions)
 ```
 
 We're ready to proceed to engineering some features with the interactions data.
@@ -144,34 +139,28 @@ This is so we have the cut-offs (one-third through the semester), which will hel
 
 ```{r}
 interactions_joined <- interactions %>% 
-  left_join(code_module_dates) # join the data based on course_module and course_presentation
+    left_join(code_module_dates) # join the data based on course_module and course_presentation
 
 interactions_filtered <- interactions_joined %>% 
-  filter(date < quantile_cutoff_date) # filter the data so only assignments before the cutoff date are included
+    filter(date < quantile_cutoff_date) # filter the data so only assignments before the cutoff date are included
 ```
 
-Then, let's engineer several features. For the present time, we'll focus on the `sum_click` variable, which tells us how many times students clicked on a resource for a given date. We'll use the `interactions_filtered` data set we just created. Let's start simple: please type the name of that data set (`interactions_filtered`) in the code chunk below. Note, you may need to unzip this file!
+Then, let's engineer several features. For the present time, we'll focus on the `sum_click` variable, which tells us how many times students clicked on a resource for a given date. We'll use the `interactions_filtered` data set we just created. Let's start simple: please type the name of that data set (`interactions_filtered`) in the code chunk below.
 
-#### **👉 Your Turn** **⤵**
+#### [Your Turn]{style="color: green;"} ⤵
 
 ```{r}
-
+interactions_filtered <- read_csv("data/oulad-interactions-filtered.csv")
 ```
 
 How can we create a feature with `sum_click`? Think back to our discussion in the presentation; we have *many* options for working with such time series data. Perhaps the most simple is to count the clicks. Please summarize the number of clicks for each student (specific to a single course). This means you will need to group your data by `id_student`, `code_module`, and `code_presentation`, and then create a summary variable. Assign the resulting output the name `interactions_summarized`. You may find the documentation for `summarize()` to be helpful. That is available [here](https://dplyr.tidyverse.org/reference/summarise.html). [This chapter](https://r4ds.had.co.nz/transform.html) is also likely helpful (note that `summarise()` and `summarize()` are different spellings for the same function).
 
-#### **👉 Your Turn** **⤵**
+#### [Your Turn]{style="color: green;"} ⤵
 
 ```{r}
-
-```
-
-#### **👉 Your Turn** **⤵**
-
-How many times did students click? Let's create a histogram to see. Please use {ggplot} and `geom_histogram()` to visualize the distribution of the `sum_clicks` variable you just created. Turn to [the documentation](https://ggplot2.tidyverse.org/reference/geom_histogram.html) if you need a pointer!
-
-```{r}
-
+interactions_summarized <- interactions_filtered %>% 
+    group_by(id_student, code_module, code_presentation) %>% 
+    summarize(sum_clicks = sum(sum_click))
 ```
 
 #### [Your Turn]{style="color: green;"} ⤵
@@ -179,15 +168,21 @@ How many times did students click? Let's create a histogram to see. Please use {
 How many times did students click? Let's create a histogram to see. Please use {ggplot} and `geom_histogram()` to visualize the distribution of the `sum_clicks` variable you just created. Turn to [the documentation](https://ggplot2.tidyverse.org/reference/geom_histogram.html) if you need a pointer!
 
 ```{r}
-
+interactions_summarized %>% 
+    ggplot(aes(x = sum_clicks)) +
+    geom_histogram()
 ```
 
 This is a good start - we've created our first feature based upon the log data, `sum_clicks`! What are some other features we can add? An affordance of using the `summarize()` function in R is we can create multiple summary statistics at once. Let's also calculate the standard deviation of the number of clicks as well as the mean. Please copy the code you wrote above into the code chunk below and then add these two additional summary statistics.
 
-#### **👉 Your Turn** **⤵**
+#### [Your Turn]{style="color: green;"} ⤵
 
 ```{r}
-
+interactions_summarized <- interactions_filtered %>% 
+    group_by(id_student, code_module, code_presentation) %>% 
+    summarize(sum_clicks = sum(sum_click),
+              sd_clicks = sd(sum_click), 
+              mean_clicks = mean(sum_click))
 ```
 
 We'll take one last step here -- creating individual *slopes* of students' clicks over time. This code is a bit more involved, and so is annotated for you below; feel free to modify and re-use this.
@@ -237,38 +232,47 @@ interactions_slopes <- interactions_slopes %>%
 
 Please rename the resulting intercept and date, changing them`intercept` and `slope`, respectively. Note, selecting a variable with a parenthesis in it can be tricky! Think of other ways you could do this, if you wish (hint: think of what a function in janitor can do!).
 
-#### **👉 Your Turn** **⤵**
+#### [Your Turn]{style="color: green;"} ⤵
 
 ```{r}
-
+interactions_slopes <- interactions_slopes %>% 
+    rename(intercept = `(Intercept)`,
+           slope = date)
 ```
 
 After running this code, we will have intercepts, linear slopes, and quadratic terms for each students' clickstream pattern over the semester.
 
-Let's join together several files. First, let's join all our features into a single file. Please use `left_join()` to join `interactions_summarized` and `interactions_slopes`, assigning the resulting output the name `interactions_summarized_and_slopes`.
+Let's join together several files. First, let's join all our features into a single file. Please use `left_join()` to join `interactions_summarized` and `interactions_slopes`, assigning the resulting output the name `interactions_summaried_and_slopes`.
 
 #### [Your Turn]{style="color: green;"} ⤵
 
 ```{r}
-
+interactions_summarized_and_slopes <- left_join(interactions_slopes, interactions_summarized)
 ```
 
-Just one last step! Let's join together *all* of the data we'll use for our modeling: `students_and_assessments` and `interactions_summarized_and_slopes`. Use `left_join()` once more, assigning the resulting output the name `students_assessments_and_interactions`. Lots of joining! Sometimes, the hardest part of complex analyses lies in the preparation (and joining) of the data.
+Just one last step! Let's join together *all* of the data we'll use for our modeling: `students_and_assessments` and `all_features`. Use `left_join()` once more, assigning the resulting output the name `students_assessments_and_interactions`. Lots of joining! Sometimes, the hardest part of complex analyses lies in the preparation (and joining) of the data.
 
-#### **👉 Your Turn** **⤵**
+#### [Your Turn]{style="color: green;"} ⤵
 
 ```{r}
-
+students_assessments_and_interactions <- left_join(students_and_assessments, 
+                                                   interactions_summarized_and_slopes)
 ```
 
 One more small step. Let's ensure that our outcome variable -- `pass` -- is a factor. It was, but when saving to and reading from a CSV, it lots its factor characteristics, becoming instead a character string. It is necessary for the outcome of a classification model (like the one we are using) to be a factor. Please use `mutate()` to do just that.
 
-#### **👉 Your Turn** **⤵**
+#### [Your Turn]{style="color: green;"} ⤵
 
 ```{r}
+students_assessments_and_interactions <- students_assessments_and_interactions %>% 
+    mutate(pass = as.factor(pass))
 
+# write_csv(students_assessments_and_interactions, "students-assessments-and-interactions.csv")
+```
 
-
+```{r}
+students_assessments_and_interactions %>% 
+    skimr::skim()
 ```
 
 We're now ready to model!
@@ -277,20 +281,23 @@ We're now ready to model!
 
 ### Step 1. Split data
 
-We'll follow the same steps we followed in modules #2 and #3, here. One difference - we'll use `students_assessments_and_interactions` instead of the data frame we used in those modules. Please port over the code you used in those modules here, changing the name of the data frame to the one we are now using.
+We'll follow the same steps we followed in Modules #2 and #3 here. One difference - we'll use `students_assessments_and_interactions` instead of the data frame we used in those modules. Please port over the code you used in those modules here, changing the name of the data frame to the one we are now using.
 
 We discuss this first step minimally as we have now carried out a step very similar to this in LL1 and LL2; return to the case study for those (especially LL1) for more on data splitting.
 
-#### **👉 Your Turn** **⤵**
+#### [Your Turn]{style="color: green;"} ⤵
 
 ```{r}
+set.seed(20230712)
 
+train_test_split <- initial_split(students_assessments_and_interactions, prop = .33, strata = "pass")
+data_train <- training(train_test_split)
 ```
 
 There is a key difference that is next. In this step. we'll further process `data_train`, creating different subsets of the data, or folds of the data, that we can use to fit our model multiple times.
 
 ```{r}
-vfcv <- vfold_cv(data_train) # this differentiates this from what we did before
+vfcv <- vfold_cv(data_train, v = 4) # this differentiates this from what we did before
 # before, we simple used data_train to fit our model
 vfcv
 ```
@@ -300,8 +307,7 @@ How does this work? `data_train` is sampled as many time as we se \#### [Your Tu
 Above, we split the data into 10 different folds. Change the number of folds from 10 to 5 by changing the value of v; 10 is simply the default---not always the best one! For help, run `?vfold_cv` to get a hint.
 
 ```{r}
-kfcv <- vfold_cv(data_train, v = 5) # this differentiates this from what we did before
-# before, we simple used data_train to fit our model
+kfcv <- vfold_cv(data_train, v = 10)
 kfcv
 ```
 
@@ -309,7 +315,7 @@ kfcv
 
 Here, we'll carry out several feature engineering steps.
 
-Read about [possible steps](https://www.tmwr.org/recipes.html) and see more about how the following five feature engineering steps below work. Like in the previou slearning labs, this is the step in which we set the recipe.
+Read about [possible steps](https://www.tmwr.org/recipes.html) and see more about how the following five feature engineering steps below work. Like in the first module, this is the step in which we set the recipe.
 
 -   [`step_normalize()`](https://recipes.tidymodels.org/reference/step_normalize.html): normalizes numeric data to have a standard deviation of one and a mean of zero
 -   [`step_dummy()`](https://recipes.tidymodels.org/reference/step_dummy.html): convert nominal data (e.g. character or factors) into one or more numeric binary model terms for the levels of the original data.
@@ -327,22 +333,22 @@ Another way is to specify *for which types of variables* the feature engineering
 step_normalize(all_numeric_predictors())
 ```
 
-#### **👉 Your Turn** **⤵**
+#### [Your Turn]{style="color: green;"} ⤵
 
 Let's turn to our recipe. Please *add to* the code below to add the new variables---features---we created. We've started you off with \_\_\_ code below (where you can add the new variables -- be sure to add all of them!).
 
 ```{r}
 my_rec <- recipe(pass ~ disability +
-                   date_registration + 
-                   gender +
-                   code_module +
-                   mean_weighted_score +
-                   ___ + ___ + ___ +
-                     ___ + ___,
+                     date_registration + 
+                     gender +
+                     code_module +
+                     mean_weighted_score +
+                     sum_clicks + sd_clicks + mean_clicks + # new
+                     intercept + slope, # new
                  data = data_train) 
 ```
 
-#### **👉 Your Turn** **⤵**
+#### [Your Turn]{style="color: green;"} ⤵
 
 Then, please *add to* the following code by completing three steps, building on the code that is started below:
 
@@ -351,7 +357,18 @@ Then, please *add to* the following code by completing three steps, building on 
 3.  Please impute missing values using the nearest neighbors method for the `mean_weighted_score`, `sum_clicks`, `sd_clicks`, `mean_clicks`, `intercept`, `slope`, and `date_registration` variables.
 
 ```{r}
-
+my_rec <- my_rec %>% 
+    step_dummy(disability) %>% 
+    step_dummy(gender) %>%  
+    step_dummy(code_module) %>% 
+    step_impute_knn(mean_weighted_score) %>% 
+    step_impute_knn(sum_clicks) %>% 
+    step_impute_knn(sd_clicks) %>% 
+    step_impute_knn(mean_clicks) %>% 
+    step_impute_knn(intercept) %>% 
+    step_impute_knn(slope) %>% 
+    step_impute_knn(date_registration) %>% 
+    step_normalize(all_numeric_predictors())
 ```
 
 ### Step 3: Specify the model and workflow
@@ -360,27 +377,21 @@ Next, we specify the model and workflow, using the same engine *but a different 
 
 -   using the `random_forest()` function to set the *model* as a random forest
 -   using `set_engine("ranger", importance = "impurity")` to set the *engine* as that provided for random forests through the {ranger} package; we also add the `importance = "impurity"` line to be able to interpret a particular variable importance metric specific to random forest models
--   finally, using `set_mode("classification"))` as we are again predicting categories
+-   finally, using `set_mode("classification"))` as we are again predicting categories (transactional and substantive conversations taking place through #NGSSchat)
 
 ```{r panel-chunk-3, echo = TRUE, eval = TRUE}
-
 # specify model
 my_mod <-
-  boost_tree(learn_rate = 0.05, trees = 1000, tree_depth = 4) %>%  # boosted tree
-  set_engine("xgboost", importance = "gain") %>% # xgboost engine and a variable importance metric
-  set_mode("classification")
+    rand_forest() %>% # specify the type of model we are fitting, a random forest
+    set_engine("ranger", importance = "impurity") %>% # using a variable importance metric specific to this random forest engine
+    set_mode("classification") # same as before
 
 # specify workflow
 my_wf <-
-  workflow() %>% # create a workflow
-  add_model(my_mod) %>% # add the model we wrote above
-  add_recipe(my_rec) # add our recipe we wrote above
+    workflow() %>% # create a workflow
+    add_model(my_mod) %>% # add the model we wrote above
+    add_recipe(my_rec) # add our recipe we wrote above
 ```
-
-**Why those defaults?**
-    **trees**: many small steps (1000)
-    **learn_rate**: 0.05 (smaller → less variance needs more trees)
-    **tree_depth**: shallow (4) to avoid over‑fitting
 
 ### Step 4: Fit model
 
@@ -388,19 +399,17 @@ Note that here we use the `kfcv` data and a different function - `fit_resamples(
 
 ```{r}
 class_metrics <- metric_set(accuracy, sensitivity, specificity, ppv, npv, kap) # specify the same metrics as earlier
-fitted_model_resamples <- fit_resamples(my_wf, 
-                                        resamples = vfcv, 
-                                        metrics = class_metrics)
+fitted_model_resamples <- fit_resamples(my_wf, resamples = vfcv, metrics = class_metrics) # specify the workflow, resampled data, and our metrics
 ```
 
 Note that you have fit as many models as the value for `v` that you specified earlier. So, this may take some time. Take a walk, grab a snack, or make a cup of tea!
 
 Then, we can use the same `collect_metrics()` function we have used to inspect the predictive strength of the model. Please do that for `fitted_model_resamples`.
 
-#### **👉 Your Turn** **⤵**
+#### [Your Turn]{style="color: green;"} ⤵
 
 ```{r}
-
+collect_metrics(fitted_model_resamples)
 ```
 
 We noted earlier that we may introduce bias when we evaluate different models against the same training data. The benefit of using the multiple folds - and fitting multiple models - is we can make changes to our features or model. Thus, if we decide to add a new feature, we can run the above steps, without concern about biasing our interpretation of how accurate our model is.
@@ -417,34 +426,35 @@ fa Finally, collect the metrics for our final fit. *These* are the values that y
 
 ```{r}
 final_fit %>% 
-  collect_metrics()
+    collect_metrics()
 ```
 
-We can see that `final_fit` is for a single fit: a boosted tree model with the best performing tuning parameters trained with the *entire* training set of data to predict the values in our (otherwise not used/"spent") testing set of data.
+We can see that `final_fit` is for a single fit: a random forest with the best performing tuning parameters trained with the *entire* training set of data to predict the values in our (otherwise not used/"spent") testing set of data.
 
-#### **👉 Your Turn** **⤵**
+#### [Your Turn]{style="color: green;"} ⤵
 
 ```{r}
-
+collect_predictions(final_fit) %>% 
+    conf_mat(.pred_class, pass)
 
 ```
 
 ## 5. COMMUNICATE
 
-Another benefit of a boosted tree model is we can interpret variable importance metrics. Do that here with the following code.
+Another benefit of a random forest is we can interpret variable importance metrics. Do that here with the following code.
 
 ```{r}
 final_fit %>% 
-  pluck(".workflow", 1) %>%   
-  extract_fit_parsnip() %>% 
-  vip(num_features = 10)
+    pluck(".workflow", 1) %>%   
+    extract_fit_parsnip() %>% 
+    vip(num_features = 10)
 ```
 
 Please add two or more notes on what you notice about which variables (features) are important, focused on what you would say to someone in your audience about what the important variables in your model were.
 
--   ADD YOUR RESPONSE HERE
+-   
 
--   ADD YOUR RESPONSE HERE
+-   
 
 ### 🧶 Knit & Check ✅
 
