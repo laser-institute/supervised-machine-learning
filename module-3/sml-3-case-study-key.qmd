@@ -291,12 +291,12 @@ We're now ready to move on to interpreting the accuracy of our model.
 
 Let's start with a simple confusion matrix. The confusion matrix is a 2 x 2 table with values (cells in the table) representing one of four conditions, elaborated below. You'll fill in the last two columns in a few moments.
 
-|      Statistic      |       How to Find       |                                          Interpretation                                          | Value |  \%  |
-|:-----------:|:-----------:|:------------------:|:-----------:|:-----------:|
-| True positive (TP)  | Truth: 1, Prediction: 1 |    Proportion of the population that is affected by a condition and correctly tested positive    | 2443  | 19.8 |
-| True negative (TN)  | Truth: 0, Prediction: 0 |  Proportion of the population that is not affected by a condition and correctly tested negative  | 4536  | 36.8 |
-| False positive (FP) | Truth: 0, Prediction: 1 | Proportion of the population that is not affected by a condition and incorrectly tested positive | 2070  | 16.8 |
-| False negative (FN) | Truth: 1, Prediction: 0 |  Proportion of the population that is affected by a condition and incorrectly tested positive.   | 3269  | 26.5 |
+| Statistic | How to Find | Interpretation | Value | \% |
+|:--:|:--:|:--:|:--:|:--:|
+| True positive (TP) | Truth: 1, Prediction: 1 | Proportion of the population that is affected by a condition and correctly tested positive | 2443 | 19.8 |
+| True negative (TN) | Truth: 0, Prediction: 0 | Proportion of the population that is not affected by a condition and correctly tested negative | 4536 | 36.8 |
+| False positive (FP) | Truth: 0, Prediction: 1 | Proportion of the population that is not affected by a condition and incorrectly tested positive | 2070 | 16.8 |
+| False negative (FN) | Truth: 1, Prediction: 0 | Proportion of the population that is affected by a condition and incorrectly tested positive. | 3269 | 26.5 |
 
 To create a confusion matrix, run `collect_predictions()`, which does what it suggests - it gathers together the model's test set predictions. Pass the `last_fit` object to this function below.
 
@@ -323,26 +323,26 @@ Here's where things get interesting: There are other statistics that have differ
 
 #### **👉 Your Turn** **⤵**
 
-|                                               |                |                                                                                                                                |                                                                                    |                      |
-|:-------------:|:-------------:|:-------------:|:-------------:|:-------------:|
-|                 **Statistic**                 |  **Equation**  |                                                       **Interpretation**                                                       |                               **Question Answered**                                | **Statistic Values** |
-|         **Sensitivity** (AKA recall)          | TP / (TP + FN) |                       Proportion of those who are affected by a condition and correctly tested positive                        |        Out of all the actual positives, how many did we correctly predict?         |         .428         |
-|                **Specificity**                | TN / (FP + TN) |                     Proportion of those who are not affected by a condition and correctly tested negative;                     |        Out of all the actual negatives, how many did we correctly predict?         |         .687         |
-| **Precision** (AKA Positive Predictive Value) | TP / (TP + FP) |                            Proportion of those who tested positive who are affected by a condition                             | Out of all the instances we predicted as positive, how many are actually positive? |         .581         |
-|         **Negative Predictive Value**         | TN / (TN + FN) | Proportion of those who tested positive who are not affected by a condition; *the probability that a negative test is correct* | Out of all the instances we predicted as negative, how many are actually negative? |         .541         |
+|  |  |  |  |  |
+|:--:|:--:|:--:|:--:|:--:|
+| **Statistic** | **Equation** | **Interpretation** | **Question Answered** | **Statistic Values** |
+| **Sensitivity** (AKA recall) | TP / (TP + FN) | Proportion of those who are affected by a condition and correctly tested positive | Out of all the actual positives, how many did we correctly predict? | .428 |
+| **Specificity** | TN / (FP + TN) | Proportion of those who are not affected by a condition and correctly tested negative; | Out of all the actual negatives, how many did we correctly predict? | .687 |
+| **Precision** (AKA Positive Predictive Value) | TP / (TP + FP) | Proportion of those who tested positive who are affected by a condition | Out of all the instances we predicted as positive, how many are actually positive? | .581 |
+| **Negative Predictive Value** | TN / (TN + FN) | Proportion of those who tested positive who are not affected by a condition; *the probability that a negative test is correct* | Out of all the instances we predicted as negative, how many are actually negative? | .541 |
 
 So, what does this hard-won by output tell us? Let's interpret each statistic carefully in the table below. Please add the value and provide a *substantive interpretation*. One is provided to get you started.
 
 #### **👉 Your Turn** **⤵**
 
-|                                           |                                                                                                                                             |
-|--------------------|----------------------------------------------------|
-| **Statistic**                             | **Substantive Interpretation**                                                                                                              |
-| Accuracy                                  |                                                                                                                                             |
-| Sensitivity (AKA recall)                  | The model correctly predicts about 2/3 of students who do not pass correctly (as not passing). This is pretty good, but it could be better. |
-| Specificity                               |                                                                                                                                             |
-| Precision (AKA Positive Predictive Value) |                                                                                                                                             |
-| Negative Predictive Value                 |                                                                                                                                             |
+|  |  |
+|----|----|
+| **Statistic** | **Substantive Interpretation** |
+| Accuracy |  |
+| Sensitivity (AKA recall) | The model correctly predicts about 2/3 of students who do not pass correctly (as not passing). This is pretty good, but it could be better. |
+| Specificity |  |
+| Precision (AKA Positive Predictive Value) |  |
+| Negative Predictive Value |  |
 
 This process might suggest to you how a "good" model isn't necessarily one that is the most accurate, but instead is one that has good values for statistics that matter given our particular question and context.
 

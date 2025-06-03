@@ -377,10 +377,7 @@ my_wf <-
   add_recipe(my_rec) # add our recipe we wrote above
 ```
 
-**Why those defaults?**
-    **trees**: many small steps (1000)
-    **learn_rate**: 0.05 (smaller → less variance needs more trees)
-    **tree_depth**: shallow (4) to avoid over‑fitting
+**Why those defaults?** **trees**: many small steps (1000) **learn_rate**: 0.05 (smaller → less variance needs more trees) **tree_depth**: shallow (4) to avoid over‑fitting
 
 ### Step 4: Fit model
 

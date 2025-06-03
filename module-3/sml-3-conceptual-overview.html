@@ -6,8 +6,8 @@
 <script src="sml-3-conceptual-overview_files/libs/quarto-html/tippy.umd.min.js"></script>
 <link href="sml-3-conceptual-overview_files/libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="sml-3-conceptual-overview_files/libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="sml-3-conceptual-overview_files/libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.6.40">
+<link href="sml-3-conceptual-overview_files/libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.6.42">
 
   <title>How Good is Our Model, Really?</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -93,7 +93,7 @@
     code span.vs { color: #20794d; } /* VerbatimString */
     code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
-  <link rel="stylesheet" href="sml-3-conceptual-overview_files/libs/revealjs/dist/theme/quarto-d8833ab8e240571a9cd8beb07a4bd96e.css">
+  <link rel="stylesheet" href="sml-3-conceptual-overview_files/libs/revealjs/dist/theme/quarto-20331ff498b1e8c7644232975b91cc95.css">
   <link href="sml-3-conceptual-overview_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="sml-3-conceptual-overview_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="sml-3-conceptual-overview_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -269,7 +269,7 @@
 </div>
 <div id="tabset-1-3">
 <ul>
-<li>After having worked through the first module, have your thoughts on what data you might use for a machine learning study evolved? If so, in what ways? If not, please elaborate on your initial thoughts and plans.</li>
+<li>After having worked through the first and second modules, have your thoughts on what data you might use for a machine learning study evolved? If so, in what ways? If not, please elaborate on your initial thoughts and plans.</li>
 </ul>
 <aside class="notes">
 <p>This can connect back to the purpose at the beginning — try to elicit ideas that go beyond simple “Accuracy” to other, broader ideas about what makes a model good. These ideas can even extend beyond metrics (e.g., a learner may mention that the data is collected ethically) - these can be rich conversations to have here, but try to focus the conversation back on metrics as a nexus and tool for thinking about what makes an SML model a good one.</p>
@@ -297,7 +297,7 @@
 <section id="oulad" class="slide level2">
 <h2>OULAD</h2>
 <ul>
-<li>The Open University Learning Analytics Dataset (OULAD) is a publicly available dataset from the Open University in the UK</li>
+<li>The <em>Open University Learning Analytics Dataset (OULAD)</em> is a publicly available dataset from the Open University in the UK</li>
 <li>It contains data on students enrolled in online courses, including their demographics, course interactions, and final grades</li>
 <li>Many students pass these courses, but not all do</li>
 <li>We have data on students’ initial characteristics and their interactions in the course</li>
@@ -420,6 +420,19 @@
 </div>
 </div>
 <p><strong>Both models have 80% accuracy, but are they equally good?</strong></p>
+<aside class="notes">
+<p>This is central to the core purpose of this module - to get learners realizing the downsides of accuracy, given what accuracy can obfuscate.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </section>
 <section id="beyond-accuracy-the-need-for-nuance" class="slide level2">
 <h2>Beyond accuracy: The need for nuance</h2>
@@ -607,7 +620,7 @@ Prediction 0 1
 <p>Here’s a time stamp:</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "2025-05-22 16:10:27 EDT"</code></pre>
+<pre><code>[1] "2025-06-02 20:14:29 EDT"</code></pre>
 </div>
 </div>
 <p><strong>How could this variable be used as a predictor variable?</strong></p>
@@ -715,6 +728,43 @@ Prediction 0 1
 <h2>Precision vs.&nbsp;Recall (Sensitivity)</h2>
 
 <img data-src="sml-3-conceptual-overview_files/figure-revealjs/unnamed-chunk-13-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"></section>
+<section id="f1-score-the-harmonic-mean" class="slide level2">
+<h2>F1 Score: The Harmonic Mean</h2>
+<p><strong>What is F1 Score?</strong> - F1 = 2 × (Precision × Recall) / (Precision + Recall) - Harmonic mean balances precision and recall - Ranges from 0 to 1 (higher is better) - Only high when <strong>both</strong> precision and recall are high</p>
+<p><strong>Why harmonic mean instead of arithmetic mean?</strong> - Harmonic mean penalizes extreme values more severely - If either precision OR recall is very low, F1 will be low - Forces you to achieve balance between the two metrics</p>
+<aside class="notes">
+<p>Emphasize that F1 score is particularly useful when you can’t decide whether precision or recall is more important, or when you need both to be reasonably high. The harmonic mean ensures that a model can’t “cheat” by excelling at one metric while ignoring the other.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="when-to-use-f1-score-in-oulad-context" class="slide level2">
+<h2>When to Use F1 Score in OULAD Context</h2>
+<p><strong>F1 Score is ideal when:</strong> - You need <strong>balanced performance</strong> on precision and recall - Both false positives AND false negatives are costly - You’re comparing multiple models and want a single metric - Class imbalance exists but you need to perform well on both classes</p>
+<p><strong>OULAD Example:</strong> - <strong>Scenario</strong>: Predicting students who need academic support - <strong>Goal</strong>: Find struggling students (high recall) while avoiding overwhelming support services (high precision) - <strong>F1 helps balance</strong>: Catching most at-risk students without flooding counselors with false alarms</p>
+<p><strong>Limitation</strong>: F1 score doesn’t tell you <em>which</em> metric is driving performance - you still need to examine precision and recall individually for full understanding</p>
+<aside class="notes">
+<p>You can give a concrete example: “If your model has 90% precision but 40% recall, the F1 score will be about 55% - much lower than either individual metric. This forces you to improve the weaker metric rather than ignoring it.”</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
 <section id="metrics-in-context-what-matters-for-oulad" class="slide level2">
 <h2>Metrics in Context: What Matters for OULAD?</h2>
 <p>When using the Open University Learning Analytics Dataset (OULAD) to build models that predict student outcomes at the module level (e.g., pass, fail, or withdrawal), the choice of which performance metrics to prioritize depends heavily on the specific goals of your analysis and the interventions or actions that will follow.</p>
@@ -729,11 +779,7 @@ Prediction 0 1
 </section>
 <section id="high-specificity" class="slide level2">
 <h2><strong>High Specificity</strong></h2>
-<p>Is crucial if:</p>
-<pre><code>* You want to accurately identify students who are **not at risk** and are likely to pass or achieve distinction, perhaps to study their successful learning patterns or to avoid unnecessary interventions.
-* You are trying to minimize the number of students incorrectly flagged for intervention who would have succeeded on their own (reducing "false alarms" for students not needing support).
-* Resources for "non-intervention" or "positive pathway" studies are limited, and you need to be sure you are focusing on genuinely low-risk students.</code></pre>
-<p>:::</p>
+<p>Is crucial if: * You want to accurately identify students who are <strong>not at risk</strong> and are likely to pass or achieve distinction, perhaps to study their successful learning patterns or to avoid unnecessary interventions. * You are trying to minimize the number of students incorrectly flagged for intervention who would have succeeded on their own (reducing “false alarms” for students not needing support). * Resources for “non-intervention” or “positive pathway” studies are limited, and you need to be sure you are focusing on genuinely low-risk students. :::</p>
 </section>
 <section id="in-essence-for-oulad" class="slide level2">
 <h2>In Essence for OULAD:</h2>
@@ -746,7 +792,20 @@ Prediction 0 1
 <section id="the-precision-recall-tradeoff" class="slide level2">
 <h2>The precision-recall tradeoff</h2>
 
-<img data-src="sml-3-conceptual-overview_files/figure-revealjs/unnamed-chunk-14-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"></section>
+<img data-src="sml-3-conceptual-overview_files/figure-revealjs/unnamed-chunk-14-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"><aside class="notes">
+<p>These next few slides get a little technical; may skip this, but it may be good to introduce this, too, and to return to later or engage in discussion based on students’ interests.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
 <section id="the-roc-curve-and-auc" class="slide level2">
 <h2>The ROC curve and AUC</h2>
 
@@ -820,8 +879,7 @@ Prediction 0 1
 </div>
 <div id="tabset-3-3">
 <ul>
-<li>Adding still another variable</li>
-<li>Stepping back and interpreting the model as a whole</li>
+<li>Stepping back and interpreting the model as a whole, focusing on moving beyond accuracy!</li>
 <li>Finding another relevant study</li>
 </ul>
 </div>

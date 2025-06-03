@@ -160,6 +160,7 @@ We can use the `tabyl` function to explore a bit further:
 ipeds %>% 
     tabyl(good_grad_rate)
 ```
+
 We can see how many institutions have good and not-so-good graduations rates -- and what percentage of the data is missing.
 
 Next, let's visualize the distribution of graduation rates to better understand our data:
@@ -228,9 +229,9 @@ select(ipeds, name, tuition_fees, avg_salary, tuition_to_salary_ratio) %>%
 
 Do you spot the problem? Add a note below about what it might be:
 
--  YOUR RESPONSE HERE
+-   YOUR RESPONSE HERE
 
-As you likely noticed, it looks like one institution - Beckfield College-Florence - has an average salary of $1 for their graduates. As a result, the ratio of tuition and fees relative to salary is _huge_ -- far larger than for any other institutions! What to do here? This seems almost certain to be an error in data reporting or recording. We can safely filter out this one row with some simple logic.
+As you likely noticed, it looks like one institution - Beckfield College-Florence - has an average salary of \$1 for their graduates. As a result, the ratio of tuition and fees relative to salary is *huge* -- far larger than for any other institutions! What to do here? This seems almost certain to be an error in data reporting or recording. We can safely filter out this one row with some simple logic.
 
 ```{r}
 ipeds <- ipeds %>% 
@@ -244,9 +245,10 @@ ipeds %>%
     ggplot(aes(x = tuition_to_salary_ratio, fill = good_grad_rate)) +
     geom_density()
 ```
+
 That's better! Add a note on what this graph might mean below:
 
-- YOUR RESPONSE HERE
+-   YOUR RESPONSE HERE
 
 We're now ready to proceed to the five machine learning (modeling) steps!
 
@@ -266,7 +268,7 @@ In this step, we will dive into the SML modeling process in much more depth than
 
 ### Step 1. Split data
 
-We didn't split the data we used in the first module. Instead, we used data to _train_ our model, and then we used the same data set to evaluate _how good our model performed_, i.e., to _test_ our model. This raises an issue: using the same data to train and test our model can lead to something called overfitting, which is when a model learns the specifics in the training data rather than the underlying pattern. 
+We didn't split the data we used in the first module. Instead, we used data to *train* our model, and then we used the same data set to evaluate *how good our model performed*, i.e., to *test* our model. This raises an issue: using the same data to train and test our model can lead to something called overfitting, which is when a model learns the specifics in the training data rather than the underlying pattern.
 
 This is related to the bias-variance trade off introduced in the conceptual overview: by using the same data to train and test our model, we run the risk of developing a model with low bias, but high variance. Any changes in the training data could result in a very different model (with far higher bias), which is not ideal. In other words, we want to develop a model that is generalizable to new data, not just the data we used to train it.
 
@@ -347,10 +349,10 @@ The [`recipe()`function](https://recipes.tidymodels.org/reference/recipe.html) a
 
 Let's create a recipe where we predict `good_grad_rate` (the outcome variable) on the basis of several variables:
 
-- `tuition_fees`
-- `avg_salary`
-- `percent_fin_aid`
-- `tuition_to_salary_ratio` (the variable we created based on two of the above variables)
+-   `tuition_fees`
+-   `avg_salary`
+-   `percent_fin_aid`
+-   `tuition_to_salary_ratio` (the variable we created based on two of the above variables)
 
 ```{r}
 my_rec <- recipe(good_grad_rate ~ 

@@ -140,3 +140,7 @@ final_fit %>%
 ```{python}
 
 ```
+
+# Discussion
+
+- What are things you consider when choosing which metric(s) to interpret for a particular analysis?
