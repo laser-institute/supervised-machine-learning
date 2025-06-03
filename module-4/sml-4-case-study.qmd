@@ -64,6 +64,8 @@ Load these with the library function, per usual.
 
 Next, we'll load a new file --- one with *interactions* (or log-trace) data. Please find that in the `data` folder for this lab, read that in and assign it the name `interactions`.
 
+*N.b.* **If you download these materials directly from GitHub, you will need to unzip the file titled `oulad-interactions.csv.zip`**
+
 ```{r}
 
 ```
