@@ -126,48 +126,10 @@ boost_fit %>%
 
 ## Code‑along: Python
 
+*AR to add, can use same steps as above if you like*
+
 ```{python}
 #| eval: false
 #| echo: true
-import pandas as pd
-from sklearn.model_selection import StratifiedKFold, cross_val_score
-from sklearn.linear_model import LogisticRegression
-import xgboost as xgb
-import shap
 
-pokemon = pd.read_csv("data/pokemon-data.csv")
-
-# Features and target
-X = pokemon[["height_m", "weight_kg", "hp"]]
-y = pokemon["early_gen"]
-
-# Cross‑validation
-kf = StratifiedKFold(n_splits=5, shuffle=True, random_state=123)
-
-log_model = LogisticRegression(max_iter=1000)
-
-xgb_model = xgb.XGBClassifier(
-    n_estimators=1000,
-    learning_rate=0.05,
-    max_depth=3,
-    subsample=0.8,
-    colsample_bytree=0.8,
-    objective="binary:logistic",
-    eval_metric="logloss",
-    random_state=123
-)
-
-log_scores = cross_val_score(log_model, X, y, cv=kf, scoring='accuracy')
-xgb_scores = cross_val_score(xgb_model,  X, y, cv=kf, scoring='accuracy')
-
-print(f"Logistic Regression accuracy: {log_scores.mean():.3f}")
-print(f"XGBoost accuracy:             {xgb_scores.mean():.3f}")
-
-# Fit the XGB on the full data for feature importance
-xgb_model.fit(X, y)
-explainer = shap.TreeExplainer(xgb_model)
-shap_values = explainer.shap_values(X)
-
-# Bar plot of feature importance
-shap.summary_plot(shap_values, X, plot_type="bar", max_display=10)
 ```
