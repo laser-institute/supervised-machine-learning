@@ -62,7 +62,7 @@ Load these with the library function, per usual.
 
 ```
 
-Next, we'll load a new file --- one with *interactions* (or log-trace) data. Please find that in the `data` folder for this lab, read that in and assign it the name `interactions`.
+Next, we'll load a new file --- one with *interactions* (or log-trace) data. Please find that (`oulad-interactions.csv`) in the `data` folder for this lab, read that in and assign it the name `interactions`. 
 
 *N.b.* **If you download these materials directly from GitHub, you will need to unzip the file titled `oulad-interactions.csv.zip`**
 
@@ -72,17 +72,9 @@ Next, we'll load a new file --- one with *interactions* (or log-trace) data. Ple
 
 We have to do the same processing we did in the third module, to obtain cut-off dates. As a reminder, the purpose of this is to train the model on data from the first one-third of the class, with the reasoning being this is a good time to intervene--far enough into the class to make an appreciable impact, but not too late to have a limited chance of being able to change students' trajectory in the class.
 
-We'll repeat the procedure we carried out with the assessments data --- calculating a cut-off for each class and then filtering the data based upon this cut-off. But, since we've already done this for the assessment data, to allow us to focus more on some new feature engineering steps in this module, we are providing you with the already-filtered interactions data. *Note*: you can find the code used to carry out these steps in the Module 4 folder in `process-interactions-data.R`.
+We'll repeat the procedure we carried out with the assessments data --- calculating a cut-off for each class and then filtering the data based upon this cut-off. But, since we've already done this for the assessment data, to allow us to focus more on some new feature engineering steps in this module, we are providing you with the already-filtered interactions data.
 
-Please load `oulad-interactions-filtered.csv` into R, assigning the resulting data frame the name `interactions`.
-
-#### **👉 Your Turn** **⤵**
-
-```{r}
-
-
-
-```
+*Note*: you can find the code used to carry out these steps in the Module 4 folder in `process-interactions-data.R`.
 
 In the OULAD documentation, this is called the VLE (virtual learning environment) data source. Please review the description of the variables in the *studentVLE* and *VLE* sources (which are joined together for this module) [here](https://analyse.kmi.open.ac.uk/open_dataset#description). Then, read in the `oulad-interactions.csv` file.
 

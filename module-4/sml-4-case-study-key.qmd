@@ -65,7 +65,9 @@ library(xgboost) # for boosted tree modeling
 library(vip) # for variable importance measures
 ```
 
-Next, we'll load a new file --- one with *interactions* (or log-trace) data. Please find that in the `data` folder for this lab, read that in and assign it the name `interactions`.
+Next, we'll load a new file --- one with *interactions* (or log-trace) data. Please find that (`oulad-interactions.csv`) in the `data` folder for this lab, read that in and assign it the name `interactions`. 
+
+*N.b.* **If you download these materials directly from GitHub, you will need to unzip the file titled `oulad-interactions.csv.zip`**
 
 ```{r}
 interactions <- read_csv("data/oulad-interactions.csv")
@@ -74,14 +76,6 @@ interactions <- read_csv("data/oulad-interactions.csv")
 We have to do the same processing we did in the third module, to obtain cut-off dates. As a reminder, the purpose of this is to train the model on data from the first one-third of the class, with the reasoning being this is a good time to intervene--far enough into the class to make an appreciable impact, but not too late to have a limited chance of being able to change students' trajectory in the class.
 
 We'll repeat the procedure we carried out with the assessments data --- calculating a cut-off for each class and then filtering the data based upon this cut-off. But, since we've already done this for the assessment data, to allow us to focus more on some new feature engineering steps in this module, we are providing you with the already-filtered interactions data. *Note*: you can find the code used to carry out these steps in the Module 4 folder in `process-interactions-data.R`.
-
-Please load `oulad-interactions-filtered.csv` into R, assigning the resulting data frame the name `interactions`.
-
-#### **👉 Your Turn** **⤵**
-
-```{r}
-interactions <- read_csv("data/oulad-interactions-filtered.csv")
-```
 
 In the OULAD documentation, this is called the VLE (virtual learning environment) data source. Please review the description of the variables in the *studentVLE* and *VLE* sources (which are joined together for this module) [here](https://analyse.kmi.open.ac.uk/open_dataset#description). Then, read in the `oulad-interactions.csv` file.
 
@@ -156,12 +150,12 @@ interactions_filtered <- interactions_joined %>%
   filter(date < quantile_cutoff_date) # filter the data so only assignments before the cutoff date are included
 ```
 
-Then, let's engineer several features. For the present time, we'll focus on the `sum_click` variable, which tells us how many times students clicked on a resource for a given date. We'll use the `interactions_filtered` data set we just created. Let's start simple: please type the name of that data set (`interactions_filtered`) in the code chunk below. Note, you may need to unzip this file!
+Then, let's engineer several features. For the present time, we'll focus on the `sum_click` variable, which tells us how many times students clicked on a resource for a given date. We'll use the `interactions` data set we just created. Let's start simple: please type the name of that data set (`interactions`) in the code chunk below. Note, you may need to unzip this file!
 
 #### **👉 Your Turn** **⤵**
 
 ```{r}
-interactions_filtered <- read_csv("data/oulad-interactions-filtered.csv")
+interactions_filtered <- read_csv("data/oulad-interactions.csv")
 ```
 
 How can we create a feature with `sum_click`? Think back to our discussion in the presentation; we have *many* options for working with such time series data. Perhaps the most simple is to count the clicks. Please summarize the number of clicks for each student (specific to a single course). This means you will need to group your data by `id_student`, `code_module`, and `code_presentation`, and then create a summary variable. Assign the resulting output the name `interactions_summarized`. You may find the documentation for `summarize()` to be helpful. That is available [here](https://dplyr.tidymodels.org/reference/summarise.html). [This chapter](https://r4ds.had.co.nz/transform.html) is also likely helpful (note that `summarise()` and `summarize()` are different spellings for the same function).
