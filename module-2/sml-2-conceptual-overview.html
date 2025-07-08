@@ -138,14 +138,15 @@
 <section>
 <section id="purpose-and-agenda" class="title-slide slide level1 center">
 <h1>Purpose and Agenda</h1>
-<p>We have some data and want to develop a prediction model. Supervised machine learning is suited to this aim. In particular, in this module, we explore how we can train a computer to predict students’ passing a course. We use a large data set, the Open University Learning Analytics Dataset (OULAD), focusing on student data at this point. Our model at this point is relatively simple, a generalized linear model.</p>
+<p>Building on the foundations from Module 1, this session delves deeper into the workflows we will use when we are using a SML approach. Particularly, we’ll explore the roles of training and testing data and when to use them in a SML workflow. Continuing with the IPEDS data we explored in Module 1, we’ll build on our predictions of institutional graduation rates.</p>
 </section>
 <section id="what-well-do-in-this-presentation" class="slide level2">
 <h2>What we’ll do in this presentation</h2>
 <ul>
 <li>Discussion 1</li>
-<li>Key Concept #1: Our framework</li>
+<li>Key Concept #1: Our SML framework</li>
 <li>Key Concept #2: Training and testing data</li>
+<li>Key Concept #3: Bias-variance trade-off</li>
 <li>Discussion 2</li>
 <li>Introduction to the other parts of this module</li>
 </ul>
@@ -174,52 +175,16 @@
 </div>
 </section></section>
 <section>
-<section id="key-concept-1" class="title-slide slide level1 center">
-<h1>Key Concept #1</h1>
+<section id="key-concept-1-our-sml-framework" class="title-slide slide level1 center">
+<h1>Key Concept #1: Our SML framework</h1>
 
 </section>
-<section id="our-framework" class="slide level2">
-<h2>Our framework</h2>
-<div class="panel-tabset">
-<ul id="tabset-2" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-2-1">Overview</a></li><li><a href="#tabset-2-2">OULAD (1)</a></li><li><a href="#tabset-2-3">OULAD (2)</a></li><li><a href="#tabset-2-4">LASER Frame</a></li><li><a href="#tabset-2-5">Supervised ML Frame</a></li></ul>
-<div class="tab-content">
-<div id="tabset-2-1">
+<h3 id="overview">Overview</h3>
 <ul>
-<li>We want to make predictions about an outcome of interest based on predictor variables that we think are related to the outcome.</li>
-<li>We’ll be using a widely-used data set in the learning analytics field: the <a href="https://analyse.kmi.open.ac.uk/open_dataset">Open University Learning Analytics Dataset (OULAD)</a>.</li>
-<li>The OULAD was created by learning analytics researchers at the United Kingdom-based Open University.</li>
-<li>It includes data from post-secondary learners participation in one of several Massive Open Online Courses (called <em>modules</em> in the OULAD).</li>
+<li>We want to make predictions about an outcome of interest based on predictor (or independent) variable(s) that we think are related to the outcome (or dependent variable).</li>
+<li>We’ll continue using <a href="https://nces.ed.gov/ipeds/">IPEDS, the Integrated Postsecondary Education Data System</a> data to predict institutional graduation rates.</li>
 </ul>
-</div>
-<div id="tabset-2-2">
-<ul>
-<li>Many students pass these courses, but not all do</li>
-<li>We have data on students’ initial characteristics and their interactions in the course</li>
-<li>If we could develop a good prediction model, we could provide additional supports to students–and maybe move the needle on some students succeeding who might not otherwise</li>
-</ul>
-</div>
-<div id="tabset-2-3">
-<p>We’ll be focusing on three files:</p>
-<ul>
-<li>studentInfo, courses, and studentRegistration</li>
-</ul>
-<p>These are joined together (see <code>oulad.R</code>) for this module. You’ll be doing more joining later!</p>
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 3 × 15
-  code_module code_presentation id_student gender region       highest_education
-  &lt;chr&gt;       &lt;chr&gt;                  &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;        &lt;chr&gt;            
-1 AAA         2013J                  11391 M      East Anglia… HE Qualification 
-2 AAA         2013J                  28400 F      Scotland     HE Qualification 
-3 AAA         2013J                  30268 F      North Weste… A Level or Equiv…
-# ℹ 9 more variables: imd_band &lt;chr&gt;, age_band &lt;chr&gt;,
-#   num_of_prev_attempts &lt;dbl&gt;, studied_credits &lt;dbl&gt;, disability &lt;chr&gt;,
-#   final_result &lt;chr&gt;, module_presentation_length &lt;dbl&gt;,
-#   date_registration &lt;dbl&gt;, date_unregistration &lt;dbl&gt;</code></pre>
-</div>
-</div>
-</div>
-<div id="tabset-2-4">
+<h3 id="laser-frame-reminder">LASER Frame (reminder)</h3>
 <ol type="1">
 <li><strong>Prepare</strong>: Prior to analysis, we’ll take a look at the context from which our data came, formulate some questions, and load R packages.</li>
 <li><strong>Wrangle</strong>: In the wrangling section, we will learn some basic techniques for manipulating, cleaning, transforming, and merging data.</li>
@@ -227,8 +192,7 @@
 <li><strong>Model</strong>: In this step, we carry out the analysis - here, supervised machine learning.</li>
 <li><strong>Communicate</strong>: Interpreting and communicating the results of our findings is the last step.</li>
 </ol>
-</div>
-<div id="tabset-2-5">
+<h3 id="sml-frame-mostly-new">SML Frame (mostly new!)</h3>
 <ol type="1">
 <li><strong>Split data</strong> (Prepare)<br>
 </li>
@@ -239,54 +203,50 @@
 <li><strong>Fit model</strong> (Model)</li>
 <li><strong>Evaluate accuracy</strong> (Communicate)</li>
 </ol>
-<p><strong>This is the fundamental process we’ll follow for this and the next two modules focused on supervised ML</strong></p>
-</div>
-</div>
-</div>
-</section></section>
+<p><strong>This is the fundamental process we’ll follow for this and the next two modules focused on supervised ML</strong></p></section>
 <section>
-<section id="key-concept-2" class="title-slide slide level1 center">
-<h1>Key Concept #2</h1>
+<section id="key-concept-2-training-and-testing-data" class="title-slide slide level1 center">
+<h1>Key Concept #2: Training and testing data</h1>
 
 </section>
-<section id="training-and-testing" class="slide level2">
-<h2>Training and testing</h2>
-<div class="panel-tabset">
-<ul id="tabset-3" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-3-1">Train vs.&nbsp;test data</a></li><li><a href="#tabset-3-2">Algorithms</a></li><li><a href="#tabset-3-3">Predictions</a></li><li><a href="#tabset-3-4">Train vs.&nbsp;test</a></li><li><a href="#tabset-3-5">How does this avoid bias?</a></li><li><a href="#tabset-3-6">Strata</a></li></ul>
-<div class="tab-content">
-<div id="tabset-3-1">
+<section id="train-vs.-test-data" class="slide level2">
+<h2>Train vs.&nbsp;test data</h2>
 <ul>
 <li><em>Train data</em>: Coded/outcome data that you use to train (“estimate”) your model</li>
 <li><em>Validation data<sup>1</sup></em>: Data you use to select a particular algorithm</li>
 <li><em>Test (“hold-out”) data</em>: Data that you do not use in any way to train your data</li>
 </ul>
 <p>[1] not always/often used, for reasons we’ll discuss later</p>
-</div>
-<div id="tabset-3-2">
+</section>
+<section id="algorithms-reminder" class="slide level2">
+<h2>Algorithms (reminder)</h2>
 <ul>
 <li>Algorithms (or estimation procedures - or <em>models</em>) refer to the <em>structure</em> and <em>process</em> of estimating the <em>parameters</em> of a model</li>
 <li>This definition provides a wide range of options for what kinds of algorithms we use (from simple to very complex, as we discuss in a later module)</li>
 <li>For now, we focus on a familiar, easy to interpret algorithm (e.g., <a href="https://dl.acm.org/doi/abs/10.1145/3448139.3448154?casa_token=skmk5XGbDOUAAAAA:Z0Kl4nyjpOGFA6RuFTiiLWaC_KxH1vkQ72Kr0hetXcumRdvu8tPYlCX12AgHr9aS0Fp3L-Uu0p4">1</a>, also <a href="https://linkinghub.elsevier.com/retrieve/pii/S0895435618310813">this</a>), <em>logistic regression</em></li>
 <li>This is a linear model with a binary (<em>“yes”</em> or <em>“no”</em>) outcome</li>
-<li>It will be a <em>bad model</em> to start us off!</li>
+<li>It will be a <em>basic model</em> to start us off!</li>
 </ul>
-</div>
-<div id="tabset-3-3">
+</section>
+<section id="predictions-reminder" class="slide level2">
+<h2>Predictions (reminder)</h2>
 <ul>
 <li>When doing supervised ML, we focus on predicting an outcome: how well we do this overall and for particular cases (more on how in the next module)</li>
 <li>We <em>do not</em> focus on inference or explanation (i.e., an “explanatory” model): model fit, statistical significance, effect sizes, etc.</li>
 <li><strong>This is a really key difference – we use different metrics to evaluate what makes for a good model</strong></li>
 </ul>
-</div>
-<div id="tabset-3-4">
+</section>
+<section id="train-vs.-test" class="slide level2">
+<h2>Train vs.&nbsp;test</h2>
 <ul>
 <li>A key concept in the context of supervised machine learning is training vs.&nbsp;testing data:</li>
 <li>Training data: Data we use to <strong>fit</strong> (or train, AKA estimate) a supervised machine learning <strong>model</strong> (AKA algorithm)</li>
-<li>Testing data: Data we use to see how well our model not used to fit the model</li>
-<li>By splitting out data into training and testing <em>sets</em>, we can obtain unbiased metrics for how good our model is at predicting</li>
+<li>Testing data: Data we use to see how well our model performs on data not used to fit the model</li>
+<li>By splitting our data into training and testing <em>sets</em>, we can obtain unbiased metrics for how good our model is at predicting</li>
 </ul>
-</div>
-<div id="tabset-3-5">
+</section>
+<section id="how-does-this-avoid-bias" class="slide level2">
+<h2>How does this avoid bias?</h2>
 <ul>
 <li>If we used only one data set (i.e., only training data) we could fit a model that does a <em>really good</em> job of making predictions</li>
 <li>But, this model would likely be <em>overfit</em> — a model that is too tailored to the specific data in our training set, rather than a model that can be more <em>generalizable</em></li>
@@ -294,20 +254,20 @@
 <li>We could fit a model that <em>perfectly</em> predicts every outcome in our training data, but when the model sees new (i.e., different) data, it performs very poorly</li>
 <li>This is <strong>essential</strong> for supervised machine learning; if you review or see a study that only uses a single data set, be skeptical of the prediction metrics!</li>
 </ul>
-</div>
-<div id="tabset-3-6">
+</section>
+<section id="strata" class="slide level2">
+<h2>Strata</h2>
 <ul>
 <li>It is often valuable to conduct a <em>stratified</em> split, based on the proportion or distribution of the dependent variables’ values in the dataset
 <ul>
 <li>this ensures our training and testing data will not have a misbalance in the dependent variable</li>
 </ul></li>
 </ul>
-</div>
-</div>
-</div>
-</section>
-<section id="key-concept-3---bias---variance" class="slide level2">
-<h2>Key concept #3 - Bias - Variance</h2>
+</section></section>
+<section>
+<section id="key-concept-3---bias---variance" class="title-slide slide level1 center">
+<h1>Key concept #3 - Bias - Variance</h1>
+
 </section>
 <section id="whats-stopping-me-from-specifying-a-complex-model" class="slide level2">
 <h2>What’s stopping me from specifying a complex model?</h2>
@@ -322,15 +282,15 @@
 <section id="illustrating-the-bias-variance-tradeoff" class="slide level2">
 <h2>Illustrating the bias-variance tradeoff</h2>
 
-<img data-src="sml-2-conceptual-overview_files/figure-revealjs/unnamed-chunk-3-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"></section>
+<img data-src="sml-2-conceptual-overview_files/figure-revealjs/unnamed-chunk-2-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"></section>
 <section id="a-strongly-biased-algorithm-linear-model" class="slide level2">
 <h2>A strongly biased algorithm (linear model)</h2>
 
-<img data-src="sml-2-conceptual-overview_files/figure-revealjs/unnamed-chunk-4-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"></section>
+<img data-src="sml-2-conceptual-overview_files/figure-revealjs/unnamed-chunk-3-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"></section>
 <section id="a-much-less-biased-algorithm-gamspline" class="slide level2">
 <h2>A much less-biased algorithm (GAM/spline)</h2>
 
-<img data-src="sml-2-conceptual-overview_files/figure-revealjs/unnamed-chunk-5-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"></section>
+<img data-src="sml-2-conceptual-overview_files/figure-revealjs/unnamed-chunk-4-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"></section>
 <section id="slightly-different-data-bottom" class="slide level2">
 <h2>Slightly different data (bottom)</h2>
 <div class="pull-left">
@@ -382,14 +342,14 @@ Regardless of model, we often wish to balance between bias and variance—to bal
 <section id="discussion-2" class="title-slide slide level1 center">
 <h1>Discussion 2</h1>
 <div class="panel-tabset">
-<ul id="tabset-4" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-4-1">Reflecting</a></li><li><a href="#tabset-4-2">Applying</a></li></ul>
+<ul id="tabset-2" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-2-1">Reflecting</a></li><li><a href="#tabset-2-2">Applying</a></li></ul>
 <div class="tab-content">
-<div id="tabset-4-1">
+<div id="tabset-2-1">
 <ul>
 <li>Why not use our training data to evaluate how good our model is?</li>
 </ul>
 </div>
-<div id="tabset-4-2">
+<div id="tabset-2-2">
 <ul>
 <li>What data or context are you interested in for your use of SML?</li>
 </ul>
@@ -401,9 +361,9 @@ Regardless of model, we often wish to balance between bias and variance—to bal
 <section id="introduction-to-the-other-parts-of-this-module" class="title-slide slide level1 center">
 <h1>Introduction to the other parts of this module</h1>
 <div class="panel-tabset">
-<ul id="tabset-5" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-5-1">Readings</a></li><li><a href="#tabset-5-2">Case study</a></li><li><a href="#tabset-5-3">Badge</a></li></ul>
+<ul id="tabset-3" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-3-1">Readings</a></li><li><a href="#tabset-3-2">Case study</a></li><li><a href="#tabset-3-3">Badge</a></li></ul>
 <div class="tab-content">
-<div id="tabset-5-1">
+<div id="tabset-3-1">
 <blockquote>
 <p>Breiman, L. (2001). Statistical modeling: The two cultures (with comments and a rejoinder by the author). Statistical science, 16(3), 199-231.</p>
 </blockquote>
@@ -411,14 +371,14 @@ Regardless of model, we often wish to balance between bias and variance—to bal
 <p>Estrellado, R. A., Freer, E. A., Mostipak, J., Rosenberg, J. M., &amp; Velásquez, I. C. (2020). <em>Data science in education using R. Routledge</em> (c14), Predicting students’ final grades using machine learning methods with online course data. http://www.datascienceineducation.com/</p>
 </blockquote>
 </div>
-<div id="tabset-5-2">
+<div id="tabset-3-2">
 <ul>
-<li>Building a prediction model for students passing the class based just on student data.</li>
+<li>Building a prediction model for institutional graduation rates based on IPEDS data</li>
 <li>Work with peers to complete this, reading the text, following links to resources (and the reading), and then completing the required 👉 Your Turn ⤵ tasks</li>
 <li>A key is available, but we strongly encourage you to use it only at the end to check your work, or if you are completely stuck and have tried our recommended troubleshooting steps: https://docs.google.com/document/d/14Jc-KG3m5k1BvyKWqw7KmDD21IugU5nV5edfJkZyspY/edit</li>
 </ul>
 </div>
-<div id="tabset-5-3">
+<div id="tabset-3-3">
 <ul>
 <li>Involves applying what you have done through this point in the module to a) extending our model and b) reflecting and planning, after which you will knit and submit your work by publishing to Posit Cloud.</li>
 </ul>
