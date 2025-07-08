@@ -1,5 +1,5 @@
 ---
-title: 'Modeling Interactions Data with Random Forests'
+title: 'Modeling Interactions Data with Boosted Trees'
 subtitle: "Case Study"
 author: "LASER Institute"
 date: today 
@@ -23,7 +23,9 @@ knitr::opts_chunk$set(echo = TRUE, eval = TRUE)
 
 ## 1. PREPARE
 
-After interpreting our last model, it is easy to think we can do a little better. But, how? In this module, we will answer this question will building a better model.
+After interpreting our last model, it is easy to think we can do a little better. But, how? In this module, we attempt to improve our predictive performance by **switching from a random‑forest model to a boosted‑tree model (using *xgboost*)** and by carrying out some targeted feature engineering.
+
+Boosted trees (gradient boosting) build a *sequence* of small trees, each one focusing on the records the previous trees struggled with. When tuned carefully (small learning rate, many trees) the ensemble can outperform bagged methods such as random forests.
 
 Feature engineering is a rich topic in machine learning research, including in the learning analytics and educational data mining communities.
 
@@ -35,7 +37,7 @@ Notably, the authors took several steps to prepare the data so that it could be 
 
 > Gobert, J. D., Sao Pedro, M., Raziuddin, J., & Baker, R. S. (2013). From log files to assessment metrics: Measuring students' science inquiry skills using educational data mining. *Journal of the Learning Sciences, 22*(4), 521-563.
 
-Even after feature engineering, machine learning approaches can often (but not always) be improved by choosing a more sophisticated model type. Note how we used a regression model in the first two case studies; here, we explore a considerably more sophisticated model, a random forest. Feature engineering and choosing a more sophisticated model adds some complexity to the modeling. As we have discussed, it is easy to bias our results if we repeatedly check the performance of *different model fits* with the same test data. Cross-validation is one commonly used solution for this problem.
+Even after feature engineering, machine learning approaches can often (but not always) be improved by choosing a more sophisticated model type. Note how we used a regression model in the first two case studies; here, we explore a considerably more sophisticated model, a boosted tree. Feature engineering and choosing a more sophisticated model adds some complexity to the modeling. As we have discussed, it is easy to bias our results if we repeatedly check the performance of *different model fits* with the same test data. Cross-validation is one commonly used solution for this problem.
 
 Our driving question is: **How much can we improve our model?** Looking back to our predictive model from LL 2, we can see that our accuracy was okay. Can we improve on that? Let's dive in!
 
@@ -47,16 +49,22 @@ First, let's load the packages we'll use---the familiar {tidyverse} and several 
 
 #### **👉 Your Turn** **⤵**
 
-Please add to the chunk below code to load three packages we've used before -- tidyverse, janitor, and tidymodels.
+Add to the chunk below code to load:
 
-Please install and add two additional packages: {ranger}, for one implementation of random forest modeling, and {vip}, for variable importance metrics. Load these with the library function
+-   **tidyverse**, **janitor**, **tidymodels**
+-   **xgboost** (boosted‑tree engine)
+-   **vip** (variable importance plots)
+
+Load these with the library function, per usual.
 
 ```{r}
 
 
 ```
 
-Next, we'll load a new file --- one with *interactions* (or log-trace) data. Please find that in the `data` folder for this lab, read that in and assign it the name `interactions`.
+Next, we'll load a new file --- one with *interactions* (or log-trace) data. Please find that (`oulad-interactions.csv`) in the `data` folder for this lab, read that in and assign it the name `interactions`. 
+
+*N.b.* **If you download these materials directly from GitHub, you will need to unzip the file titled `oulad-interactions.csv.zip`**
 
 ```{r}
 
@@ -64,17 +72,9 @@ Next, we'll load a new file --- one with *interactions* (or log-trace) data. Ple
 
 We have to do the same processing we did in the third module, to obtain cut-off dates. As a reminder, the purpose of this is to train the model on data from the first one-third of the class, with the reasoning being this is a good time to intervene--far enough into the class to make an appreciable impact, but not too late to have a limited chance of being able to change students' trajectory in the class.
 
-We'll repeat the procedure we carried out with the assessments data --- calculating a cut-off for each class and then filtering the data based upon this cut-off. But, since we've already done this for the assessment data, to allow us to focus more on some new feature engineering steps in this module, we are providing you with the already-filtered interactions data. *Note*: you can find the code used to carry out these steps in the Module 4 folder in `process-interactions-data.R`.
+We'll repeat the procedure we carried out with the assessments data --- calculating a cut-off for each class and then filtering the data based upon this cut-off. But, since we've already done this for the assessment data, to allow us to focus more on some new feature engineering steps in this module, we are providing you with the already-filtered interactions data.
 
-Please load `oulad-interactions-filtered.csv` into R, assigning the resulting data frame the name `interactions`.
-
-#### **👉 Your Turn** **⤵**
-
-```{r}
-
-
-
-```
+*Note*: you can find the code used to carry out these steps in the Module 4 folder in `process-interactions-data.R`.
 
 In the OULAD documentation, this is called the VLE (virtual learning environment) data source. Please review the description of the variables in the *studentVLE* and *VLE* sources (which are joined together for this module) [here](https://analyse.kmi.open.ac.uk/open_dataset#description). Then, read in the `oulad-interactions.csv` file.
 
@@ -354,14 +354,15 @@ Next, we specify the model and workflow, using the same engine *but a different 
 
 -   using the `random_forest()` function to set the *model* as a random forest
 -   using `set_engine("ranger", importance = "impurity")` to set the *engine* as that provided for random forests through the {ranger} package; we also add the `importance = "impurity"` line to be able to interpret a particular variable importance metric specific to random forest models
--   finally, using `set_mode("classification"))` as we are again predicting categories (transactional and substantive conversations taking place through #NGSSchat)
+-   finally, using `set_mode("classification"))` as we are again predicting categories
 
 ```{r panel-chunk-3, echo = TRUE, eval = TRUE}
+
 # specify model
 my_mod <-
-  rand_forest() %>% # specify the type of model we are fitting, a random forest
-  set_engine("ranger", importance = "impurity") %>% # using a variable importance metric specific to this random forest engine
-  set_mode("classification") # same as before
+  boost_tree(learn_rate = 0.05, trees = 1000, tree_depth = 4) %>%  # boosted tree
+  set_engine("xgboost", importance = "gain") %>% # xgboost engine and a variable importance metric
+  set_mode("classification")
 
 # specify workflow
 my_wf <-
@@ -370,13 +371,17 @@ my_wf <-
   add_recipe(my_rec) # add our recipe we wrote above
 ```
 
+**Why those defaults?** **trees**: many small steps (1000) **learn_rate**: 0.05 (smaller → less variance needs more trees) **tree_depth**: shallow (4) to avoid over‑fitting
+
 ### Step 4: Fit model
 
 Note that here we use the `kfcv` data and a different function - `fit_resamples()`, instead of `fit()`. This function is required when we have multiple folds of our sample, as we created using the vfcv function above. See more about this function [here](https://tune.tidymodels.org/reference/fit_resamples.html).
 
 ```{r}
 class_metrics <- metric_set(accuracy, sensitivity, specificity, ppv, npv, kap) # specify the same metrics as earlier
-fitted_model_resamples <- fit_resamples(my_wf, resamples = vfcv, metrics = class_metrics) # specify the workflow, resampled data, and our metrics
+fitted_model_resamples <- fit_resamples(my_wf, 
+                                        resamples = vfcv, 
+                                        metrics = class_metrics)
 ```
 
 Note that you have fit as many models as the value for `v` that you specified earlier. So, this may take some time. Take a walk, grab a snack, or make a cup of tea!
@@ -406,7 +411,7 @@ final_fit %>%
   collect_metrics()
 ```
 
-We can see that `final_fit` is for a single fit: a random forest with the best performing tuning parameters trained with the *entire* training set of data to predict the values in our (otherwise not used/"spent") testing set of data.
+We can see that `final_fit` is for a single fit: a boosted tree model with the best performing tuning parameters trained with the *entire* training set of data to predict the values in our (otherwise not used/"spent") testing set of data.
 
 #### **👉 Your Turn** **⤵**
 
@@ -417,7 +422,7 @@ We can see that `final_fit` is for a single fit: a random forest with the best p
 
 ## 5. COMMUNICATE
 
-Another benefit of a random forest is we can interpret variable importance metrics. Do that here with the following code.
+Another benefit of a boosted tree model is we can interpret variable importance metrics. Do that here with the following code.
 
 ```{r}
 final_fit %>% 

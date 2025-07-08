@@ -188,7 +188,7 @@ library(tidymodels)
 #| eval: false
 
 pokemon_recipe <- recipe(early_gen ~ height_m + weight_kg + hp, 
-                         data = train) %>% 
+                         data = pokemon) %>% 
     step_mutate(early_gen = as.factor(early_gen))
 ```
 

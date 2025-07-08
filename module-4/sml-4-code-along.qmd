@@ -1,11 +1,12 @@
+
 ---
-title: "How to Cross-Validate and Change the Model"
+title: "How to Cross‑Validate and Change the Model"
 subtitle: "Code Along"
 format:
-  revealjs: 
+  revealjs:
     slide-number: c/t
     progress: true
-    chalkboard: 
+    chalkboard:
       buttons: false
     preview-links: auto
     logo: img/LASERLogoB.png
@@ -13,55 +14,14 @@ format:
     width: 1920
     height: 1080
     margin: 0.05
-    footer: <a href=https://www.go.ncsu.edu/laser-institute>go.ncsu.edu/laser-institute
+    footer: <a href="https://www.go.ncsu.edu/laser-institute">go.ncsu.edu/laser-institute
 ---
 
-```{r}
-# load all the relevant packages
-pacman::p_load(pacman, knitr, tidyverse, readxl)
-```
-
-# Getting started
-
-## Process
-
-- Again, create a .R file in `/module-4`
-- Then, run copy and paste the code in this presentation as we talk through each step
-
-## Quick discussion
-
-- Which feature engineering steps do you think are most important for the OULAD data we have been using?
-
-# Code-along: R
+## R Code
 
 ::: {.panel-tabset}
-## ggplot2
 
-```{r}
-#| eval: false
-#| echo: true
-library(ggrepel)
-library(tidyverse)
-
-ggplot(starwars, aes(x = height, label = name)) +
-    geom_histogram()
-```
-
-## ggplot2 (2)
-
-```{r}
-#| eval: false
-#| echo: true
-library(ggrepel)
-
-ggplot(starwars, aes(x = height, y = mass, label = name)) +
-    geom_point() +
-    geom_label_repel()
-```
-
-## 0. Setup
-
-**Loading, setting up: create a .R file in /module-4 and run this code**
+### 0. Loading & Setup
 
 ```{r}
 #| eval: false
@@ -69,183 +29,107 @@ ggplot(starwars, aes(x = height, y = mass, label = name)) +
 library(tidyverse)
 library(tidymodels)
 
-starwars_recoded <- starwars %>% # built-in data available just by typing
-    mutate(species_human = ifelse(species == "Human", "human", "not human"))
-
-starwars_recoded %>% 
-    count(species_human) # how many humans are there?
+pokemon <- read_csv("data/pokemon-data.csv")
+pokemon %>% glimpse()
 ```
 
-
-## 1. Split data
+### 1. Create Cross‑Validation Folds
 
 ```{r}
 #| eval: false
 #| echo: true
-train_test_split <- initial_split(starwars_recoded, prop = .70)
-
-data_train <- training(train_test_split)
+set.seed(123)
+pokemon_folds <- vfold_cv(pokemon, v = 5, strata = early_gen)
+pokemon_folds
 ```
 
-## 1. Split data (KFCV)
+### 2. Specify Recipe
 
 ```{r}
 #| eval: false
 #| echo: true
-
-# during Step 1
-kfcv <- vfold_cv(data_train, v = 10) # this differentiates this from what we did before
-# before, we simple used data_train to fit our model
-kfcv
+pokemon_rec <- recipe(early_gen ~ height_m + weight_kg + hp, data = pokemon) %>% 
+  step_mutate(early_gen = as.factor(early_gen))
 ```
 
-## 2. Engineer features
+### 3. Specify Models
 
 ```{r}
 #| eval: false
 #| echo: true
-# predicting humans based on the variables we used in LL1 + birth_year and homeworld
-my_rec <- recipe(species_human ~ height + mass + birth_year + eye_color, data = data_train) %>% 
-    step_novel(eye_color) # need to dummy code
+log_mod <- logistic_reg() %>% 
+  set_engine("glm") %>% 
+  set_mode("classification")
+
+boost_mod <- boost_tree(
+    trees = 1000, 
+    mtry = 3, 
+    learn_rate = 0.05
+  ) %>% 
+  set_engine("xgboost") %>% 
+  set_mode("classification")
 ```
 
-
-## 3. Specify model
+### 4. Create Workflows
 
 ```{r}
 #| eval: false
 #| echo: true
+log_wf <- workflow() %>% 
+  add_recipe(pokemon_rec) %>% 
+  add_model(log_mod)
 
-#| eval: false
-#| echo: true
-# during step 3
-my_mod <- rand_forest() %>% # different
-    set_engine("ranger", importance = "impurity") %>% # different and with importance
-    set_mode("classification")
+boost_wf <- workflow() %>% 
+  add_recipe(pokemon_rec) %>% 
+  add_model(boost_mod)
 ```
 
-## 4. Fit model
+### 5. Fit Resamples & Collect Metrics
 
 ```{r}
 #| eval: false
 #| echo: true
+log_res <- fit_resamples(
+  log_wf,
+  resamples = pokemon_folds,
+  metrics   = metric_set(accuracy)
+)
 
-class_metrics <- metric_set(accuracy, sensitivity, specificity, ppv, npv, kap) # this is new
+boost_res <- fit_resamples(
+  boost_wf,
+  resamples = pokemon_folds,
+  metrics   = metric_set(accuracy)
+)
 
-fitted_model_resamples <- fit_resamples(my_wf, 
-                                        resamples = kfcv, # different
-                                        metrics = class_metrics)
+bind_rows(
+  collect_metrics(log_res)   %>% mutate(model = "Logistic Regression"),
+  collect_metrics(boost_res) %>% mutate(model = "XGBoost")
+) %>% 
+  select(model, mean, std_err)
 ```
 
-## 5. Evaluate accuracy (training)
+### 6. Variable Importance (VIP) for XGBoost
 
 ```{r}
 #| eval: false
 #| echo: true
+library(vip)
 
-collect_metrics(fitted_model_resamples)
-```
+boost_fit <- fit(boost_wf, data = pokemon)
 
-## 5. Evaluate accuracy (VIP)
-
-```{r}
-#| eval: false
-#| echo: true
-
-final_fit %>% 
-    pluck(".workflow", 1) %>%   
-    pull_workflow_fit() %>% 
-    vip(num_features = 10)
-```
-
-## 5. Evaluate accuracy (testing)
-
-```{r}
-#| eval: false
-#| echo: true
-
-final_fit <- last_fit(my_wf, train_test_split, metrics = class_metrics)
-collect_metrics(final_fit)
+boost_fit %>% 
+  pull_workflow_fit() %>% 
+  vip(num_features = 10)
 ```
 
 :::
 
-# Code-along: python
+## Code‑along: Python
 
-::: panel-tabset
-
-## Loading, setting up
-
-```{python}
-#| eval: false
-#| echo: true
-#
-# Imports for visualization and modeling
-import matplotlib.pyplot as plt
-import seaborn as sns
-from sklearn.model_selection import cross_val_score, KFold
-from sklearn.ensemble import RandomForestClassifier
-import shap
-
-# Star Wars data
-import seaborn as sns
-starwars = sns.load_dataset('starwars')
-```
-
-## Plotting with matplotlib
+*AR to add, can use same steps as above if you like*
 
 ```{python}
 #| eval: false
 #| echo: true
 
-# Star Wars data
-import seaborn as sns
-starwars = sns.load_dataset('starwars')
-
-# Plot 1: Histogram
-plt.figure(figsize=(10, 6))
-sns.histplot(starwars['height'], kde=False)
-plt.xlabel('Height')
-plt.ylabel('Count')
-plt.title('Distribution of Heights')
-plt.show()
-
-# Plot 2: Scatter plot with labels
-plt.figure(figsize=(10, 6))
-sns.scatterplot(data=starwars, x='height', y='mass')
-for i, txt in enumerate(starwars['name']):
-    plt.annotate(txt, (starwars['height'][i], starwars['mass'][i]), fontsize=9)
-plt.xlabel('Height')
-plt.ylabel('Mass')
-plt.title('Height vs Mass with Labels')
-plt.show()
-```
-
-## Cross-validation and RF modeling
-
-```{python}
-#| eval: false
-#| echo: true
-
-# Cross-validation setup (v-fold)
-from sklearn.datasets import make_classification
-X, y = make_classification(n_samples=1000, n_features=20, random_state=42)
-kf = KFold(n_splits=20, shuffle=True, random_state=42)
-kf_splits = list(kf.split(X))
-
-# Random Forest Model
-model = RandomForestClassifier(n_estimators=100, random_state=42)
-
-# Cross-validation and metric collection
-cv_scores = cross_val_score(model, X, y, cv=kf, scoring='accuracy')
-print('Cross-validation accuracy scores:', cv_scores)
-print('Mean cross-validation accuracy:', cv_scores.mean())
-
-# Fit the model on the entire dataset for feature importance
-model.fit(X, y)
-explainer = shap.TreeExplainer(model)
-shap_values = explainer.shap_values(X)
-
-# Plot feature importance
-shap.summary_plot(shap_values, X, plot_type="bar", max_display=10)
 ```

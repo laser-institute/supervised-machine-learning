@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.6.40">
+<meta name="generator" content="quarto-1.6.42">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="LASER Institute">
-<meta name="dcterms.date" content="2025-05-19">
+<meta name="dcterms.date" content="2025-06-02">
 
 <title>Predicting Institutional Graduation Rates Using Testing and Training Data</title>
 <style>
@@ -65,12 +65,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="sml-2-case-study-key_files/libs/quarto-html/tippy.umd.min.js"></script>
 <script src="sml-2-case-study-key_files/libs/quarto-html/anchor.min.js"></script>
 <link href="sml-2-case-study-key_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="sml-2-case-study-key_files/libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="sml-2-case-study-key_files/libs/quarto-html/quarto-syntax-highlighting-dark-8ea72dc5fed832574809a9c94082fbbb.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="sml-2-case-study-key_files/libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="sml-2-case-study-key_files/libs/quarto-html/quarto-syntax-highlighting-dark-b53751a350365c71b6c909e95f209ed1.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
 <script src="sml-2-case-study-key_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="sml-2-case-study-key_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="sml-2-case-study-key_files/libs/bootstrap/bootstrap-00d65cf21f174b4516a2e66297fda939.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="sml-2-case-study-key_files/libs/bootstrap/bootstrap-dark-c849bbedd074e1c235909309894d6680.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="sml-2-case-study-key_files/libs/bootstrap/bootstrap-c40676b2bf6f3885adcce02e998bb44c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="sml-2-case-study-key_files/libs/bootstrap/bootstrap-dark-53a30e6d4f540c8956ac884ec0bd0668.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 
 
 </head>
@@ -164,7 +164,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">May 19, 2025</p>
+      <p class="date">June 2, 2025</p>
     </div>
   </div>
   
@@ -203,15 +203,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="b.-load-packages" class="level3">
 <h3 class="anchored" data-anchor-id="b.-load-packages">1b. Load Packages</h3>
-<p>Like in the last module, please load the tidyverse package. Also, please load the tidymodels and janitor packages in the code chunk below.</p>
+<p>Like in the last module, please load the tidyverse package. Also, please load the tidymodels and janitor packages in the code chunk below. Also, add another package we’ll use, skimr. Install it if you need.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
 ✔ dplyr     1.1.4     ✔ readr     2.1.5
 ✔ forcats   1.0.0     ✔ stringr   1.5.1
-✔ ggplot2   3.5.1     ✔ tibble    3.2.1
-✔ lubridate 1.9.3     ✔ tidyr     1.3.1
+✔ ggplot2   3.5.2     ✔ tibble    3.2.1
+✔ lubridate 1.9.4     ✔ tidyr     1.3.1
 ✔ purrr     1.0.4     
 ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
 ✖ dplyr::filter() masks stats::filter()
@@ -220,21 +220,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidymodels)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>── Attaching packages ────────────────────────────────────── tidymodels 1.2.0 ──
-✔ broom        1.0.7      ✔ rsample      1.2.1 
-✔ dials        1.2.1      ✔ tune         1.2.1 
-✔ infer        1.0.7      ✔ workflows    1.1.4 
-✔ modeldata    1.4.0      ✔ workflowsets 1.1.0 
-✔ parsnip      1.2.1      ✔ yardstick    1.3.1 
-✔ recipes      1.0.10     
+<pre><code>── Attaching packages ────────────────────────────────────── tidymodels 1.3.0 ──
+✔ broom        1.0.8     ✔ rsample      1.3.0
+✔ dials        1.4.0     ✔ tune         1.3.0
+✔ infer        1.0.8     ✔ workflows    1.2.0
+✔ modeldata    1.4.0     ✔ workflowsets 1.1.1
+✔ parsnip      1.3.2     ✔ yardstick    1.3.2
+✔ recipes      1.3.1     
 ── Conflicts ───────────────────────────────────────── tidymodels_conflicts() ──
 ✖ scales::discard() masks purrr::discard()
 ✖ dplyr::filter()   masks stats::filter()
 ✖ recipes::fixed()  masks stringr::fixed()
 ✖ dplyr::lag()      masks stats::lag()
 ✖ yardstick::spec() masks readr::spec()
-✖ recipes::step()   masks stats::step()
-• Search for functions across packages at https://www.tidymodels.org/find/</code></pre>
+✖ recipes::step()   masks stats::step()</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(janitor)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -245,6 +244,7 @@ The following objects are masked from 'package:stats':
 
     chisq.test, fisher.test</code></pre>
 </div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(skimr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
@@ -259,7 +259,7 @@ The following objects are masked from 'package:stats':
 <h3 class="anchored" data-anchor-id="a.-import-and-inspect-data">2a. Import and Inspect Data</h3>
 <p>For this module, we’ll be working with the same IPEDS (Integrated Postsecondary Education Data System) dataset we used in Module 1. Let’s read it in:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>ipeds <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/ipeds-all-title-9-2022-data.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>ipeds <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/ipeds-all-title-9-2022-data.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Rows: 5988 Columns: 24
 ── Column specification ────────────────────────────────────────────────────────
@@ -273,45 +273,45 @@ dbl (15): unitid, year, DRVADM2022.Percent admitted - total, DRVIC2022.Tuiti...
 </div>
 <p>We’ll use the same data cleaning steps from Module 1:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>ipeds <span class="ot">&lt;-</span> janitor<span class="sc">::</span><span class="fu">clean_names</span>(ipeds)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>ipeds <span class="ot">&lt;-</span> <span class="fu">clean_names</span>(ipeds)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>ipeds <span class="ot">&lt;-</span> ipeds <span class="sc">%&gt;%</span> </span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(<span class="at">name =</span> institution_name, </span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">title_iv =</span> hd2022_postsecondary_and_title_iv_institution_indicator, <span class="co"># is the university a title IV university?</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">carnegie_class =</span> hd2022_carnegie_classification_2021_basic, <span class="co"># which carnegie classification</span></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">state =</span> hd2022_state_abbreviation, <span class="co"># state</span></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>           <span class="at">total_enroll =</span> drvef2022_total_enrollment, <span class="co"># total enrollment</span></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>           <span class="at">pct_admitted =</span> drvadm2022_percent_admitted_total, <span class="co"># percentage of applicants admitted</span></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>           <span class="at">n_bach =</span> drvc2022_bachelors_degree, <span class="co"># number of students receiving a bachelor's degree</span></span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>           <span class="at">n_mast =</span> drvc2022_masters_degree, <span class="co"># number receiving a master's</span></span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>           <span class="at">n_doc =</span> drvc2022_doctors_degree_research_scholarship, <span class="co"># number receive a doctoral degree</span></span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>           <span class="at">tuition_fees =</span> drvic2022_tuition_and_fees_2021_22, <span class="co"># total cost of tuition and fees</span></span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>           <span class="at">grad_rate =</span> drvgr2022_graduation_rate_total_cohort, <span class="co"># graduation rate</span></span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>           <span class="at">percent_fin_aid =</span> sfa2122_percent_of_full_time_first_time_undergraduates_awarded_any_financial_aid, <span class="co"># percent of students receive financial aid</span></span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>           <span class="at">avg_salary =</span> drvhr2022_average_salary_equated_to_9_months_of_full_time_instructional_staff_all_ranks) <span class="co"># average salary of instructional staff</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>ipeds <span class="ot">&lt;-</span> ipeds <span class="sc">%&gt;%</span> </span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(<span class="at">name =</span> institution_name, </span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">title_iv =</span> hd2022_postsecondary_and_title_iv_institution_indicator, <span class="co"># is the university a title IV university?</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">carnegie_class =</span> hd2022_carnegie_classification_2021_basic, <span class="co"># which carnegie classification</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">state =</span> hd2022_state_abbreviation, <span class="co"># state</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>           <span class="at">total_enroll =</span> drvef2022_total_enrollment, <span class="co"># total enrollment</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>           <span class="at">pct_admitted =</span> drvadm2022_percent_admitted_total, <span class="co"># percentage of applicants admitted</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>           <span class="at">n_bach =</span> drvc2022_bachelors_degree, <span class="co"># number of students receiving a bachelor's degree</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>           <span class="at">n_mast =</span> drvc2022_masters_degree, <span class="co"># number receiving a master's</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>           <span class="at">n_doc =</span> drvc2022_doctors_degree_research_scholarship, <span class="co"># number receive a doctoral degree</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>           <span class="at">tuition_fees =</span> drvic2022_tuition_and_fees_2021_22, <span class="co"># total cost of tuition and fees</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>           <span class="at">grad_rate =</span> drvgr2022_graduation_rate_total_cohort, <span class="co"># graduation rate</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>           <span class="at">percent_fin_aid =</span> sfa2122_percent_of_full_time_first_time_undergraduates_awarded_any_financial_aid, <span class="co"># percent of students receive financial aid</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>           <span class="at">avg_salary =</span> drvhr2022_average_salary_equated_to_9_months_of_full_time_instructional_staff_all_ranks) <span class="co"># average salary of instructional staff</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="your-turn" class="level4">
 <h4 class="anchored" data-anchor-id="your-turn"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
 <p>Just as we did in Module 1, let’s filter the data to include only Title IV postsecondary institutions.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>ipeds <span class="ot">&lt;-</span> ipeds <span class="sc">%&gt;%</span> </span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(title_iv <span class="sc">==</span> <span class="st">"Title IV postsecondary institution"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>ipeds <span class="ot">&lt;-</span> ipeds <span class="sc">%&gt;%</span> </span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(title_iv <span class="sc">==</span> <span class="st">"Title IV postsecondary institution"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="your-turn-1" class="level4">
 <h4 class="anchored" data-anchor-id="your-turn-1"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
 <p>Now, filter the data again to <em>only</em> include institutions with a carnegie classification. Specifically, exclude those institutions with a value for the <code>carnegie_class</code> variable that is “Not applicable, not in Carnegie universe (not accredited or nondegree-granting)”. As a hint: whereas the logical operator <code>==</code> is used to include only matching conditions, the logical operator <code>!=</code> excludes matching conditions.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>ipeds <span class="ot">&lt;-</span> ipeds <span class="sc">%&gt;%</span> </span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(carnegie_class <span class="sc">!=</span> <span class="st">"Not applicable, not in Carnegie universe (not accredited or nondegree-granting)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>ipeds <span class="ot">&lt;-</span> ipeds <span class="sc">%&gt;%</span> </span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(carnegie_class <span class="sc">!=</span> <span class="st">"Not applicable, not in Carnegie universe (not accredited or nondegree-granting)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="your-turn-2" class="level4">
 <h4 class="anchored" data-anchor-id="your-turn-2"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
 <p>Let’s inspect our data - using <code>glimpse()</code> or another means of your choosing below.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(ipeds)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(ipeds)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 3,818
 Columns: 13
@@ -345,9 +345,9 @@ $ avg_salary      &lt;dbl&gt; 77824, 106434, 36637, 92561, 72635, 97394, 63494, 
 <h4 class="anchored" data-anchor-id="your-turn-3"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
 <p>Create a binary variable called <code>good_grad_rate</code> that indicates whether an institution has a graduation rate above a certain threshold. Choose a threshold that seems reasonable to you.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>ipeds <span class="ot">&lt;-</span> ipeds <span class="sc">%&gt;%</span> </span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">good_grad_rate =</span> <span class="fu">if_else</span>(grad_rate <span class="sc">&gt;</span> <span class="dv">62</span>, <span class="dv">1</span>, <span class="dv">0</span>),</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">good_grad_rate =</span> <span class="fu">as.factor</span>(good_grad_rate))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>ipeds <span class="ot">&lt;-</span> ipeds <span class="sc">%&gt;%</span> </span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">good_grad_rate =</span> <span class="fu">if_else</span>(grad_rate <span class="sc">&gt;</span> <span class="dv">62</span>, <span class="dv">1</span>, <span class="dv">0</span>),</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">good_grad_rate =</span> <span class="fu">as.factor</span>(good_grad_rate))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Here, add a reason or two for how and why you picked the threshold you did:</p>
 <ul>
@@ -364,8 +364,8 @@ $ avg_salary      &lt;dbl&gt; 77824, 106434, 36637, 92561, 72635, 97394, 63494, 
 <h3 class="anchored" data-anchor-id="a.-examine-variables">3a. Examine Variables</h3>
 <p>Let’s take a closer look at our institutional data. In the chunk below, count the number of institutions with good and poor graduation rates.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>ipeds <span class="sc">%&gt;%</span> </span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">count</span>(good_grad_rate)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>ipeds <span class="sc">%&gt;%</span> </span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">count</span>(good_grad_rate)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 3 × 2
   good_grad_rate     n
@@ -378,8 +378,8 @@ $ avg_salary      &lt;dbl&gt; 77824, 106434, 36637, 92561, 72635, 97394, 63494, 
 <p>What does this tell us?</p>
 <p>We can use the <code>tabyl</code> function to explore a bit further:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>ipeds <span class="sc">%&gt;%</span> </span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tabyl</span>(good_grad_rate)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>ipeds <span class="sc">%&gt;%</span> </span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tabyl</span>(good_grad_rate)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> good_grad_rate    n   percent valid_percent
               0 2529 0.6623887     0.7438235
@@ -390,12 +390,12 @@ $ avg_salary      &lt;dbl&gt; 77824, 106434, 36637, 92561, 72635, 97394, 63494, 
 <p>We can see how many institutions have good and not-so-good graduations rates – and what percentage of the data is missing.</p>
 <p>Next, let’s visualize the distribution of graduation rates to better understand our data:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>ipeds <span class="sc">%&gt;%</span> </span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> grad_rate)) <span class="sc">+</span></span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">5</span>, <span class="at">fill =</span> <span class="st">"steelblue"</span>, <span class="at">color =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Distribution of Graduation Rates"</span>,</span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">x =</span> <span class="st">"Graduation Rate (%)"</span>,</span>
-<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">y =</span> <span class="st">"Number of Institutions"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>ipeds <span class="sc">%&gt;%</span> </span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> grad_rate)) <span class="sc">+</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">5</span>, <span class="at">fill =</span> <span class="st">"steelblue"</span>, <span class="at">color =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Distribution of Graduation Rates"</span>,</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">x =</span> <span class="st">"Graduation Rate (%)"</span>,</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">y =</span> <span class="st">"Number of Institutions"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: Removed 418 rows containing non-finite outside the scale range
 (`stat_bin()`).</code></pre>
@@ -412,11 +412,11 @@ $ avg_salary      &lt;dbl&gt; 77824, 106434, 36637, 92561, 72635, 97394, 63494, 
 <h4 class="anchored" data-anchor-id="your-turn-4"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
 <p>Create another visualization that explores the relationship between two variables in our dataset. For example, you might want to look at the relationship between tuition fees and graduation rates, or enrollment and graduation rates.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Add your visualization code here</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Add your visualization code here</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>One last, critical step is understanding missingness in our data. The <code>skimr::skim()</code> function is fantastic for this — it tells us the number and percentage of missing values for each variable in our data set.</p>
+<p>One last, critical step is understanding missingness in our data. The <code>skim()</code> function from the {skimr} package is fantastic for this — it tells us the number and percentage of missing values for each variable in our data set.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>skimr<span class="sc">::</span><span class="fu">skim</span>(ipeds)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">skim</span>(ipeds)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
 <caption>Data summary</caption>
@@ -713,7 +713,8 @@ $ avg_salary      &lt;dbl&gt; 77824, 106434, 36637, 92561, 72635, 97394, 63494, 
 </table>
 </div>
 </div>
-<p>From this, we can see that several variables have considerable missingness. For example, the <code>pct_admitted</code> variable has more than half of its values missing! There are ways to deal with this (real-life datasets, including the IPEDS data, are rife with missing values for a whole host of reasons). For this analysis, though, we’ll focus on the variables that have relatively few missing values - <code>tuition_fees</code>, <code>percent_fin_aid</code>, <code>avg_salary</code>, and our dependent variable, <code>good_rate_rate</code>. This will be a simple model — simpler in terms of the features than the model in the first analysis, but with the knowledge that we are using variables that are more complete.</p>
+<p>From this, we can see that several variables have considerable missingness. For example, the <code>pct_admitted</code> variable has more than half of its values missing! There are ways to deal with this (real-life datasets, including the IPEDS data, are rife with missing values for a whole host of reasons). We will address those (e.g., imputation) later.</p>
+<p>For this analysis, though, we’ll focus on the variables that have relatively few missing values - <code>tuition_fees</code>, <code>percent_fin_aid</code>, <code>avg_salary</code>, and our dependent variable, <code>good_grad_rate</code>. This will be a simple model — simpler in terms of the features than the model in the first analysis, but with the knowledge that we are using variables that are more complete.</p>
 </section>
 </section>
 <section id="b.-feature-engineering" class="level3">
@@ -726,14 +727,14 @@ $ avg_salary      &lt;dbl&gt; 77824, 106434, 36637, 92561, 72635, 97394, 63494, 
 <p>Though not as often discussed as other steps, feature engineering is an important step. You can read more about feature engineering <a href="https://www.tmwr.org/recipes.html">here</a>.</p>
 <p>For this module, we’ll create a new feature that might help predict graduation rates. Let’s create a derived variable representing the ratio of tuition and fees to average salary, which could indicate the institution’s value proposition.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>ipeds <span class="ot">&lt;-</span> ipeds <span class="sc">%&gt;%</span> </span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">tuition_to_salary_ratio =</span> tuition_fees <span class="sc">/</span> avg_salary)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>ipeds <span class="ot">&lt;-</span> ipeds <span class="sc">%&gt;%</span> </span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">tuition_to_salary_ratio =</span> tuition_fees <span class="sc">/</span> avg_salary)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Let’s examine this new feature:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>ipeds <span class="sc">%&gt;%</span> </span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> tuition_to_salary_ratio, <span class="at">fill =</span> good_grad_rate)) <span class="sc">+</span></span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_density</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>ipeds <span class="sc">%&gt;%</span> </span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> tuition_to_salary_ratio, <span class="at">fill =</span> good_grad_rate)) <span class="sc">+</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_density</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: Removed 656 rows containing non-finite outside the scale range
 (`stat_density()`).</code></pre>
@@ -749,8 +750,8 @@ $ avg_salary      &lt;dbl&gt; 77824, 106434, 36637, 92561, 72635, 97394, 63494, 
 <p>Something is very not right. It seems like there may be some number that is way off – and that’s skewing the plot in a weird way.</p>
 <p>What’s going on? In this case, it can be helpful to get eyes on the data to see if anything funny seems to be going on. Let’s take a look at the relevant variables:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">select</span>(ipeds, name, tuition_fees, avg_salary, tuition_to_salary_ratio) <span class="sc">%&gt;%</span> </span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">arrange</span>((<span class="fu">desc</span>(tuition_to_salary_ratio)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">select</span>(ipeds, name, tuition_fees, avg_salary, tuition_to_salary_ratio) <span class="sc">%&gt;%</span> </span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">arrange</span>((<span class="fu">desc</span>(tuition_to_salary_ratio)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 3,818 × 4
    name                           tuition_fees avg_salary tuition_to_salary_ra…¹
@@ -775,14 +776,14 @@ $ avg_salary      &lt;dbl&gt; 77824, 106434, 36637, 92561, 72635, 97394, 63494, 
 </ul>
 <p>As you likely noticed, it looks like one institution - Beckfield College-Florence - has an average salary of $1 for their graduates. As a result, the ratio of tuition and fees relative to salary is <em>huge</em> – far larger than for any other institutions! What to do here? This seems almost certain to be an error in data reporting or recording. We can safely filter out this one row with some simple logic.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>ipeds <span class="ot">&lt;-</span> ipeds <span class="sc">%&gt;%</span> </span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(avg_salary <span class="sc">&gt;</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>ipeds <span class="ot">&lt;-</span> ipeds <span class="sc">%&gt;%</span> </span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(avg_salary <span class="sc">&gt;</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Let’s try to create that plot again:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>ipeds <span class="sc">%&gt;%</span> </span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> tuition_to_salary_ratio, <span class="at">fill =</span> good_grad_rate)) <span class="sc">+</span></span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_density</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>ipeds <span class="sc">%&gt;%</span> </span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> tuition_to_salary_ratio, <span class="at">fill =</span> good_grad_rate)) <span class="sc">+</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_density</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: Removed 543 rows containing non-finite outside the scale range
 (`stat_density()`).</code></pre>
@@ -814,8 +815,8 @@ $ avg_salary      &lt;dbl&gt; 77824, 106434, 36637, 92561, 72635, 97394, 63494, 
 </ol>
 <section id="step-1.-split-data" class="level3">
 <h3 class="anchored" data-anchor-id="step-1.-split-data">Step 1. Split data</h3>
-<p>We didn’t split the data we used in the first module. Instead, we used data to <em>train</em> our model, and then we used the same data set to evaluate <em>how good our model performed</em>, i.e., to <em>test</em> our model. This raises an issue: using the same data to train and test our model can lead to something called overfitting, which is when a model learns the specfics in the training data rather than the underlying pattern.</p>
-<p>This is related to the bias-variance tradeoff introduced in the conceptual overview: by using the same data to train and test our model, we run the risk of developing a model with low bias, but high variance. Any changes in the training data could result in a very different model (with far higher bias), which is not ideal. In other words, we want to develop a model that is generalizable to new data, not just the data we used to train it.</p>
+<p>We didn’t split the data we used in the first module. Instead, we used data to <em>train</em> our model, and then we used the same data set to evaluate <em>how good our model performed</em>, i.e., to <em>test</em> our model. This raises an issue: using the same data to train and test our model can lead to something called overfitting, which is when a model learns the specifics in the training data rather than the underlying pattern.</p>
+<p>This is related to the bias-variance trade off introduced in the conceptual overview: by using the same data to train and test our model, we run the risk of developing a model with low bias, but high variance. Any changes in the training data could result in a very different model (with far higher bias), which is not ideal. In other words, we want to develop a model that is generalizable to new data, not just the data we used to train it.</p>
 <p>The authors of Data Science in Education Using R (Estrellado et al., 2020) remind us that:</p>
 <blockquote class="blockquote">
 <p>At its core, machine learning is the process of “showing” your statistical model only some of the data at once and training the model to predict accurately on that training dataset (this is the “learning” part of machine learning). Then, the model as developed on the training data is shown new data - data you had all along, but hid from your computer initially - and you see how well the model that you developed on the training data performs on this new testing data. Eventually, you might use the model on entirely new data.</p>
@@ -837,13 +838,13 @@ $ avg_salary      &lt;dbl&gt; 77824, 106434, 36637, 92561, 72635, 97394, 63494, 
 <p>We also specify the strata to ensure there is not misbalance in the dependent variable (good_grad_rate).</p>
 <p>Run the following code to split the data:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">20250712</span>)</span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>train_test_split <span class="ot">&lt;-</span> <span class="fu">initial_split</span>(ipeds, <span class="at">prop =</span> .<span class="dv">80</span>, <span class="at">strata =</span> <span class="st">"good_grad_rate"</span>)</span>
-<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>data_train <span class="ot">&lt;-</span> <span class="fu">training</span>(train_test_split)</span>
-<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>data_test  <span class="ot">&lt;-</span> <span class="fu">testing</span>(train_test_split)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">20250712</span>)</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>train_test_split <span class="ot">&lt;-</span> <span class="fu">initial_split</span>(ipeds, <span class="at">prop =</span> .<span class="dv">80</span>, <span class="at">strata =</span> <span class="st">"good_grad_rate"</span>)</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>data_train <span class="ot">&lt;-</span> <span class="fu">training</span>(train_test_split)</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>data_test  <span class="ot">&lt;-</span> <span class="fu">testing</span>(train_test_split)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p><strong>Note</strong>: Since random sampling uses random numbers, it is important to set the random number seed using the <code>set.seed()</code> function. This ensures that the random numbers can be reproduced at a later time (if needed). We pick the first date on which we may carry out this learning lab as the seed, but any number will work!</p>
 </section>
@@ -851,7 +852,7 @@ $ avg_salary      &lt;dbl&gt; 77824, 106434, 36637, 92561, 72635, 97394, 63494, 
 <h4 class="anchored" data-anchor-id="your-turn-5"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
 <p>Go ahead and type <code>data_train</code> and <code>data_test</code> into the console (in steps) to check that this data set indeed has 80% of the number of observations as in the larger data. Do that in the chunk below:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>data_train</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>data_train</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2,962 × 15
    name    title_iv carnegie_class state total_enroll pct_admitted n_bach n_mast
@@ -871,7 +872,7 @@ $ avg_salary      &lt;dbl&gt; 77824, 106434, 36637, 92561, 72635, 97394, 63494, 
 #   percent_fin_aid &lt;dbl&gt;, avg_salary &lt;dbl&gt;, good_grad_rate &lt;fct&gt;,
 #   tuition_to_salary_ratio &lt;dbl&gt;</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>data_test</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>data_test</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 742 × 15
    name    title_iv carnegie_class state total_enroll pct_admitted n_bach n_mast
@@ -924,342 +925,12 @@ $ avg_salary      &lt;dbl&gt; 77824, 106434, 36637, 92561, 72635, 97394, 63494, 
 <li><code>tuition_to_salary_ratio</code> (the variable we created based on two of the above variables)</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>my_rec <span class="ot">&lt;-</span> <span class="fu">recipe</span>(good_grad_rate <span class="sc">~</span> </span>
-<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>                     tuition_fees <span class="sc">+</span></span>
-<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>                     avg_salary <span class="sc">+</span></span>
-<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>                     tuition_to_salary_ratio <span class="sc">+</span></span>
-<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>                     percent_fin_aid,</span>
-<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>                 <span class="at">data =</span> ipeds) </span>
-<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>my_rec</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code></code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>── Recipe ──────────────────────────────────────────────────────────────────────</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code></code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>── Inputs </code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Number of variables by role</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>outcome:   1
-predictor: 4</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>skimr<span class="sc">::</span><span class="fu">skim</span>(ipeds)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<table class="caption-top table table-sm table-striped small">
-<caption>Data summary</caption>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Name</td>
-<td style="text-align: left;">ipeds</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Number of rows</td>
-<td style="text-align: left;">3704</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Number of columns</td>
-<td style="text-align: left;">15</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">_______________________</td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Column type frequency:</td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">character</td>
-<td style="text-align: left;">4</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">factor</td>
-<td style="text-align: left;">1</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">numeric</td>
-<td style="text-align: left;">10</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">________________________</td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Group variables</td>
-<td style="text-align: left;">None</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Variable type: character</strong></p>
-<table class="caption-top table table-sm table-striped small">
-<colgroup>
-<col style="width: 20%">
-<col style="width: 13%">
-<col style="width: 19%">
-<col style="width: 5%">
-<col style="width: 5%">
-<col style="width: 8%">
-<col style="width: 12%">
-<col style="width: 15%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">skim_variable</th>
-<th style="text-align: right;">n_missing</th>
-<th style="text-align: right;">complete_rate</th>
-<th style="text-align: right;">min</th>
-<th style="text-align: right;">max</th>
-<th style="text-align: right;">empty</th>
-<th style="text-align: right;">n_unique</th>
-<th style="text-align: right;">whitespace</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">name</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">6</td>
-<td style="text-align: right;">91</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">3663</td>
-<td style="text-align: right;">0</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">title_iv</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">34</td>
-<td style="text-align: right;">34</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">carnegie_class</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">15</td>
-<td style="text-align: right;">88</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">33</td>
-<td style="text-align: right;">0</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">state</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">4</td>
-<td style="text-align: right;">30</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">59</td>
-<td style="text-align: right;">0</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Variable type: factor</strong></p>
-<table class="caption-top table table-sm table-striped small">
-<colgroup>
-<col style="width: 20%">
-<col style="width: 13%">
-<col style="width: 19%">
-<col style="width: 11%">
-<col style="width: 12%">
-<col style="width: 22%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">skim_variable</th>
-<th style="text-align: right;">n_missing</th>
-<th style="text-align: right;">complete_rate</th>
-<th style="text-align: left;">ordered</th>
-<th style="text-align: right;">n_unique</th>
-<th style="text-align: left;">top_counts</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">good_grad_rate</td>
-<td style="text-align: right;">365</td>
-<td style="text-align: right;">0.9</td>
-<td style="text-align: left;">FALSE</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: left;">0: 2485, 1: 854</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Variable type: numeric</strong></p>
-<table class="caption-top table table-sm table-striped small">
-<colgroup>
-<col style="width: 20%">
-<col style="width: 8%">
-<col style="width: 12%">
-<col style="width: 7%">
-<col style="width: 7%">
-<col style="width: 6%">
-<col style="width: 7%">
-<col style="width: 7%">
-<col style="width: 7%">
-<col style="width: 7%">
-<col style="width: 5%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">skim_variable</th>
-<th style="text-align: right;">n_missing</th>
-<th style="text-align: right;">complete_rate</th>
-<th style="text-align: right;">mean</th>
-<th style="text-align: right;">sd</th>
-<th style="text-align: right;">p0</th>
-<th style="text-align: right;">p25</th>
-<th style="text-align: right;">p50</th>
-<th style="text-align: right;">p75</th>
-<th style="text-align: right;">p100</th>
-<th style="text-align: left;">hist</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">total_enroll</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1.00</td>
-<td style="text-align: right;">5015.64</td>
-<td style="text-align: right;">9435.00</td>
-<td style="text-align: right;">1.00</td>
-<td style="text-align: right;">583.75</td>
-<td style="text-align: right;">1878.00</td>
-<td style="text-align: right;">5283.75</td>
-<td style="text-align: right;">164091.0</td>
-<td style="text-align: left;">▇▁▁▁▁</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">pct_admitted</td>
-<td style="text-align: right;">1945</td>
-<td style="text-align: right;">0.47</td>
-<td style="text-align: right;">71.86</td>
-<td style="text-align: right;">22.50</td>
-<td style="text-align: right;">0.00</td>
-<td style="text-align: right;">60.00</td>
-<td style="text-align: right;">77.00</td>
-<td style="text-align: right;">89.00</td>
-<td style="text-align: right;">100.0</td>
-<td style="text-align: left;">▁▁▃▆▇</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">n_bach</td>
-<td style="text-align: right;">1171</td>
-<td style="text-align: right;">0.68</td>
-<td style="text-align: right;">797.09</td>
-<td style="text-align: right;">1696.55</td>
-<td style="text-align: right;">0.00</td>
-<td style="text-align: right;">31.00</td>
-<td style="text-align: right;">224.00</td>
-<td style="text-align: right;">676.00</td>
-<td style="text-align: right;">24230.0</td>
-<td style="text-align: left;">▇▁▁▁▁</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">n_mast</td>
-<td style="text-align: right;">1174</td>
-<td style="text-align: right;">0.68</td>
-<td style="text-align: right;">347.27</td>
-<td style="text-align: right;">936.85</td>
-<td style="text-align: right;">0.00</td>
-<td style="text-align: right;">0.00</td>
-<td style="text-align: right;">53.50</td>
-<td style="text-align: right;">287.00</td>
-<td style="text-align: right;">19615.0</td>
-<td style="text-align: left;">▇▁▁▁▁</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">n_doc</td>
-<td style="text-align: right;">1174</td>
-<td style="text-align: right;">0.68</td>
-<td style="text-align: right;">31.35</td>
-<td style="text-align: right;">114.08</td>
-<td style="text-align: right;">0.00</td>
-<td style="text-align: right;">0.00</td>
-<td style="text-align: right;">0.00</td>
-<td style="text-align: right;">5.00</td>
-<td style="text-align: right;">1595.0</td>
-<td style="text-align: left;">▇▁▁▁▁</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">tuition_fees</td>
-<td style="text-align: right;">543</td>
-<td style="text-align: right;">0.85</td>
-<td style="text-align: right;">16907.82</td>
-<td style="text-align: right;">15447.41</td>
-<td style="text-align: right;">480.00</td>
-<td style="text-align: right;">4970.00</td>
-<td style="text-align: right;">10958.00</td>
-<td style="text-align: right;">25650.00</td>
-<td style="text-align: right;">66064.0</td>
-<td style="text-align: left;">▇▂▂▁▁</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">grad_rate</td>
-<td style="text-align: right;">365</td>
-<td style="text-align: right;">0.90</td>
-<td style="text-align: right;">48.16</td>
-<td style="text-align: right;">21.44</td>
-<td style="text-align: right;">0.00</td>
-<td style="text-align: right;">32.00</td>
-<td style="text-align: right;">47.00</td>
-<td style="text-align: right;">63.00</td>
-<td style="text-align: right;">100.0</td>
-<td style="text-align: left;">▂▇▇▅▂</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">percent_fin_aid</td>
-<td style="text-align: right;">354</td>
-<td style="text-align: right;">0.90</td>
-<td style="text-align: right;">90.10</td>
-<td style="text-align: right;">15.08</td>
-<td style="text-align: right;">0.00</td>
-<td style="text-align: right;">86.00</td>
-<td style="text-align: right;">97.00</td>
-<td style="text-align: right;">100.00</td>
-<td style="text-align: right;">100.0</td>
-<td style="text-align: left;">▁▁▁▁▇</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">avg_salary</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1.00</td>
-<td style="text-align: right;">67794.18</td>
-<td style="text-align: right;">24325.03</td>
-<td style="text-align: right;">4584.00</td>
-<td style="text-align: right;">52170.75</td>
-<td style="text-align: right;">64822.50</td>
-<td style="text-align: right;">80262.25</td>
-<td style="text-align: right;">215232.0</td>
-<td style="text-align: left;">▂▇▂▁▁</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">tuition_to_salary_ratio</td>
-<td style="text-align: right;">543</td>
-<td style="text-align: right;">0.85</td>
-<td style="text-align: right;">0.26</td>
-<td style="text-align: right;">0.22</td>
-<td style="text-align: right;">0.01</td>
-<td style="text-align: right;">0.08</td>
-<td style="text-align: right;">0.17</td>
-<td style="text-align: right;">0.43</td>
-<td style="text-align: right;">2.4</td>
-<td style="text-align: left;">▇▂▁▁▁</td>
-</tr>
-</tbody>
-</table>
-</div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>my_rec <span class="ot">&lt;-</span> <span class="fu">recipe</span>(good_grad_rate <span class="sc">~</span> </span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>                     tuition_fees <span class="sc">+</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>                     avg_salary <span class="sc">+</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>                     tuition_to_salary_ratio <span class="sc">+</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>                     percent_fin_aid,</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>                 <span class="at">data =</span> ipeds) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
@@ -1268,9 +939,9 @@ predictor: 4</code></pre>
 <p>With tidymodels, we start building a model by specifying the <em>functional form</em> of the model that we want using the <a href="https://tidymodels.github.io/parsnip/">{parsnip} package</a>. Since our outcome is binary, the model type we will use is “<a href="https://parsnip.tidymodels.org/reference/logistic_reg.html">logistic regression</a>.” We can declare this with <code>logistic_reg()</code> and assign to an object we will later use in our workflow:</p>
 <p>Run the following code to finish specifying our model:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># specify model</span></span>
-<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>my_mod <span class="ot">&lt;-</span></span>
-<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">logistic_reg</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># specify model</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>my_mod <span class="ot">&lt;-</span></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">logistic_reg</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>That is pretty underwhelming since, on its own, it doesn’t really do much. However, now that the type of model has been specified, a method for <em>fitting</em> or training the model can be stated using the <strong>engine</strong>.</p>
 <section id="start-your-engine" class="level4">
@@ -1281,12 +952,12 @@ predictor: 4</code></pre>
 <h4 class="anchored" data-anchor-id="your-turn-7"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
 <p>Below, specify a glm engine, and a classification mode, replacing the placeholder text below.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>my_mod <span class="ot">&lt;-</span></span>
-<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">logistic_reg</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">set_engine</span>(<span class="st">"glm"</span>) <span class="sc">%&gt;%</span> <span class="co"># generalized linear model</span></span>
-<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">set_mode</span>(<span class="st">"classification"</span>) <span class="co"># since we are predicting a dichotomous outcome, specify classification; for a number, specify regression</span></span>
-<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>my_mod</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>my_mod <span class="ot">&lt;-</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">logistic_reg</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">set_engine</span>(<span class="st">"glm"</span>) <span class="sc">%&gt;%</span> <span class="co"># generalized linear model</span></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">set_mode</span>(<span class="st">"classification"</span>) <span class="co"># since we are predicting a dichotomous outcome, specify classification; for a number, specify regression</span></span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>my_mod</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Logistic Regression Model Specification (classification)
 
@@ -1302,10 +973,10 @@ Computational engine: glm </code></pre>
 <p>We’ll use the{<a href="https://workflows.tidymodels.org/">workflows</a>} package from tidymodels to bundle our parsnip model (<code>lr_mod</code>) with our first recipe (<code>lr_recipe_1</code>).</p>
 <p>Add your model and recipe (see their names above)!</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>my_wf <span class="ot">&lt;-</span></span>
-<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">workflow</span>() <span class="sc">%&gt;%</span> <span class="co"># create a workflow</span></span>
-<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">add_model</span>(my_mod) <span class="sc">%&gt;%</span> <span class="co"># add the model we wrote above</span></span>
-<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">add_recipe</span>(my_rec) <span class="co"># add our recipe we wrote above</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>my_wf <span class="ot">&lt;-</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">workflow</span>() <span class="sc">%&gt;%</span> <span class="co"># create a workflow</span></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">add_model</span>(my_mod) <span class="sc">%&gt;%</span> <span class="co"># add the model we wrote above</span></span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">add_recipe</span>(my_rec) <span class="co"># add our recipe we wrote above</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
@@ -1315,13 +986,13 @@ Computational engine: glm </code></pre>
 <p>Finally, we’ll use the <code>last_fit</code> function, which is the key here: note that it uses the <code>train_test_split</code> data—not just the training data.</p>
 <p>Here, then, we fit the data <em>using the training data set</em> and evaluate its accuracy using the <em>testing data set</em> (which is not used to train the model), passing the <code>my_wf</code> object as the first argument, and the split as the second.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>final_fit <span class="ot">&lt;-</span> <span class="fu">last_fit</span>(my_wf, train_test_split)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>final_fit <span class="ot">&lt;-</span> <span class="fu">last_fit</span>(my_wf, train_test_split)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="your-turn-8" class="level4">
 <h4 class="anchored" data-anchor-id="your-turn-8"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
 <p>Type the output of the above function (the name you assigned the output to) below; this is the final, fitted model—one that can be interpreted further in the next step!</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>final_fit</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>final_fit</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># Resampling results
 # Manual resampling 
@@ -1338,10 +1009,10 @@ Computational engine: glm </code></pre>
 <h3 class="anchored" data-anchor-id="step-5-interpret-accuracy">Step 5: Interpret accuracy</h3>
 <p>Importantly, we can <em>summarize</em> across all of these codes. One way to do this is straightforward; how many of the codes were the same, as in the following chunk of code:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>final_fit <span class="sc">%&gt;%</span> </span>
-<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">collect_predictions</span>() <span class="sc">%&gt;%</span> <span class="co"># see test set predictions</span></span>
-<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(.pred_class, good_grad_rate) <span class="sc">%&gt;%</span> <span class="co"># just to make the output easier to view </span></span>
-<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">correct =</span> .pred_class <span class="sc">==</span> good_grad_rate) <span class="co"># create a new variable, co</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>final_fit <span class="sc">%&gt;%</span> </span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">collect_predictions</span>() <span class="sc">%&gt;%</span> <span class="co"># see test set predictions</span></span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(.pred_class, good_grad_rate) <span class="sc">%&gt;%</span> <span class="co"># just to make the output easier to view </span></span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">correct =</span> .pred_class <span class="sc">==</span> good_grad_rate) <span class="co"># create a new variable, co</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 742 × 3
    .pred_class good_grad_rate correct
@@ -1363,11 +1034,11 @@ Computational engine: glm </code></pre>
 <p>When these are <strong>the same</strong>, the model predicted the code <em>correctly</em>; when they aren’t the same, the model was incorrect.</p>
 <p>We can also tabulate these using the <code>tabyl</code> function:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>final_fit <span class="sc">%&gt;%</span> </span>
-<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">collect_predictions</span>() <span class="sc">%&gt;%</span> <span class="co"># see test set predictions</span></span>
-<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(.pred_class, good_grad_rate) <span class="sc">%&gt;%</span> <span class="co"># just to make the output easier to view </span></span>
-<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">correct =</span> .pred_class <span class="sc">==</span> good_grad_rate) <span class="sc">%&gt;%</span>  <span class="co"># create a new variable, co</span></span>
-<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tabyl</span>(correct)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>final_fit <span class="sc">%&gt;%</span> </span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">collect_predictions</span>() <span class="sc">%&gt;%</span> <span class="co"># see test set predictions</span></span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(.pred_class, good_grad_rate) <span class="sc">%&gt;%</span> <span class="co"># just to make the output easier to view </span></span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">correct =</span> .pred_class <span class="sc">==</span> good_grad_rate) <span class="sc">%&gt;%</span>  <span class="co"># create a new variable, co</span></span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tabyl</span>(correct)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> correct   n   percent valid_percent
    FALSE  98 0.1320755     0.1573034
@@ -1379,7 +1050,7 @@ Computational engine: glm </code></pre>
 <h4 class="anchored" data-anchor-id="your-turn-9"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
 <p>A short-cut to the above is to simply use the <code>collect_metrics()</code> function, taking <code>final_fit</code> as its one argument; <strong>we’ll use this short-cut from here forward</strong>, having seen how accuracy is calculated. Write that code below.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">collect_metrics</span>(final_fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">collect_metrics</span>(final_fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 3 × 4
   .metric     .estimator .estimate .config             
