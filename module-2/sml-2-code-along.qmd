@@ -15,9 +15,12 @@ format:
     margin: 0.05
     footer: <a href=https://www.go.ncsu.edu/laser-institute>go.ncsu.edu/laser-institute
 ---
-
 ```{r}
 #| include: false
+reticulate::py_install("pandas")
+reticulate::py_install("numpy")
+reticulate::py_install("statsmodels")
+reticulate::py_install("scikit-learn")
 ```
 
 ```{r}
@@ -126,16 +129,57 @@ collect_metrics(log_reg_fit)
 
 :::
 
-## python code
+## Python Code
 
-*AR edit*
+::: panel-tabset
+## 0
+
+**Data loading, setting up**
 
 ```{python}
-#| eval: false
+#| eval: true
 #| echo: true
+import pandas as pd 
 
+pokemon_df = pd.read_csv('data/pokemon-data.csv')
 
+pokemon_df.head()
 ```
+
+## 1
+
+**Split data**
+
+```{python}
+#| eval: true
+#| echo: true
+from sklearn.model_selection import train_test_split  # import the built in train-test split tool from sci-kit learn.
+
+train_df, test_df = train_test_split(pokemon_df, test_size=0.2, random_state=42)  
+```
+
+## 2
+
+**Fit model**
+
+```{python}
+#| eval: true
+#| echo: true
+import statsmodels.formula.api as smf
+
+model = smf.logit('early_gen ~ height_m + weight_kg + hp', data=train_df).fit()
+```
+
+## 3
+
+**evaluate model**
+
+```{python}
+#| eval: true
+#| echo: true 
+model.summary()
+```
+:::
 
 # Discussion
 
