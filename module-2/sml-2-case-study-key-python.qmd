@@ -332,13 +332,13 @@ len(train_df) / len(ipeds_df)  # should = ~0.8
 
 In this section, we introduce another scikit-learn tool called a Pipeline, which is designed to help you to take raw data through preprocessing steps and a model all in one cohesive method. Some examples of Pipeline steps:
 
--   Turning categorical variables into multiple binary columns ("One-hot encoding").
+-   Turning categorical variables into multiple binary columns (i.e., "one-hot encoding").
 
 -   Scaling numerical values (min-max scaling or standard scaling).
 
--   Imputing missing values with a mean or median or using a model to estimate missing values.
+-   Imputing missing values with a mean or median, or using a model to estimate missing values.
 
--   Building a model with a LinearRegression.
+-   Training a LinearRegression model.
 
 We'll dive more into the above steps in later modules, focusing now on just dealing with missing values (Imputation) and building a model.
 
