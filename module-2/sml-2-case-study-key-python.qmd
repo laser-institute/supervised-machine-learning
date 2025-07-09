@@ -59,7 +59,7 @@ import numpy as np
 import seaborn as sns
 ```
 
-We will also load a few scikit-learn tools to use in later this case study:
+We will also load a few scikit-learn tools to use later in this case study:
 
 ```{python}
 # The same model from module-1

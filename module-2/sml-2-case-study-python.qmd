@@ -14,9 +14,18 @@ theme:
 editor: visual
 ---
 
+```{r setup, include=FALSE}
+reticulate::py_install("pandas")
+reticulate::py_install("numpy")
+reticulate::py_install("statsmodels")
+reticulate::py_install("scikit-learn")
+reticulate::py_install("matplotlib")
+reticulate::py_install("seaborn")
+```
+
 ## 1. PREPARE
 
-We'll focus on the core parts of doing a machine learning analysis in R, this time bringing into the picture the key concept of training and testing data, which we deliberately omitted from the last case study. We'll use the {[tidymodels](https://www.tidymodels.org/)} set of R packages (add-ons) to do so, like in the first module. However, to help anchor our analysis and provide us with some direction, we'll focus on the following research question as we explore this new approach:
+We'll focus on the core parts of doing a machine learning analysis in Python, this time bringing into the picture the key concept of training and testing data, which we deliberately omitted from the last case study. We'll use the {[scikit-learn](https://scikit-learn.org/stable/)} library (add-ons) to do so, like in the first module. However, to help anchor our analysis and provide us with some direction, we'll focus on the following research question as we explore this new approach:
 
 > How well can we predict which institutions have higher graduation rates?
 
@@ -40,64 +49,69 @@ Please review this chapter, focusing on the overall goals of the analysis and ho
 
 ### 1b. Load Packages
 
-#### **👉 Your Turn** **⤵**
+Like in the last module, please load the pandas data wrangling library, the *numpy* numerical library and *matplotlib* for basic plotting. We will also import [seaborn](https://seaborn.pydata.org/) (a more feature-rich data visualization tool) which will be introduced later in the case study.
 
-Like in the last module, please load the tidyverse package. Also, please load the tidymodels and janitor packages in the code chunk below. Also, add another package we'll use, skimr. Install it if you need.
+```{python}
+import matplotlib.pyplot as plt 
 
-```{r load-packages}
+import pandas as pd 
+import numpy as np
+import seaborn as sns
+```
 
+We will also load a few scikit-learn tools to use later in this case study:
+
+```{python}
+# The same model from module-1
+from sklearn.linear_model import LogisticRegression
+
+# New scikit-learn tools we'll explore in this case study
+from sklearn.pipeline import Pipeline
+from sklearn.model_selection import train_test_split
+from sklearn.impute import SimpleImputer
+from sklearn.metrics import accuracy_score
 ```
 
 ## 2. WRANGLE
 
-In general, data wrangling involves some combination of cleaning, reshaping, transforming, and merging data (Wickham & Grolemund, 2017). The importance of data wrangling is difficult to overstate, as it involves the initial steps of going from raw data to a dataset that can be explored and modeled (Krumm et al, 2018). In Part 2, we focus on the following wrangling processes to:
-
-1.  **Importing and Inspecting Data**. In this section, we will "read" in our CSV data file and take a quick look at what our file contains.
-
-2.  **Transform Variables**. We use the `mutate()` function to create a dichotomous variable for whether or not the institution has a "good" graduation rate, building on what we did in Module 1.
+In general, data wrangling involves some combination of cleaning, reshaping, transforming, and merging data (Wickham & Grolemund, 2017). The importance of data wrangling is difficult to overstate, as it involves the initial steps of going from raw data to a dataset that can be explored and modeled (Krumm et al, 2018).
 
 ### 2a. Import and Inspect Data
 
-#### **👉 Your Turn** **⤵**
+For this module, we'll be working with the same IPEDS (Integrated Postsecondary Education Data System) dataset we used in Module 1. Let's read it in:
 
-For this module, we'll be working with the same IPEDS (Integrated Postsecondary Education Data System) dataset we used in Module 1. Let's read it in - check the code from the last module if you need it:
-
-```{r}
-ipeds <- read_csv("data/ipeds-all-title-9-2022-data.csv")
+```{python}
+ipeds_df = pd.read_csv("data/ipeds-all-title-9-2022-data.csv")
 ```
 
-#### **👉 Your Turn** **⤵**
+We'll use the same data cleaning steps from Module 1:
 
-We'll use the same data cleaning steps from Module 1. Below, use the `clean_names()` function we used in module 1.
+```{python}
+column_map = {
+    'institution name': 'name',
+    'HD2022.Postsecondary and Title IV institution indicator': 'title_iv',  # is the university a title IV university?
+    'HD2022.Carnegie Classification 2021: Basic': 'carnegie_class',  # which carnegie classification
+    'HD2022.State abbreviation': 'state',  # state
+    'DRVEF2022.Total  enrollment': 'total_enroll',  # total enrollment
+    'DRVADM2022.Percent admitted - total': 'pct_admitted',  # percentage of applicants admitted
+    "DRVC2022.Bachelor's degree": 'n_bach',  # number of students receiving a bachelor's degree
+    "DRVC2022.Master's degree": 'n_mast',  # number of students receiving a master's degree
+    "DRVC2022.Doctor's degree - research/scholarship": 'n_doc',  # number receive a doctoral degree
+    'DRVIC2022.Tuition and fees, 2021-22': 'tuition_fees',  # total cost of tuition and fees
+    'DRVGR2022.Graduation rate, total cohort': 'grad_rate',  # graduation rate
+    'SFA2122.Percent of full-time first-time undergraduates awarded any financial aid': 'percent_fin_aid',  # percent of students receive financial aid
+    'DRVHR2022.Average salary equated to 9 months of full-time instructional staff - all ranks': 'avg_salary'  # average salary of instructional staff
+}
 
-```{r}
-ipeds <- clean_names(ipeds)
-```
-
-Then run this code to clean the names up further.
-
-```{r}
-ipeds <- ipeds %>% 
-    select(name = institution_name, 
-           title_iv = hd2022_postsecondary_and_title_iv_institution_indicator, # is the university a title IV university?
-           carnegie_class = hd2022_carnegie_classification_2021_basic, # which carnegie classification
-           state = hd2022_state_abbreviation, # state
-           total_enroll = drvef2022_total_enrollment, # total enrollment
-           pct_admitted = drvadm2022_percent_admitted_total, # percentage of applicants admitted
-           n_bach = drvc2022_bachelors_degree, # number of students receiving a bachelor's degree
-           n_mast = drvc2022_masters_degree, # number receiving a master's
-           n_doc = drvc2022_doctors_degree_research_scholarship, # number receive a doctoral degree
-           tuition_fees = drvic2022_tuition_and_fees_2021_22, # total cost of tuition and fees
-           grad_rate = drvgr2022_graduation_rate_total_cohort, # graduation rate
-           percent_fin_aid = sfa2122_percent_of_full_time_first_time_undergraduates_awarded_any_financial_aid, # percent of students receive financial aid
-           avg_salary = drvhr2022_average_salary_equated_to_9_months_of_full_time_instructional_staff_all_ranks) # average salary of instructional staff
+ipeds_df = ipeds_df.rename(columns=column_map)  # first map column names ... 
+ipeds_df = ipeds_df[column_map.values()]  # then select the columns it mapped.
 ```
 
 #### **👉 Your Turn** **⤵**
 
 Just as we did in Module 1, let's filter the data to include only Title IV postsecondary institutions.
 
-```{r}
+```{python}
 
 ```
 
@@ -105,20 +119,21 @@ Just as we did in Module 1, let's filter the data to include only Title IV posts
 
 Now, filter the data again to *only* include institutions with a carnegie classification. Specifically, exclude those institutions with a value for the `carnegie_class` variable that is "Not applicable, not in Carnegie universe (not accredited or nondegree-granting)". As a hint: whereas the logical operator `==` is used to include only matching conditions, the logical operator `!=` excludes matching conditions.
 
-```{r}
+```{python}
 
 ```
 
 #### **👉 Your Turn** **⤵**
 
-Let's inspect our data - using `glimpse()` or another means of your choosing below.
+Let's inspect our data - using .`head()` or another means of your choosing below.
 
-```{r}
+```{python}
 
 ```
 
 Write down a few observations after inspecting the data:
 
+-   YOUR RESPONSE HERE
 -   YOUR RESPONSE HERE
 -   YOUR RESPONSE HERE
 
@@ -128,14 +143,15 @@ We'll now transform our graduation rate variable into a binary outcome for our c
 
 #### **👉 Your Turn** **⤵**
 
-Create a binary variable called `good_grad_rate` that indicates whether an institution has a graduation rate above a certain threshold. Choose a threshold that seems reasonable to you. Then coerce the variable to be a factor.
+Create a binary variable called `good_grad_rate` that indicates whether an institution has a graduation rate above a certain threshold. Choose a threshold that seems reasonable to you.
 
-```{r}
+```{python}
 
 ```
 
 Here, add a reason or two for how and why you picked the threshold you did:
 
+-   YOUR RESPONSE HERE
 -   YOUR RESPONSE HERE
 
 ## 3. EXPLORE
@@ -144,50 +160,40 @@ As noted by Krumm et al. (2018), exploratory data analysis often involves some c
 
 ### 3a. Examine Variables
 
-#### **👉 Your Turn** **⤵**
-
 Let's take a closer look at our institutional data. In the chunk below, count the number of institutions with good and poor graduation rates.
 
-```{r}
-
+```{python}
+ipeds_df['good_grad_rate'].value_counts()
 ```
 
 What does this tell us?
 
-We can use the `tabyl` function (instead of `count()`) to explore a bit further:
-
-```{r}
-
-```
-
 We can see how many institutions have good and not-so-good graduations rates -- and what percentage of the data is missing.
 
-#### **👉 Your Turn** **⤵**
+Next, let's visualize the distribution of graduation rates to better understand our data:
 
-Next, let's visualize the distribution of graduation rates to better understand our data. Change the color (specified with `fill =`) to one of those here: https://sites.stat.columbia.edu/tzheng/files/Rcolor.pdf
-
-```{r}
-ipeds %>% 
-    ggplot(aes(x = grad_rate)) +
-    geom_histogram(binwidth = 5, fill = "CHANGE THIS TO A COLOR", color = "white") +
-    labs(title = "Distribution of Graduation Rates",
-         x = "Graduation Rate (%)",
-         y = "Number of Institutions")
+```{python}
+plt.hist(ipeds_df['grad_rate'], bins=range(0, 105, 5), color='skyblue', edgecolor='white')
+plt.title("Distribution of Graduation Rates")
+plt.xlabel("Graduation Rate (%)")
+plt.ylabel("Number of Institutions")
+plt.tight_layout()
+plt.show()
 ```
 
 #### **👉 Your Turn** **⤵**
 
 Create another visualization that explores the relationship between two variables in our dataset. For example, you might want to look at the relationship between tuition fees and graduation rates, or enrollment and graduation rates.
 
-```{r}
+```{python}
 # Add your visualization code here
 
 ```
 
-One last, critical step is understanding missingness in our data. The `skim()` function from the {skimr} package is fantastic for this --- it tells us the number and percentage of missing values for each variable in our data set.
+One last, critical step is understanding missingness in our data. The `isnull()` method is fantastic for this --- when combined with the `sum()` method it tells us the number of missing values for each variable in our data set.
 
-```{r}
-skim(ipeds)
+```{python}
+ipeds_df.isnull().sum()
 ```
 
 From this, we can see that several variables have considerable missingness. For example, the `pct_admitted` variable has more than half of its values missing! There are ways to deal with this (real-life datasets, including the IPEDS data, are rife with missing values for a whole host of reasons). We will address those (e.g., imputation) later.
@@ -206,26 +212,33 @@ Though not as often discussed as other steps, feature engineering is an importan
 
 For this module, we'll create a new feature that might help predict graduation rates. Let's create a derived variable representing the ratio of tuition and fees to average salary, which could indicate the institution's value proposition.
 
-```{r}
-ipeds <- ipeds %>% 
-    mutate(tuition_to_salary_ratio = tuition_fees / avg_salary)
+```{python}
+ipeds_df['tuition_to_salary_ratio'] = ipeds_df['tuition_fees'] / ipeds_df['avg_salary']
 ```
 
-#### **👉 Your Turn** **⤵**
+Let's examine this new feature:
 
-Let's examine this new feature with a histogram or density plot. Write that code below --- referencing the code above if you need it.
+```{python}
+sns.kdeplot(  # builds a density plot
+    data=ipeds_df,
+    x='tuition_to_salary_ratio',
+    hue='good_grad_rate',
+    fill=True,
+)
 
-```{r}
-
+plt.title("Density of Tuition-to-Salary Ratio by Graduation Rate Quality")
+plt.xlabel("Tuition to Salary Ratio")
+plt.ylabel("Density")
+plt.show()
 ```
 
 Something is very not right. It seems like there may be some number that is way off -- and that's skewing the plot in a weird way.
 
 What's going on? In this case, it can be helpful to get eyes on the data to see if anything funny seems to be going on. Let's take a look at the relevant variables:
 
-```{r}
-select(ipeds, name, tuition_fees, avg_salary, tuition_to_salary_ratio) %>% 
-    arrange((desc(tuition_to_salary_ratio)))
+```{python}
+columns_to_inspect = ['name', 'tuition_fees', 'avg_salary', 'tuition_to_salary_ratio']
+ipeds_df[columns_to_inspect].sort_values(by='tuition_to_salary_ratio', ascending=False)
 ```
 
 Do you spot the problem? Add a note below about what it might be:
@@ -234,17 +247,24 @@ Do you spot the problem? Add a note below about what it might be:
 
 As you likely noticed, it looks like one institution - Beckfield College-Florence - has an average salary of \$1 for their graduates. As a result, the ratio of tuition and fees relative to salary is *huge* -- far larger than for any other institutions! What to do here? This seems almost certain to be an error in data reporting or recording. We can safely filter out this one row with some simple logic.
 
-```{r}
-ipeds <- ipeds %>% 
-    filter(avg_salary > 1)
+```{python}
+ipeds_df = ipeds_df.query("avg_salary > 1")
 ```
 
-#### **👉 Your Turn** **⤵**
+Let's try to create that plot again:
 
-Let's try to create that plot again - copy your code from above here:
+```{python}
+sns.kdeplot(  # builds a density plot
+    data=ipeds_df,
+    x='tuition_to_salary_ratio',
+    hue='good_grad_rate',
+    fill=True,
+)
 
-```{r}
-
+plt.title("Density of Tuition-to-Salary Ratio by Graduation Rate Quality")
+plt.xlabel("Tuition to Salary Ratio")
+plt.ylabel("Density")
+plt.show()
 ```
 
 That's better! Add a note on what this graph might mean below:
@@ -259,13 +279,11 @@ In this step, we will dive into the SML modeling process in much more depth than
 
 1.  **Split Data** into a training and test set that will be used to develop a predictive model;
 
-2.  **Create a "Recipe"** for our predictive model and learn how to deal with nominal data that we would like to use as predictors;
+2.  **Create a "Pipeline"** for our predictive model and learn how to streamline data processing steps;
 
-3.  **Specify the model and workflow** by selecting the *functional form* of the model that we want and using a *model workflow* to pair our model and recipe together;
+3.  **Fit Models** to our training set using logistic regression;
 
-4.  **Fit Models** to our training set using logistic regression;
-
-5.  **Interpret Accuracy** of our model to see how well our model can "predict" our outcome of interest.
+4.  **Interpret Accuracy** of our model to see how well our model can "predict" our outcome of interest.
 
 ### Step 1. Split data
 
@@ -291,174 +309,107 @@ After you decide how much to set aside, the most common approach for actually pa
 
 #### Split Data Sets
 
-To split our data, we will be using our first {tidymodels} function - `initial_split()`.
-
-The function `initial_split()` function from the {rsample} package takes the original data and saves the information on how to make the partitions. The {rsample} package has two aptly named functions for created a training and testing data set called `training()` and `testing()`, respectively.
-
-We also specify the strata to ensure there is not misbalance in the dependent variable (good_grad_rate).
+To split our data, we will be using the `train_test_split()` scikit-learn function.
 
 Run the following code to split the data:
 
-```{r}
-set.seed(20250712)
-
-train_test_split <- initial_split(ipeds, prop = .80, strata = "good_grad_rate")
-
-data_train <- training(train_test_split)
-
-data_test  <- testing(train_test_split)
+```{python}
+from sklearn.model_selection import train_test_split
+train_df, test_df = train_test_split(ipeds_df, test_size=0.2, random_state=20250712)  # splitting the data and sedding a random state so this is reproducible
 ```
 
-**Note**: Since random sampling uses random numbers, it is important to set the random number seed using the `set.seed()` function. This ensures that the random numbers can be reproduced at a later time (if needed). We pick the first date on which we may carry out this learning lab as the seed, but any number will work!
+**Note**: Since random sampling uses random numbers, it is important to set the `random_state` parameter as the same value. This ensures that the random numbers can be reproduced at a later time (if needed). We pick the first date on which we may carry out this learning lab as the seed, but any number will work!
 
 #### **👉 Your Turn** **⤵**
 
-Go ahead and type `data_train` and `data_test` into the console (in steps) to check that this data set indeed has 80% of the number of observations as in the larger data. Do that in the chunk below:
+Go ahead and use the `len()` to check that the training data set indeed has 80% of the number of observations as in the larger data. Do that in the chunk below:
 
-```{r}
-
-```
-
-### Step 2: Create a "Recipe"
-
-In this section, we introduce another tidymodels package named {[recipes](https://recipes.tidymodels.org/)}, which is designed to help you prepare your data *before* training your model. Recipes are built as a series of preprocessing steps, such as:
-
--   converting qualitative predictors to indicator variables (also known as dummy variables),
-
--   transforming data to be on a different scale (e.g., taking the logarithm of a variable),
-
--   transforming whole groups of predictors together,
-
--   extracting key features from raw variables (e.g., getting the day of the week out of a date variable), and so on.
-
-If you are familiar with R's formula interface, a lot of this might sound familiar and like what a formula already does. Recipes can be used to do many of the same things, but they have a much wider range of possibilities.
-
-We'll dive more into the above steps in later modules, focusing on the formula for our model at this point. So, for now, we'll simply add the features we used in the last module, adding the new feature we created above.
-
-#### **Add a formula**
-
-To get started, let's create a recipe for a simple logistic regression model. Before training the model, we can use a recipe.
-
-The [`recipe()`function](https://recipes.tidymodels.org/reference/recipe.html) as we used it here has two arguments:
-
--   A **formula**. Any variable on the left-hand side of the tilde (`~`) is considered the model outcome (`code`, in our present case). On the right-hand side of the tilde are the predictors. Variables may be listed by name, or you can use the dot (`.`) to indicate all other variables as predictors. This is where we can add functions to automate some of the feature engineering steps (in later modules).
-
--   The **data**. A recipe is associated with the data set used to create the model. This will typically be the *training* set, so `data = train_data` here. Naming a data set doesn't actually change the data itself; it is only used to catalog the names of the variables and their types, like factors, integers, dates, etc.
-
-#### **👉 Your Turn** **⤵**
-
-Let's create a recipe where we predict `good_grad_rate` (the outcome variable) on the basis of several variables:
-
--   `tuition_fees`
--   `avg_salary`
--   `percent_fin_aid`
--   `tuition_to_salary_ratio` (the variable we created based on two of the above variables)
-
-```{r}
+```{python}
 
 ```
 
-### Step 3: Specify the model and workflow
+### Step 2: Create a "Pipeline"
 
-With tidymodels, we start building a model by specifying the *functional form* of the model that we want using the [{parsnip} package](https://tidymodels.github.io/parsnip/). Since our outcome is binary, the model type we will use is "[logistic regression](https://parsnip.tidymodels.org/reference/logistic_reg.html)." We can declare this with `logistic_reg()` and assign to an object we will later use in our workflow:
+In this section, we introduce another scikit-learn tool called a Pipeline, which is designed to help you to take raw data through preprocessing steps and a model all in one cohesive method. Some examples of Pipeline steps:
+
+-   Turning categorical variables into multiple binary columns (i.e., "one-hot encoding").
+
+-   Scaling numerical values (min-max scaling or standard scaling).
+
+-   Imputing missing values with a mean or median, or using a model to estimate missing values.
+
+-   Training a LinearRegression model.
+
+We'll dive more into the above steps in later modules, focusing now on just dealing with missing values (Imputation) and building a model.
+
+#### **Prepare the data**
+
+To get started, let's split both the train and test datasets between the independent columns (i.e. "features") and dependent column (i.e. "target" or "outcome"):
+
+```{python}
+dependent_col = 'good_grad_rate'  # what we're predicting
+
+independent_cols = [  # what we're using to predict
+   'tuition_fees',
+   'avg_salary',
+   'tuition_to_salary_ratio',
+   'percent_fin_aid'
+]
+
+X_train = train_df[independent_cols]
+y_train = train_df[dependent_col]
+
+X_test = test_df[independent_cols]
+y_test = test_df[dependent_col]
+```
+
+Since we're predicting a binary outcome (`good_grad_rate`), we will use the scikit-learn `LinearRegression` model. To deal with the blank values (i.e. nulls) that would break the model, we use the scikit-learn SimpleImputer. This fills blank values with a variety of strategies one can specify. In this example we will use "median" which fills blanks with the median value for that column:
 
 Run the following code to finish specifying our model:
 
-```{r}
-# specify model
-my_mod <-
-    logistic_reg()
+```{python}
+pipeline = Pipeline(
+    steps=[
+        ('impute', SimpleImputer(strategy='median')),
+        ('model', LogisticRegression()),
+    ]
+)
 ```
 
-That is pretty underwhelming since, on its own, it doesn't really do much. However, now that the type of model has been specified, a method for *fitting* or training the model can be stated using the **engine**.
+### Step 3: Fit model
 
-#### **Start your engine**
+Running `pipeline.fit()` allows all steps of the pipeline to learn from the training data – the median to fill for each numerical column, and the model weights in the regression. Now when making new predictions we can simply use the `predict()` method.
 
-To set the *engine,* let's rewrite the code above and "pipe" in the `set_engine("glm")` function and `set_mode("classification"))` to set the "*mode*" to classification. Note that this could also be changed to regression for a continuous/numeric outcome.
-
-#### **👉 Your Turn** **⤵**
-
-Below, specify a glm engine, and a classification mode, replacing the placeholder text below.
-
-```{r}
-my_mod <-
-    logistic_reg() %>% 
-    set_engine("ADD YOUR VALUE HERE") %>% # generalized linear model
-    set_mode("ADD YOUR VALUE HERE") # since we are predicting a dichotomous outcome, specify classification; for a number, specify regression
-
-my_mod
-```
-
-The engine value is often a mash-up of different packages that can be used to fit or train the model as well as the estimation method. For example, we will use "glm" a generalized linear model for binary outcomes and default for logistic regression in the {parsnip} package.
-
-#### **Add to workflow**
-
-Now we can use the recipe created earlier across several steps as we train and test our model. To simplify this process, we can use a *model workflow*, which pairs a model and recipe together.
-
-This is a straightforward approach because different recipes are often needed for different models, so when a model and recipe are bundled, it becomes easier to train and test *workflows*.
-
-We'll use the{[workflows](https://workflows.tidymodels.org/)} package from tidymodels to bundle our parsnip model (`lr_mod`) with our first recipe (`lr_recipe_1`).
-
-Add your model and recipe (see their names above)! Check your code from the last module if you need help.
-
-#### **👉 Your Turn** **⤵**
-
-```{r}
-
-```
-
-### Step 4: Fit model
-
-Now that we have a single workflow that can be used to prepare the recipe and train the model from the resulting predictors, we can use the `fit()` function to fit our model to our `train_data`. And again, we set a random number seed to ensure that if we run this same code again, we will get the same results in terms of the data partition:
-
-Finally, we'll use the `last_fit` function, which is the key here: note that it uses the `train_test_split` data---not just the training data.
-
-Here, then, we fit the data *using the training data set* and evaluate its accuracy using the *testing data set* (which is not used to train the model), passing the `my_wf` object as the first argument, and the split as the second.
-
-```{r}
-final_fit <- last_fit(my_wf, train_test_split)
+```{python}
+pipeline.fit(X=X_train, y=y_train)
 ```
 
 #### **👉 Your Turn** **⤵**
 
-Type the output of the above function (the name you assigned the output to) below; this is the final, fitted model---one that can be interpreted further in the next step!
+Let's inspect our pipeline by typing its instance name (the name of the `Pipeline` object) below; this is the final, fitted model---one that can be interpreted further in the next step!
 
-```{r}
+```{python}
 
 ```
 
-You may see a message/warning above or when you examine `final_fit`; you can safely ignore that.
+### Step 4: Interpret accuracy
 
-### Step 5: Interpret accuracy
+To interpret the model's accuracy we start by making a prediction on the test dataset, then calculating the number of times the prediction and actual outcome value is the same:
 
-Importantly, we can *summarize* across all of these codes. One way to do this is straightforward; how many of the codes were the same, as in the following chunk of code:
+```{python}
+y_preds = pipeline.predict(X_test)
 
-```{r}
-final_fit %>% 
-    collect_predictions() %>% # see test set predictions
-    select(.pred_class, good_grad_rate) %>% # just to make the output easier to view 
-    mutate(correct = .pred_class == good_grad_rate) # create a new variable, co
-```
+correct = y_preds == y_test
+accuracy = sum(correct) / len(y_test)
 
-You may notice some of the rows may be missing values. This is because there were some missing values in the `imd_band` variable, and for this machine learning algorithm (the generalized linear model), missing values result in row-wise deletion.
-
-When these are **the same**, the model predicted the code *correctly*; when they aren't the same, the model was incorrect.
-
-We can also tabulate these using the `tabyl` function:
-
-```{r}
-final_fit %>% 
-    collect_predictions() %>% # see test set predictions
-    select(.pred_class, good_grad_rate) %>% # just to make the output easier to view 
-    mutate(correct = .pred_class == good_grad_rate) %>%  # create a new variable, co
-    tabyl(correct)
+print('accuracy:', accuracy)
 ```
 
 #### **👉 Your Turn** **⤵**
 
-A short-cut to the above is to simply use the `collect_metrics()` function, taking `final_fit` as its one argument; **we'll use this short-cut from here forward**, having seen how accuracy is calculated. Write that code below.
+A short-cut to the above is to simply use the scikit-learn `accuracy_score()` function (which we already imported above), taking `y_preds` as the first argument and `y_test` as the second; **we'll use this short-cut from here forward**, having seen how accuracy is calculated. Write that code below.
 
-```{r}
+```{python}
 
 ```
 
