@@ -137,7 +137,7 @@ collect_metrics(log_reg_fit)
 **Data loading, setting up**
 
 ```{python}
-#| eval: true
+#| eval: false
 #| echo: true
 import pandas as pd 
 
@@ -151,7 +151,7 @@ pokemon_df.head()
 **Split data**
 
 ```{python}
-#| eval: true
+#| eval: false
 #| echo: true
 from sklearn.model_selection import train_test_split  # import the built in train-test split tool from sci-kit learn.
 
@@ -163,7 +163,7 @@ train_df, test_df = train_test_split(pokemon_df, test_size=0.2, random_state=42)
 **Fit model**
 
 ```{python}
-#| eval: true
+#| eval: false
 #| echo: true
 import statsmodels.formula.api as smf
 
@@ -175,7 +175,7 @@ model = smf.logit('early_gen ~ height_m + weight_kg + hp', data=train_df).fit()
 **evaluate model**
 
 ```{python}
-#| eval: true
+#| eval: false
 #| echo: true 
 model.summary()
 ```
