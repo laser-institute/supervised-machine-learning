@@ -87,7 +87,6 @@ ipeds_df = pd.read_csv("data/ipeds-all-title-9-2022-data.csv")
 We'll use the same data cleaning steps from Module 1:
 
 ```{python}
-{python}
 column_map = {
     'institution name': 'name',
     'HD2022.Postsecondary and Title IV institution indicator': 'title_iv',  # is the university a title IV university?
