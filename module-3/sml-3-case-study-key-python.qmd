@@ -16,6 +16,14 @@ resource_files:
 - img/tidymodels.png
 ---
 
+```{r}
+#| include: false
+reticulate::py_install("pandas")
+reticulate::py_install("numpy")
+reticulate::py_install("statsmodels")
+reticulate::py_install("scikit-learn")
+```
+
 ## 1. PREPARE
 
 When we left off the first case study, we saw that our model was *pretty accurate*. We can and will do better in terms of accuracy. But, the accuracy value we found also raises a broader question: How good was our model in terms of making predictions?
@@ -46,12 +54,24 @@ You don't need to read the entire article yet, but please open this article, sca
 
 2.  YOUR RESPONSE HERE
 
-Like in the first learning module, we'll first load several packages -- {tidyverse}, {tidymodels}, and {janitor}. Make sure these are installed (via `install.packages()`). Note that if they're already installed, you don't need to install them again.
+Like in the first learning module, we'll first load several packages -- pandas and numpy. Note that if they're already installed, you don't need to install them again.
 
-```{r}
-library(tidyverse)
-library(tidymodels)
-library(janitor)
+```{python}
+import pandas as pd 
+import numpy as np 
+```
+
+We will also import a number of scikit-learn packages. Some are used in previous modules, but some we will introduce in this case study:
+
+```{python}
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import Pipeline
+from sklearn.impute import SimpleImputer
+from sklearn.linear_model import LogisticRegression
+
+# These are new
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import OneHotEncoder
 ```
 
 ## 2. WRANGLE
@@ -62,109 +82,107 @@ Like in the code-along, let's take a look at the data and do some processing of 
 
 We'll load the students file together; you'll write code to read the assessments file, which is named "oulad-assessments.csv". Please assign the name `assessments` to the loaded assessments file.
 
-```{r}
-students <- read_csv("data/oulad-students.csv")
-assessments <- read_csv("data/oulad-assessments.csv")
+```{python}
+students_df = pd.read_csv("data/oulad-students.csv")
+assessments_df = pd.read_csv("data/oulad-assessments.csv")
 ```
 
 ## 3. EXPLORE
 
 #### **👉 Your Turn** **⤵**
 
-In the last learning module, we used the `count()` function. Let's practice that again, by counting the number of of assessments of different types. If you need, recall that the data dictionary is [here](https://analyse.kmi.open.ac.uk/open_dataset). Note what the different types of assessments mean.
+In the last learning module, we used the `value_counts()` function. Let's practice that again, by counting the number of of assessments of different types. If you need, recall that the data dictionary is [here](https://analyse.kmi.open.ac.uk/open_dataset). Note what the different types of assessments mean.
 
-```{r}
-assessments %>% 
-    count(assessment_type)
+```{python}
+assessments_df['assessment_type'].value_counts()
 ```
 
 -   
 
 #### **👉 Your Turn** **⤵**
 
-We'll now use another function--like `count()`, from the {tidyverse}. Specifically, we'll use the `distinct()` function. This returns the unique (or distinct) values for a specified variable. Learn more about `distinct()` [here](https://dplyr.tidyverse.org/reference/distinct.html). Below, find the distinct assessment IDs.
+We'll now use another function--like `value_counts``()`, from the pandas library. Specifically, we'll use the `nunique()` function. This returns the number of unique values for a specified variable. Learn more about `distinct()` [here](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.nunique.html). Below, find the distinct assessment IDs.
 
-```{r}
-assessments %>% 
-    distinct(id_assessment) # this many unique assessments
+```{python}
+assessments_df['id_assessment'].nunique()
 ```
 
 Let's explore the assessments data a bit.
 
-We might be interested in how many assessments there are per course. To calculate that, we need to `count()` several variables at once; when doing this, `count()` tabulates the number of unique combinations of the variables passed to it.
+We might be interested in how many assessments there are per course. We can use the pandas `groupby()` and `size()` to make a grouped pandas DataFrame:
 
-```{r}
-assessments %>% 
-    count(assessment_type, code_module, code_presentation)
+```{python}
+assessment_count_df = (
+    assessments_df
+        .groupby(['assessment_type', 'code_module', 'code_presentation'])
+        .size()
+        .reset_index(name='n')
+)
+
+assessment_count_df.head()
 ```
 
-Let's explore the dates assignments were submitted a bit -- using the `summarize()` function:
+Let's explore the dates assignments were submitted a bit -- using the `describe()` method:
 
-```{r}
-assessments %>% 
-    summarize(mean_date = mean(date, na.rm = TRUE), # find the mean date for assignments
-              median_date = median(date, na.rm = TRUE), # find the median
-              sd_date = sd(date, na.rm = TRUE), # find the sd
-              min_date = min(date, na.rm = TRUE), # find the min
-              max_date = max(date, na.rm = TRUE)) # find the mad
+```{python}
+assessments_df[['date']].describe()
 ```
 
 What can we take from this? It looks like, on average, the average (mean and median) date assignments were due was around 130 -- 130 days after the start of the course. The first assignment seems to have been due 12 days into the course, and the last 261 days after.
 
 Crucially, though, these dates vary by course. Thus, we need to first group the data by course. Let's use a different function this time -- `quantile()`, and calculate the first quantile value. Our reasoning is that we want to be able to act to support students, and if we wait until after the average assignment is due, then that might be too late. Whereas the first quantile comes approximately one-quarter through the semester --- with, therefore, more time to intervene.
 
-```{r}
-assessments %>% 
-    group_by(code_module, code_presentation) %>% # first, group by course (module: course; presentation: semester)
-    summarize(mean_date = mean(date, na.rm = TRUE),
-              median_date = median(date, na.rm = TRUE),
-              sd_date = sd(date, na.rm = TRUE),
-              min_date = min(date, na.rm = TRUE),
-              max_date = max(date, na.rm = TRUE),
-              first_quantile = quantile(date, probs = .25, na.rm = TRUE)) # find the first (25%) quantile
-```
-
 Alright, this is a bit complicated, but we can actually work with this data. Let's use just a portion of the above code, assigning it the name `code_module_dates`.
 
-```{r}
-code_module_dates <- assessments %>% 
-    group_by(code_module, code_presentation) %>% 
-    summarize(quantile_cutoff_date = quantile(date, probs = .25, na.rm = TRUE))
+```{python}
+code_module_dates_df = (
+    assessments_df
+    .groupby(['code_module', 'code_presentation'])['date']
+    .quantile(0.25)
+    .reset_index(name='quantile_cutoff_date')
+)
 ```
 
 #### **👉 Your Turn** **⤵**
 
 Let's take a look at what we just created; type `code_module_dates` below:
 
-```{r}
-code_module_dates
+```{python}
+code_module_dates_df
 ```
 
 What have we created? We found the date that is one-quarter of the way through the semester (in terms of the dates assignments are due).
 
 #### **👉 Your Turn** **⤵**
 
-We can thus use this to group and calculate students' performance on assignments through this point. To do this, we need to use a join function --- `left_join()`, in particular. Please use `left_join()` to join together `assessments` and `code_module_dates`, with `assessments` being the "left" data frame, and `code_module_dates` the right. Save the output of the join the name `assessments_joined`.
+We can thus use this to group and calculate students' performance on assignments through this point. To do this, we need to use a join function --- The pandas `merge()`, in particular (documentation [here](https://pandas.pydata.org/docs/reference/api/pandas.merge.html)). Please use the pandas merge function to join together `assessments_df` and `code_module_dates_df`, with `assessments_df` being the "left" data frame, and `code_module_dates_df` the "right". To specify the type of join, set the `how` parameter to 'left' and the `on` parameter to `['code_module', 'code_presentation']`. Save the output of the join the name `assessments_joined_df`.
 
-```{r}
-assessments_joined <- assessments %>% 
-    left_join(code_module_dates) # join the data based on course_module and course_presentation
+```{python}
+assessments_joined_df = pd.merge(
+    left=assessments_df, 
+    right=code_module_dates_df,
+    on=['code_module', 'code_presentation'],
+    how='left'
+)
 ```
 
 We're almost there! The next few lines filter the assessments data so it only includes assessments before our cutoff date.
 
-```{r}
-assessments_filtered <- assessments_joined %>% 
-    filter(date < quantile_cutoff_date) # filter the data so only assignments before the cutoff date are included
+```{python}
+assessments_filtered_df = assessments_joined_df.query('date < quantile_cutoff_date') # filter the data so only assignments before the cutoff date are included
 ```
 
 Finally, we'll find the average score for each student.
 
-```{r}
-assessments_summarized <- assessments_filtered %>% 
-    mutate(weighted_score = score * weight) %>% # create a new variable that accounts for the "weight" (comparable to points) given each assignment
-    group_by(id_student) %>% 
-    summarize(mean_weighted_score = mean(weighted_score)) 
+```{python}
+assessments_filtered_df['weighted_score'] = assessments_filtered_df['score'] * assessments_filtered_df['weight']  # create a new variable that accounts for the "weight" (comparable to points) given each assignment
+
+assessments_summarized_df = (
+    assessments_filtered_df
+    .groupby('id_student')['weighted_score']
+    .mean()
+    .reset_index(name='mean_weighted_score')
+)
 ```
 
 As a point of reflection here, note how much work we've done before we've gotten to the machine learning steps. Though a challenge, this is typical for both machine learning and more traditional statistical models: a lot of the work is in the preparation and data wrangling stages.
@@ -292,7 +310,7 @@ We're now ready to move on to interpreting the accuracy of our model.
 Let's start with a simple confusion matrix. The confusion matrix is a 2 x 2 table with values (cells in the table) representing one of four conditions, elaborated below. You'll fill in the last two columns in a few moments.
 
 | Statistic | How to Find | Interpretation | Value | \% |
-|:--:|:--:|:--:|:--:|:--:|
+|:-------------:|:-------------:|:-------------:|:-------------:|:-------------:|
 | True positive (TP) | Truth: 1, Prediction: 1 | Proportion of the population that is affected by a condition and correctly tested positive | 2443 | 19.8 |
 | True negative (TN) | Truth: 0, Prediction: 0 | Proportion of the population that is not affected by a condition and correctly tested negative | 4536 | 36.8 |
 | False positive (FP) | Truth: 0, Prediction: 1 | Proportion of the population that is not affected by a condition and incorrectly tested positive | 2070 | 16.8 |
@@ -324,7 +342,7 @@ Here's where things get interesting: There are other statistics that have differ
 #### **👉 Your Turn** **⤵**
 
 |  |  |  |  |  |
-|:--:|:--:|:--:|:--:|:--:|
+|:-------------:|:-------------:|:-------------:|:-------------:|:-------------:|
 | **Statistic** | **Equation** | **Interpretation** | **Question Answered** | **Statistic Values** |
 | **Sensitivity** (AKA recall) | TP / (TP + FN) | Proportion of those who are affected by a condition and correctly tested positive | Out of all the actual positives, how many did we correctly predict? | .428 |
 | **Specificity** | TN / (FP + TN) | Proportion of those who are not affected by a condition and correctly tested negative; | Out of all the actual negatives, how many did we correctly predict? | .687 |
@@ -336,7 +354,7 @@ So, what does this hard-won by output tell us? Let's interpret each statistic ca
 #### **👉 Your Turn** **⤵**
 
 |  |  |
-|----|----|
+|------------------------------------|------------------------------------|
 | **Statistic** | **Substantive Interpretation** |
 | Accuracy |  |
 | Sensitivity (AKA recall) | The model correctly predicts about 2/3 of students who do not pass correctly (as not passing). This is pretty good, but it could be better. |
