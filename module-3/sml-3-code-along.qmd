@@ -60,6 +60,7 @@ pokemon %>%
 ```{r}
 #| eval: false
 #| echo: true
+
 train_test_split <- initial_split(pokemon, prop = .70)
 
 data_train <- training(train_test_split)
@@ -70,7 +71,7 @@ data_train <- training(train_test_split)
 ```{r}
 #| eval: false
 #| echo: true
-# predicting early generation status based on height, weight, and HP
+
 my_rec <- recipe(early_gen ~ height_m + weight_kg + hp, data = data_train) %>% 
     step_mutate(early_gen = as.factor(early_gen))
 ```
@@ -80,6 +81,7 @@ my_rec <- recipe(early_gen ~ height_m + weight_kg + hp, data = data_train) %>%
 ```{r}
 #| eval: false
 #| echo: true
+
 my_mod <-
     logistic_reg() %>% 
     set_engine("glm") %>%
@@ -98,6 +100,7 @@ my_wf <-
 ```{r}
 #| eval: false
 #| echo: true
+
 class_metrics <- metric_set(accuracy, sensitivity, specificity, ppv, npv, kap) # this is new
 final_fit <- last_fit(my_wf, train_test_split, metrics = class_metrics)
 ```
@@ -109,15 +112,9 @@ final_fit <- last_fit(my_wf, train_test_split, metrics = class_metrics)
 ```{r}
 #| eval: false
 #| echo: true
-fit_model <- fit(my_wf, data_train)
 
-predictions <- predict(fit_model, data_train) %>% 
-    bind_cols(data_train) %>% 
-    mutate(early_gen = as.factor(early_gen))
+fit_model <- last_fit(my_wf, train_test_split)
 
-predictions %>%
-    metrics(early_gen, .pred_class) %>%
-    filter(.metric == "accuracy")
 ```
 
 ## 5.
@@ -127,6 +124,7 @@ predictions %>%
 ```{r}
 #| eval: false
 #| echo: true
+
 final_fit %>%
     collect_metrics()
 ```
