@@ -68,6 +68,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, precision_score, confusion_matrix, cohen_kappa_score
 
 # These are new
 from sklearn.compose import ColumnTransformer
@@ -101,7 +102,7 @@ assessments_df['assessment_type'].value_counts()
 
 #### **👉 Your Turn** **⤵**
 
-We'll now use another function--like `value_counts``()`, from the pandas library. Specifically, we'll use the `nunique()` function. This returns the number of unique values for a specified variable. Learn more about `distinct()` [here](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.nunique.html). Below, find the distinct assessment IDs.
+We'll now use another function--like `value_counts()`, from the pandas library. Specifically, we'll use the `nunique()` function. This returns the number of unique values for a specified variable. Learn more about `nunique` [here](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.nunique.html). Below, find the distinct assessment IDs.
 
 ```{python}
 assessments_df['id_assessment'].nunique()
@@ -132,7 +133,7 @@ What can we take from this? It looks like, on average, the average (mean and med
 
 Crucially, though, these dates vary by course. Thus, we need to first group the data by course. Let's use a different function this time -- `quantile()`, and calculate the first quantile value. Our reasoning is that we want to be able to act to support students, and if we wait until after the average assignment is due, then that might be too late. Whereas the first quantile comes approximately one-quarter through the semester --- with, therefore, more time to intervene.
 
-Alright, this is a bit complicated, but we can actually work with this data. Let's use just a portion of the above code, assigning it the name `code_module_dates`.
+Alright, this is a bit complicated, but we can actually work with this data. Let's use the `groupby` and `quantile` function on the `date` column, assigning it the name `code_module_dates`.
 
 ```{python}
 code_module_dates_df = (
@@ -155,7 +156,11 @@ What have we created? We found the date that is one-quarter of the way through t
 
 #### **👉 Your Turn** **⤵**
 
-We can thus use this to group and calculate students' performance on assignments through this point. To do this, we need to use a join function --- The pandas `merge()`, in particular (documentation [here](https://pandas.pydata.org/docs/reference/api/pandas.merge.html)). Please use the pandas merge function to join together `assessments_df` and `code_module_dates_df`, with `assessments_df` being the "left" data frame, and `code_module_dates_df` the "right". To specify the type of join, set the `how` parameter to 'left' and the `on` parameter to `['code_module', 'code_presentation']`. Save the output of the join the name `assessments_joined_df`.
+We can thus use this to group and calculate students' performance on assignments through this point. To do this, we need to use a join function --- The pandas `merge()`, in particular (documentation [here](https://pandas.pydata.org/docs/reference/api/pandas.merge.html)).
+
+Please use the pandas merge function to join together `assessments_df` and `code_module_dates_df`, with `assessments_df` being the "left" data frame, and `code_module_dates_df` the "right". To specify the type of join, set the `how` parameter to 'left' and the `on` parameter to `['code_module', 'code_presentation']`.
+
+Save the output of the join the name `assessments_joined_df`.
 
 ```{python}
 assessments_joined_df = pd.merge(
@@ -189,34 +194,36 @@ As a point of reflection here, note how much work we've done before we've gotten
 
 Let's copy the code below that we used to process the students data (when processing the `pass` and `imd_band` variables).
 
-```{r}
-students <- students %>% 
-    mutate(pass = ifelse(final_result == "Pass", 1, 0)) %>% # creates a dummy code
-    mutate(pass = as.factor(pass)) # makes the variable a factor, helping later steps
+```{python}
+students_df['pass'] = np.where(students_df['final_result'] == 'Pass', 1, 0)
 
-students <- students %>% 
-    mutate(imd_band = factor(imd_band, levels = c("0-10%",
-                                                  "10-20%",
-                                                  "20-30%",
-                                                  "30-40%",
-                                                  "40-50%",
-                                                  "50-60%",
-                                                  "60-70%",
-                                                  "70-80%",
-                                                  "80-90%",
-                                                  "90-100%"))) %>% # this creates a factor with ordered levels
-    mutate(imd_band = as.integer(imd_band)) # this changes the levels into integers based on the order of the factor levels
+imd_mapping = {  # maps from the text to a numerical, ordinal value (aka category 4 less than 5 and 5 represents values less than 6)
+    "0-10%": 1,
+    "10-20%": 2,
+    "20-30%": 3,
+    "30-40%": 4,
+    "40-50%": 5,
+    "50-60%": 6,
+    "60-70%": 7,
+    "70-80%": 8,
+    "80-90%": 9,
+    "90-100%": 10
+}
+
+students_df['imd_band'] = students_df['imd_band'].map(imd_mapping)
 ```
 
 #### **👉 Your Turn** **⤵**
 
-Finally, let's join together `students` and `assessments_summarized`, assigning the joined the name `students_and_assessments`.
+Finally, let's join together `students_df` and `assessments_summarized_df` on the id_student column, assigning the joined the name `students_and_assessments_df`.
 
-```{r}
-students_and_assessments <- students %>% 
-    left_join(assessments_summarized)
-
-# write_csv(students_and_assessents, "students_and_assessments.csv")
+```{python}
+students_and_assessments_df = pd.merge(
+    left=students_df,
+    right=assessments_summarized_df,
+    how='left',
+    on='id_student'
+)
 ```
 
 Big picture, we've added another measure -- another feature -- that we can use to make predictions: students' performance on assessments 1/4 of the way through the course.
@@ -237,101 +244,113 @@ Please review this paper before proceeding, focusing on how they describe
 
 This is identical to what we did in the first learning module, using the `students_and_assessments` data. We'll also create a testing data set we'll use later.
 
-```{r}
-set.seed(20230712)
+```{python}
 
-students_and_assessments <- students_and_assessments %>% 
-    drop_na(mean_weighted_score)
+students_and_assessments_df = students_and_assessments_df.dropna(subset=['mean_weighted_score'])
 
-train_test_split <- initial_split(students_and_assessments, prop = .50, strata = "pass")
-data_train <- training(train_test_split)
-data_test <- testing(train_test_split)
+train_df, test_df = train_test_split(
+    students_and_assessments_df, 
+    test_size=0.5, 
+    stratify=students_and_assessments_df['pass'], 
+    random_state=20240712,
+)
 ```
 
-### Step 2: Engineer features and write down the recipe
+One we have a train and test dataset, we'll split apart the independent (`X`) from the dependent (`y`) variables.
 
-We'll also specify the recipe, adding our `mean_weighted_score` variable we calculated above as well as variables we used in LL1 (case study and badge). Note how we dummy code two variables using `step_dummy()` (described further in the first learning module).
+```{python}
+X_train = train_df.drop(columns=['pass'])  # Keeps all columns except our outcome column 'pass'
+y_train = train_df['pass']  # Isolates just the outcome column
 
-```{r}
-my_rec <- recipe(pass ~ disability +
-                     date_registration + 
-                     gender +
-                     code_module +
-                     mean_weighted_score, 
-                 data = data_train) %>% 
-    step_dummy(disability) %>% 
-    step_dummy(gender) %>%  
-    step_dummy(code_module)
+X_test = test_df.drop(columns=['pass'])
+y_test = test_df['pass']
+```
+
+### Step 2: Build the modeling Pipeline:
+
+Real-world datasets often include a mix of categorical variables (such as a `gender` column with values like *Male*, *Female*, or *Non-binary*) and numerical variables (like average test scores; e.g., `mean_weighted_score`). These two types of data require different preprocessing steps before they can be used in a machine learning model. For instance, missing values in numerical features are often filled using the column’s median, while missing values in categorical features are typically replaced with the most frequent category.
+
+In this section, we introduce a new preprocessing technique using scikit-learn’s `OneHotEncoder`. This tool transforms a single categorical column into multiple binary columns, one for each unique category. This step ("one-hot encoding") is necessary because most machine learning models only accept numerical input. Some libraries, such as the *statsmodels* library we've used in earlier exercises, automatically handle categorical variables behind the scenes. However, with scikit-learn, we apply one-hot encoding manually, which gives us greater control over how the data is transformed and ensures consistency throughout the pipeline.
+
+```{python}
+categorical_transformer = Pipeline(steps=[
+    ("imputer", SimpleImputer(strategy="most_frequent")),
+    ("onehot", OneHotEncoder(drop="first", handle_unknown="ignore")),
+])
+
+numerical_transformer = Pipeline(steps=[
+    ("imputer", SimpleImputer(strategy="mean")),
+])
 
 ```
 
-### Step 3: Specify the model and workflow
+Scikit-learn’s `ColumnTransformer` lets us apply different preprocessing steps to different columns in a single, organized pipeline. This is especially useful for datasets with both numerical and categorical features, allowing us to handle each type appropriately by referring to column names directly.
 
-These steps are also the same as in LL1.
+We can then combine the `ColumnTransformer` with a model—such as `LogisticRegression`—using a `Pipeline`. This bundles preprocessing and modeling into one object, making it easy to train the model and make predictions on new data, while keeping the code clean and consistent.
 
-```{r}
-# specify model
-my_mod <-
-    logistic_reg() %>% 
-    set_engine("glm") %>% # generalized linear model
-    set_mode("classification") # since we are predicting a dichotomous outcome, specify classification; for a number, specify regression
+```{python}
+categorical_features = [
+    'disability',
+    'gender',
+    'code_module',
+]
 
-# specify workflow
-my_wf <-
-    workflow() %>% # create a workflow
-    add_model(my_mod) %>% # add the model we wrote above
-    add_recipe(my_rec) # add our recipe we wrote above
+numerical_features = [
+    'date_registration',
+    'mean_weighted_score',
+]
+
+preprocessor = ColumnTransformer(transformers=[
+    ("cat", categorical_transformer, categorical_features),  
+    ("num", numerical_transformer, numerical_features)
+])
+
+# Full pipeline
+model_pipeline = Pipeline(steps=[
+    ("preprocessor", preprocessor),
+    ("classifier", LogisticRegression())
+])
 ```
 
-### Step 4: Fit model
+In this example, we refer to columns by name. However, when applying transformations to all columns of a certain type, a common approach is to use pandas' `select_dtypes()` method to automatically detect and group them by data type.
 
-Finally, we'll use the `last_fit` function, but we'll add something a little different - we'll add the metric set here. To the above, we'll add another common metric - Cohen's Kappa, which is similar to accuracy, but which accounts for chance agreement.
+```{python}
+# This is example code:
+numerical_features = X_train.select_dtypes(include=['int64', 'float64']).columns.tolist()
+categorical_features = X_train.select_dtypes(include=['object', 'category']).columns.tolist()
+```
 
-To do so, we have to specify *which* metrics we want to use using the `metric_set()` function (see all of the avaimodulele options [here](https://yardstick.tidymodels.org/articles/metric-types.html)). Please specify six metrics in the metric set -- accuracy, sensitivity, specificity, ppv (recall), npv, and kappa. Assign the name `class_metrics` to the output of your use of the `metric_set()` function.
+### Step 3: Fit model and calculate metrics
+
+Finally, we'll use the `fit` function on the `model_pipeline` object to train the model with the training dataset, and the `predict` method to make new predictions on the test dataset.
 
 #### **👉 Your Turn** **⤵**
 
-```{r}
-class_metrics <- metric_set(accuracy, sensitivity, specificity, ppv, npv, kap) # add probs?
+```{python}
+model_pipeline.fit(X=X_train, y=y_train)
+y_preds = model_pipeline.predict(X_test)
 ```
 
-Then, please use `last_fit`, looking to how we did this in the last learning module for a guide on how to specify the argument nts. To the arguments, add `metrics = class_metrics`.
+Once you’ve generated predictions on the test dataset, follow the same pattern we used in the earlier code-along to calculate the full set of evaluation metrics. These include: accuracy, sensitivity (recall), specificity, precision, negative predictive value, and Cohen’s kappa.
 
-```{r}
-final_fit <- last_fit(my_wf, train_test_split, metrics = class_metrics)
+```{python}
+accuracy = accuracy_score(y_test, y_preds)
+precision = precision_score(y_test, y_preds, pos_label=1)
+kappa = cohen_kappa_score(y_test, y_preds)
+
+true_negative, false_positive, false_negative, true_positive = confusion_matrix(y_test, y_preds).ravel()
+
+sensitivity = true_positive / (true_positive + false_negative)  # or the sklearn.metrics recall_score function
+specificity = true_negative / (true_negative + false_positive)
+
+negative_predictive_value = true_negative / (true_negative + false_negative)
 ```
 
 We're now ready to move on to interpreting the accuracy of our model.
 
-### Step 5: Interpret accuracy
+### Step 4: Interpret accuracy
 
-### A confusion matrix and true and false positives and negatives
-
-Let's start with a simple confusion matrix. The confusion matrix is a 2 x 2 table with values (cells in the table) representing one of four conditions, elaborated below. You'll fill in the last two columns in a few moments.
-
-| Statistic | How to Find | Interpretation | Value | \% |
-|:-------------:|:-------------:|:-------------:|:-------------:|:-------------:|
-| True positive (TP) | Truth: 1, Prediction: 1 | Proportion of the population that is affected by a condition and correctly tested positive | 2443 | 19.8 |
-| True negative (TN) | Truth: 0, Prediction: 0 | Proportion of the population that is not affected by a condition and correctly tested negative | 4536 | 36.8 |
-| False positive (FP) | Truth: 0, Prediction: 1 | Proportion of the population that is not affected by a condition and incorrectly tested positive | 2070 | 16.8 |
-| False negative (FN) | Truth: 1, Prediction: 0 | Proportion of the population that is affected by a condition and incorrectly tested positive. | 3269 | 26.5 |
-
-To create a confusion matrix, run `collect_predictions()`, which does what it suggests - it gathers together the model's test set predictions. Pass the `last_fit` object to this function below.
-
-#### **👉 Your Turn** **⤵**
-
-```{r}
-collect_predictions(final_fit)
-```
-
-Take a look at the columns. You'll need to provide the predictions (created with `collect_predictions()`) and then pipe that to `conf_mat()`, to which you provide the names of a) the predictions and b) the known values for the test set. Some code to get you started is below.
-
-```{r}
-collect_predictions(final_fit) %>% 
-    conf_mat(.pred_class, pass)
-```
-
-You should see a confusion matrix output. If so, nice work! Please fill in the **Value** and **Percentage** columns in the table above (with TP, TN, FP, and FN), entering the appropriate values and then converting those into a percentage based on the total number of data points in the test data set. The accuracy can be interpreted as the sum of the true positive and true negative percentages. So, what's the accuracy? Add that below as a percentage.
+So, what's the accuracy? Add that below as a percentage.
 
 -   **Accuracy:** 56.6%
 
@@ -372,15 +391,54 @@ Recall that Baker and colleagues sought to balance between precision and recall 
 
 ### Quickly calculating metrics
 
-After all of this work, we *can* calculate the above much more easily given how we setup our metrics (using `metric_set()` earlier, such as when we want to efficiently communicate the results of our analysis to our audience? Below, use `collect_metrics()` with the `final_fit` object, noting that in addition to the four metrics we calculated manually just a few moments ago, we are also provided with the accuracy and Cohen's Kappa values.
+That was quite a bit of work to calculate those metrics manually. If evaluating models in this way is something we plan to do frequently, it makes sense to encapsulate the logic in a reusable function. This not only saves time and reduces repetitive code, but also helps ensure **consistency** across experiments and makes our analysis easier to maintain and debug as our projects grow.
+
+```{python}
+def calculate_model_performance_metrics(y_actual, y_preds) -> dict: 
+    """
+    Calculates a suite of classification performance metrics.
+
+    This function computes common evaluation metrics for binary classification,
+    including accuracy, sensitivity (recall), specificity, precision,
+    negative predictive value, and Cohen’s kappa. It assumes the positive class is labeled as 1.
+
+    Args:
+        y_actual (list or array): Ground truth (true) binary labels.
+        y_preds (list or array): Predicted binary labels.
+
+    Returns:
+        dict: A dictionary containing all metrics:
+    """
+    accuracy = accuracy_score(y_actual, y_preds)
+    precision = precision_score(y_actual, y_preds, pos_label=1)
+    kappa = cohen_kappa_score(y_actual, y_preds)
+    
+    true_negative, false_positive, false_negative, true_positive = confusion_matrix(y_actual, y_preds).ravel()
+    
+    sensitivity = true_positive / (true_positive + false_negative)  # or the sklearn.metrics recall_score function
+    specificity = true_negative / (true_negative + false_positive)
+    
+    negative_predictive_value = true_negative / (true_negative + false_negative)
+
+    return {
+        "accuracy": accuracy,
+        "sensitivity": sensitivity,
+        "specificity": specificity,
+        "precision": precision,
+        "negative_predictive_value": negative_predictive_value,
+        "cohen_kappa": kappa
+    }
+```
 
 #### **👉 Your Turn** **⤵**
 
-```{r}
-collect_metrics(final_fit)
+Use the `calculate_model_performance_metrics` function defined above to calculate the suite of metrics.
+
+```{python}
+calculate_model_performance_metrics(y_actual=y_test, y_preds=y_preds)
 ```
 
-Having invested in understanding the terminology of machine learning metrics, we'll use this "shortcut" (using `collect_metrics()` going forward.
+Having invested in understanding the terminology of machine learning metrics, we'll use this "shortcut" going forward.
 
 ### 🧶 Knit & Check ✅
 
