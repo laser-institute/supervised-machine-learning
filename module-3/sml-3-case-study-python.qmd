@@ -81,9 +81,10 @@ Like in the code-along, let's take a look at the data and do some processing of 
 
 #### **👉 Your Turn** **⤵**
 
-We'll load the students file together; you'll write code to read the assessments file, which is named "oulad-assessments.csv". Please assign the name `assessments` to the loaded assessments file.
+We'll load the students file together; you'll write code to read the assessments file, which is named "oulad-assessments.csv". Please assign the name `assessments_df` to the loaded assessments file.
 
 ```{python}
+students_df = pd.read_csv("data/oulad-students.csv")
 
 ```
 
