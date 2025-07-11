@@ -208,7 +208,7 @@ accuracy = accuracy_score(y_actual, y_preds)
 precision = precision_score(y_actual, y_preds, pos_label=1)
 kappa = cohen_kappa_score(y_actual, y_preds)
 
-# Calculate a confusion matrix to get counts of true/false positive/negative predictions
+# We'll learn more about the confusion matrix in the case study
 true_negative, false_positive, false_negative, true_positive = confusion_matrix(y_actual, y_preds).ravel()
 sensitivity = true_positive / (true_positive + false_negative)  # or the sklearn.metrics recall_score function
 specificity = true_negative / (true_negative + false_positive)
