@@ -17,6 +17,14 @@ format:
     footer: <a href="https://www.go.ncsu.edu/laser-institute">go.ncsu.edu/laser-institute
 ---
 
+```{r}
+#| include: false
+reticulate::py_install("pandas")
+reticulate::py_install("numpy")
+reticulate::py_install("statsmodels")
+reticulate::py_install("scikit-learn")
+```
+
 ## R Code
 
 ::: {.panel-tabset}
@@ -126,10 +134,94 @@ boost_fit %>%
 
 ## Code‑along: Python
 
-*AR to add, can use same steps as above if you like*
+::: {.panel-tabset}
+
+### 0. Loading & Setup
 
 ```{python}
 #| eval: false
 #| echo: true
+import pandas as pd
+
+pokemon_df = pd.read_csv("data/pokemon-data.csv")
+pokemon_df.head()
+```
+
+
+### 1. Split data
+
+```{python}
+#| eval: false
+#| echo: true
+independent_columns = ['height_m', 'weight_kg', 'hp']
+dependent_column = 'early_gen'
+
+X = pokemon_df[independent_columns]
+y = pokemon_df[dependent_column]
+```
+
+### 2. Create model pipelines
+
+We will make a pipeline for a logistic regression and a gradient boosting random forest model.
+```{python}
+#| eval: false
+#| echo: true
+from sklearn.pipeline import Pipeline
+from sklearn.impute import SimpleImputer
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import GradientBoostingClassifier
+
+lr_pipeline = Pipeline(
+    steps=[
+        ('imputer', SimpleImputer(strategy='median')),
+        ('model', LogisticRegression())
+    ])
+
+boost_pipeline = Pipeline(
+    steps=[
+        ('imputer', SimpleImputer(strategy='median')),
+        ('model', GradientBoostingClassifier(n_estimators=1000, learning_rate=0.05))
+    ])
+```
+
+### 3. Run stratified cross validation
+```{python}
+#| eval: false
+#| echo: true
+from sklearn.model_selection import StratifiedKFold, cross_val_score
+
+random_seed = 22790
+
+skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=random_seed)
+lr_scores = cross_val_score(lr_pipeline, X, y, cv=skf, scoring='accuracy')  # can also score with 'f1' which is the harmonic mean or sensitivity (recall) and precision
+boost_scores = cross_val_score(boost_pipeline, X, y, cv=skf, scoring='accuracy')
+```
+
+### 4. Evaluate metrics
+
+```{python}
+#| eval: false
+#| echo: true
+import numpy as np 
+
+print('logistic regression mean accuracy:', np.mean(lr_scores))
+print('boosted random forest mean accuracy:', np.mean(boost_scores))
 
 ```
+
+
+### 5. Variable Importance (VIP) for XGBoost
+
+```{python}
+#| eval: false
+#| echo: true
+boost_pipeline.fit(X, y)
+
+model = boost_pipeline.named_steps['model']
+importances = model.feature_importances_
+feature_importances = pd.Series(importances, index=independent_columns)
+
+print(feature_importances.sort_values(ascending=False))
+```
+
+:::
