@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.6.42">
+<meta name="generator" content="quarto-1.6.40">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="LASER Institute">
-<meta name="dcterms.date" content="2025-06-02">
+<meta name="dcterms.date" content="2025-07-13">
 
 <title>Modeling Interactions Data with Boosted Trees</title>
 <style>
@@ -65,12 +65,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="sml-4-case-study-key_files/libs/quarto-html/tippy.umd.min.js"></script>
 <script src="sml-4-case-study-key_files/libs/quarto-html/anchor.min.js"></script>
 <link href="sml-4-case-study-key_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="sml-4-case-study-key_files/libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="sml-4-case-study-key_files/libs/quarto-html/quarto-syntax-highlighting-dark-b53751a350365c71b6c909e95f209ed1.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="sml-4-case-study-key_files/libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="sml-4-case-study-key_files/libs/quarto-html/quarto-syntax-highlighting-dark-8ea72dc5fed832574809a9c94082fbbb.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
 <script src="sml-4-case-study-key_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="sml-4-case-study-key_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="sml-4-case-study-key_files/libs/bootstrap/bootstrap-c40676b2bf6f3885adcce02e998bb44c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="sml-4-case-study-key_files/libs/bootstrap/bootstrap-dark-53a30e6d4f540c8956ac884ec0bd0668.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="sml-4-case-study-key_files/libs/bootstrap/bootstrap-00d65cf21f174b4516a2e66297fda939.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="sml-4-case-study-key_files/libs/bootstrap/bootstrap-dark-c849bbedd074e1c235909309894d6680.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 
 
 </head>
@@ -83,16 +83,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#prepare" id="toc-prepare" class="nav-link active" data-scroll-target="#prepare">1. PREPARE</a></li>
+  <li><a href="#prepare" id="toc-prepare" class="nav-link active" data-scroll-target="#prepare">1. PREPARE</a>
+  <ul>
+  <li><a href="#a-more-sophisticated-model" id="toc-a-more-sophisticated-model" class="nav-link" data-scroll-target="#a-more-sophisticated-model">A more sophisticated model</a></li>
+  <li><a href="#a-little-background-and-some-readings-on-feature-engineering" id="toc-a-little-background-and-some-readings-on-feature-engineering" class="nav-link" data-scroll-target="#a-little-background-and-some-readings-on-feature-engineering">A little background (and some readings) on feature engineering</a></li>
+  </ul></li>
   <li><a href="#wrangle" id="toc-wrangle" class="nav-link" data-scroll-target="#wrangle">2. WRANGLE</a></li>
   <li><a href="#step-0-loading-and-setting-up" id="toc-step-0-loading-and-setting-up" class="nav-link" data-scroll-target="#step-0-loading-and-setting-up">Step 0: Loading and setting up</a>
   <ul>
   <li><a href="#your-turn" id="toc-your-turn" class="nav-link" data-scroll-target="#your-turn"><strong>👉 Your Turn</strong> <strong>⤵</strong></a></li>
+  <li><a href="#your-turn-1" id="toc-your-turn-1" class="nav-link" data-scroll-target="#your-turn-1"><strong>👉 Your Turn</strong> <strong>⤵</strong></a></li>
+  <li><a href="#your-turn-2" id="toc-your-turn-2" class="nav-link" data-scroll-target="#your-turn-2"><strong>👉 Your Turn</strong> <strong>⤵</strong></a></li>
   </ul></li>
   <li><a href="#explore" id="toc-explore" class="nav-link" data-scroll-target="#explore">3. EXPLORE</a>
   <ul>
-  <li><a href="#your-turn-1" id="toc-your-turn-1" class="nav-link" data-scroll-target="#your-turn-1"><strong>👉 Your Turn</strong> <strong>⤵</strong></a></li>
-  <li><a href="#your-turn-2" id="toc-your-turn-2" class="nav-link" data-scroll-target="#your-turn-2"><strong>👉 Your Turn</strong> <strong>⤵</strong></a></li>
   <li><a href="#your-turn-3" id="toc-your-turn-3" class="nav-link" data-scroll-target="#your-turn-3"><strong>👉 Your Turn</strong> <strong>⤵</strong></a></li>
   <li><a href="#your-turn-4" id="toc-your-turn-4" class="nav-link" data-scroll-target="#your-turn-4"><strong>👉 Your Turn</strong> <strong>⤵</strong></a></li>
   <li><a href="#your-turn-5" id="toc-your-turn-5" class="nav-link" data-scroll-target="#your-turn-5"><strong>👉 Your Turn</strong> <strong>⤵</strong></a></li>
@@ -102,26 +106,27 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#your-turn-9" id="toc-your-turn-9" class="nav-link" data-scroll-target="#your-turn-9"><strong>👉 Your Turn</strong> <strong>⤵</strong></a></li>
   <li><a href="#your-turn-10" id="toc-your-turn-10" class="nav-link" data-scroll-target="#your-turn-10"><strong>👉 Your Turn</strong> <strong>⤵</strong></a></li>
   <li><a href="#your-turn-11" id="toc-your-turn-11" class="nav-link" data-scroll-target="#your-turn-11"><strong>👉 Your Turn</strong> <strong>⤵</strong></a></li>
+  <li><a href="#your-turn-12" id="toc-your-turn-12" class="nav-link" data-scroll-target="#your-turn-12"><strong>👉 Your Turn</strong> <strong>⤵</strong></a></li>
   </ul></li>
   <li><a href="#model" id="toc-model" class="nav-link" data-scroll-target="#model">4. MODEL</a>
   <ul>
   <li><a href="#step-1.-split-data" id="toc-step-1.-split-data" class="nav-link" data-scroll-target="#step-1.-split-data">Step 1. Split data</a>
   <ul class="collapse">
-  <li><a href="#your-turn-12" id="toc-your-turn-12" class="nav-link" data-scroll-target="#your-turn-12"><strong>👉 Your Turn</strong> <strong>⤵</strong></a></li>
+  <li><a href="#your-turn-13" id="toc-your-turn-13" class="nav-link" data-scroll-target="#your-turn-13"><strong>👉 Your Turn</strong> <strong>⤵</strong></a></li>
   </ul></li>
   <li><a href="#step-2-engineer-features-and-write-down-the-recipe" id="toc-step-2-engineer-features-and-write-down-the-recipe" class="nav-link" data-scroll-target="#step-2-engineer-features-and-write-down-the-recipe">Step 2: Engineer features and write down the recipe</a>
   <ul class="collapse">
-  <li><a href="#your-turn-13" id="toc-your-turn-13" class="nav-link" data-scroll-target="#your-turn-13"><strong>👉 Your Turn</strong> <strong>⤵</strong></a></li>
   <li><a href="#your-turn-14" id="toc-your-turn-14" class="nav-link" data-scroll-target="#your-turn-14"><strong>👉 Your Turn</strong> <strong>⤵</strong></a></li>
+  <li><a href="#your-turn-15" id="toc-your-turn-15" class="nav-link" data-scroll-target="#your-turn-15"><strong>👉 Your Turn</strong> <strong>⤵</strong></a></li>
   </ul></li>
   <li><a href="#step-3-specify-the-model-and-workflow" id="toc-step-3-specify-the-model-and-workflow" class="nav-link" data-scroll-target="#step-3-specify-the-model-and-workflow">Step 3: Specify the model and workflow</a></li>
   <li><a href="#step-4-fit-model" id="toc-step-4-fit-model" class="nav-link" data-scroll-target="#step-4-fit-model">Step 4: Fit model</a>
   <ul class="collapse">
-  <li><a href="#your-turn-15" id="toc-your-turn-15" class="nav-link" data-scroll-target="#your-turn-15"><strong>👉 Your Turn</strong> <strong>⤵</strong></a></li>
+  <li><a href="#your-turn-16" id="toc-your-turn-16" class="nav-link" data-scroll-target="#your-turn-16"><strong>👉 Your Turn</strong> <strong>⤵</strong></a></li>
   </ul></li>
   <li><a href="#step-5-interpret-accuracy" id="toc-step-5-interpret-accuracy" class="nav-link" data-scroll-target="#step-5-interpret-accuracy">Step 5: Interpret accuracy</a>
   <ul class="collapse">
-  <li><a href="#your-turn-16" id="toc-your-turn-16" class="nav-link" data-scroll-target="#your-turn-16"><strong>👉 Your Turn</strong> <strong>⤵</strong></a></li>
+  <li><a href="#your-turn-17" id="toc-your-turn-17" class="nav-link" data-scroll-target="#your-turn-17"><strong>👉 Your Turn</strong> <strong>⤵</strong></a></li>
   </ul></li>
   </ul></li>
   <li><a href="#communicate" id="toc-communicate" class="nav-link" data-scroll-target="#communicate">5. COMMUNICATE</a>
@@ -153,7 +158,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">June 2, 2025</p>
+      <p class="date">July 13, 2025</p>
     </div>
   </div>
   
@@ -167,10 +172,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="prepare" class="level2">
 <h2 class="anchored" data-anchor-id="prepare">1. PREPARE</h2>
-<p>After interpreting our last model, it is easy to think we can do a little better. But, how? In this module, we attempt to improve our predictive performance by <strong>switching from a random‑forest model to a boosted‑tree model (using <em>xgboost</em>)</strong> and by carrying out some targeted feature engineering.</p>
-<p>Boosted trees (gradient boosting) build a <em>sequence</em> of small trees, each one focusing on the records the previous trees struggled with. When tuned carefully (small learning rate, many trees) the ensemble can outperform bagged methods such as random forests.</p>
+<p>After interpreting our last model, it is easy to think we can do a little better. But, how? In this module, we’ll do do things: 1) specify a more sophisticated model and 2) go deeper on some feature engineering.</p>
+<p>Our driving question for this module, then, is: <strong>How much can we improve our model?</strong> Looking back to our predictive model from module 3, we can see that our accuracy was okay. Can we improve on that? Let’s dive in! First, we’ll briefly review two key concepts for the module.</p>
+<section id="a-more-sophisticated-model" class="level3">
+<h3 class="anchored" data-anchor-id="a-more-sophisticated-model">A more sophisticated model</h3>
+<p>we attempt to improve our predictive performance by switching to a more complex model than the logistic regression we have been using–specifically, to a type of model that is based on decision trees – a boosted‑tree model. In short, this is one way we can improve our model’s predictions.</p>
+<p>Boosted trees (gradient boosting) build a <em>sequence</em> of small “decision trees” (detailed in the conceptual overview), each one focusing on the records the previous trees struggled with. When tuned carefully (small learning rate, many trees) the ensemble can outperform other algorithms based on decision trees you may have heard of, like the random forest algorithm.</p>
+</section>
+<section id="a-little-background-and-some-readings-on-feature-engineering" class="level3">
+<h3 class="anchored" data-anchor-id="a-little-background-and-some-readings-on-feature-engineering">A little background (and some readings) on feature engineering</h3>
 <p>Feature engineering is a rich topic in machine learning research, including in the learning analytics and educational data mining communities.</p>
-<p>Consider research on online learning and the work of Rodriguez et al.&nbsp;(2021). In these two studies, <em>digital trace data</em>, data generated through users’ interactions with digital technologies. Optionally, review this paper – specifically how they processed the “clickstream” data. As this paper illustrates, there is not one way to use such data.</p>
+<p>Consider research on online learning and the work of Rodriguez et al.&nbsp;(2021). In this study, <em>digital trace data</em>, data generated through users’ interactions with digital technologies. Optionally, review this paper – specifically how they processed the “clickstream” data. As this paper illustrates, there is not one way to use such data.</p>
 <blockquote class="blockquote">
 <p>Rodriguez, F., Lee, H. R., Rutherford, T., Fischer, C., Potma, E., &amp; Warschauer, M. (2021, April). Using clickstream data mining techniques to understand and support first-generation college students in an online chemistry course. In <em>LAK21: 11th International Learning Analytics and Knowledge Conference</em> (pp.&nbsp;313-322).</p>
 </blockquote>
@@ -179,14 +191,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Gobert, J. D., Sao Pedro, M., Raziuddin, J., &amp; Baker, R. S. (2013). From log files to assessment metrics: Measuring students’ science inquiry skills using educational data mining. <em>Journal of the Learning Sciences, 22</em>(4), 521-563.</p>
 </blockquote>
 <p>Even after feature engineering, machine learning approaches can often (but not always) be improved by choosing a more sophisticated model type. Note how we used a regression model in the first two case studies; here, we explore a considerably more sophisticated model, a boosted tree. Feature engineering and choosing a more sophisticated model adds some complexity to the modeling. As we have discussed, it is easy to bias our results if we repeatedly check the performance of <em>different model fits</em> with the same test data. Cross-validation is one commonly used solution for this problem.</p>
-<p>Our driving question is: <strong>How much can we improve our model?</strong> Looking back to our predictive model from LL 2, we can see that our accuracy was okay. Can we improve on that? Let’s dive in!</p>
+</section>
 </section>
 <section id="wrangle" class="level2">
 <h2 class="anchored" data-anchor-id="wrangle">2. WRANGLE</h2>
 </section>
 <section id="step-0-loading-and-setting-up" class="level2">
 <h2 class="anchored" data-anchor-id="step-0-loading-and-setting-up">Step 0: Loading and setting up</h2>
-<p>First, let’s load the packages we’ll use—the familiar {tidyverse} and several others focused on modeling.</p>
+<p>First, let’s load the packages we’ll use—the familiar {tidyverse} and several others focused on modeling. Lastly, we’ll load a new package, {arrow}; more on why, shortly.</p>
 <section id="your-turn" class="level4">
 <h4 class="anchored" data-anchor-id="your-turn"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
 <p>Add to the chunk below code to load:</p>
@@ -194,6 +206,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><strong>tidyverse</strong>, <strong>janitor</strong>, <strong>tidymodels</strong></li>
 <li><strong>xgboost</strong> (boosted‑tree engine)</li>
 <li><strong>vip</strong> (variable importance plots)</li>
+<li><strong>arrow</strong> (for loading large data sets)</li>
 </ul>
 <p>Load these with the library function, per usual.</p>
 <div class="cell">
@@ -202,8 +215,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
 ✔ dplyr     1.1.4     ✔ readr     2.1.5
 ✔ forcats   1.0.0     ✔ stringr   1.5.1
-✔ ggplot2   3.5.2     ✔ tibble    3.2.1
-✔ lubridate 1.9.4     ✔ tidyr     1.3.1
+✔ ggplot2   3.5.2     ✔ tibble    3.3.0
+✔ lubridate 1.9.3     ✔ tidyr     1.3.1
 ✔ purrr     1.0.4     
 ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
 ✖ dplyr::filter() masks stats::filter()
@@ -221,20 +234,21 @@ The following objects are masked from 'package:stats':
 </div>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidymodels)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>── Attaching packages ────────────────────────────────────── tidymodels 1.3.0 ──
-✔ broom        1.0.8     ✔ rsample      1.3.0
-✔ dials        1.4.0     ✔ tune         1.3.0
-✔ infer        1.0.8     ✔ workflows    1.2.0
-✔ modeldata    1.4.0     ✔ workflowsets 1.1.1
-✔ parsnip      1.3.2     ✔ yardstick    1.3.2
-✔ recipes      1.3.1     
+<pre><code>── Attaching packages ────────────────────────────────────── tidymodels 1.2.0 ──
+✔ broom        1.0.7      ✔ rsample      1.2.1 
+✔ dials        1.2.1      ✔ tune         1.2.1 
+✔ infer        1.0.7      ✔ workflows    1.1.4 
+✔ modeldata    1.4.0      ✔ workflowsets 1.1.0 
+✔ parsnip      1.2.1      ✔ yardstick    1.3.1 
+✔ recipes      1.0.10     
 ── Conflicts ───────────────────────────────────────── tidymodels_conflicts() ──
 ✖ scales::discard() masks purrr::discard()
 ✖ dplyr::filter()   masks stats::filter()
 ✖ recipes::fixed()  masks stringr::fixed()
 ✖ dplyr::lag()      masks stats::lag()
 ✖ yardstick::spec() masks readr::spec()
-✖ recipes::step()   masks stats::step()</code></pre>
+✖ recipes::step()   masks stats::step()
+• Use tidymodels_prefer() to resolve common conflicts.</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(xgboost) <span class="co"># for boosted tree modeling</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -254,28 +268,104 @@ The following object is masked from 'package:utils':
 
     vi</code></pre>
 </div>
-</div>
-<p>Next, we’ll load a new file — one with <em>interactions</em> (or log-trace) data. Please find that (<code>oulad-interactions.csv</code>) in the <code>data</code> folder for this lab, read that in and assign it the name <code>interactions</code>.</p>
-<p><em>N.b.</em> <strong>If you download these materials directly from GitHub, you will need to unzip the file titled <code>oulad-interactions.csv.zip</code></strong></p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>interactions <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/oulad-interactions.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(arrow) <span class="co"># for large, compressed (parquet) files</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Rows: 5548858 Columns: 11
+<pre><code>
+Attaching package: 'arrow'
+
+The following object is masked from 'package:lubridate':
+
+    duration
+
+The following object is masked from 'package:utils':
+
+    timestamp</code></pre>
+</div>
+</div>
+<p>Let’s get started! We have to do the same processing we did in the third module to obtain cut-off dates. The purpose of this is to train the model on data from the first one-third of the class, with the reasoning being this is a good time to intervene—-far enough into the class to make an appreciable impact, but not too late to have a limited chance of being able to change students’ trajectory in the class. We’ll repeat the procedure we carried out with the assessments data: calculating a cut-off for each class and then filtering the data based upon this cut-off.</p>
+<p>First, though, we need to load <em>a really big file</em> with all of the interactions data — one with interactions (or log-trace) data. In the OULAD documentation, this is called the VLE (virtual learning environment) data source. Please review the description of the variables in the <em>studentVLE</em> and <em>VLE</em> sources (which are joined together for this module) <a href="https://analyse.kmi.open.ac.uk/open_dataset#description">here</a>.</p>
+<p>The data is in a file named <code>oulad-interactions.parquet</code> file. You’ll find this in the <code>data</code> folder. Why this format? Parquet is a modern, columnar storage format that is highly efficient for large datasets. It allows for compressed storage and faster reading, especially when you only need a subset of columns. If we had stored this same data in a plain-text format like CSV, it would have taken up significantly more space — potentially too much to include in this lab’s repository at all (the file contains 5.5 million rows!).</p>
+<p>The tradeoff is that Parquet files aren’t immediately human-readable and can’t be opened directly in Excel. However, for programmatic analysis with tools like Python and Pandas, it’s an excellent option: compact, fast, and well-suited for large-scale data.</p>
+<p>Now let’s load it:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>interactions <span class="ot">&lt;-</span> <span class="fu">read_parquet</span>(<span class="st">"data/oulad-interactions.parquet"</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>interactions <span class="sc">%&gt;%</span> </span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">glimpse</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 10,655,280
+Columns: 9
+$ code_module       &lt;chr&gt; "AAA", "AAA", "AAA", "AAA", "AAA", "AAA", "AAA", "AA…
+$ code_presentation &lt;chr&gt; "2013J", "2013J", "2013J", "2013J", "2013J", "2013J"…
+$ id_student        &lt;dbl&gt; 28400, 28400, 28400, 28400, 28400, 28400, 28400, 284…
+$ id_site           &lt;dbl&gt; 546652, 546652, 546652, 546614, 546714, 546652, 5468…
+$ date              &lt;dbl&gt; -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -1…
+$ sum_click         &lt;dbl&gt; 4, 1, 1, 11, 1, 8, 2, 15, 17, 1, 1, 1, 3, 4, 3, 2, 3…
+$ activity_type     &lt;chr&gt; "forumng", "forumng", "forumng", "homepage", "oucont…
+$ week_from         &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ week_to           &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …</code></pre>
+</div>
+</div>
+<p>We can see that this file is indeed large - more than 10 million rows, with data on the number of <em>clicks</em> (<code>sum_clicks)</code> a student in a particular offering of a course makes with a particular component of the course (<code>id_site</code>) and the type of that component (<code>activity_type</code>). at a specific time.</p>
+<p>Since you did something similar in the last module, you’ll just run the code in the chunk below to calculate and filter the data based on a cut-off point (and associated date).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>assessments <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/oulad-assessments.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 173912 Columns: 10
 ── Column specification ────────────────────────────────────────────────────────
 Delimiter: ","
-chr (3): code_module, code_presentation, activity_type
-dbl (8): id_student, id_site, date, sum_click, week_from, week_to, module_pr...
+chr (3): code_module, code_presentation, assessment_type
+dbl (7): id_assessment, id_student, date_submitted, is_banked, score, date, ...
 
 ℹ Use `spec()` to retrieve the full column specification for this data.
 ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
 </div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>code_module_dates <span class="ot">&lt;-</span> assessments <span class="sc">%&gt;%</span> </span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>   <span class="fu">group_by</span>(code_module, code_presentation) <span class="sc">%&gt;%</span> </span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">quantile_cutoff_date =</span> <span class="fu">quantile</span>(date, <span class="at">probs =</span> .<span class="dv">25</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="co"># change this throughout</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`summarise()` has grouped output by 'code_module'. You can override using the
+`.groups` argument.</code></pre>
 </div>
-<p>We have to do the same processing we did in the third module, to obtain cut-off dates. As a reminder, the purpose of this is to train the model on data from the first one-third of the class, with the reasoning being this is a good time to intervene–far enough into the class to make an appreciable impact, but not too late to have a limited chance of being able to change students’ trajectory in the class.</p>
-<p>We’ll repeat the procedure we carried out with the assessments data — calculating a cut-off for each class and then filtering the data based upon this cut-off. But, since we’ve already done this for the assessment data, to allow us to focus more on some new feature engineering steps in this module, we are providing you with the already-filtered interactions data. <em>Note</em>: you can find the code used to carry out these steps in the Module 4 folder in <code>process-interactions-data.R</code>.</p>
-<p>In the OULAD documentation, this is called the VLE (virtual learning environment) data source. Please review the description of the variables in the <em>studentVLE</em> and <em>VLE</em> sources (which are joined together for this module) <a href="https://analyse.kmi.open.ac.uk/open_dataset#description">here</a>. Then, read in the <code>oulad-interactions.csv</code> file.</p>
-<p>Also, we’ll load another file we created in the last module - <code>oulad-students_and_assessments.csv</code>. That is in this module’s data folder; please load this in with <code>read_csv()</code>, as below.</p>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>interactions_joined <span class="ot">&lt;-</span> interactions <span class="sc">%&gt;%</span> </span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">left_join</span>(code_module_dates) <span class="co"># join the data based on course_module and course_presentation</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Joining with `by = join_by(code_module, code_presentation)`</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>interactions_filtered <span class="ot">&lt;-</span> interactions_joined <span class="sc">%&gt;%</span> </span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(date <span class="sc">&lt;</span> quantile_cutoff_date) <span class="co"># filter the data so only assignments before the cutoff date are included</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="your-turn-1" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-1"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
+<p>Now, <code>glimpse()</code> the filtered data set you just created.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>students_and_assessments <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/oulad-students-and-assessments.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(interactions_filtered)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 4,589,618
+Columns: 10
+$ code_module          &lt;chr&gt; "AAA", "AAA", "AAA", "AAA", "AAA", "AAA", "AAA", …
+$ code_presentation    &lt;chr&gt; "2013J", "2013J", "2013J", "2013J", "2013J", "201…
+$ id_student           &lt;dbl&gt; 28400, 28400, 28400, 28400, 28400, 28400, 28400, …
+$ id_site              &lt;dbl&gt; 546652, 546652, 546652, 546614, 546714, 546652, 5…
+$ date                 &lt;dbl&gt; -10, -10, -10, -10, -10, -10, -10, -10, -10, -10,…
+$ sum_click            &lt;dbl&gt; 4, 1, 1, 11, 1, 8, 2, 15, 17, 1, 1, 1, 3, 4, 3, 2…
+$ activity_type        &lt;chr&gt; "forumng", "forumng", "forumng", "homepage", "ouc…
+$ week_from            &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ week_to              &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ quantile_cutoff_date &lt;dbl&gt; 54, 54, 54, 54, 54, 54, 54, 54, 54, 54, 54, 54, 5…</code></pre>
+</div>
+</div>
+<p>What do you notice about this data in relation to the original data set? You may wish to <code>glimpse()</code> (or inspect in another way) the not filtered interactions data, too. Share a few notes on what you observe about these:</p>
+<ul>
+<li></li>
+<li></li>
+</ul>
+<p>We will not only use this (filtered) interactions data, but also data on students and assessments. Here, we’ll be expeditious by loading a file we created in the last module - <code>oulad-students_and_assessments.csv</code>. That is in this module’s data folder; please load this in with <code>read_csv()</code>, as below.</p>
+</section>
+<section id="your-turn-2" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-2"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>students_and_assessments <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/oulad-students-and-assessments.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Rows: 32593 Columns: 17
 ── Column specification ────────────────────────────────────────────────────────
@@ -287,40 +377,39 @@ dbl (9): id_student, imd_band, num_of_prev_attempts, studied_credits, module...
 ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
 </div>
 </div>
-<p>Woah, even filtered, this is a large file! Let’s start to explore it a bit. Please take three steps to explore the data, as follows.</p>
 </section>
 </section>
 <section id="explore" class="level2">
 <h2 class="anchored" data-anchor-id="explore">3. EXPLORE</h2>
-<section id="your-turn-1" class="level4">
-<h4 class="anchored" data-anchor-id="your-turn-1"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
-<p><em>First</em>, <code>count()</code> the <code>activity_type</code> variable and <em>sort</em> the resulting output by frequency.</p>
+<section id="your-turn-3" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-3"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
+<p><em>First</em>, <code>count()</code> the <code>activity_type</code> variable in your filtered interactions data and <em>sort</em> the resulting output by frequency.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>interactions <span class="sc">%&gt;%</span> </span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">count</span>(activity_type, <span class="at">sort =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>interactions_filtered <span class="sc">%&gt;%</span> </span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">count</span>(activity_type, <span class="at">sort =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 19 × 2
    activity_type        n
    &lt;chr&gt;            &lt;int&gt;
- 1 forumng        1279917
- 2 subpage        1104279
- 3 oucontent      1065736
- 4 homepage        832424
- 5 resource        436704
- 6 quiz            398966
- 7 url             232573
- 8 ouwiki           66413
- 9 page             33539
-10 oucollaborate    25861
-11 externalquiz     18171
-12 questionnaire    16528
-13 ouelluminate     13829
-14 glossary          9630
-15 dualpane          7306
-16 htmlactivity      6562
-17 dataplus           311
-18 sharedsubpage      103
-19 repeatactivity       6</code></pre>
+ 1 forumng        1098240
+ 2 subpage         946870
+ 3 oucontent       803941
+ 4 homepage        671272
+ 5 resource        387505
+ 6 quiz            302289
+ 7 url             196844
+ 8 ouwiki           63268
+ 9 page             28789
+10 oucollaborate    22024
+11 externalquiz     17767
+12 questionnaire    15834
+13 ouelluminate     12716
+14 glossary          8737
+15 dualpane          6812
+16 htmlactivity      6335
+17 dataplus           271
+18 sharedsubpage      100
+19 repeatactivity       4</code></pre>
 </div>
 </div>
 <p>What does this tell you? Consulting the codebook and your output, please add at least two notes on what you are noticing:</p>
@@ -329,20 +418,20 @@ dbl (9): id_student, imd_band, num_of_prev_attempts, studied_credits, module...
 <li>Other common activities include homepage, quiz, oucontent, and url interactions</li>
 </ul>
 </section>
-<section id="your-turn-2" class="level4">
-<h4 class="anchored" data-anchor-id="your-turn-2"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
+<section id="your-turn-4" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-4"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
 <p><em>Second</em>, please create a histogram of the <code>date</code> variable.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>interactions <span class="sc">%&gt;%</span> </span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> date)) <span class="sc">+</span></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_histogram</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>interactions_filtered <span class="sc">%&gt;%</span> </span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> date)) <span class="sc">+</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_histogram</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
 </div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="sml-4-case-study-key_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="sml-4-case-study-key_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -352,27 +441,27 @@ dbl (9): id_student, imd_band, num_of_prev_attempts, studied_credits, module...
 <li>The distribution shows interaction patterns over time, with some peaks and valleys suggesting different activity levels throughout the course</li>
 </ul>
 </section>
-<section id="your-turn-3" class="level4">
-<h4 class="anchored" data-anchor-id="your-turn-3"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
+<section id="your-turn-5" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-5"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
 <p><em>Third</em>, please conduct one other data exploration step of your choosing. Options include creating simple graphs or calculating descriptive, summary statistics.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(skimr)</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">skim</span>(interactions)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(skimr)</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">skim</span>(interactions_filtered)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
 <caption>Data summary</caption>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">Name</td>
-<td style="text-align: left;">interactions</td>
+<td style="text-align: left;">interactions_filtered</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Number of rows</td>
-<td style="text-align: left;">5548858</td>
+<td style="text-align: left;">4589618</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Number of columns</td>
-<td style="text-align: left;">11</td>
+<td style="text-align: left;">10</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">_______________________</td>
@@ -388,7 +477,7 @@ dbl (9): id_student, imd_band, num_of_prev_attempts, studied_credits, module...
 </tr>
 <tr class="odd">
 <td style="text-align: left;">numeric</td>
-<td style="text-align: left;">8</td>
+<td style="text-align: left;">7</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">________________________</td>
@@ -460,11 +549,11 @@ dbl (9): id_student, imd_band, num_of_prev_attempts, studied_credits, module...
 <p><strong>Variable type: numeric</strong></p>
 <table class="caption-top table table-sm table-striped small">
 <colgroup>
-<col style="width: 23%">
-<col style="width: 8%">
-<col style="width: 12%">
-<col style="width: 8%">
-<col style="width: 8%">
+<col style="width: 19%">
+<col style="width: 9%">
+<col style="width: 13%">
+<col style="width: 9%">
+<col style="width: 9%">
 <col style="width: 6%">
 <col style="width: 6%">
 <col style="width: 6%">
@@ -492,12 +581,12 @@ dbl (9): id_student, imd_band, num_of_prev_attempts, studied_credits, module...
 <td style="text-align: left;">id_student</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">1.00</td>
-<td style="text-align: right;">726903.72</td>
-<td style="text-align: right;">571596.96</td>
+<td style="text-align: right;">728767.50</td>
+<td style="text-align: right;">577792.66</td>
 <td style="text-align: right;">6516</td>
-<td style="text-align: right;">511001</td>
-<td style="text-align: right;">588131</td>
-<td style="text-align: right;">645451</td>
+<td style="text-align: right;">508388</td>
+<td style="text-align: right;">586625</td>
+<td style="text-align: right;">644848</td>
 <td style="text-align: right;">2698588</td>
 <td style="text-align: left;">▅▇▁▁▁</td>
 </tr>
@@ -505,34 +594,34 @@ dbl (9): id_student, imd_band, num_of_prev_attempts, studied_credits, module...
 <td style="text-align: left;">id_site</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">1.00</td>
-<td style="text-align: right;">734462.44</td>
-<td style="text-align: right;">129889.18</td>
+<td style="text-align: right;">730838.12</td>
+<td style="text-align: right;">129122.13</td>
 <td style="text-align: right;">526721</td>
-<td style="text-align: right;">661808</td>
-<td style="text-align: right;">730007</td>
-<td style="text-align: right;">877045</td>
-<td style="text-align: right;">941543</td>
-<td style="text-align: left;">▇▂▇▆▇</td>
+<td style="text-align: right;">661804</td>
+<td style="text-align: right;">729683</td>
+<td style="text-align: right;">832712</td>
+<td style="text-align: right;">937844</td>
+<td style="text-align: left;">▇▂▇▅▇</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">date</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">1.00</td>
-<td style="text-align: right;">37.18</td>
-<td style="text-align: right;">38.87</td>
+<td style="text-align: right;">25.04</td>
+<td style="text-align: right;">26.99</td>
 <td style="text-align: right;">-25</td>
-<td style="text-align: right;">8</td>
-<td style="text-align: right;">27</td>
-<td style="text-align: right;">55</td>
-<td style="text-align: right;">172</td>
-<td style="text-align: left;">▆▇▃▂▁</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">41</td>
+<td style="text-align: right;">123</td>
+<td style="text-align: left;">▅▇▃▂▁</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">sum_click</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">1.00</td>
-<td style="text-align: right;">3.68</td>
-<td style="text-align: right;">8.45</td>
+<td style="text-align: right;">3.60</td>
+<td style="text-align: right;">8.34</td>
 <td style="text-align: right;">1</td>
 <td style="text-align: right;">1</td>
 <td style="text-align: right;">2</td>
@@ -542,153 +631,90 @@ dbl (9): id_student, imd_band, num_of_prev_attempts, studied_credits, module...
 </tr>
 <tr class="odd">
 <td style="text-align: left;">week_from</td>
-<td style="text-align: right;">4701710</td>
-<td style="text-align: right;">0.15</td>
-<td style="text-align: right;">6.08</td>
-<td style="text-align: right;">5.06</td>
+<td style="text-align: right;">3938349</td>
+<td style="text-align: right;">0.14</td>
+<td style="text-align: right;">4.80</td>
+<td style="text-align: right;">4.44</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">2</td>
-<td style="text-align: right;">5</td>
-<td style="text-align: right;">9</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">7</td>
 <td style="text-align: right;">29</td>
-<td style="text-align: left;">▇▅▂▁▁</td>
+<td style="text-align: left;">▇▃▁▁▁</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">week_to</td>
-<td style="text-align: right;">4701710</td>
-<td style="text-align: right;">0.15</td>
-<td style="text-align: right;">6.12</td>
-<td style="text-align: right;">5.03</td>
+<td style="text-align: right;">3938349</td>
+<td style="text-align: right;">0.14</td>
+<td style="text-align: right;">4.84</td>
+<td style="text-align: right;">4.42</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">2</td>
-<td style="text-align: right;">5</td>
-<td style="text-align: right;">9</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">7</td>
 <td style="text-align: right;">29</td>
-<td style="text-align: left;">▇▅▂▁▁</td>
+<td style="text-align: left;">▇▃▁▁▁</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">module_presentation_length</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1.00</td>
-<td style="text-align: right;">256.69</td>
-<td style="text-align: right;">13.28</td>
-<td style="text-align: right;">234</td>
-<td style="text-align: right;">241</td>
-<td style="text-align: right;">262</td>
-<td style="text-align: right;">269</td>
-<td style="text-align: right;">269</td>
-<td style="text-align: left;">▆▁▁▂▇</td>
-</tr>
-<tr class="even">
 <td style="text-align: left;">quantile_cutoff_date</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">1.00</td>
-<td style="text-align: right;">99.66</td>
-<td style="text-align: right;">40.57</td>
+<td style="text-align: right;">70.66</td>
+<td style="text-align: right;">25.72</td>
 <td style="text-align: right;">32</td>
-<td style="text-align: right;">54</td>
-<td style="text-align: right;">129</td>
-<td style="text-align: right;">131</td>
-<td style="text-align: right;">173</td>
-<td style="text-align: left;">▅▂▁▇▁</td>
+<td style="text-align: right;">51</td>
+<td style="text-align: right;">87</td>
+<td style="text-align: right;">94</td>
+<td style="text-align: right;">124</td>
+<td style="text-align: left;">▅▆▂▇▁</td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
-<p>We’re ready to proceed to engineering some features with the interactions data.</p>
-<p>First, let’s join together the <code>interactions</code> and the <code>code_module_dates</code> data frames.</p>
-<p>We’ll use the same code to create the <code>code_module_dates</code> we used in LL2.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>assessments <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/oulad-assessments.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Rows: 173912 Columns: 10
-── Column specification ────────────────────────────────────────────────────────
-Delimiter: ","
-chr (3): code_module, code_presentation, assessment_type
-dbl (7): id_assessment, id_student, date_submitted, is_banked, score, date, ...
-
-ℹ Use `spec()` to retrieve the full column specification for this data.
-ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>code_module_dates <span class="ot">&lt;-</span> assessments <span class="sc">%&gt;%</span> </span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(code_module, code_presentation) <span class="sc">%&gt;%</span> </span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(<span class="at">quantile_cutoff_date =</span> <span class="fu">quantile</span>(date, <span class="at">probs =</span> .<span class="dv">25</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>`summarise()` has grouped output by 'code_module'. You can override using the
-`.groups` argument.</code></pre>
-</div>
-</div>
-<p>This is so we have the cut-offs (one-third through the semester), which will help us to only use data from that period in our model when we filter the data based upon those dates.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>interactions_joined <span class="ot">&lt;-</span> interactions <span class="sc">%&gt;%</span> </span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(code_module_dates) <span class="co"># join the data based on course_module and course_presentation</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Joining with `by = join_by(code_module, code_presentation,
-quantile_cutoff_date)`</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>interactions_filtered <span class="ot">&lt;-</span> interactions_joined <span class="sc">%&gt;%</span> </span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(date <span class="sc">&lt;</span> quantile_cutoff_date) <span class="co"># filter the data so only assignments before the cutoff date are included</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>Then, let’s engineer several features. For the present time, we’ll focus on the <code>sum_click</code> variable, which tells us how many times students clicked on a resource for a given date. We’ll use the <code>interactions</code> data set we just created. Let’s start simple: please type the name of that data set (<code>interactions</code>) in the code chunk below. Note, you may need to unzip this file!</p>
-</section>
-<section id="your-turn-4" class="level4">
-<h4 class="anchored" data-anchor-id="your-turn-4"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>interactions_filtered <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/oulad-interactions.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Rows: 5548858 Columns: 11
-── Column specification ────────────────────────────────────────────────────────
-Delimiter: ","
-chr (3): code_module, code_presentation, activity_type
-dbl (8): id_student, id_site, date, sum_click, week_from, week_to, module_pr...
-
-ℹ Use `spec()` to retrieve the full column specification for this data.
-ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-</div>
-</div>
+<p>We’re ready to proceed to engineering some features with the interactions data. For the present time, we’ll focus on the <code>sum_click</code> variable, which tells us how many times students clicked on a resource for a given date.</p>
 <p>How can we create a feature with <code>sum_click</code>? Think back to our discussion in the presentation; we have <em>many</em> options for working with such time series data. Perhaps the most simple is to count the clicks. Please summarize the number of clicks for each student (specific to a single course). This means you will need to group your data by <code>id_student</code>, <code>code_module</code>, and <code>code_presentation</code>, and then create a summary variable. Assign the resulting output the name <code>interactions_summarized</code>. You may find the documentation for <code>summarize()</code> to be helpful. That is available <a href="https://dplyr.tidymodels.org/reference/summarise.html">here</a>. <a href="https://r4ds.had.co.nz/transform.html">This chapter</a> is also likely helpful (note that <code>summarise()</code> and <code>summarize()</code> are different spellings for the same function).</p>
 </section>
-<section id="your-turn-5" class="level4">
-<h4 class="anchored" data-anchor-id="your-turn-5"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
+<section id="your-turn-6" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-6"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>interactions_summarized <span class="ot">&lt;-</span> interactions_filtered <span class="sc">%&gt;%</span> </span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(id_student, code_module, code_presentation) <span class="sc">%&gt;%</span> </span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(<span class="at">sum_clicks =</span> <span class="fu">sum</span>(sum_click))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>interactions_summarized <span class="ot">&lt;-</span> interactions_filtered <span class="sc">%&gt;%</span> </span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(id_student, code_module, code_presentation) <span class="sc">%&gt;%</span> </span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(<span class="at">sum_clicks =</span> <span class="fu">sum</span>(sum_click))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>`summarise()` has grouped output by 'id_student', 'code_module'. You can
 override using the `.groups` argument.</code></pre>
 </div>
 </div>
 </section>
-<section id="your-turn-6" class="level4">
-<h4 class="anchored" data-anchor-id="your-turn-6"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
+<section id="your-turn-7" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-7"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
 <p>How many times did students click? Let’s create a histogram to see. Please use {ggplot} and <code>geom_histogram()</code> to visualize the distribution of the <code>sum_clicks</code> variable you just created. Turn to <a href="https://ggplot2.tidymodels.org/reference/geom_histogram.html">the documentation</a> if you need a pointer!</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>interactions_summarized <span class="sc">%&gt;%</span> </span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> sum_clicks)) <span class="sc">+</span></span>
-<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_histogram</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>interactions_summarized <span class="sc">%&gt;%</span> </span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> sum_clicks)) <span class="sc">+</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_histogram</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
 </div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="sml-4-case-study-key_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="sml-4-case-study-key_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>This is a good start - we’ve created our first feature based upon the log data, <code>sum_clicks</code>! What are some other features we can add? An affordance of using the <code>summarize()</code> function in R is we can create multiple summary statistics at once. Let’s also calculate the standard deviation of the number of clicks as well as the mean. Please copy the code you wrote above into the code chunk below and then add these two additional summary statistics.</p>
 </section>
-<section id="your-turn-7" class="level4">
-<h4 class="anchored" data-anchor-id="your-turn-7"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
+<section id="your-turn-8" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-8"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>interactions_summarized <span class="ot">&lt;-</span> interactions_filtered <span class="sc">%&gt;%</span> </span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(id_student, code_module, code_presentation) <span class="sc">%&gt;%</span> </span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(<span class="at">sum_clicks =</span> <span class="fu">sum</span>(sum_click),</span>
-<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">sd_clicks =</span> <span class="fu">sd</span>(sum_click), </span>
-<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>              <span class="at">mean_clicks =</span> <span class="fu">mean</span>(sum_click))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>interactions_summarized <span class="ot">&lt;-</span> interactions_filtered <span class="sc">%&gt;%</span> </span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(id_student, code_module, code_presentation) <span class="sc">%&gt;%</span> </span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(<span class="at">sum_clicks =</span> <span class="fu">sum</span>(sum_click),</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">sd_clicks =</span> <span class="fu">sd</span>(sum_click), </span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>              <span class="at">mean_clicks =</span> <span class="fu">mean</span>(sum_click))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>`summarise()` has grouped output by 'id_student', 'code_module'. You can
 override using the `.groups` argument.</code></pre>
@@ -697,85 +723,83 @@ override using the `.groups` argument.</code></pre>
 <p>We’ll take one last step here – creating individual <em>slopes</em> of students’ clicks over time. This code is a bit more involved, and so is annotated for you below; feel free to modify and re-use this.</p>
 <p>First, we use a custom function that can deal with cases where the fitting of the slopes fails (e.g., for students with only a single data point, or some other unanticipated issue with the model estimation).</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define a function to fit the model and handle warnings</span></span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>fit_model <span class="ot">&lt;-</span> <span class="cf">function</span>(data) {</span>
-<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tryCatch</span>(</span>
-<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>        { </span>
-<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Fit a linear model with sum_click as the response and date as the predictor</span></span>
-<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>            model <span class="ot">&lt;-</span> <span class="fu">lm</span>(sum_click <span class="sc">~</span> date, <span class="at">data =</span> data)</span>
-<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Tidy the model output (convert to a tidy data frame)</span></span>
-<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>            <span class="fu">tidy</span>(model) </span>
-<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>        },</span>
-<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Handle errors: return a tibble with NA values</span></span>
-<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">error =</span> <span class="cf">function</span>(e) { <span class="fu">tibble</span>(<span class="at">term =</span> <span class="cn">NA</span>, <span class="at">estimate =</span> <span class="cn">NA</span>, <span class="at">std.error =</span> <span class="cn">NA</span>, <span class="at">statistic =</span> <span class="cn">NA</span>, <span class="at">p.value =</span> <span class="cn">NA</span>) },</span>
-<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Handle warnings: return a tibble with NA values</span></span>
-<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a>        <span class="at">warning =</span> <span class="cf">function</span>(w) { <span class="fu">tibble</span>(<span class="at">term =</span> <span class="cn">NA</span>, <span class="at">estimate =</span> <span class="cn">NA</span>, <span class="at">std.error =</span> <span class="cn">NA</span>, <span class="at">statistic =</span> <span class="cn">NA</span>, <span class="at">p.value =</span> <span class="cn">NA</span>) }</span>
-<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define a function to fit the model and handle warnings</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>fit_model <span class="ot">&lt;-</span> <span class="cf">function</span>(data) {</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tryCatch</span>(</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>        { </span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Fit a linear model with sum_click as the response and date as the predictor</span></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>            model <span class="ot">&lt;-</span> <span class="fu">lm</span>(sum_click <span class="sc">~</span> date, <span class="at">data =</span> data)</span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Tidy the model output (convert to a tidy data frame)</span></span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>            <span class="fu">tidy</span>(model) </span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Handle errors: return a tibble with NA values</span></span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">error =</span> <span class="cf">function</span>(e) { <span class="fu">tibble</span>(<span class="at">term =</span> <span class="cn">NA</span>, <span class="at">estimate =</span> <span class="cn">NA</span>, <span class="at">std.error =</span> <span class="cn">NA</span>, <span class="at">statistic =</span> <span class="cn">NA</span>, <span class="at">p.value =</span> <span class="cn">NA</span>) },</span>
+<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Handle warnings: return a tibble with NA values</span></span>
+<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a>        <span class="at">warning =</span> <span class="cf">function</span>(w) { <span class="fu">tibble</span>(<span class="at">term =</span> <span class="cn">NA</span>, <span class="at">estimate =</span> <span class="cn">NA</span>, <span class="at">std.error =</span> <span class="cn">NA</span>, <span class="at">statistic =</span> <span class="cn">NA</span>, <span class="at">p.value =</span> <span class="cn">NA</span>) }</span>
+<span id="cb37-14"><a href="#cb37-14" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb37-15"><a href="#cb37-15" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p><strong>Note: this next step may take up to a minute or so! Please feel free to relax!</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit the models for each group</span></span>
-<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>interactions_slopes <span class="ot">&lt;-</span> interactions_filtered <span class="sc">%&gt;%</span></span>
-<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(id_student, code_module, code_presentation) <span class="sc">%&gt;%</span> <span class="co"># Group by student and course</span></span>
-<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">nest</span>() <span class="sc">%&gt;%</span> <span class="co"># Nest the data frame, creating a list of data frames for each group</span></span>
-<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">model =</span> <span class="fu">map</span>(data, fit_model)) <span class="sc">%&gt;%</span> <span class="co"># Apply the fit_model function to each nested data frame</span></span>
-<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">unnest</span>(model) <span class="co"># Unnest the model output, returning to a regular data frame</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit the models for each group</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>interactions_slopes <span class="ot">&lt;-</span> interactions_filtered <span class="sc">%&gt;%</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(id_student, code_module, code_presentation) <span class="sc">%&gt;%</span> <span class="co"># Group by student and course</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">nest</span>() <span class="sc">%&gt;%</span> <span class="co"># Nest the data frame, creating a list of data frames for each group</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">model =</span> <span class="fu">map</span>(data, fit_model)) <span class="sc">%&gt;%</span> <span class="co"># Apply the fit_model function to each nested data frame</span></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">unnest</span>(model) <span class="co"># Unnest the model output, returning to a regular data frame</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We’ll do a bit of data wrangling.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Process the output</span></span>
-<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>interactions_slopes <span class="ot">&lt;-</span> interactions_slopes <span class="sc">%&gt;%</span></span>
-<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span> <span class="co"># Remove grouping</span></span>
-<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(code_module, code_presentation, id_student, term, estimate) <span class="sc">%&gt;%</span> <span class="co"># Select relevant columns</span></span>
-<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(term)) <span class="sc">%&gt;%</span> <span class="co"># Filter out rows where term is NA</span></span>
-<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">spread</span>(term, estimate) <span class="sc">%&gt;%</span> <span class="co"># Spread the terms into separate columns</span></span>
-<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate_if</span>(is.numeric, round, <span class="dv">4</span>) <span class="co"># Round numeric columns to 4 decimal places</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Process the output</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>interactions_slopes <span class="ot">&lt;-</span> interactions_slopes <span class="sc">%&gt;%</span></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span> <span class="co"># Remove grouping</span></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(code_module, code_presentation, id_student, term, estimate) <span class="sc">%&gt;%</span> <span class="co"># Select relevant columns</span></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(term)) <span class="sc">%&gt;%</span> <span class="co"># Filter out rows where term is NA</span></span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">spread</span>(term, estimate) <span class="sc">%&gt;%</span> <span class="co"># Spread the terms into separate columns</span></span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate_if</span>(is.numeric, round, <span class="dv">4</span>) <span class="co"># Round numeric columns to 4 decimal places</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Please rename the resulting intercept and date, changing them<code>intercept</code> and <code>slope</code>, respectively. Note, selecting a variable with a parenthesis in it can be tricky! Think of other ways you could do this, if you wish (hint: think of what a function in janitor can do!).</p>
-</section>
-<section id="your-turn-8" class="level4">
-<h4 class="anchored" data-anchor-id="your-turn-8"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>interactions_slopes <span class="ot">&lt;-</span> interactions_slopes <span class="sc">%&gt;%</span> </span>
-<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rename</span>(<span class="at">intercept =</span> <span class="st">`</span><span class="at">(Intercept)</span><span class="st">`</span>,</span>
-<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">slope =</span> date)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>After running this code, we will have intercepts, linear slopes, and quadratic terms for each students’ clickstream pattern over the semester.</p>
-<p>Let’s join together several files. First, let’s join all our features into a single file. Please use <code>left_join()</code> to join <code>interactions_summarized</code> and <code>interactions_slopes</code>, assigning the resulting output the name <code>interactions_summarized_and_slopes</code>.</p>
 </section>
 <section id="your-turn-9" class="level4">
 <h4 class="anchored" data-anchor-id="your-turn-9"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>interactions_summarized_and_slopes <span class="ot">&lt;-</span> <span class="fu">left_join</span>(interactions_slopes, interactions_summarized)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>interactions_slopes <span class="ot">&lt;-</span> interactions_slopes <span class="sc">%&gt;%</span> </span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rename</span>(<span class="at">intercept =</span> <span class="st">`</span><span class="at">(Intercept)</span><span class="st">`</span>,</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">slope =</span> date)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>After running this code, we will have intercepts, linear slopes, and quadratic terms for each students’ clickstream pattern over the semester.</p>
+<p>Let’s join together several files. First, let’s join all our features into a single file. Please use <code>left_join()</code> to join <code>interactions_summarized</code> and <code>interactions_slopes</code>, assigning the resulting output the name <code>interactions_summarized_and_slopes</code>.</p>
+</section>
+<section id="your-turn-10" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-10"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>interactions_summarized_and_slopes <span class="ot">&lt;-</span> <span class="fu">left_join</span>(interactions_slopes, interactions_summarized)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Joining with `by = join_by(code_module, code_presentation, id_student)`</code></pre>
 </div>
 </div>
 <p>Just one last step! Let’s join together <em>all</em> of the data we’ll use for our modeling: <code>students_and_assessments</code> and <code>interactions_summarized_and_slopes</code>. Use <code>left_join()</code> once more, assigning the resulting output the name <code>students_assessments_and_interactions</code>. Lots of joining! Sometimes, the hardest part of complex analyses lies in the preparation (and joining) of the data.</p>
 </section>
-<section id="your-turn-10" class="level4">
-<h4 class="anchored" data-anchor-id="your-turn-10"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
+<section id="your-turn-11" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-11"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>students_assessments_and_interactions <span class="ot">&lt;-</span> <span class="fu">left_join</span>(students_and_assessments, </span>
-<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>                                                   interactions_summarized_and_slopes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>students_assessments_and_interactions <span class="ot">&lt;-</span> <span class="fu">left_join</span>(students_and_assessments, </span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>                                                   interactions_summarized_and_slopes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Joining with `by = join_by(code_module, code_presentation, id_student)`</code></pre>
 </div>
 </div>
 <p>One more small step. Let’s ensure that our outcome variable – <code>pass</code> – is a factor. It was, but when saving to and reading from a CSV, it lots its factor characteristics, becoming instead a character string. It is necessary for the outcome of a classification model (like the one we are using) to be a factor. Please use <code>mutate()</code> to do just that.</p>
 </section>
-<section id="your-turn-11" class="level4">
-<h4 class="anchored" data-anchor-id="your-turn-11"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
+<section id="your-turn-12" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-12"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>students_assessments_and_interactions <span class="ot">&lt;-</span> students_assessments_and_interactions <span class="sc">%&gt;%</span> </span>
-<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">pass =</span> <span class="fu">as.factor</span>(pass))</span>
-<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a><span class="co"># write_csv(students_assessments_and_interactions, "students-assessments-and-interactions.csv")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>students_assessments_and_interactions <span class="ot">&lt;-</span> students_assessments_and_interactions <span class="sc">%&gt;%</span> </span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">pass =</span> <span class="fu">as.factor</span>(pass))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>students_assessments_and_interactions <span class="sc">%&gt;%</span> </span>
-<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>    skimr<span class="sc">::</span><span class="fu">skim</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>students_assessments_and_interactions <span class="sc">%&gt;%</span> </span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>    skimr<span class="sc">::</span><span class="fu">skim</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
 <caption>Data summary</caption>
@@ -1097,66 +1121,66 @@ override using the `.groups` argument.</code></pre>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">intercept</td>
-<td style="text-align: right;">3565</td>
+<td style="text-align: right;">3621</td>
 <td style="text-align: right;">0.89</td>
-<td style="text-align: right;">3.10</td>
-<td style="text-align: right;">2.92</td>
-<td style="text-align: right;">-200.20</td>
-<td style="text-align: right;">2.18</td>
-<td style="text-align: right;">2.86</td>
-<td style="text-align: right;">3.77</td>
-<td style="text-align: right;">123.14</td>
-<td style="text-align: left;">▁▁▁▇▁</td>
+<td style="text-align: right;">3.08</td>
+<td style="text-align: right;">4.73</td>
+<td style="text-align: right;">-585.59</td>
+<td style="text-align: right;">2.17</td>
+<td style="text-align: right;">2.85</td>
+<td style="text-align: right;">3.75</td>
+<td style="text-align: right;">130.83</td>
+<td style="text-align: left;">▁▁▁▁▇</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">slope</td>
-<td style="text-align: right;">4320</td>
-<td style="text-align: right;">0.87</td>
+<td style="text-align: right;">4409</td>
+<td style="text-align: right;">0.86</td>
 <td style="text-align: right;">0.00</td>
-<td style="text-align: right;">0.16</td>
+<td style="text-align: right;">0.21</td>
 <td style="text-align: right;">-12.17</td>
 <td style="text-align: right;">-0.01</td>
 <td style="text-align: right;">0.00</td>
 <td style="text-align: right;">0.02</td>
-<td style="text-align: right;">8.22</td>
-<td style="text-align: left;">▁▁▇▁▁</td>
+<td style="text-align: right;">20.12</td>
+<td style="text-align: left;">▁▇▁▁▁</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">sum_clicks</td>
-<td style="text-align: right;">3565</td>
+<td style="text-align: right;">3621</td>
 <td style="text-align: right;">0.89</td>
-<td style="text-align: right;">704.28</td>
-<td style="text-align: right;">971.10</td>
+<td style="text-align: right;">570.23</td>
+<td style="text-align: right;">761.14</td>
 <td style="text-align: right;">1.00</td>
-<td style="text-align: right;">158.00</td>
-<td style="text-align: right;">375.00</td>
-<td style="text-align: right;">815.00</td>
-<td style="text-align: right;">14609.00</td>
+<td style="text-align: right;">138.00</td>
+<td style="text-align: right;">316.00</td>
+<td style="text-align: right;">667.00</td>
+<td style="text-align: right;">12920.00</td>
 <td style="text-align: left;">▇▁▁▁▁</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">sd_clicks</td>
-<td style="text-align: right;">3817</td>
+<td style="text-align: right;">3878</td>
 <td style="text-align: right;">0.88</td>
-<td style="text-align: right;">5.03</td>
-<td style="text-align: right;">5.41</td>
+<td style="text-align: right;">5.01</td>
+<td style="text-align: right;">5.46</td>
 <td style="text-align: right;">0.00</td>
-<td style="text-align: right;">2.48</td>
-<td style="text-align: right;">3.99</td>
-<td style="text-align: right;">6.54</td>
+<td style="text-align: right;">2.43</td>
+<td style="text-align: right;">3.86</td>
+<td style="text-align: right;">6.55</td>
 <td style="text-align: right;">554.90</td>
 <td style="text-align: left;">▇▁▁▁▁</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">mean_clicks</td>
-<td style="text-align: right;">3565</td>
+<td style="text-align: right;">3621</td>
 <td style="text-align: right;">0.89</td>
-<td style="text-align: right;">3.21</td>
-<td style="text-align: right;">1.22</td>
+<td style="text-align: right;">3.20</td>
+<td style="text-align: right;">1.28</td>
 <td style="text-align: right;">1.00</td>
-<td style="text-align: right;">2.37</td>
-<td style="text-align: right;">3.01</td>
-<td style="text-align: right;">3.83</td>
+<td style="text-align: right;">2.35</td>
+<td style="text-align: right;">2.97</td>
+<td style="text-align: right;">3.82</td>
 <td style="text-align: right;">46.24</td>
 <td style="text-align: left;">▇▁▁▁▁</td>
 </tr>
@@ -1173,19 +1197,19 @@ override using the `.groups` argument.</code></pre>
 <h3 class="anchored" data-anchor-id="step-1.-split-data">Step 1. Split data</h3>
 <p>We’ll follow the same steps we followed in modules #2 and #3, here. One difference - we’ll use <code>students_assessments_and_interactions</code> instead of the data frame we used in those modules. Please port over the code you used in those modules here, changing the name of the data frame to the one we are now using.</p>
 <p>We discuss this first step minimally as we have now carried out a step very similar to this in LL1 and LL2; return to the case study for those (especially LL1) for more on data splitting.</p>
-<section id="your-turn-12" class="level4">
-<h4 class="anchored" data-anchor-id="your-turn-12"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
+<section id="your-turn-13" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-13"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">20230712</span>)</span>
-<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>train_test_split <span class="ot">&lt;-</span> <span class="fu">initial_split</span>(students_assessments_and_interactions, <span class="at">prop =</span> .<span class="dv">33</span>, <span class="at">strata =</span> <span class="st">"pass"</span>)</span>
-<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>data_train <span class="ot">&lt;-</span> <span class="fu">training</span>(train_test_split)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2025</span>)</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>train_test_split <span class="ot">&lt;-</span> <span class="fu">initial_split</span>(students_assessments_and_interactions, <span class="at">prop =</span> .<span class="dv">33</span>, <span class="at">strata =</span> <span class="st">"pass"</span>)</span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>data_train <span class="ot">&lt;-</span> <span class="fu">training</span>(train_test_split)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>There is a key difference that is next. In this step. we’ll further process <code>data_train</code>, creating different subsets of the data, or folds of the data, that we can use to fit our model multiple times.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>vfcv <span class="ot">&lt;-</span> <span class="fu">vfold_cv</span>(data_train) <span class="co"># this differentiates this from what we did before</span></span>
-<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a><span class="co"># before, we simple used data_train to fit our model</span></span>
-<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>vfcv</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>vfcv <span class="ot">&lt;-</span> <span class="fu">vfold_cv</span>(data_train) <span class="co"># this differentiates this from what we did before</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a><span class="co"># before, we simple used data_train to fit our model</span></span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>vfcv</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#  10-fold cross-validation 
 # A tibble: 10 × 2
@@ -1206,8 +1230,8 @@ override using the `.groups` argument.</code></pre>
 <p>How does this work? <code>data_train</code> is sampled as many time as we set.</p>
 <p>Above, we split the data into 10 different folds. Change the number of folds from 10 to 5 by changing the value of v; 10 is simply the default—not always the best one! For help, run <code>?vfold_cv</code> to get a hint.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>kfcv <span class="ot">&lt;-</span> <span class="fu">vfold_cv</span>(data_train, <span class="at">v =</span> <span class="dv">5</span>) <span class="co"># Changed from 10 to 5</span></span>
-<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>kfcv</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>kfcv <span class="ot">&lt;-</span> <span class="fu">vfold_cv</span>(data_train, <span class="at">v =</span> <span class="dv">5</span>) <span class="co"># Changed from 10 to 5</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>kfcv</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#  5-fold cross-validation 
 # A tibble: 5 × 2
@@ -1231,30 +1255,30 @@ override using the `.groups` argument.</code></pre>
 <li><a href="https://recipes.tidymodels.org/reference/step_dummy.html"><code>step_dummy()</code></a>: convert nominal data (e.g.&nbsp;character or factors) into one or more numeric binary model terms for the levels of the original data.</li>
 <li><a href="https://recipes.tidymodels.org/reference/step_impute_knn.html"><code>step_impute_knn()</code></a>: impute missing values using the nearest neighbors method</li>
 </ul>
-<p>We will use all three of these. Please note that there are two ways to use each of these. One of them is by <em>specifying the specific variable</em> you want to use for the feature engineering step. For example, below, we would normalize a hypothetical variable, one called <code>minutes_of_videos_watched</code>:</p>
+<p>We will use all three of these. Please note that there are two ways to use each of these. One of them is by <em>specifying the specific variable</em> you want to use for the feature engineering step. For example, below, we would normalize a hypothetical variable, one called <code>minutes_of_videos_watched</code> (<strong>note, this code isn’t meant to run!</strong>):</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">step_normalize</span>(minutes_of_videos_watched)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">step_normalize</span>(minutes_of_videos_watched)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Another way is to specify <em>for which types of variables</em> the feature engineering step applies. You can see all of the available types <a href="https://recipes.tidymodels.org/reference/has_role.html">here</a>. For example, the code below would normalize all numeric variables:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">step_normalize</span>(<span class="fu">all_numeric_predictors</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">step_normalize</span>(<span class="fu">all_numeric_predictors</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<section id="your-turn-13" class="level4">
-<h4 class="anchored" data-anchor-id="your-turn-13"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
-<p>Let’s turn to our recipe. Please <em>add to</em> the code below to add the new variables—features—we created. We’ve started you off with ___ code below (where you can add the new variables – be sure to add all of them!).</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>my_rec <span class="ot">&lt;-</span> <span class="fu">recipe</span>(pass <span class="sc">~</span> disability <span class="sc">+</span></span>
-<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>                   date_registration <span class="sc">+</span> </span>
-<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>                   gender <span class="sc">+</span></span>
-<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>                   code_module <span class="sc">+</span></span>
-<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>                   mean_weighted_score <span class="sc">+</span></span>
-<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a>                   sum_clicks <span class="sc">+</span> sd_clicks <span class="sc">+</span> mean_clicks <span class="sc">+</span> <span class="co"># new</span></span>
-<span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a>                   intercept <span class="sc">+</span> slope, <span class="co"># new</span></span>
-<span id="cb52-8"><a href="#cb52-8" aria-hidden="true" tabindex="-1"></a>                 <span class="at">data =</span> data_train) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</section>
 <section id="your-turn-14" class="level4">
 <h4 class="anchored" data-anchor-id="your-turn-14"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
+<p>Let’s turn to our recipe. Please <em>add to</em> the code below to add the new variables—features—we created. We’ve started you off with ___ code below (where you can add the new variables – be sure to add all of them!).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>my_rec <span class="ot">&lt;-</span> <span class="fu">recipe</span>(pass <span class="sc">~</span> disability <span class="sc">+</span></span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>                   date_registration <span class="sc">+</span> </span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>                   gender <span class="sc">+</span></span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>                   code_module <span class="sc">+</span></span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>                   mean_weighted_score <span class="sc">+</span></span>
+<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a>                   sum_clicks <span class="sc">+</span> sd_clicks <span class="sc">+</span> mean_clicks <span class="sc">+</span> <span class="co"># new</span></span>
+<span id="cb54-7"><a href="#cb54-7" aria-hidden="true" tabindex="-1"></a>                   intercept <span class="sc">+</span> slope, <span class="co"># new</span></span>
+<span id="cb54-8"><a href="#cb54-8" aria-hidden="true" tabindex="-1"></a>                 <span class="at">data =</span> data_train) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="your-turn-15" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-15"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
 <p>Then, please <em>add to</em> the following code by completing three steps, building on the code that is started below:</p>
 <ol type="1">
 <li>Please normalize all numeric predictors.</li>
@@ -1262,18 +1286,18 @@ override using the `.groups` argument.</code></pre>
 <li>Please impute missing values using the nearest neighbors method for the <code>mean_weighted_score</code>, <code>sum_clicks</code>, <code>sd_clicks</code>, <code>mean_clicks</code>, <code>intercept</code>, <code>slope</code>, and <code>date_registration</code> variables.</li>
 </ol>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>my_rec <span class="ot">&lt;-</span> my_rec <span class="sc">%&gt;%</span> </span>
-<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">step_dummy</span>(disability) <span class="sc">%&gt;%</span> </span>
-<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">step_dummy</span>(gender) <span class="sc">%&gt;%</span>  </span>
-<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">step_dummy</span>(code_module) <span class="sc">%&gt;%</span> </span>
-<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">step_impute_knn</span>(mean_weighted_score) <span class="sc">%&gt;%</span> </span>
-<span id="cb53-6"><a href="#cb53-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">step_impute_knn</span>(sum_clicks) <span class="sc">%&gt;%</span> </span>
-<span id="cb53-7"><a href="#cb53-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">step_impute_knn</span>(sd_clicks) <span class="sc">%&gt;%</span> </span>
-<span id="cb53-8"><a href="#cb53-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">step_impute_knn</span>(mean_clicks) <span class="sc">%&gt;%</span> </span>
-<span id="cb53-9"><a href="#cb53-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">step_impute_knn</span>(intercept) <span class="sc">%&gt;%</span> </span>
-<span id="cb53-10"><a href="#cb53-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">step_impute_knn</span>(slope) <span class="sc">%&gt;%</span> </span>
-<span id="cb53-11"><a href="#cb53-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">step_impute_knn</span>(date_registration) <span class="sc">%&gt;%</span> </span>
-<span id="cb53-12"><a href="#cb53-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">step_normalize</span>(<span class="fu">all_numeric_predictors</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>my_rec <span class="ot">&lt;-</span> my_rec <span class="sc">%&gt;%</span> </span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">step_dummy</span>(disability) <span class="sc">%&gt;%</span> </span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">step_dummy</span>(gender) <span class="sc">%&gt;%</span>  </span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">step_dummy</span>(code_module) <span class="sc">%&gt;%</span> </span>
+<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">step_impute_knn</span>(mean_weighted_score) <span class="sc">%&gt;%</span> </span>
+<span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">step_impute_knn</span>(sum_clicks) <span class="sc">%&gt;%</span> </span>
+<span id="cb55-7"><a href="#cb55-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">step_impute_knn</span>(sd_clicks) <span class="sc">%&gt;%</span> </span>
+<span id="cb55-8"><a href="#cb55-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">step_impute_knn</span>(mean_clicks) <span class="sc">%&gt;%</span> </span>
+<span id="cb55-9"><a href="#cb55-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">step_impute_knn</span>(intercept) <span class="sc">%&gt;%</span> </span>
+<span id="cb55-10"><a href="#cb55-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">step_impute_knn</span>(slope) <span class="sc">%&gt;%</span> </span>
+<span id="cb55-11"><a href="#cb55-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">step_impute_knn</span>(date_registration) <span class="sc">%&gt;%</span> </span>
+<span id="cb55-12"><a href="#cb55-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">step_normalize</span>(<span class="fu">all_numeric_predictors</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
@@ -1286,17 +1310,17 @@ override using the `.groups` argument.</code></pre>
 <li>finally, using <code>set_mode("classification"))</code> as we are again predicting categories</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="co"># specify model</span></span>
-<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>my_mod <span class="ot">&lt;-</span></span>
-<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">boost_tree</span>(<span class="at">learn_rate =</span> <span class="fl">0.05</span>, <span class="at">trees =</span> <span class="dv">1000</span>, <span class="at">tree_depth =</span> <span class="dv">4</span>) <span class="sc">%&gt;%</span>  <span class="co"># boosted tree</span></span>
-<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"xgboost"</span>, <span class="at">importance =</span> <span class="st">"gain"</span>) <span class="sc">%&gt;%</span> <span class="co"># xgboost engine and a variable importance metric</span></span>
-<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"classification"</span>)</span>
-<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb54-7"><a href="#cb54-7" aria-hidden="true" tabindex="-1"></a><span class="co"># specify workflow</span></span>
-<span id="cb54-8"><a href="#cb54-8" aria-hidden="true" tabindex="-1"></a>my_wf <span class="ot">&lt;-</span></span>
-<span id="cb54-9"><a href="#cb54-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">workflow</span>() <span class="sc">%&gt;%</span> <span class="co"># create a workflow</span></span>
-<span id="cb54-10"><a href="#cb54-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(my_mod) <span class="sc">%&gt;%</span> <span class="co"># add the model we wrote above</span></span>
-<span id="cb54-11"><a href="#cb54-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_recipe</span>(my_rec) <span class="co"># add our recipe we wrote above</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="co"># specify model</span></span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>my_mod <span class="ot">&lt;-</span></span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">boost_tree</span>(<span class="at">learn_rate =</span> <span class="fl">0.05</span>, <span class="at">trees =</span> <span class="dv">1000</span>, <span class="at">tree_depth =</span> <span class="dv">4</span>) <span class="sc">%&gt;%</span>  <span class="co"># boosted tree</span></span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"xgboost"</span>, <span class="at">importance =</span> <span class="st">"gain"</span>) <span class="sc">%&gt;%</span> <span class="co"># xgboost engine and a variable importance metric</span></span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"classification"</span>)</span>
+<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a><span class="co"># specify workflow</span></span>
+<span id="cb56-8"><a href="#cb56-8" aria-hidden="true" tabindex="-1"></a>my_wf <span class="ot">&lt;-</span></span>
+<span id="cb56-9"><a href="#cb56-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">workflow</span>() <span class="sc">%&gt;%</span> <span class="co"># create a workflow</span></span>
+<span id="cb56-10"><a href="#cb56-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(my_mod) <span class="sc">%&gt;%</span> <span class="co"># add the model we wrote above</span></span>
+<span id="cb56-11"><a href="#cb56-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_recipe</span>(my_rec) <span class="co"># add our recipe we wrote above</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p><strong>Why those defaults?</strong> <strong>trees</strong>: many small steps (1000) <strong>learn_rate</strong>: 0.05 (smaller → less variance needs more trees) <strong>tree_depth</strong>: shallow (4) to avoid over‑fitting</p>
 </section>
@@ -1304,33 +1328,33 @@ override using the `.groups` argument.</code></pre>
 <h3 class="anchored" data-anchor-id="step-4-fit-model">Step 4: Fit model</h3>
 <p>Note that here we use the <code>kfcv</code> data and a different function - <code>fit_resamples()</code>, instead of <code>fit()</code>. This function is required when we have multiple folds of our sample, as we created using the vfcv function above. See more about this function <a href="https://tune.tidymodels.org/reference/fit_resamples.html">here</a>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>class_metrics <span class="ot">&lt;-</span> <span class="fu">metric_set</span>(accuracy, sensitivity, specificity, ppv, npv, kap) <span class="co"># specify the same metrics as earlier</span></span>
-<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>fitted_model_resamples <span class="ot">&lt;-</span> <span class="fu">fit_resamples</span>(my_wf, </span>
-<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>                                        <span class="at">resamples =</span> kfcv, <span class="co"># Changed from vfcv to kfcv</span></span>
-<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a>                                        <span class="at">metrics =</span> class_metrics)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>class_metrics <span class="ot">&lt;-</span> <span class="fu">metric_set</span>(accuracy, sensitivity, specificity, ppv, npv, kap) <span class="co"># specify the same metrics as earlier</span></span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>fitted_model_resamples <span class="ot">&lt;-</span> <span class="fu">fit_resamples</span>(my_wf, </span>
+<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a>                                        <span class="at">resamples =</span> kfcv, <span class="co"># Changed from vfcv to kfcv</span></span>
+<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a>                                        <span class="at">metrics =</span> class_metrics)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Note that you have fit as many models as the value for <code>v</code> that you specified earlier. So, this may take some time. Take a walk, grab a snack, or make a cup of tea!</p>
 <p>Then, we can use the same <code>collect_metrics()</code> function we have used to inspect the predictive strength of the model. Please do that for <code>fitted_model_resamples</code>.</p>
-<section id="your-turn-15" class="level4">
-<h4 class="anchored" data-anchor-id="your-turn-15"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
+<section id="your-turn-16" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-16"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">collect_metrics</span>(fitted_model_resamples)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">collect_metrics</span>(fitted_model_resamples)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 6
   .metric     .estimator  mean     n std_err .config             
   &lt;chr&gt;       &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;               
-1 accuracy    binary     0.668     5 0.00808 Preprocessor1_Model1
-2 kap         binary     0.278     5 0.0130  Preprocessor1_Model1
-3 npv         binary     0.572     5 0.00842 Preprocessor1_Model1
-4 ppv         binary     0.717     5 0.00849 Preprocessor1_Model1
-5 sensitivity binary     0.769     5 0.00932 Preprocessor1_Model1
-6 specificity binary     0.503     5 0.00420 Preprocessor1_Model1</code></pre>
+1 accuracy    binary     0.658     5 0.00247 Preprocessor1_Model1
+2 kap         binary     0.248     5 0.00565 Preprocessor1_Model1
+3 npv         binary     0.560     5 0.00239 Preprocessor1_Model1
+4 ppv         binary     0.702     5 0.00348 Preprocessor1_Model1
+5 sensitivity binary     0.780     5 0.00199 Preprocessor1_Model1
+6 specificity binary     0.459     5 0.00699 Preprocessor1_Model1</code></pre>
 </div>
 </div>
 <p>We noted earlier that we may introduce bias when we evaluate different models against the same training data. The benefit of using the multiple folds - and fitting multiple models - is we can make changes to our features or model. Thus, if we decide to add a new feature, we can run the above steps, without concern about biasing our interpretation of how accurate our model is.</p>
 <p>That is, we can be unconcerned about inadvertently introducing bias until we reach the last step - fitting our last model. We can do that using the familiar <code>fit()</code> function, followed by <code>last_fit</code>. It is important to not make further changes after this point.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>final_fit <span class="ot">&lt;-</span> <span class="fu">last_fit</span>(my_wf, train_test_split, <span class="at">metrics =</span> class_metrics)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>final_fit <span class="ot">&lt;-</span> <span class="fu">last_fit</span>(my_wf, train_test_split, <span class="at">metrics =</span> class_metrics)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
@@ -1338,31 +1362,31 @@ override using the `.groups` argument.</code></pre>
 <h3 class="anchored" data-anchor-id="step-5-interpret-accuracy">Step 5: Interpret accuracy</h3>
 <p>Finally, collect the metrics for our final fit. <em>These</em> are the values that you should report as final.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a>final_fit <span class="sc">%&gt;%</span> </span>
-<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect_metrics</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a>final_fit <span class="sc">%&gt;%</span> </span>
+<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect_metrics</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 4
   .metric     .estimator .estimate .config             
   &lt;chr&gt;       &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
-1 accuracy    binary         0.669 Preprocessor1_Model1
-2 sensitivity binary         0.773 Preprocessor1_Model1
-3 specificity binary         0.500 Preprocessor1_Model1
-4 ppv         binary         0.717 Preprocessor1_Model1
-5 npv         binary         0.574 Preprocessor1_Model1
-6 kap         binary         0.280 Preprocessor1_Model1</code></pre>
+1 accuracy    binary         0.661 Preprocessor1_Model1
+2 sensitivity binary         0.781 Preprocessor1_Model1
+3 specificity binary         0.466 Preprocessor1_Model1
+4 ppv         binary         0.705 Preprocessor1_Model1
+5 npv         binary         0.565 Preprocessor1_Model1
+6 kap         binary         0.255 Preprocessor1_Model1</code></pre>
 </div>
 </div>
 <p>We can see that <code>final_fit</code> is for a single fit: a boosted tree model with the best performing tuning parameters trained with the <em>entire</em> training set of data to predict the values in our (otherwise not used/“spent”) testing set of data.</p>
-<section id="your-turn-16" class="level4">
-<h4 class="anchored" data-anchor-id="your-turn-16"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
+<section id="your-turn-17" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-17"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="fu">collect_predictions</span>(final_fit) <span class="sc">%&gt;%</span> </span>
-<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">conf_mat</span>(.pred_class, pass)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="fu">collect_predictions</span>(final_fit) <span class="sc">%&gt;%</span> </span>
+<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">conf_mat</span>(.pred_class, pass)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>          Truth
 Prediction     0     1
-         0 10475  3081
-         1  4138  4144</code></pre>
+         0 10582  2974
+         1  4423  3859</code></pre>
 </div>
 </div>
 </section>
@@ -1372,14 +1396,14 @@ Prediction     0     1
 <h2 class="anchored" data-anchor-id="communicate">5. COMMUNICATE</h2>
 <p>Another benefit of a boosted tree model is we can interpret variable importance metrics. Do that here with the following code.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a>final_fit <span class="sc">%&gt;%</span> </span>
-<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pluck</span>(<span class="st">".workflow"</span>, <span class="dv">1</span>) <span class="sc">%&gt;%</span>   </span>
-<span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">extract_fit_parsnip</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb63-4"><a href="#cb63-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">vip</span>(<span class="at">num_features =</span> <span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a>final_fit <span class="sc">%&gt;%</span> </span>
+<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pluck</span>(<span class="st">".workflow"</span>, <span class="dv">1</span>) <span class="sc">%&gt;%</span>   </span>
+<span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">extract_fit_parsnip</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb65-4"><a href="#cb65-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">vip</span>(<span class="at">num_features =</span> <span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="sml-4-case-study-key_files/figure-html/unnamed-chunk-33-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="sml-4-case-study-key_files/figure-html/unnamed-chunk-32-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>

@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.6.42">
+<meta name="generator" content="quarto-1.6.40">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="LASER Institute">
-<meta name="dcterms.date" content="2025-06-02">
+<meta name="dcterms.date" content="2025-07-13">
 
 <title>Beyond Accuracy: How to Calculate Metrics</title>
 <style>
@@ -65,12 +65,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="sml-3-case-study-key_files/libs/quarto-html/tippy.umd.min.js"></script>
 <script src="sml-3-case-study-key_files/libs/quarto-html/anchor.min.js"></script>
 <link href="sml-3-case-study-key_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="sml-3-case-study-key_files/libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="sml-3-case-study-key_files/libs/quarto-html/quarto-syntax-highlighting-dark-b53751a350365c71b6c909e95f209ed1.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="sml-3-case-study-key_files/libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="sml-3-case-study-key_files/libs/quarto-html/quarto-syntax-highlighting-dark-8ea72dc5fed832574809a9c94082fbbb.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
 <script src="sml-3-case-study-key_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="sml-3-case-study-key_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="sml-3-case-study-key_files/libs/bootstrap/bootstrap-c40676b2bf6f3885adcce02e998bb44c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="sml-3-case-study-key_files/libs/bootstrap/bootstrap-dark-53a30e6d4f540c8956ac884ec0bd0668.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="sml-3-case-study-key_files/libs/bootstrap/bootstrap-00d65cf21f174b4516a2e66297fda939.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="sml-3-case-study-key_files/libs/bootstrap/bootstrap-dark-c849bbedd074e1c235909309894d6680.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 
 
 </head>
@@ -152,7 +152,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">June 2, 2025</p>
+      <p class="date">July 13, 2025</p>
     </div>
   </div>
   
@@ -194,8 +194,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
 ✔ dplyr     1.1.4     ✔ readr     2.1.5
 ✔ forcats   1.0.0     ✔ stringr   1.5.1
-✔ ggplot2   3.5.2     ✔ tibble    3.2.1
-✔ lubridate 1.9.4     ✔ tidyr     1.3.1
+✔ ggplot2   3.5.2     ✔ tibble    3.3.0
+✔ lubridate 1.9.3     ✔ tidyr     1.3.1
 ✔ purrr     1.0.4     
 ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
 ✖ dplyr::filter() masks stats::filter()
@@ -204,20 +204,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidymodels)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>── Attaching packages ────────────────────────────────────── tidymodels 1.3.0 ──
-✔ broom        1.0.8     ✔ rsample      1.3.0
-✔ dials        1.4.0     ✔ tune         1.3.0
-✔ infer        1.0.8     ✔ workflows    1.2.0
-✔ modeldata    1.4.0     ✔ workflowsets 1.1.1
-✔ parsnip      1.3.2     ✔ yardstick    1.3.2
-✔ recipes      1.3.1     
+<pre><code>── Attaching packages ────────────────────────────────────── tidymodels 1.2.0 ──
+✔ broom        1.0.7      ✔ rsample      1.2.1 
+✔ dials        1.2.1      ✔ tune         1.2.1 
+✔ infer        1.0.7      ✔ workflows    1.1.4 
+✔ modeldata    1.4.0      ✔ workflowsets 1.1.0 
+✔ parsnip      1.2.1      ✔ yardstick    1.3.1 
+✔ recipes      1.0.10     
 ── Conflicts ───────────────────────────────────────── tidymodels_conflicts() ──
 ✖ scales::discard() masks purrr::discard()
 ✖ dplyr::filter()   masks stats::filter()
 ✖ recipes::fixed()  masks stringr::fixed()
 ✖ dplyr::lag()      masks stats::lag()
 ✖ yardstick::spec() masks readr::spec()
-✖ recipes::step()   masks stats::step()</code></pre>
+✖ recipes::step()   masks stats::step()
+• Use suppressPackageStartupMessages() to eliminate package startup messages</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(janitor)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -550,11 +551,11 @@ dbl (7): id_assessment, id_student, date_submitted, is_banked, score, date, ...
 <p>Let’s start with a simple confusion matrix. The confusion matrix is a 2 x 2 table with values (cells in the table) representing one of four conditions, elaborated below. You’ll fill in the last two columns in a few moments.</p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 20%">
-<col style="width: 20%">
-<col style="width: 20%">
-<col style="width: 20%">
-<col style="width: 20%">
+<col style="width: 13%">
+<col style="width: 15%">
+<col style="width: 62%">
+<col style="width: 4%">
+<col style="width: 3%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -642,11 +643,11 @@ Prediction    0    1
 <h4 class="anchored" data-anchor-id="your-turn-9"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 20%">
-<col style="width: 20%">
-<col style="width: 20%">
-<col style="width: 20%">
-<col style="width: 20%">
+<col style="width: 15%">
+<col style="width: 5%">
+<col style="width: 43%">
+<col style="width: 28%">
+<col style="width: 7%">
 </colgroup>
 <tbody>
 <tr class="odd">
@@ -692,8 +693,8 @@ Prediction    0    1
 <h4 class="anchored" data-anchor-id="your-turn-10"><strong>👉 Your Turn</strong> <strong>⤵</strong></h4>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 50%">
-<col style="width: 50%">
+<col style="width: 23%">
+<col style="width: 76%">
 </colgroup>
 <tbody>
 <tr class="odd">

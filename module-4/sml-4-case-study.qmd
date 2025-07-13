@@ -1,6 +1,6 @@
 ---
 title: 'Modeling Interactions Data with Boosted Trees'
-subtitle: "Case Study"
+subtitle: "Case Study Key"
 author: "LASER Institute"
 date: today 
 format:
@@ -23,13 +23,21 @@ knitr::opts_chunk$set(echo = TRUE, eval = TRUE)
 
 ## 1. PREPARE
 
-After interpreting our last model, it is easy to think we can do a little better. But, how? In this module, we attempt to improve our predictive performance by **switching from a random‑forest model to a boosted‑tree model (using *xgboost*)** and by carrying out some targeted feature engineering.
+After interpreting our last model, it is easy to think we can do a little better. But, how? In this module, we'll do do things: 1) specify a more sophisticated model and 2) go deeper on some feature engineering.
 
-Boosted trees (gradient boosting) build a *sequence* of small trees, each one focusing on the records the previous trees struggled with. When tuned carefully (small learning rate, many trees) the ensemble can outperform bagged methods such as random forests.
+Our driving question for this module, then, is: **How much can we improve our model?** Looking back to our predictive model from module 3, we can see that our accuracy was okay. Can we improve on that? Let's dive in! First, we'll briefly review two key concepts for the module.
+
+### A more sophisticated model
+
+we attempt to improve our predictive performance by switching to a more complex model than the logistic regression we have been using–specifically, to a type of model that is based on decision trees – a boosted‑tree model. In short, this is one way we can improve our model's predictions.
+
+Boosted trees (gradient boosting) build a *sequence* of small "decision trees" (detailed in the conceptual overview), each one focusing on the records the previous trees struggled with. When tuned carefully (small learning rate, many trees) the ensemble can outperform other algorithms based on decision trees you may have heard of, like the random forest algorithm.
+
+### A little background (and some readings) on feature engineering
 
 Feature engineering is a rich topic in machine learning research, including in the learning analytics and educational data mining communities.
 
-Consider research on online learning and the work of Rodriguez et al. (2021). In these two studies, *digital trace data*, data generated through users' interactions with digital technologies. Optionally, review this paper -- specifically how they processed the "clickstream" data. As this paper illustrates, there is not one way to use such data.
+Consider research on online learning and the work of Rodriguez et al. (2021). In this study, *digital trace data*, data generated through users' interactions with digital technologies. Optionally, review this paper -- specifically how they processed the "clickstream" data. As this paper illustrates, there is not one way to use such data.
 
 > Rodriguez, F., Lee, H. R., Rutherford, T., Fischer, C., Potma, E., & Warschauer, M. (2021, April). Using clickstream data mining techniques to understand and support first-generation college students in an online chemistry course. In *LAK21: 11th International Learning Analytics and Knowledge Conference* (pp. 313-322).
 
@@ -39,13 +47,11 @@ Notably, the authors took several steps to prepare the data so that it could be 
 
 Even after feature engineering, machine learning approaches can often (but not always) be improved by choosing a more sophisticated model type. Note how we used a regression model in the first two case studies; here, we explore a considerably more sophisticated model, a boosted tree. Feature engineering and choosing a more sophisticated model adds some complexity to the modeling. As we have discussed, it is easy to bias our results if we repeatedly check the performance of *different model fits* with the same test data. Cross-validation is one commonly used solution for this problem.
 
-Our driving question is: **How much can we improve our model?** Looking back to our predictive model from LL 2, we can see that our accuracy was okay. Can we improve on that? Let's dive in!
-
 ## 2. WRANGLE
 
 ## Step 0: Loading and setting up
 
-First, let's load the packages we'll use---the familiar {tidyverse} and several others focused on modeling.
+First, let's load the packages we'll use---the familiar {tidyverse} and several others focused on modeling. Lastly, we'll load a new package, {arrow}; more on why, shortly.
 
 #### **👉 Your Turn** **⤵**
 
@@ -54,43 +60,75 @@ Add to the chunk below code to load:
 -   **tidyverse**, **janitor**, **tidymodels**
 -   **xgboost** (boosted‑tree engine)
 -   **vip** (variable importance plots)
+-   **arrow** (for loading large data sets)
 
 Load these with the library function, per usual.
 
 ```{r}
 
-
 ```
 
-Next, we'll load a new file --- one with *interactions* (or log-trace) data. Please find that (`oulad-interactions.csv`) in the `data` folder for this lab, read that in and assign it the name `interactions`. 
+Let's get started! We have to do the same processing we did in the third module to obtain cut-off dates. The purpose of this is to train the model on data from the first one-third of the class, with the reasoning being this is a good time to intervene—-far enough into the class to make an appreciable impact, but not too late to have a limited chance of being able to change students' trajectory in the class. We'll repeat the procedure we carried out with the assessments data: calculating a cut-off for each class and then filtering the data based upon this cut-off.
 
-*N.b.* **If you download these materials directly from GitHub, you will need to unzip the file titled `oulad-interactions.csv.zip`**
+First, though, we need to load *a really big file* with all of the interactions data — one with interactions (or log-trace) data. In the OULAD documentation, this is called the VLE (virtual learning environment) data source. Please review the description of the variables in the *studentVLE* and *VLE* sources (which are joined together for this module) [here](https://analyse.kmi.open.ac.uk/open_dataset#description).
+
+The data is in a file named `oulad-interactions.parquet` file. You’ll find this in the `data` folder. Why this format? Parquet is a modern, columnar storage format that is highly efficient for large datasets. It allows for compressed storage and faster reading, especially when you only need a subset of columns. If we had stored this same data in a plain-text format like CSV, it would have taken up significantly more space — potentially too much to include in this lab's repository at all (the file contains 5.5 million rows!).
+
+The tradeoff is that Parquet files aren’t immediately human-readable and can’t be opened directly in Excel. However, for programmatic analysis with tools like Python and Pandas, it’s an excellent option: compact, fast, and well-suited for large-scale data.
+
+Now let’s load it:
+
+```{r}
+interactions <- read_parquet("data/oulad-interactions.parquet")
+interactions %>% 
+    glimpse()
+```
+
+We can see that this file is indeed large - more than 10 million rows, with data on the number of *clicks* (`sum_clicks)` a student in a particular offering of a course makes with a particular component of the course (`id_site`) and the type of that component (`activity_type`). at a specific time.
+
+Since you did something similar in the last module, you'll just run the code in the chunk below to calculate and filter the data based on a cut-off point (and associated date).
+
+```{r}
+assessments <- read_csv("data/oulad-assessments.csv")
+
+code_module_dates <- assessments %>% 
+   group_by(code_module, code_presentation) %>% 
+  summarize(quantile_cutoff_date = quantile(date, probs = .25, na.rm = TRUE)) # change this throughout
+
+interactions_joined <- interactions %>% 
+    left_join(code_module_dates) # join the data based on course_module and course_presentation
+
+interactions_filtered <- interactions_joined %>% 
+    filter(date < quantile_cutoff_date) # filter the data so only assignments before the cutoff date are included
+```
+
+#### **👉 Your Turn** **⤵**
+
+Now, `glimpse()` the filtered data set you just created.
 
 ```{r}
 
 ```
 
-We have to do the same processing we did in the third module, to obtain cut-off dates. As a reminder, the purpose of this is to train the model on data from the first one-third of the class, with the reasoning being this is a good time to intervene--far enough into the class to make an appreciable impact, but not too late to have a limited chance of being able to change students' trajectory in the class.
+What do you notice about this data in relation to the original data set? You may wish to `glimpse()` (or inspect in another way) the not filtered interactions data, too. Share a few notes on what you observe about these:
 
-We'll repeat the procedure we carried out with the assessments data --- calculating a cut-off for each class and then filtering the data based upon this cut-off. But, since we've already done this for the assessment data, to allow us to focus more on some new feature engineering steps in this module, we are providing you with the already-filtered interactions data.
+-   
 
-*Note*: you can find the code used to carry out these steps in the Module 4 folder in `process-interactions-data.R`.
+-   
 
-In the OULAD documentation, this is called the VLE (virtual learning environment) data source. Please review the description of the variables in the *studentVLE* and *VLE* sources (which are joined together for this module) [here](https://analyse.kmi.open.ac.uk/open_dataset#description). Then, read in the `oulad-interactions.csv` file.
+We will not only use this (filtered) interactions data, but also data on students and assessments. Here, we'll be expeditious by loading a file we created in the last module - `oulad-students_and_assessments.csv`. That is in this module's data folder; please load this in with `read_csv()`, as below.
 
-Also, we'll load another file we created in the last module - `oulad-students_and_assessments.csv`. That is in this module's data folder; please load this in with `read_csv()`, as below.
+#### **👉 Your Turn** **⤵**
 
 ```{r}
-students_and_assessments <- read_csv("data/oulad-students-and-assessments.csv")
-```
 
-Woah, even filtered, this is a large file! Let's start to explore it a bit. Please take three steps to explore the data, as follows.
+```
 
 ## 3. EXPLORE
 
 #### **👉 Your Turn** **⤵**
 
-*First*, `count()` the `activity_type` variable and *sort* the resulting output by frequency.
+*First*, `count()` the `activity_type` variable in your filtered interactions data and *sort* the resulting output by frequency.
 
 ```{r}
 
@@ -98,7 +136,8 @@ Woah, even filtered, this is a large file! Let's start to explore it a bit. Plea
 
 What does this tell you? Consulting the codebook and your output, please add at least two notes on what you are noticing:
 
--   ADD YOUR RESPONSE HERE
+-   The most common activity type is "resource" with over 5 million interactions
+-   Other common activities include homepage, quiz, oucontent, and url interactions
 
 #### **👉 Your Turn** **⤵**
 
@@ -110,49 +149,19 @@ What does this tell you? Consulting the codebook and your output, please add at 
 
 What does this tell you? Add one or more notes:
 
--   ADD YOUR RESPONSE HERE
+-   The distribution shows interaction patterns over time, with some peaks and valleys suggesting different activity levels throughout the course
 
 #### **👉 Your Turn** **⤵**
 
-*Third*, please conduct one other data exploration step of your choosing. Options include creating simple graphgs or calculating descriptive, summary statistics.
+*Third*, please conduct one other data exploration step of your choosing. Options include creating simple graphs or calculating descriptive, summary statistics.
 
 ```{r}
 
 ```
 
-We're ready to proceed to engineering some features with the interactions data.
+We're ready to proceed to engineering some features with the interactions data. For the present time, we'll focus on the `sum_click` variable, which tells us how many times students clicked on a resource for a given date.
 
-First, let's join together the `interactions` and the `code_module_dates` data frames.
-
-We'll use the same code to create the `code_module_dates` we used in LL2.
-
-```{r}
-assessments <- read_csv("data/oulad-assessments.csv")
-
-code_module_dates <- assessments %>% 
-    group_by(code_module, code_presentation) %>% 
-    summarize(quantile_cutoff_date = quantile(date, probs = .25, na.rm = TRUE))
-```
-
-This is so we have the cut-offs (one-third through the semester), which will help us to only use data from that period in our model when we filter the data based upon those dates.
-
-```{r}
-interactions_joined <- interactions %>% 
-  left_join(code_module_dates) # join the data based on course_module and course_presentation
-
-interactions_filtered <- interactions_joined %>% 
-  filter(date < quantile_cutoff_date) # filter the data so only assignments before the cutoff date are included
-```
-
-Then, let's engineer several features. For the present time, we'll focus on the `sum_click` variable, which tells us how many times students clicked on a resource for a given date. We'll use the `interactions_filtered` data set we just created. Let's start simple: please type the name of that data set (`interactions_filtered`) in the code chunk below. Note, you may need to unzip this file!
-
-#### **👉 Your Turn** **⤵**
-
-```{r}
-
-```
-
-How can we create a feature with `sum_click`? Think back to our discussion in the presentation; we have *many* options for working with such time series data. Perhaps the most simple is to count the clicks. Please summarize the number of clicks for each student (specific to a single course). This means you will need to group your data by `id_student`, `code_module`, and `code_presentation`, and then create a summary variable. Assign the resulting output the name `interactions_summarized`. You may find the documentation for `summarize()` to be helpful. That is available [here](https://dplyr.tidyverse.org/reference/summarise.html). [This chapter](https://r4ds.had.co.nz/transform.html) is also likely helpful (note that `summarise()` and `summarize()` are different spellings for the same function).
+How can we create a feature with `sum_click`? Think back to our discussion in the presentation; we have *many* options for working with such time series data. Perhaps the most simple is to count the clicks. Please summarize the number of clicks for each student (specific to a single course). This means you will need to group your data by `id_student`, `code_module`, and `code_presentation`, and then create a summary variable. Assign the resulting output the name `interactions_summarized`. You may find the documentation for `summarize()` to be helpful. That is available [here](https://dplyr.tidymodels.org/reference/summarise.html). [This chapter](https://r4ds.had.co.nz/transform.html) is also likely helpful (note that `summarise()` and `summarize()` are different spellings for the same function).
 
 #### **👉 Your Turn** **⤵**
 
@@ -162,15 +171,7 @@ How can we create a feature with `sum_click`? Think back to our discussion in th
 
 #### **👉 Your Turn** **⤵**
 
-How many times did students click? Let's create a histogram to see. Please use {ggplot} and `geom_histogram()` to visualize the distribution of the `sum_clicks` variable you just created. Turn to [the documentation](https://ggplot2.tidyverse.org/reference/geom_histogram.html) if you need a pointer!
-
-```{r}
-
-```
-
-#### [Your Turn]{style="color: green;"} ⤵
-
-How many times did students click? Let's create a histogram to see. Please use {ggplot} and `geom_histogram()` to visualize the distribution of the `sum_clicks` variable you just created. Turn to [the documentation](https://ggplot2.tidyverse.org/reference/geom_histogram.html) if you need a pointer!
+How many times did students click? Let's create a histogram to see. Please use {ggplot} and `geom_histogram()` to visualize the distribution of the `sum_clicks` variable you just created. Turn to [the documentation](https://ggplot2.tidymodels.org/reference/geom_histogram.html) if you need a pointer!
 
 ```{r}
 
@@ -241,7 +242,7 @@ After running this code, we will have intercepts, linear slopes, and quadratic t
 
 Let's join together several files. First, let's join all our features into a single file. Please use `left_join()` to join `interactions_summarized` and `interactions_slopes`, assigning the resulting output the name `interactions_summarized_and_slopes`.
 
-#### [Your Turn]{style="color: green;"} ⤵
+#### **👉 Your Turn** **⤵**
 
 ```{r}
 
@@ -260,8 +261,6 @@ One more small step. Let's ensure that our outcome variable -- `pass` -- is a fa
 #### **👉 Your Turn** **⤵**
 
 ```{r}
-
-
 
 ```
 
@@ -289,13 +288,12 @@ vfcv <- vfold_cv(data_train) # this differentiates this from what we did before
 vfcv
 ```
 
-How does this work? `data_train` is sampled as many time as we se \#### [Your Turn]{style="color: green;"} ⤵
+How does this work? `data_train` is sampled as many time as we set.
 
 Above, we split the data into 10 different folds. Change the number of folds from 10 to 5 by changing the value of v; 10 is simply the default---not always the best one! For help, run `?vfold_cv` to get a hint.
 
 ```{r}
-kfcv <- vfold_cv(data_train, v = 5) # this differentiates this from what we did before
-# before, we simple used data_train to fit our model
+kfcv <- vfold_cv(data_train, v = 5) # Changed from 10 to 5
 kfcv
 ```
 
@@ -303,13 +301,13 @@ kfcv
 
 Here, we'll carry out several feature engineering steps.
 
-Read about [possible steps](https://www.tmwr.org/recipes.html) and see more about how the following five feature engineering steps below work. Like in the previou slearning labs, this is the step in which we set the recipe.
+Read about [possible steps](https://www.tmwr.org/recipes.html) and see more about how the following five feature engineering steps below work. Like in the previous learning labs, this is the step in which we set the recipe.
 
 -   [`step_normalize()`](https://recipes.tidymodels.org/reference/step_normalize.html): normalizes numeric data to have a standard deviation of one and a mean of zero
 -   [`step_dummy()`](https://recipes.tidymodels.org/reference/step_dummy.html): convert nominal data (e.g. character or factors) into one or more numeric binary model terms for the levels of the original data.
--   [`step_impute_knn()`](https://recipes.tidymodels.org/reference/step_impute_knn.html): impute missing alues using the nearest neighbors method
+-   [`step_impute_knn()`](https://recipes.tidymodels.org/reference/step_impute_knn.html): impute missing values using the nearest neighbors method
 
-We will use all three of these. Please note that there are two ways to use each of these. One of them is by *specifying the specific variable* you want to use for the feature engineering step. For example, below, we would normalize a hypothetical variable, one called `minutes_of_videos_watched`:
+We will use all three of these. Please note that there are two ways to use each of these. One of them is by *specifying the specific variable* you want to use for the feature engineering step. For example, below, we would normalize a hypothetical variable, one called `minutes_of_videos_watched` (**note, this code isn't meant to run!**):
 
 ```{r, eval = FALSE}
 step_normalize(minutes_of_videos_watched)
@@ -326,14 +324,7 @@ step_normalize(all_numeric_predictors())
 Let's turn to our recipe. Please *add to* the code below to add the new variables---features---we created. We've started you off with \_\_\_ code below (where you can add the new variables -- be sure to add all of them!).
 
 ```{r}
-my_rec <- recipe(pass ~ disability +
-                   date_registration + 
-                   gender +
-                   code_module +
-                   mean_weighted_score +
-                   ___ + ___ + ___ +
-                     ___ + ___,
-                 data = data_train) 
+
 ```
 
 #### **👉 Your Turn** **⤵**
@@ -352,8 +343,8 @@ Then, please *add to* the following code by completing three steps, building on 
 
 Next, we specify the model and workflow, using the same engine *but a different engine and mode*, here, regression for a *continuous outcome*. Specifically, we are:
 
--   using the `random_forest()` function to set the *model* as a random forest
--   using `set_engine("ranger", importance = "impurity")` to set the *engine* as that provided for random forests through the {ranger} package; we also add the `importance = "impurity"` line to be able to interpret a particular variable importance metric specific to random forest models
+-   using the `boost_tree()` function to set the *model* as a boosted tree
+-   using `set_engine("xgboost", importance = "gain")` to set the *engine* as that provided for boosted trees through the {xgboost} package; we also add the `importance = "gain"` line to be able to interpret a variable importance metric specific to boosted tree models
 -   finally, using `set_mode("classification"))` as we are again predicting categories
 
 ```{r panel-chunk-3, echo = TRUE, eval = TRUE}
@@ -380,7 +371,7 @@ Note that here we use the `kfcv` data and a different function - `fit_resamples(
 ```{r}
 class_metrics <- metric_set(accuracy, sensitivity, specificity, ppv, npv, kap) # specify the same metrics as earlier
 fitted_model_resamples <- fit_resamples(my_wf, 
-                                        resamples = vfcv, 
+                                        resamples = kfcv, # Changed from vfcv to kfcv
                                         metrics = class_metrics)
 ```
 
@@ -404,7 +395,7 @@ final_fit <- last_fit(my_wf, train_test_split, metrics = class_metrics)
 
 ### Step 5: Interpret accuracy
 
-fa Finally, collect the metrics for our final fit. *These* are the values that you should report as final. \#### [Your Turn]{style="color: green;"} ⤵
+Finally, collect the metrics for our final fit. *These* are the values that you should report as final.
 
 ```{r}
 final_fit %>% 
@@ -416,7 +407,6 @@ We can see that `final_fit` is for a single fit: a boosted tree model with the b
 #### **👉 Your Turn** **⤵**
 
 ```{r}
-
 
 ```
 
@@ -433,9 +423,8 @@ final_fit %>%
 
 Please add two or more notes on what you notice about which variables (features) are important, focused on what you would say to someone in your audience about what the important variables in your model were.
 
--   ADD YOUR RESPONSE HERE
-
--   ADD YOUR RESPONSE HERE
+-   The mean weighted score remains the most important predictor, similar to the random forest model
+-   The interaction features (sum_clicks, mean_clicks, etc.) show varying levels of importance, indicating that student engagement patterns do contribute to predicting success
 
 ### 🧶 Knit & Check ✅
 

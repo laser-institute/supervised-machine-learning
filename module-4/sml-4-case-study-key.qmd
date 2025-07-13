@@ -75,7 +75,13 @@ library(arrow) # for large, compressed (parquet) files
 
 Let's get started! We have to do the same processing we did in the third module to obtain cut-off dates. The purpose of this is to train the model on data from the first one-third of the class, with the reasoning being this is a good time to intervene—-far enough into the class to make an appreciable impact, but not too late to have a limited chance of being able to change students' trajectory in the class. We'll repeat the procedure we carried out with the assessments data: calculating a cut-off for each class and then filtering the data based upon this cut-off.
 
-First, though, we need to load *a really big file* with all of the interactions data. In the OULAD documentation, this is called the VLE (virtual learning environment) data source. Please review the description of the variables in the *studentVLE* and *VLE* sources (which are joined together for this module) [here](https://analyse.kmi.open.ac.uk/open_dataset#description). Then, read in the `oulad-interactions.parquet` file. Instead of `read_csv()`, you'll need to use a function from the {arrow} package, `read_parquet()`:
+First, though, we need to load *a really big file* with all of the interactions data — one with interactions (or log-trace) data. In the OULAD documentation, this is called the VLE (virtual learning environment) data source. Please review the description of the variables in the *studentVLE* and *VLE* sources (which are joined together for this module) [here](https://analyse.kmi.open.ac.uk/open_dataset#description).
+
+The data is in a file named `oulad-interactions.parquet` file. You’ll find this in the `data` folder. Why this format? Parquet is a modern, columnar storage format that is highly efficient for large datasets. It allows for compressed storage and faster reading, especially when you only need a subset of columns. If we had stored this same data in a plain-text format like CSV, it would have taken up significantly more space — potentially too much to include in this lab's repository at all (the file contains 5.5 million rows!).
+
+The tradeoff is that Parquet files aren’t immediately human-readable and can’t be opened directly in Excel. However, for programmatic analysis with tools like Python and Pandas, it’s an excellent option: compact, fast, and well-suited for large-scale data.
+
+Now let’s load it:
 
 ```{r}
 interactions <- read_parquet("data/oulad-interactions.parquet")
@@ -277,11 +283,6 @@ One more small step. Let's ensure that our outcome variable -- `pass` -- is a fa
 ```{r}
 students_assessments_and_interactions <- students_assessments_and_interactions %>% 
     mutate(pass = as.factor(pass))
-```
-
-```{r}
-students_assessments_and_interactions %>% 
-    skimr::skim()
 ```
 
 We're now ready to model!

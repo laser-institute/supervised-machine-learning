@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="LASER Institute">
-<meta name="dcterms.date" content="2025-04-04">
+<meta name="dcterms.date" content="2025-07-13">
 
 <title>Explaining or Predicting Graduation Rates Using IPEDS</title>
 <style>
@@ -123,8 +123,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </ul></li>
   <li><a href="#communicate" id="toc-communicate" class="nav-link" data-scroll-target="#communicate">5. COMMUNICATE</a>
   <ul>
-  <li><a href="#rq-a" id="toc-rq-a" class="nav-link" data-scroll-target="#rq-a">RQ A</a></li>
-  <li><a href="#rq" id="toc-rq" class="nav-link" data-scroll-target="#rq">RQ</a></li>
+  <li><a href="#rq-a---regression-research-question-1" id="toc-rq-a---regression-research-question-1" class="nav-link" data-scroll-target="#rq-a---regression-research-question-1">RQ A - Regression Research Question</a></li>
+  <li><a href="#rq-b---supervised-machine-learning-research-question-1" id="toc-rq-b---supervised-machine-learning-research-question-1" class="nav-link" data-scroll-target="#rq-b---supervised-machine-learning-research-question-1">RQ B - Supervised Machine Learning Research Question</a></li>
   <li><a href="#knit-check" id="toc-knit-check" class="nav-link" data-scroll-target="#knit-check">🧶 Knit &amp; Check ✅</a></li>
   </ul></li>
   </ul>
@@ -152,7 +152,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">April 4, 2025</p>
+      <p class="date">July 13, 2025</p>
     </div>
   </div>
   
@@ -168,7 +168,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="prepare">1. PREPARE</h2>
 <section id="the-laser-workflow" class="level3">
 <h3 class="anchored" data-anchor-id="the-laser-workflow">The LASER workflow</h3>
-<p>Each machine learning “case study” is designed to illustrate how machine learning methods and techniques can be applied to address a research question of interest, create useful data products, and conduct reproducible research. Each case study is structured around a basic analytics workflow modeled after the Data-Intensive Research Workflow from <a href="#0">Learning Analytics Goes to School</a> (Krumm et al., 2018):</p>
+<p>Each supervised machine learning “case study” is designed to illustrate how supervised machine learning methods and techniques can be applied to address a research question of interest, create useful data products, and conduct reproducible research. Each case study is structured around a basic analytics workflow modeled after the Data-Intensive Research Workflow from <a href="#0">Learning Analytics Goes to School</a> (Krumm et al., 2018):</p>
 <p><img src="https://sbkellogg.github.io/eci-589/unit-1/img/workflow.png" class="img-fluid" style="width:80.0%" alt=""></p>
 <p>Figure 2.2 Steps of Data-Intensive Research Workflow</p>
 <p>In the overview presentation for this learning lab, we considered five steps in our supervised machine learning process. Those steps are mirrored here in this case study, with the addition of some other components of this workflow. For example, to help prepare for analysis, we’ll first take a step back and think about how we want to use machine learning, and <em>predicting</em> is a key word. Many scholars have focused on predicting students who are <em>at-risk</em>: of dropping a course or not succeeding in it. In the ML Learning Lab 1 case study will cover the following workflow topics as we attempt to develop our own model for predicting student drop-out:</p>
@@ -204,7 +204,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
 ✔ dplyr     1.1.4     ✔ readr     2.1.5
 ✔ forcats   1.0.0     ✔ stringr   1.5.1
-✔ ggplot2   3.5.1     ✔ tibble    3.2.1
+✔ ggplot2   3.5.2     ✔ tibble    3.3.0
 ✔ lubridate 1.9.3     ✔ tidyr     1.3.1
 ✔ purrr     1.0.4     
 ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
@@ -249,7 +249,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 ✖ dplyr::lag()      masks stats::lag()
 ✖ yardstick::spec() masks readr::spec()
 ✖ recipes::step()   masks stats::step()
-• Use tidymodels_prefer() to resolve common conflicts.</code></pre>
+• Learn how to get started at https://www.tidymodels.org/start/</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(janitor)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -570,32 +570,30 @@ Number of Fisher Scoring iterations: 6</code></pre>
 </div>
 <p>Then, we’ll conduct a supervised machine learning analysis (with a simple but still commonly used model - in fact, the same model we used for the regression, a generalized linear model!). Again, for now, you’ll run this code; later, you’ll work through each step in detail.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>ipeds_split <span class="ot">&lt;-</span> <span class="fu">initial_split</span>(ipeds, <span class="at">prop =</span> <span class="fl">0.8</span>)</span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>train <span class="ot">&lt;-</span> <span class="fu">training</span>(ipeds_split)</span>
-<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>test <span class="ot">&lt;-</span> <span class="fu">testing</span>(ipeds_split)</span>
-<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>my_rec <span class="ot">&lt;-</span> <span class="fu">recipe</span>(good_grad_rate <span class="sc">~</span> total_enroll <span class="sc">+</span> pct_admitted <span class="sc">+</span> n_bach <span class="sc">+</span> n_mast <span class="sc">+</span> n_doc <span class="sc">+</span> tuition_fees <span class="sc">+</span> percent_fin_aid <span class="sc">+</span> avg_salary, <span class="at">data =</span> ipeds) <span class="co"># same as above; this sets up what predicts the outcome</span></span>
-<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a><span class="co"># specify model</span></span>
-<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>my_mod <span class="ot">&lt;-</span></span>
-<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">logistic_reg</span>() <span class="sc">%&gt;%</span> <span class="co"># specifies a logistic regression</span></span>
-<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">set_engine</span>(<span class="st">"glm"</span>) <span class="sc">%&gt;%</span> <span class="co"># specifies the specific package used to estimate the logistic regression</span></span>
-<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">set_mode</span>(<span class="st">"classification"</span>) <span class="co"># specifies that our outcome is a dichotomous or categorical variable</span></span>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>my_rec <span class="ot">&lt;-</span> <span class="fu">recipe</span>(good_grad_rate <span class="sc">~</span> total_enroll <span class="sc">+</span> pct_admitted <span class="sc">+</span> n_bach <span class="sc">+</span> n_mast <span class="sc">+</span> n_doc <span class="sc">+</span> tuition_fees <span class="sc">+</span> percent_fin_aid <span class="sc">+</span> avg_salary, <span class="at">data =</span> ipeds) <span class="co"># same as above; this sets up what predicts the outcome</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="co"># specify model</span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>my_mod <span class="ot">&lt;-</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">logistic_reg</span>() <span class="sc">%&gt;%</span> <span class="co"># specifies a logistic regression</span></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">set_engine</span>(<span class="st">"glm"</span>) <span class="sc">%&gt;%</span> <span class="co"># specifies the specific package used to estimate the logistic regression</span></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">set_mode</span>(<span class="st">"classification"</span>) <span class="co"># specifies that our outcome is a dichotomous or categorical variable</span></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>my_wf <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">%&gt;%</span> <span class="co"># this starts a workflow, which will stitch together the steps in our analysis</span></span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">add_model</span>(my_mod) <span class="sc">%&gt;%</span> <span class="co"># adds the model</span></span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">add_recipe</span>(my_rec) <span class="co"># adds the recipe</span></span>
 <span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a>my_wf <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">%&gt;%</span> <span class="co"># this starts a workflow, which will stitch together the steps in our analysis</span></span>
-<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">add_model</span>(my_mod) <span class="sc">%&gt;%</span> <span class="co"># adds the model</span></span>
-<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">add_recipe</span>(my_rec) <span class="co"># adds the recipe</span></span>
-<span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-17"><a href="#cb35-17" aria-hidden="true" tabindex="-1"></a>fit_model <span class="ot">&lt;-</span> <span class="fu">last_fit</span>(my_wf, ipeds_split) <span class="co"># fits the model</span></span>
-<span id="cb35-18"><a href="#cb35-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-19"><a href="#cb35-19" aria-hidden="true" tabindex="-1"></a><span class="fu">collect_metrics</span>(fit_model) <span class="co"># examines accuracy</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a>fit_model <span class="ot">&lt;-</span> <span class="fu">fit</span>(my_wf, <span class="at">data =</span> ipeds) <span class="co"># fits the model</span></span>
+<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a>ipeds_preds <span class="ot">&lt;-</span> <span class="fu">predict</span>(fit_model, ipeds, <span class="at">type =</span> <span class="st">"class"</span>) <span class="sc">%&gt;%</span> <span class="co"># makes predictions</span></span>
+<span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_cols</span>(ipeds <span class="sc">%&gt;%</span> <span class="fu">select</span>(good_grad_rate)) <span class="co"># binds the known outcomes</span></span>
+<span id="cb35-17"><a href="#cb35-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-18"><a href="#cb35-18" aria-hidden="true" tabindex="-1"></a><span class="fu">metrics</span>(ipeds_preds, <span class="at">truth =</span> good_grad_rate, <span class="at">estimate =</span> .pred_class) <span class="co"># calculates metrics</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 3 × 4
-  .metric     .estimator .estimate .config             
-  &lt;chr&gt;       &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
-1 accuracy    binary         0.802 Preprocessor1_Model1
-2 roc_auc     binary         0.864 Preprocessor1_Model1
-3 brier_class binary         0.138 Preprocessor1_Model1</code></pre>
+<pre><code># A tibble: 2 × 3
+  .metric  .estimator .estimate
+  &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt;
+1 accuracy binary         0.810
+2 kap      binary         0.588</code></pre>
 </div>
 </div>
 <p>The key to observe at this point is what is similar and different between the two approaches (regression and supervised machine learning). Both used the same underlying statistical model, but had some stark differences. Add two or more similarities and two or more differences (no wrong answers!) below.</p>
@@ -623,18 +621,18 @@ Number of Fisher Scoring iterations: 6</code></pre>
 <li><p><strong>Narrate.</strong> Writing a narrative to accompany the data products involves, at a minimum, pairing a data product with its related research question, describing how best to interpret the data product, and explaining the ways in which the data product helps answer the research question.</p></li>
 </ol>
 <p>Now, let’s return to our research questions. What did we find? This (especially the supervised machine learning model and its output) is very likely new, and this is meant to elicit initial perceptions, and not the right answer. What did we find for each of your RQs? Add a few thoughts below for each. Focus on what you would communicate about this analysis to a general audience, again, keeping in mind this is based on your very initial interpretations.</p>
-<section id="rq-a" class="level3">
-<h3 class="anchored" data-anchor-id="rq-a">RQ A</h3>
+<section id="rq-a---regression-research-question-1" class="level3">
+<h3 class="anchored" data-anchor-id="rq-a---regression-research-question-1">RQ A - Regression Research Question</h3>
 <ul>
-<li><p>ADD YOUR RESPONSE HERE</p></li>
-<li><p>ADD YOUR RESPONSE HERE</p></li>
+<li>YOUR RESPONSE</li>
+<li>YOUR RESPONSE</li>
 </ul>
 </section>
-<section id="rq" class="level3">
-<h3 class="anchored" data-anchor-id="rq">RQ</h3>
+<section id="rq-b---supervised-machine-learning-research-question-1" class="level3">
+<h3 class="anchored" data-anchor-id="rq-b---supervised-machine-learning-research-question-1">RQ B - Supervised Machine Learning Research Question</h3>
 <ul>
-<li><p>ADD YOUR RESPONSE HERE</p></li>
-<li><p>ADD YOUR RESPONSE HERE</p></li>
+<li>YOUR RESPONSE</li>
+<li>YOUR RESPONSE</li>
 </ul>
 </section>
 <section id="knit-check" class="level3">
