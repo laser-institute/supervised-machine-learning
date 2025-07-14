@@ -261,14 +261,6 @@ There's no single "best" way; the right tools depend on your goals:
 This invites students to really think hard about what they are trying to do.
 :::
 
-## The SML workflow
-
-![](https://sbkellogg.github.io/eci-589/unit-1/img/workflow.png){alt="" width="80%"}
-
-::: notes
-We expand on this in the case study.
-:::
-
 ## Unsupervised ML
 
 -   Does not require coded data; one way to think about unsupervised ML is that its purpose is to discover codes/labels
