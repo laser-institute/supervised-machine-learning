@@ -245,7 +245,6 @@ metrics(pokemon_preds, truth = early_gen, estimate = .pred_class)
 ```{python}
 #| eval: false
 #| echo: true
-from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 
@@ -261,17 +260,12 @@ pokemon_df = pokemon_df.dropna()  # sci-kit learn won't work with rows that have
 ```{python}
 #| echo: true
 #| eval: false
-train_df, test_df = train_test_split(pokemon_df, test_size=0.2, random_state=42)  # random state is set to give reproducible results
 
 dependent_col = 'early_gen'
 independent_cols = ['height_m', 'weight_kg', 'hp']
 
-X_train = train_df[independent_cols]
-y_train= train_df[dependent_col]
-
-X_test = test_df[independent_cols]
-y_test = test_df[dependent_col]
-
+X = pokemon_df[independent_cols]
+y = pokemon_df[dependent_col]
 ```
 
 ## 2
@@ -282,7 +276,7 @@ y_test = test_df[dependent_col]
 #| echo: true
 #| eval: false
 model = LogisticRegression()
-model.fit(X_train, y_train)  # Fit the model on the training data
+model.fit(X, y)  # Fit the model on the entire dataset
 ```
 
 ## 3
@@ -293,8 +287,8 @@ model.fit(X_train, y_train)  # Fit the model on the training data
 #| echo: true
 #| eval: false
 
-y_preds = model.predict(X_test)  # Then predict on the test data
-accuracy = accuracy_score(y_test, y_preds)  # Compare your predictions vs the actual y's
+y_preds = model.predict(X)  # Then predict on all the data as if you didn't know the dependent variable
+accuracy = accuracy_score(y, y_preds)  # Compare your predictions vs the actual y's
 
 round(accuracy, 3)
 ```

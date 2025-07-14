@@ -294,12 +294,10 @@ Then, we'll conduct a supervised machine learning analysis (with a simple but st
 One note – you'll see here we use a value of .20 for the proportion of the data in the test set (and .80 in the training data set). For now, know that this isn't a hard rule, but, rather, the "best" split depends on a few considerations that we'll discuss in a later module.
 
 ```{python}
-from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 
 ipeds_df = ipeds_df.dropna()  # Scikit-learn does not support null values, so we’ll drop them for now. In later modules, we’ll explore imputation techniques to handle missing data
-train_df, test_df = train_test_split(ipeds_df, test_size=0.2, random_state=42)  # splitting the data and sedding a random state so this is reproducible
 
 dependent_col = 'good_grad_rate'  # the name of the value that we are modeling - the 1/0 column for a good graduation rate
 independent_cols = [  # the independent columns to predict the dependent column
@@ -313,17 +311,14 @@ independent_cols = [  # the independent columns to predict the dependent column
     'avg_salary'
 ]
 
-X_train = train_df[independent_cols]  # split our dataset between dependent and independent columns
-y_train = train_df[dependent_col]
-
-X_test = test_df[independent_cols]
-y_test = test_df[dependent_col]
+X = ipeds_df[independent_cols]  # split our dataset between dependent and independent columns
+y = ipeds_df[dependent_col]
 
 model = LogisticRegression()  # Define the model object. Here is where we coul set any model parameters in the future
-model.fit(X=X_train, y=y_train)  # Fit the model on the training dataset
+model.fit(X=X, y=y)  # Fit the model on the entire dataset
 
-y_preds = model.predict(X_test)  # Make predictions on the test dataset
-accuracy = accuracy_score(y_test, y_preds)  # use sklearn built in functions to evaluate accuracy
+y_preds = model.predict(X)  
+accuracy = accuracy_score(y, y_preds)  # use sklearn built in functions to evaluate accuracy
 
 print('accuracy:', round(accuracy, 3))
 ```
