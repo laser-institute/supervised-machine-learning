@@ -321,7 +321,7 @@ model = LogisticRegression()  # Define the model object. Here is where we coul s
 model.fit(X=X, y=y)  # Fit the model on the enire dataset
 
 y_preds = model.predict(X)
-accuracy = accuracy_score(y_test, y_preds)  # use sklearn built in functions to evaluate accuracy
+accuracy = accuracy_score(y, y_preds)  # use sklearn built in functions to evaluate accuracy
 
 print('accuracy:', round(accuracy, 3))
 ```
