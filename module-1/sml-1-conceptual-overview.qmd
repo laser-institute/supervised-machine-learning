@@ -54,7 +54,6 @@ This is from the overview of the module -- it is just a high-level overview of t
 The discussions that follow are optional, but they can be really rich.
 :::
 
-::: panel-tabset
 ## Getting Started
 
 -   Explain why are you interested in machine learning.
@@ -367,8 +366,6 @@ This is a fairly general point, but a helpful one and one that guides this and t
 :::
 
 # Discussion 2
-
-## Discussion Questions
 
 ::: panel-tabset
 ## Reflecting
