@@ -14,14 +14,9 @@ format:
     height: 1080
     margin: 0.05
     footer: <a href=https://www.go.ncsu.edu/laser-institute>go.ncsu.edu/laser-institute
+jupyter: python3
 ---
-```{r}
-#| include: false
-reticulate::py_install("pandas")
-reticulate::py_install("numpy")
-reticulate::py_install("statsmodels")
-reticulate::py_install("scikit-learn")
-```
+
 
 ```{r}
 # load all the relevant packages

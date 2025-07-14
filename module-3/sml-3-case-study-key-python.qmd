@@ -14,15 +14,8 @@ theme:
 editor: visual
 resource_files:
 - img/tidymodels.png
+jupyter: python3
 ---
-
-```{r}
-#| include: false
-reticulate::py_install("pandas")
-reticulate::py_install("numpy")
-reticulate::py_install("statsmodels")
-reticulate::py_install("scikit-learn")
-```
 
 ## 1. PREPARE
 
@@ -361,7 +354,7 @@ Here's where things get interesting: There are other statistics that have differ
 #### **👉 Your Turn** **⤵**
 
 |                                               |                |                                                                                                                                |                                                                                    |                      |
-|:---------------------------------------------:|:--------------:|:------------------------------------------------------------------------------------------------------------------------------:|:----------------------------------------------------------------------------------:|:--------------------:|
+|:----------:|:----------:|:----------------------:|:------------:|:----------:|
 |                 **Statistic**                 |  **Equation**  |                                                       **Interpretation**                                                       |                               **Question Answered**                                | **Statistic Values** |
 |         **Sensitivity** (AKA recall)          | TP / (TP + FN) |                       Proportion of those who are affected by a condition and correctly tested positive                        |        Out of all the actual positives, how many did we correctly predict?         |         .428         |
 |                **Specificity**                | TN / (FP + TN) |                     Proportion of those who are not affected by a condition and correctly tested negative;                     |        Out of all the actual negatives, how many did we correctly predict?         |         .687         |
@@ -373,7 +366,7 @@ So, what does this hard-won by output tell us? Let's interpret each statistic ca
 #### **👉 Your Turn** **⤵**
 
 |                                           |                                                                                                                                             |
-|-------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------|
+|------------------|------------------------------------------------------|
 | **Statistic**                             | **Substantive Interpretation**                                                                                                              |
 | Accuracy                                  |                                                                                                                                             |
 | Sensitivity (AKA recall)                  | The model correctly predicts about 2/3 of students who do not pass correctly (as not passing). This is pretty good, but it could be better. |
