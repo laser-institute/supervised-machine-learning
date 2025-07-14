@@ -6,8 +6,8 @@
 <script src="sml-3-code-along_files/libs/quarto-html/tippy.umd.min.js"></script>
 <link href="sml-3-code-along_files/libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="sml-3-code-along_files/libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="sml-3-code-along_files/libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.6.42">
+<link href="sml-3-code-along_files/libs/quarto-html/quarto-syntax-highlighting-29e2c20b02301cfff04dc8050bf30c7e.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.6.37">
 
   <title>Adding Metrics to a Workflow</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -93,7 +93,7 @@
     code span.vs { color: #20794d; } /* VerbatimString */
     code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
-  <link rel="stylesheet" href="sml-3-code-along_files/libs/revealjs/dist/theme/quarto-20331ff498b1e8c7644232975b91cc95.css">
+  <link rel="stylesheet" href="sml-3-code-along_files/libs/revealjs/dist/theme/quarto-d8833ab8e240571a9cd8beb07a4bd96e.css">
   <link href="sml-3-code-along_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="sml-3-code-along_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="sml-3-code-along_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -300,7 +300,113 @@
 
 <section id="code-along-python" class="title-slide slide level1 center">
 <h1>Code-along: python</h1>
-<p><strong>AR, separate into the same steps as above?</strong></p>
+<div class="panel-tabset">
+<ul id="tabset-2" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-2-1">0.</a></li><li><a href="#tabset-2-2">1.</a></li><li><a href="#tabset-2-3">2.</a></li><li><a href="#tabset-2-4">3.</a></li><li><a href="#tabset-2-5">4.</a></li><li><a href="#tabset-2-6">5.</a></li></ul>
+<div class="tab-content">
+<div id="tabset-2-1">
+<p><strong>Loading, setting up: create a .py file in /module-3 and run this code</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href=""></a><span class="im">import</span> pandas <span class="im">as</span> pd </span>
+<span id="cb8-2"><a href=""></a></span>
+<span id="cb8-3"><a href=""></a>pokemon_df <span class="op">=</span> pd.read_csv(<span class="st">"../module-2/data/pokemon-data.csv"</span>)</span>
+<span id="cb8-4"><a href=""></a>pokemon_df[<span class="st">'early_gen'</span>].value_counts()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>early_gen
+0    550
+1    251
+Name: count, dtype: int64</code></pre>
+</div>
+</div>
+</div>
+<div id="tabset-2-2">
+<p><strong>Train-test split the dataset</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href=""></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
+<span id="cb10-2"><a href=""></a>train_df, test_df <span class="op">=</span> train_test_split(pokemon_df, test_size<span class="op">=</span><span class="fl">0.3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-2-3">
+<p><strong>Specify the model formula and fit it to the training dataset</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href=""></a><span class="co"># predicting early generation status based on height, weight, and HP</span></span>
+<span id="cb11-2"><a href=""></a><span class="im">import</span> statsmodels.formula.api <span class="im">as</span> smf</span>
+<span id="cb11-3"><a href=""></a></span>
+<span id="cb11-4"><a href=""></a>model <span class="op">=</span> smf.logit(<span class="st">'early_gen ~ height_m + weight_kg + hp'</span>, data<span class="op">=</span>train_df).fit()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Optimization terminated successfully.
+         Current function value: 0.594744
+         Iterations 6</code></pre>
+</div>
+</div>
+</div>
+<div id="tabset-2-4">
+<p><strong>Make predictions on test dataset</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href=""></a>y_pred_prob <span class="op">=</span> model.predict(test_df)</span>
+<span id="cb13-2"><a href=""></a></span>
+<span id="cb13-3"><a href=""></a><span class="co"># Convert the predictions from a probability to a binary outcome</span></span>
+<span id="cb13-4"><a href=""></a>y_preds <span class="op">=</span> (y_pred_prob <span class="op">&gt;=</span> <span class="fl">0.5</span>).astype(<span class="bu">int</span>)</span>
+<span id="cb13-5"><a href=""></a></span>
+<span id="cb13-6"><a href=""></a>y_actual <span class="op">=</span> test_df[<span class="st">'early_gen'</span>].astype(<span class="bu">int</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-2-5">
+<p><strong>Calculate model metrics</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href=""></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> (</span>
+<span id="cb14-2"><a href=""></a>    accuracy_score,</span>
+<span id="cb14-3"><a href=""></a>    recall_score,</span>
+<span id="cb14-4"><a href=""></a>    precision_score,</span>
+<span id="cb14-5"><a href=""></a>    confusion_matrix,</span>
+<span id="cb14-6"><a href=""></a>    cohen_kappa_score</span>
+<span id="cb14-7"><a href=""></a>)</span>
+<span id="cb14-8"><a href=""></a></span>
+<span id="cb14-9"><a href=""></a><span class="co"># Metrics we'se seen: </span></span>
+<span id="cb14-10"><a href=""></a>accuracy <span class="op">=</span> accuracy_score(y_actual, y_preds)</span>
+<span id="cb14-11"><a href=""></a></span>
+<span id="cb14-12"><a href=""></a><span class="co"># New metrics</span></span>
+<span id="cb14-13"><a href=""></a>sensitivity <span class="op">=</span> recall_score(y_actual, y_preds, pos_label<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb14-14"><a href=""></a>precision <span class="op">=</span> precision_score(y_actual, y_preds, pos_label<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb14-15"><a href=""></a>kappa <span class="op">=</span> cohen_kappa_score(y_actual, y_preds)</span>
+<span id="cb14-16"><a href=""></a></span>
+<span id="cb14-17"><a href=""></a>true_negative, false_positive, false_negative, true_positive <span class="op">=</span> confusion_matrix(y_actual, y_preds).ravel()</span>
+<span id="cb14-18"><a href=""></a>specificity <span class="op">=</span> true_negative <span class="op">/</span> (true_negative <span class="op">+</span> false_positive)</span>
+<span id="cb14-19"><a href=""></a>negative_predictive_value <span class="op">=</span> true_negative <span class="op">/</span> (true_negative <span class="op">+</span> false_negative)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-2-6">
+<p><strong>Evaluate metrics</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href=""></a>metrics <span class="op">=</span> {</span>
+<span id="cb15-2"><a href=""></a>    <span class="st">"accuracy"</span>: accuracy,</span>
+<span id="cb15-3"><a href=""></a>    <span class="st">"sensitivity"</span>: sensitivity,</span>
+<span id="cb15-4"><a href=""></a>    <span class="st">"specificity"</span>: specificity,</span>
+<span id="cb15-5"><a href=""></a>    <span class="st">"precision"</span>: precision,</span>
+<span id="cb15-6"><a href=""></a>    <span class="st">"negative_predictive_value"</span>: negative_predictive_value,</span>
+<span id="cb15-7"><a href=""></a>    <span class="st">"cohen_kappa"</span>: kappa</span>
+<span id="cb15-8"><a href=""></a>}</span>
+<span id="cb15-9"><a href=""></a></span>
+<span id="cb15-10"><a href=""></a><span class="cf">for</span> key, value <span class="kw">in</span> metrics.items(): </span>
+<span id="cb15-11"><a href=""></a>    <span class="bu">print</span>(<span class="ss">f'</span><span class="sc">{</span>key<span class="sc">}</span><span class="ss">: </span><span class="sc">{</span><span class="bu">round</span>(value, <span class="dv">3</span>)<span class="sc">}</span><span class="ss">'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>accuracy: 0.68
+sensitivity: 0.013
+specificity: 1.0
+precision: 1.0
+negative_predictive_value: 0.679
+cohen_kappa: 0.017</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<section id="discussion" class="title-slide slide level1 center">
+<h1>Discussion</h1>
+<ul>
+<li>What are things you consider when choosing which metric(s) to interpret for a particular analysis?</li>
+</ul>
 <a href="https://www.go.ncsu.edu/laser-institute">
 </a></section><a href="https://www.go.ncsu.edu/laser-institute">
     </a></div><a href="https://www.go.ncsu.edu/laser-institute">

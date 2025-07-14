@@ -15,10 +15,17 @@ format:
     margin: 0.05
     footer: <a href=https://www.go.ncsu.edu/laser-institute>go.ncsu.edu/laser-institute
 ---
+```{r}
+#| include: false
+reticulate::py_install("pandas")
+reticulate::py_install("numpy")
+reticulate::py_install("statsmodels")
+reticulate::py_install("scikit-learn")
+```
 
 ```{r}
 # load all the relevant packages
-pacman::p_load(pacman, knitr, tidyverse, readxl)
+pacman::p_load(pacman, knitr, tidyverse, readxl, tidymodels)
 ```
 
 # Getting started
@@ -133,11 +140,103 @@ final_fit %>%
 
 # Code-along: python
 
-**AR, separate into the same steps as above?**
+::: {.panel-tabset}
+## 0.
+
+**Loading, setting up: create a .py file in /module-3 and run this code**
 
 ```{python}
+#| eval: false
+#| echo: true
+import pandas as pd 
 
+pokemon_df = pd.read_csv("../module-2/data/pokemon-data.csv")
+pokemon_df['early_gen'].value_counts()
 ```
+
+## 1.
+
+**Train-test split the dataset**
+```{python}
+#| eval: false
+#| echo: true
+from sklearn.model_selection import train_test_split
+train_df, test_df = train_test_split(pokemon_df, test_size=0.3)
+```
+
+## 2.
+
+**Specify the model formula and fit it to the training dataset**
+
+```{python}
+#| eval: false
+#| echo: true
+# predicting early generation status based on height, weight, and HP
+import statsmodels.formula.api as smf
+
+model = smf.logit('early_gen ~ height_m + weight_kg + hp', data=train_df).fit()
+```
+
+## 3.
+
+**Make predictions on test dataset**
+
+```{python}
+#| eval: false
+#| echo: true
+y_pred_prob = model.predict(test_df)
+
+# Convert the predictions from a probability to a binary outcome
+y_preds = (y_pred_prob >= 0.5).astype(int)
+
+y_actual = test_df['early_gen'].astype(int)
+```
+
+## 4.
+
+**Calculate model metrics**
+
+```{python}
+#| eval: false
+#| echo: true
+from sklearn.metrics import accuracy_score, recall_score, confusion_matrix, cohen_kappa_score
+
+# Metrics we'se seen: 
+accuracy = accuracy_score(y_actual, y_preds)
+
+# New metrics
+precision = precision_score(y_actual, y_preds, pos_label=1)
+kappa = cohen_kappa_score(y_actual, y_preds)
+
+# We'll learn more about the confusion matrix in the case study
+true_negative, false_positive, false_negative, true_positive = confusion_matrix(y_actual, y_preds).ravel()
+sensitivity = true_positive / (true_positive + false_negative)  # or the sklearn.metrics recall_score function
+specificity = true_negative / (true_negative + false_positive)
+negative_predictive_value = true_negative / (true_negative + false_negative)
+```
+
+
+## 5.
+
+**Evaluate metrics**
+
+```{python}
+#| eval: false
+#| echo: true
+metrics = {
+    "accuracy": accuracy,
+    "sensitivity": sensitivity,
+    "specificity": specificity,
+    "precision": precision,
+    "negative_predictive_value": negative_predictive_value,
+    "cohen_kappa": kappa
+}
+
+for key, value in metrics.items(): 
+    print(f'{key}: {round(value, 3)}')
+```
+
+:::
 
 # Discussion
 
