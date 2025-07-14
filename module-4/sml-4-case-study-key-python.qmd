@@ -15,16 +15,8 @@ editor: visual
 # bibliography: lit/references.bib
 resource_files:
 - img/tidymodels.png
+jupyter: python3
 ---
-
-```{r}
-#| include: false
-reticulate::py_install("pandas")
-reticulate::py_install("pyarrow")  # for parquet support
-reticulate::py_install("numpy")
-reticulate::py_install("statsmodels")
-reticulate::py_install("scikit-learn")
-```
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, eval = TRUE)

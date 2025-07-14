@@ -1,0 +1,887 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "---\n",
+        "title: 'Modeling Interactions Data with Boosted Trees'\n",
+        "subtitle: \"Case Study Key\"\n",
+        "author: \"LASER Institute\"\n",
+        "date: today \n",
+        "format:\n",
+        "  html:\n",
+        "    toc: true\n",
+        "    toc-depth: 4\n",
+        "    toc-location: right\n",
+        "theme:\n",
+        "  light: simplex\n",
+        "  dark: cyborg\n",
+        "editor: visual\n",
+        "# bibliography: lit/references.bib\n",
+        "resource_files:\n",
+        "- img/tidymodels.png\n",
+        "jupyter: python3\n",
+        "---\n",
+        "\n",
+        "```{r setup, include=FALSE}\n",
+        "knitr::opts_chunk$set(echo = TRUE, eval = TRUE)\n",
+        "```\n",
+        "\n",
+        "\n",
+        "## 1. PREPARE\n",
+        "\n",
+        "After interpreting our last model, it is easy to think we can do a little better. But, how? In this module, we'll do do things: 1) specify a more sophisticated model and 2) go deeper on some feature engineering.\n",
+        "\n",
+        "Our driving question for this module, then, is: **How much can we improve our model?** Looking back to our predictive model from module 3, we can see that our accuracy was okay. Can we improve on that? Let's dive in! First, we'll briefly review two key concepts for the module.\n",
+        "\n",
+        "### A more sophisticated model\n",
+        "\n",
+        "we attempt to improve our predictive performance by switching to a more complex model than the logistic regression we have been using–specifically, to a type of model that is based on decision trees – a boosted‑tree model. In short, this is one way we can improve our model's predictions.\n",
+        "\n",
+        "Boosted trees (gradient boosting) build a *sequence* of small \"decision trees\" (detailed in the conceptual overview), each one focusing on the records the previous trees struggled with. When tuned carefully (small learning rate, many trees) the ensemble can outperform other algorithms based on decision trees you may have heard of, like the random forest algorithm.\n",
+        "\n",
+        "### A little background (and some readings) on feature engineering\n",
+        "\n",
+        "Feature engineering is a rich topic in machine learning research, including in the learning analytics and educational data mining communities.\n",
+        "\n",
+        "Consider research on online learning and the work of Rodriguez et al. (2021). In this study, *digital trace data*, data generated through users' interactions with digital technologies. Optionally, review this paper -- specifically how they processed the \"clickstream\" data. As this paper illustrates, there is not one way to use such data.\n",
+        "\n",
+        "> Rodriguez, F., Lee, H. R., Rutherford, T., Fischer, C., Potma, E., & Warschauer, M. (2021, April). Using clickstream data mining techniques to understand and support first-generation college students in an online chemistry course. In *LAK21: 11th International Learning Analytics and Knowledge Conference* (pp. 313-322).\n",
+        "\n",
+        "Notably, the authors took several steps to prepare the data so that it could be validly interpreted. The same is true here in the context of machine learning. In a different context, the work of Gobert et al. (2013) is a great example of using data from educational simulations. Optionally review this paper, too, focused on their use of a technique they called *replay tagging* to conduct feature engineering.\n",
+        "\n",
+        "> Gobert, J. D., Sao Pedro, M., Raziuddin, J., & Baker, R. S. (2013). From log files to assessment metrics: Measuring students' science inquiry skills using educational data mining. *Journal of the Learning Sciences, 22*(4), 521-563.\n",
+        "\n",
+        "Even after feature engineering, machine learning approaches can often (but not always) be improved by choosing a more sophisticated model type. Note how we used a regression model in the first two case studies; here, we explore a considerably more sophisticated model, a boosted tree. Feature engineering and choosing a more sophisticated model adds some complexity to the modeling. As we have discussed, it is easy to bias our results if we repeatedly check the performance of *different model fits* with the same test data. Cross-validation is one commonly used solution for this problem.\n",
+        "\n",
+        "## 2. WRANGLE\n",
+        "\n",
+        "## Step 0: Loading and setting up\n",
+        "\n",
+        "First, let's load the packages we'll use---the familiar pandas and several others focused on modeling.\n",
+        "\n",
+        "#### **👉 Your Turn** **⤵**\n",
+        "\n",
+        "Add to the chunk below code to load:\n",
+        "\n",
+        "-   **pandas** for data wrangling (as \"pd\")\n",
+        "-   **matplotlib.pyplot** (as \"plt\")\n",
+        "\n",
+        "Load these with the import function, per usual.\n"
+      ],
+      "id": "d29e4a74"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "import pandas as pd\n",
+        "import matplotlib.pyplot as plt"
+      ],
+      "id": "3ec90ec1",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Next we'll load a few more libraries for modeling and analysis.\n"
+      ],
+      "id": "c4054e28"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "import statsmodels.formula.api as smf\n",
+        "\n",
+        "from sklearn.model_selection import StratifiedKFold, cross_validate, train_test_split\n",
+        "from sklearn.pipeline import Pipeline\n",
+        "from sklearn.impute import KNNImputer, SimpleImputer\n",
+        "from sklearn.ensemble import GradientBoostingClassifier\n",
+        "from sklearn.metrics import accuracy_score, precision_score, confusion_matrix, cohen_kappa_score, make_scorer\n",
+        "from sklearn.compose import ColumnTransformer\n",
+        "from sklearn.preprocessing import OneHotEncoder, StandardScaler"
+      ],
+      "id": "ba00a0da",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Let's get started! We have to do the same processing we did in the third module to obtain cut-off dates. The purpose of this is to train the model on data from the first one-third of the class, with the reasoning being this is a good time to intervene—-far enough into the class to make an appreciable impact, but not too late to have a limited chance of being able to change students' trajectory in the class. We'll repeat the procedure we carried out with the assessments data: calculating a cut-off for each class and then filtering the data based upon this cut-off.\n",
+        "\n",
+        "First, though, we need to load *a really big file* with all of the interactions data — one with interactions (or log-trace) data. In the OULAD documentation, this is called the VLE (virtual learning environment) data source. Please review the description of the variables in the *studentVLE* and *VLE* sources (which are joined together for this module) [here](https://analyse.kmi.open.ac.uk/open_dataset#description).\n",
+        "\n",
+        "The data is in a file named `oulad-interactions.parquet` file. You’ll find this in the `data` folder. Why this format? Parquet is a modern, columnar storage format that is highly efficient for large datasets. It allows for compressed storage and faster reading, especially when you only need a subset of columns. If we had stored this same data in a plain-text format like CSV, it would have taken up significantly more space — potentially too much to include in this lab's repository at all.\n",
+        "\n",
+        "The tradeoff is that Parquet files aren’t immediately human-readable and can’t be opened directly in Excel. However, for programmatic analysis with tools like Python and Pandas, it’s an excellent option: compact, fast, and well-suited for large-scale data.\n",
+        "\n",
+        "Now let’s load it:\n"
+      ],
+      "id": "9112d4b8"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "interactions_df = pd.read_parquet(\"data/oulad-interactions.parquet\")"
+      ],
+      "id": "d69dc0ed",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "We can see that this file is indeed large - more than 10 million rows, with data on the number of *clicks* (`sum_clicks)` a student in a particular offering of a course makes with a particular component of the course (`id_site`) and the type of that component (`activity_type`). at a specific time.\n",
+        "\n",
+        "Since you did something similar in the last module, you'll just run the code in the chunk below to calculate and filter the data based on a cut-off point (and associated date).\n"
+      ],
+      "id": "9c837007"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "assessments_df = pd.read_csv(\"data/oulad-assessments.csv\")\n",
+        "\n",
+        "code_module_dates_df = (\n",
+        "    assessments_df\n",
+        "    .groupby(['code_module', 'code_presentation'])['date']\n",
+        "    .quantile(0.25)\n",
+        "    .reset_index(name='quantile_cutoff_date')  # this just cleans up the naming of the summary statistic\n",
+        ")\n",
+        "\n",
+        "interactions_joined_df = pd.merge(\n",
+        "    left=interactions_df, \n",
+        "    right=code_module_dates_df,\n",
+        "    on=['code_module', 'code_presentation'],\n",
+        "    how='left'\n",
+        ")\n",
+        "\n",
+        "interactions_filtered_df = interactions_joined_df.query('date < quantile_cutoff_date')"
+      ],
+      "id": "7e9578ec",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "#### **👉 Your Turn** **⤵**\n",
+        "\n",
+        "Now, use the `head()` method on the filtered data set you just created.\n"
+      ],
+      "id": "9770542d"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "interactions_filtered_df.head()"
+      ],
+      "id": "c09f6d4b",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "What do you notice about this data in relation to the original data set? You may wish to `info()` (or inspect in another way) the not filtered interactions data, too. Share a few notes on what you observe about these:\n",
+        "\n",
+        "-   \n",
+        "\n",
+        "-   \n",
+        "\n",
+        "We will not only use this (filtered) interactions data, but also data on students and assessments. Here, we'll be expeditious by loading a file we created in the last module - `oulad-students_and_assessments.csv`. That is in this module's data folder; please load this in with `read_csv()`, as below.\n",
+        "\n",
+        "#### **👉 Your Turn** **⤵**\n"
+      ],
+      "id": "364d2656"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "students_and_assessments_df = pd.read_csv(\"data/oulad-students-and-assessments.csv\")"
+      ],
+      "id": "90ec60ed",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## 3. EXPLORE\n",
+        "\n",
+        "#### **👉 Your Turn** **⤵**\n",
+        "\n",
+        "*First*, use the `value_counts()` method on the `activity_type` variable in your filtered interactions data\n"
+      ],
+      "id": "df643e58"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "interactions_filtered_df['activity_type'].value_counts()"
+      ],
+      "id": "e857dd67",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "What does this tell you? Consulting the codebook and your output, please add at least two notes on what you are noticing:\n",
+        "\n",
+        "-   The most common activity type is \"forumng\" with over 10 million interactions\n",
+        "-   Other common activities include subpage, oucontent, homepage, resource, and url interactions\n",
+        "\n",
+        "#### **👉 Your Turn** **⤵**\n",
+        "\n",
+        "*Second*, please create a histogram of the `date` variable.\n"
+      ],
+      "id": "8a031b1a"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "plt.hist(interactions_filtered_df['date'], edgecolor='white')\n",
+        "plt.xlabel('Date')\n",
+        "plt.ylabel('Count')\n",
+        "plt.title('Histogram of Interactions by Date')\n",
+        "plt.show()"
+      ],
+      "id": "f3e4d8fb",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "What does this tell you? Add one or more notes:\n",
+        "\n",
+        "-   The distribution shows interaction patterns over time, with some peaks and valleys suggesting different activity levels throughout the course\n",
+        "\n",
+        "#### **👉 Your Turn** **⤵**\n",
+        "\n",
+        "*Third*, please conduct one other data exploration step of your choosing. Options include creating simple graphs or calculating descriptive, summary statistics.\n"
+      ],
+      "id": "658057b3"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "interactions_filtered_df['sum_click'].describe().round()"
+      ],
+      "id": "ad6c4792",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "We're ready to proceed to engineering some features with the interactions data. For the present time, we'll focus on the `sum_click` variable, which tells us how many times students clicked on a resource for a given date.\n",
+        "\n",
+        "How can we create a feature with `sum_click`? Think back to our discussion in the presentation; we have *many* options for working with such time series data. Perhaps the most simple is to count the clicks. Please summarize the number of clicks for each student (specific to a single course). This means you will need to group your data by `id_student`, `code_module`, and `code_presentation`, and then create a summary variable. Assign the resulting output the name `interactions_summarized_df`. You may find the documentation for `groupby()` and `agg()` to be helpful. That is available [here](https://pandas.pydata.org/pandas-docs/version/0.22/generated/pandas.core.groupby.DataFrameGroupBy.agg.html). A useful hint is to use named variables in the `agg` function; e.g., `agg(sum_clicks=('sum_click', 'sum'), ...)` to avoid renaming columns in a later step.\n",
+        "\n",
+        "#### **👉 Your Turn** **⤵**\n"
+      ],
+      "id": "a30d6fa7"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "interactions_summarized_df = (\n",
+        "    interactions_filtered_df\n",
+        "    .groupby(['id_student', 'code_module', 'code_presentation'], as_index=False)\n",
+        "    .agg(sum_clicks=('sum_click', 'sum'))\n",
+        ")"
+      ],
+      "id": "d02cee0b",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "#### **👉 Your Turn** **⤵**\n",
+        "\n",
+        "How many times did students click? Let's create a histogram to see. Please use `plt.hist` to visualize the distribution of the `sum_clicks` variable you just created. Turn to the [documentation](https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.hist.html) if you need a pointer!\n"
+      ],
+      "id": "cb332a34"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "plt.hist(interactions_summarized_df['sum_clicks'], edgecolor='white', bins=25)\n",
+        "plt.xlabel('Clicks')\n",
+        "plt.ylabel('Count')\n",
+        "plt.show()"
+      ],
+      "id": "281a51b3",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "This is a good start - we've created our first feature based upon the log data, `sum_clicks`! What are some other features we can add? An affordance of using the `agg()` function in Python is we can create multiple summary statistics at once. Let's also calculate the standard deviation of the number of clicks as well as the mean. Please copy the code you wrote above into the code chunk below and then add these two additional summary statistics.\n",
+        "\n",
+        "#### **👉 Your Turn** **⤵**\n"
+      ],
+      "id": "d9affca4"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "interactions_summarized_df = (\n",
+        "    interactions_filtered_df\n",
+        "    .groupby(['id_student', 'code_module', 'code_presentation'], as_index=False)\n",
+        "    .agg(sum_clicks=('sum_click', 'sum'),\n",
+        "        std_clicks=('sum_click', 'std'),\n",
+        "        mean_clicks=('sum_click', 'mean'))\n",
+        "        )"
+      ],
+      "id": "47fb2dec",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "We'll take one last step here -- creating individual *slopes* of students' clicks over time. This code is a bit more involved, and so is annotated for you below; feel free to modify and re-use this.\n",
+        "\n",
+        "First, we use a custom function that can deal with cases where the fitting of the slopes fails (e.g., for students with only a single data point, or some other unanticipated issue with the model estimation).\n"
+      ],
+      "id": "cf982e4c"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "def get_slope_and_intercept(data: pd.DataFrame) -> pd.Series:  # These extra bits of info (e.g., \"-> pd.Series:\") are type hints -- a useful, optional tool that tells the function's user what comes in and goes out. \n",
+        "    try:\n",
+        "        # Fit a linear model with sum_click as the response and date as the predictor\n",
+        "        model = smf.ols('sum_click ~ date', data=data).fit()\n",
+        "        # Extract the model parameters for the Intercept and the slope of the date predictor\n",
+        "        return pd.Series({\n",
+        "            'intercept': model.params['Intercept'],\n",
+        "            'slope': model.params['date']\n",
+        "        })\n",
+        "    except Exception:\n",
+        "        # When fitting a slope fails, return an empty Pandas Series\n",
+        "        return pd.Series({'intercept': None, 'slope': None})"
+      ],
+      "id": "af965580",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "**Note: this next step may take up to a minute or so! Please feel free to relax!**\n"
+      ],
+      "id": "fe031a6a"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "model_params_df = (\n",
+        "    interactions_filtered_df\n",
+        "    .groupby(['id_student', 'code_module', 'code_presentation'])\n",
+        "    .apply(get_slope_and_intercept)\n",
+        "    .reset_index()\n",
+        ")\n",
+        "model_params_df = model_params_df.round(4)  # Reduce the precision of the slopes and intercepts"
+      ],
+      "id": "e64fca78",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Let's use `pd.merge()` to left join the slopes and intercepts into the `interactions_summarized_df` feature dataset. Name the new DataFrame `interactions_summarized_and_slopes_df`.\n",
+        "\n",
+        "#### **👉 Your Turn** **⤵**\n"
+      ],
+      "id": "ab1a92b0"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "interactions_summarized_and_slopes_df = pd.merge(\n",
+        "    interactions_summarized_df,\n",
+        "    model_params_df,\n",
+        "    on=['id_student', 'code_module', 'code_presentation'],\n",
+        "    how='left'\n",
+        ")"
+      ],
+      "id": "b083c406",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Let's join together all of our features into a single file. Please use `pd.merge()` to left join `students_and_assessments_df` and `interactions_summarized_and_slopes_df`, assigning the resulting output the name `students_assessments_and_interactions_df`.\n",
+        "\n",
+        "#### **👉 Your Turn** **⤵**\n"
+      ],
+      "id": "59b85f04"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "students_assessments_and_interactions_df = pd.merge(\n",
+        "    students_and_assessments_df,\n",
+        "    interactions_summarized_and_slopes_df,\n",
+        "    on=['id_student', 'code_module', 'code_presentation'],\n",
+        "    how='left'\n",
+        ")"
+      ],
+      "id": "87d36faf",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Lots of joining! Sometimes, the hardest part of complex analyses lies in the preparation (and joining) of the data.\n",
+        "\n",
+        "Let's take a look at a few rows of your final dataset. Use the `describe()` function. If the numbers are in scientific notation, consider adding the `round` function to your call; e.g., `.round(2)`.\n",
+        "\n",
+        "#### **👉 Your Turn** **⤵**\n"
+      ],
+      "id": "12f2d14a"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "students_assessments_and_interactions_df.describe().round(2)"
+      ],
+      "id": "2a902dd0",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "We're now ready to model!\n",
+        "\n",
+        "## 4. MODEL\n",
+        "\n",
+        "### Step 1. Split data\n",
+        "\n",
+        "We'll follow the same steps we followed in modules #2 and #3, here. One difference - we'll use `students_assessments_and_interactions_df` instead of the data frame we used in those modules. Please port over the code you used in those modules here, changing the name of the data frame to the one we are now using.\n",
+        "\n",
+        "We discuss this first step minimally as we have now carried out a step very similar to this in LL1 and LL2; return to the case study for those (especially LL1) for more on data splitting.\n",
+        "\n",
+        "#### **👉 Your Turn** **⤵**\n"
+      ],
+      "id": "b8ff6747"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "train_df, test_df = train_test_split(\n",
+        "    students_assessments_and_interactions_df, \n",
+        "    test_size=0.25, \n",
+        "    stratify=students_assessments_and_interactions_df['pass'], \n",
+        "    random_state=20240712,\n",
+        ")\n",
+        "\n",
+        "X_train = train_df.drop(columns=['pass'])  # Keeps all columns except our outcome column 'pass'\n",
+        "y_train = train_df['pass']  # Isolates just the outcome column\n",
+        "\n",
+        "X_test = test_df.drop(columns=['pass'])\n",
+        "y_test = test_df['pass']"
+      ],
+      "id": "8aa86c30",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "There is a key difference that is next. In this step. we'll further process `` `X_train` ``, creating different subsets of the data, or folds of the data, that we can use to fit our model multiple times. The first step is creating a `StratifiedKFold` object that we can use later in a process called cross-validation.\n"
+      ],
+      "id": "5838eedf"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=22790)"
+      ],
+      "id": "913c24fc",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "How does this work? `X_train` is sampled as many time as we set the `n_splits` parameter. What does this mean in practice? It means that we split our data into 5 equally sized “folds.” Each fold contains a mix of examples that mirrors the overall balance of our outcome variable (because we're using **stratified** folds).\n",
+        "\n",
+        "During cross-validation, our model will train on 4 of the folds and test on the 1 remaining fold**.** This process is repeated 5 times, each time rotating which fold is used as the test set.\n",
+        "\n",
+        "### Step 2: Engineer features and build preprocessing pipeline\n",
+        "\n",
+        "Here, we'll carry out several feature engineering steps as part of a scikit-learn `Pipeline`.\n",
+        "\n",
+        "-   [StandardScaler](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html): normalizes numeric data to have a standard deviation of one and a mean of zero\n",
+        "-   [SimpleImputer](https://scikit-learn.org/stable/modules/generated/sklearn.impute.SimpleImputer.html) and [KNNImputer](https://scikit-learn.org/stable/modules/generated/sklearn.impute.KNNImputer.html): impute missing values using a simple strategy or the nearest neighbors method\n",
+        "-   [OneHotEncoder](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.OneHotEncoder.html): convert nominal data (e.g. character or factors) into one or more numeric binary model terms for the levels of the original data.\n",
+        "\n",
+        "We will use all four of these in making a `Pipeline` for both categorical data and numerical data.\n"
+      ],
+      "id": "254fa7ad"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "categorical_transformer = Pipeline(steps=[\n",
+        "    (\"imputer\", SimpleImputer(strategy='most_frequent')),\n",
+        "    (\"onehot\", OneHotEncoder(drop=\"first\", handle_unknown=\"ignore\")),\n",
+        "])\n",
+        "\n",
+        "numerical_transformer = Pipeline(steps=[\n",
+        "    (\"imputer\", KNNImputer(n_neighbors=5)),\n",
+        "    (\"scaler\", StandardScaler()),\n",
+        "])"
+      ],
+      "id": "fb928460",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "#### **👉 Your Turn** **⤵**\n",
+        "\n",
+        "Following the pattern from the Module-3 case study, combine the categorical and numerical columns into one preprocessor with the `ColumnTransformer`.\n",
+        "\n",
+        "The categorical features we will use in the model are: `disability`, `gender`, and `code_module`\n",
+        "\n",
+        "The numerical features are: `date_registration`, `mean_weighted_score`, `sum_clicks`, `std_clicks`, `mean_clicks`, `intercept` and `slope`\n"
+      ],
+      "id": "9875b458"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "categorical_features = [\n",
+        "    'disability',\n",
+        "    'gender',\n",
+        "    'code_module',\n",
+        "]\n",
+        "\n",
+        "numerical_features = [\n",
+        "    'date_registration',\n",
+        "    'mean_weighted_score',\n",
+        "    'sum_clicks',\n",
+        "    'std_clicks',\n",
+        "    'mean_clicks',\n",
+        "    'intercept',\n",
+        "    'slope',\n",
+        "]\n",
+        "\n",
+        "preprocessor = ColumnTransformer(transformers=[\n",
+        "    (\"cat\", categorical_transformer, categorical_features),  \n",
+        "    (\"num\", numerical_transformer, numerical_features)\n",
+        "])"
+      ],
+      "id": "cc178aaf",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "### Step 3: Specify the model and complete the Pipeline\n",
+        "\n",
+        "#### **👉 Your Turn** **⤵**\n",
+        "\n",
+        "Then, please *add the preprocessor to the scikit-learn `GradientBoostingClassifier` in a final `Pipeline` named `model_pipeline`*. We will start with some good baseline parameters for the classifier: `learning_rate=0.05, n_estimators=1000, max_depth=4`.\n"
+      ],
+      "id": "40069e2b"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "model_pipeline = Pipeline(steps=[\n",
+        "    (\"preprocessor\", preprocessor),\n",
+        "    (\"model\", GradientBoostingClassifier(learning_rate=0.05, n_estimators=1000, max_depth=4))\n",
+        "])"
+      ],
+      "id": "6e87d437",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "**Why those defaults?** **n_estimators**: many small steps (1000) **learning_rate**: 0.05 (smaller → less variance needs more trees) **max_depth**: shallow (4) to avoid over‑fitting\n",
+        "\n",
+        "### Step 4: Fit model\n",
+        "\n",
+        "In this step, we use the `cross_validate` function (instead of `cross_val_score`, which was used in the code-along) because it allows us to evaluate multiple performance metrics simultaneously during cross-validation. While `cross_val_score` is simpler and useful when you're only interested in a single scoring metric (like accuracy), it becomes limiting when you need a broader view of model performance. The trade-off is that `cross_validate` produces a more complex output, which often requires extra steps to process and interpret.\n"
+      ],
+      "id": "471ee0e6"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "scoring_methods = {\n",
+        "    'accuracy': 'accuracy', \n",
+        "    'precision': 'precision',\n",
+        "    'recall': 'recall', \n",
+        "    'cohen_kappa_score': make_scorer(cohen_kappa_score),\n",
+        "}\n",
+        "\n",
+        "results = cross_validate(model_pipeline, X_train, y_train, cv=skf, scoring=scoring_methods)\n",
+        "results_mean = pd.DataFrame(results).mean() # extra output processing"
+      ],
+      "id": "596996e1",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Note that you have fit as many models as the value for `n_splits` that you specified earlier. So, this may take some time. Take a walk, grab a snack, or make a cup of tea!\n",
+        "\n",
+        "#### **👉 Your Turn** **⤵**\n",
+        "\n",
+        "Ok, your model run is complete — let’s take a look at the results.\n",
+        "\n",
+        "Start by viewing the full output from cross_validate, which is stored in the results dictionary. This shows the metric scores (and optional timing info) for each fold of cross-validation. Type `results` below.\n"
+      ],
+      "id": "05f505e7"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "results"
+      ],
+      "id": "794f7da7",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Then, check the `results_mean` object to see the average value of each metric across all folds. This provides a quick summary of overall model performance:\n"
+      ],
+      "id": "3337fb91"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "results_mean"
+      ],
+      "id": "f5a1d133",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "We noted earlier that we may introduce bias when we evaluate different models against the same training data. The benefit of using the multiple folds - and fitting multiple models - is we can make changes to our features or model. Thus, if we decide to add a new feature, we can run the above steps, without concern about biasing our interpretation of how accurate our model is.\n",
+        "\n",
+        "That is, we can be unconcerned about inadvertently introducing bias until we reach the last step - fitting our last model. We can do that using the familiar `fit()` function.\n"
+      ],
+      "id": "3c8cca3a"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "model_pipeline.fit(X_train, y_train)"
+      ],
+      "id": "07ee121f",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "### Step 5: Interpret accuracy\n",
+        "\n",
+        "Finally, let's calculate the metrics for our final fit. *These* are the values that you should report as final. First, we will calculate predictions on the test dataset.\n"
+      ],
+      "id": "e5ee5e23"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "y_preds = model_pipeline.predict(X_test)"
+      ],
+      "id": "c8695a15",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Here we can use the `calculate_metrics` method from previous case studies.\n"
+      ],
+      "id": "f55f5bec"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "def calculate_metrics(y_actual, y_preds) -> dict: \n",
+        "    \"\"\"Calculates a suite of model metrics and returns the values as a dictionary\"\"\"\n",
+        "    accuracy = accuracy_score(y_actual, y_preds)\n",
+        "    precision = precision_score(y_actual, y_preds, pos_label=1)\n",
+        "    kappa = cohen_kappa_score(y_actual, y_preds)\n",
+        "    \n",
+        "    true_negative, false_positive, false_negative, true_positive = confusion_matrix(y_actual, y_preds).ravel()\n",
+        "    \n",
+        "    sensitivity = true_positive / (true_positive + false_negative)  # or the sklearn.metrics recall_score function\n",
+        "    specificity = true_negative / (true_negative + false_positive)\n",
+        "    \n",
+        "    negative_predictive_value = true_negative / (true_negative + false_negative)\n",
+        "\n",
+        "    return {\n",
+        "        \"accuracy\": accuracy,\n",
+        "        \"sensitivity\": sensitivity,\n",
+        "        \"specificity\": specificity,\n",
+        "        \"precision\": precision,\n",
+        "        \"negative_predictive_value\": negative_predictive_value,\n",
+        "        \"cohen_kappa\": kappa\n",
+        "    }"
+      ],
+      "id": "f8089213",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Apply the `calculate_metrics` function to the predictions (`y_pred`) and the actual values in the test data (`y_test`):\n",
+        "\n",
+        "#### **👉 Your Turn** **⤵**\n"
+      ],
+      "id": "ae736ddc"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "calculate_metrics(y_actual=y_test, y_preds=y_preds)"
+      ],
+      "id": "1cd90f5e",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## 5. COMMUNICATE\n",
+        "\n",
+        "Another benefit of a boosted tree model is we can interpret variable importance metrics. Do that here with the following code.\n"
+      ],
+      "id": "3f26877b"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "model = model_pipeline.named_steps['model']\n",
+        "importances = model.feature_importances_\n",
+        "\n",
+        "# Get categorical and numerical names from the fitted preprocessor\n",
+        "preprocessor = model_pipeline.named_steps['preprocessor']\n",
+        "categorical_names = preprocessor.named_transformers_['cat'] .named_steps['onehot'].get_feature_names_out(categorical_features)\n",
+        "numerical_names = numerical_features\n",
+        "all_feature_names = list(categorical_names) + numerical_names\n",
+        "\n",
+        "# Build output Series\n",
+        "feature_importances = pd.Series(importances, index=all_feature_names)\n",
+        "print(feature_importances.sort_values(ascending=False))"
+      ],
+      "id": "f77b3b27",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Please add two or more notes on what you notice about which variables (features) are important, focused on what you would say to someone in your audience about what the important variables in your model were.\n",
+        "\n",
+        "-   The mean weighted score remains the most important predictor, similar to the random forest model\n",
+        "-   The interaction features (sum_clicks, mean_clicks, etc.) show varying levels of importance, indicating that student engagement patterns do contribute to predicting success\n",
+        "\n",
+        "### 🧶 Knit & Check ✅\n",
+        "\n",
+        "Congratulations - you've completed this case study! Consider moving on to the badge activity next."
+      ],
+      "id": "d97b55ac"
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "name": "python3",
+      "language": "python",
+      "display_name": "Python 3 (ipykernel)",
+      "path": "/Library/Frameworks/Python.framework/Versions/3.12/share/jupyter/kernels/python3"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 5
+}

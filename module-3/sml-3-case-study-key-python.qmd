@@ -360,26 +360,26 @@ Here's where things get interesting: There are other statistics that have differ
 
 #### **👉 Your Turn** **⤵**
 
-|  |  |  |  |  |
-|:-------------:|:-------------:|:-------------:|:-------------:|:-------------:|
-| **Statistic** | **Equation** | **Interpretation** | **Question Answered** | **Statistic Values** |
-| **Sensitivity** (AKA recall) | TP / (TP + FN) | Proportion of those who are affected by a condition and correctly tested positive | Out of all the actual positives, how many did we correctly predict? | .428 |
-| **Specificity** | TN / (FP + TN) | Proportion of those who are not affected by a condition and correctly tested negative; | Out of all the actual negatives, how many did we correctly predict? | .687 |
-| **Precision** (AKA Positive Predictive Value) | TP / (TP + FP) | Proportion of those who tested positive who are affected by a condition | Out of all the instances we predicted as positive, how many are actually positive? | .581 |
-| **Negative Predictive Value** | TN / (TN + FN) | Proportion of those who tested positive who are not affected by a condition; *the probability that a negative test is correct* | Out of all the instances we predicted as negative, how many are actually negative? | .541 |
+|                                               |                |                                                                                                                                |                                                                                    |                      |
+|:---------------------------------------------:|:--------------:|:------------------------------------------------------------------------------------------------------------------------------:|:----------------------------------------------------------------------------------:|:--------------------:|
+|                 **Statistic**                 |  **Equation**  |                                                       **Interpretation**                                                       |                               **Question Answered**                                | **Statistic Values** |
+|         **Sensitivity** (AKA recall)          | TP / (TP + FN) |                       Proportion of those who are affected by a condition and correctly tested positive                        |        Out of all the actual positives, how many did we correctly predict?         |         .428         |
+|                **Specificity**                | TN / (FP + TN) |                     Proportion of those who are not affected by a condition and correctly tested negative;                     |        Out of all the actual negatives, how many did we correctly predict?         |         .687         |
+| **Precision** (AKA Positive Predictive Value) | TP / (TP + FP) |                            Proportion of those who tested positive who are affected by a condition                             | Out of all the instances we predicted as positive, how many are actually positive? |         .581         |
+|         **Negative Predictive Value**         | TN / (TN + FN) | Proportion of those who tested positive who are not affected by a condition; *the probability that a negative test is correct* | Out of all the instances we predicted as negative, how many are actually negative? |         .541         |
 
 So, what does this hard-won by output tell us? Let's interpret each statistic carefully in the table below. Please add the value and provide a *substantive interpretation*. One is provided to get you started.
 
 #### **👉 Your Turn** **⤵**
 
-|  |  |
-|------------------------------------|------------------------------------|
-| **Statistic** | **Substantive Interpretation** |
-| Accuracy |  |
-| Sensitivity (AKA recall) | The model correctly predicts about 2/3 of students who do not pass correctly (as not passing). This is pretty good, but it could be better. |
-| Specificity |  |
-| Precision (AKA Positive Predictive Value) |  |
-| Negative Predictive Value |  |
+|                                           |                                                                                                                                             |
+|-------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------|
+| **Statistic**                             | **Substantive Interpretation**                                                                                                              |
+| Accuracy                                  |                                                                                                                                             |
+| Sensitivity (AKA recall)                  | The model correctly predicts about 2/3 of students who do not pass correctly (as not passing). This is pretty good, but it could be better. |
+| Specificity                               |                                                                                                                                             |
+| Precision (AKA Positive Predictive Value) |                                                                                                                                             |
+| Negative Predictive Value                 |                                                                                                                                             |
 
 This process might suggest to you how a "good" model isn't necessarily one that is the most accurate, but instead is one that has good values for statistics that matter given our particular question and context.
 

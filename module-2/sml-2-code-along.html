@@ -6,8 +6,8 @@
 <script src="sml-2-code-along_files/libs/quarto-html/tippy.umd.min.js"></script>
 <link href="sml-2-code-along_files/libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="sml-2-code-along_files/libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="sml-2-code-along_files/libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.6.42">
+<link href="sml-2-code-along_files/libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.6.40">
 
   <title>How to Split Data into Training and Testing Sets</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -93,7 +93,7 @@
     code span.vs { color: #20794d; } /* VerbatimString */
     code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
-  <link rel="stylesheet" href="sml-2-code-along_files/libs/revealjs/dist/theme/quarto-20331ff498b1e8c7644232975b91cc95.css">
+  <link rel="stylesheet" href="sml-2-code-along_files/libs/revealjs/dist/theme/quarto-d8833ab8e240571a9cd8beb07a4bd96e.css">
   <link href="sml-2-code-along_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="sml-2-code-along_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="sml-2-code-along_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -284,8 +284,44 @@
 </div>
 </section>
 <section id="python-code" class="slide level2">
-<h2>python code</h2>
-<p><em>AR edit</em></p>
+<h2>Python Code</h2>
+<div class="panel-tabset">
+<ul id="tabset-2" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-2-1">0</a></li><li><a href="#tabset-2-2">1</a></li><li><a href="#tabset-2-3">2</a></li><li><a href="#tabset-2-4">3</a></li></ul>
+<div class="tab-content">
+<div id="tabset-2-1">
+<p><strong>Data loading, setting up</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href=""></a><span class="im">import</span> pandas <span class="im">as</span> pd </span>
+<span id="cb7-2"><a href=""></a></span>
+<span id="cb7-3"><a href=""></a>pokemon_df <span class="op">=</span> pd.read_csv(<span class="st">'data/pokemon-data.csv'</span>)</span>
+<span id="cb7-4"><a href=""></a></span>
+<span id="cb7-5"><a href=""></a>pokemon_df.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-2-2">
+<p><strong>Split data</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href=""></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split  <span class="co"># import the built in train-test split tool from sci-kit learn.</span></span>
+<span id="cb8-2"><a href=""></a></span>
+<span id="cb8-3"><a href=""></a>train_df, test_df <span class="op">=</span> train_test_split(pokemon_df, test_size<span class="op">=</span><span class="fl">0.2</span>, random_state<span class="op">=</span><span class="dv">42</span>)  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-2-3">
+<p><strong>Fit model</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href=""></a><span class="im">import</span> statsmodels.formula.api <span class="im">as</span> smf</span>
+<span id="cb9-2"><a href=""></a></span>
+<span id="cb9-3"><a href=""></a>model <span class="op">=</span> smf.logit(<span class="st">'early_gen ~ height_m + weight_kg + hp'</span>, data<span class="op">=</span>train_df).fit()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-2-4">
+<p><strong>evaluate model</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href=""></a>model.summary()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
 </section></section>
 <section id="discussion" class="title-slide slide level1 center">
 <h1>Discussion</h1>

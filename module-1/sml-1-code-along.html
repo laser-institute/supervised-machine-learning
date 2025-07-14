@@ -224,10 +224,10 @@
 <div style="font-size: 60%;">
 <table class="caption-top">
 <colgroup>
-<col style="width: 10%">
-<col style="width: 12%">
-<col style="width: 58%">
-<col style="width: 18%">
+<col style="width: 17%">
+<col style="width: 17%">
+<col style="width: 47%">
+<col style="width: 17%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -322,6 +322,12 @@
 <td>Pokémon’s approximate weight (units vary by dataset, often kilograms).</td>
 <td>6.0, 90.5, 210.0</td>
 </tr>
+<tr class="odd">
+<td><strong>early_gen</strong></td>
+<td>Numeric</td>
+<td>Whether or not a Pokemon is 1st or 2nd gen</td>
+<td>1, 0</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -343,9 +349,9 @@
 </div>
 </div>
 <div id="tabset-1-2">
-<p><strong>Fit model – we’ll just use three variables to begin with a very simple model - how do gp, speed, and attack relate to legendary status</strong></p>
+<p><strong>Fit model – we’ll just use three variables to begin with a very simple model - how do several variables relate to a Pokemon being 1st or 2nd gen relative to 3rd-6th</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href=""></a>m1 <span class="ot">&lt;-</span> <span class="fu">glm</span>(is_legendary <span class="sc">~</span> hp <span class="sc">+</span> speed <span class="sc">+</span> sp_attack,</span>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href=""></a>m1 <span class="ot">&lt;-</span> <span class="fu">glm</span>(early_gen <span class="sc">~</span> height_m <span class="sc">+</span> weight_kg <span class="sc">+</span> hp,</span>
 <span id="cb2-2"><a href=""></a>          <span class="at">data =</span> pokemon,</span>
 <span id="cb2-3"><a href=""></a>          <span class="at">family =</span> <span class="st">"binomial"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -360,8 +366,36 @@
 </div>
 </section>
 <section id="python-code" class="slide level2">
-<h2>python code</h2>
-<p><em>AR edit based on the above regression, and comment</em></p>
+<h2>Python Code</h2>
+<div class="panel-tabset">
+<ul id="tabset-2" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-2-1">0</a></li><li><a href="#tabset-2-2">1</a></li><li><a href="#tabset-2-3">2</a></li></ul>
+<div class="tab-content">
+<div id="tabset-2-1">
+<p><strong>Loading, setting up</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href=""></a><span class="im">import</span> pandas <span class="im">as</span> pd </span>
+<span id="cb4-2"><a href=""></a></span>
+<span id="cb4-3"><a href=""></a>pokemon_df <span class="op">=</span> pd.read_csv(<span class="st">'data/pokemon-data.csv'</span>)</span>
+<span id="cb4-4"><a href=""></a></span>
+<span id="cb4-5"><a href=""></a>pokemon_df.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-2-2">
+<p><strong>fit model</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href=""></a><span class="im">import</span> statsmodels.formula.api <span class="im">as</span> smf</span>
+<span id="cb5-2"><a href=""></a></span>
+<span id="cb5-3"><a href=""></a>model <span class="op">=</span> smf.logit(<span class="st">'early_gen ~ height_m + weight_kg + hp'</span>, data<span class="op">=</span>pokemon_df).fit()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-2-3">
+<p><strong>evaluate model</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href=""></a>model.summary()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
 </section></section>
 <section>
 <section id="code-along---sml" class="title-slide slide level1 center">
@@ -371,79 +405,101 @@
 <section id="r-code-1" class="slide level2">
 <h2>R Code</h2>
 <div class="panel-tabset">
-<ul id="tabset-2" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-2-1">0</a></li><li><a href="#tabset-2-2">1</a></li><li><a href="#tabset-2-3">2</a></li><li><a href="#tabset-2-4">3</a></li><li><a href="#tabset-2-5">4</a></li><li><a href="#tabset-2-6">5</a></li></ul>
+<ul id="tabset-3" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-3-1">0</a></li><li><a href="#tabset-3-2">1</a></li><li><a href="#tabset-3-3">2</a></li><li><a href="#tabset-3-4">3</a></li><li><a href="#tabset-3-5">4</a></li><li><a href="#tabset-3-6">5</a></li></ul>
 <div class="tab-content">
-<div id="tabset-2-1">
+<div id="tabset-3-1">
 <p><strong>Loading, setting up</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href=""></a><span class="fu">library</span>(tidymodels)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href=""></a><span class="fu">library</span>(tidymodels)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
-<div id="tabset-2-2">
+<div id="tabset-3-2">
 <p><strong>Split data</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href=""></a>pokemon_split <span class="ot">&lt;-</span> <span class="fu">initial_split</span>(pokemon, <span class="at">prop =</span> <span class="fl">0.8</span>)</span>
-<span id="cb5-2"><a href=""></a>train <span class="ot">&lt;-</span> <span class="fu">training</span>(pokemon_split)</span>
-<span id="cb5-3"><a href=""></a>test <span class="ot">&lt;-</span> <span class="fu">testing</span>(pokemon_split)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href=""></a><span class="co"># skipped for now, to be introduced in the next module!</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
-<div id="tabset-2-3">
+<div id="tabset-3-3">
 <p><strong>Engineer features and specify recipe</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href=""></a>pokemon_recipe <span class="ot">&lt;-</span> <span class="fu">recipe</span>(is_legendary <span class="sc">~</span> hp <span class="sc">+</span> speed <span class="sc">+</span> sp_attack, <span class="at">data =</span> train) <span class="sc">%&gt;%</span> </span>
-<span id="cb6-2"><a href=""></a>    <span class="fu">step_mutate</span>(<span class="at">is_legendary =</span> <span class="fu">as.factor</span>(is_legendary))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href=""></a>pokemon_recipe <span class="ot">&lt;-</span> <span class="fu">recipe</span>(early_gen <span class="sc">~</span> height_m <span class="sc">+</span> weight_kg <span class="sc">+</span> hp, </span>
+<span id="cb9-2"><a href=""></a>                         <span class="at">data =</span> pokemon) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-3"><a href=""></a>    <span class="fu">step_mutate</span>(<span class="at">early_gen =</span> <span class="fu">as.factor</span>(early_gen))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
-<div id="tabset-2-4">
-<p><strong>Specify recipe, model, and workflow</strong></p>
+<div id="tabset-3-4">
+<p><strong>Set model and workflow</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href=""></a>my_mod <span class="ot">&lt;-</span> <span class="fu">logistic_reg</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb7-2"><a href=""></a>    <span class="fu">set_engine</span>(<span class="st">"glm"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb7-3"><a href=""></a>    <span class="fu">set_mode</span>(<span class="st">"classification"</span>)</span>
-<span id="cb7-4"><a href=""></a></span>
-<span id="cb7-5"><a href=""></a>my_wf <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb7-6"><a href=""></a>    <span class="fu">add_recipe</span>(pokemon_recipe) <span class="sc">%&gt;%</span></span>
-<span id="cb7-7"><a href=""></a>    <span class="fu">add_model</span>(log_reg_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href=""></a>my_mod <span class="ot">&lt;-</span> <span class="fu">logistic_reg</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb10-2"><a href=""></a>    <span class="fu">set_engine</span>(<span class="st">"glm"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb10-3"><a href=""></a>    <span class="fu">set_mode</span>(<span class="st">"classification"</span>)</span>
+<span id="cb10-4"><a href=""></a></span>
+<span id="cb10-5"><a href=""></a>my_wf <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb10-6"><a href=""></a>    <span class="fu">add_recipe</span>(pokemon_recipe) <span class="sc">%&gt;%</span></span>
+<span id="cb10-7"><a href=""></a>    <span class="fu">add_model</span>(my_mod)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
-<div id="tabset-2-5">
+<div id="tabset-3-5">
 <p><strong>Fit model</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href=""></a>log_reg_fit <span class="ot">&lt;-</span> <span class="fu">last_fit</span>(my_wf, pokemon_split)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href=""></a>log_reg_fit <span class="ot">&lt;-</span> <span class="fu">fit</span>(my_wf, pokemon_split)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
-<div id="tabset-2-6">
+<div id="tabset-3-6">
 <p><strong>Evaluate accuracy</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href=""></a><span class="fu">collect_metrics</span>(log_reg_fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href=""></a>pokemon_preds <span class="ot">&lt;-</span> <span class="fu">predict</span>(log_reg_fit, pokemon, <span class="at">type =</span> <span class="st">"class"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb12-2"><a href=""></a>  <span class="fu">bind_cols</span>(pokemon <span class="sc">%&gt;%</span> <span class="fu">select</span>(early_gen))</span>
+<span id="cb12-3"><a href=""></a></span>
+<span id="cb12-4"><a href=""></a><span class="fu">metrics</span>(pokemon_preds, <span class="at">truth =</span> early_gen, <span class="at">estimate =</span> .pred_class)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
 </div>
 </section>
 <section id="python-code-1" class="slide level2">
-<h2>python code</h2>
-<p><em>just example code</em></p>
+<h2>Python code</h2>
+<div class="panel-tabset">
+<ul id="tabset-4" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-4-1">0</a></li><li><a href="#tabset-4-2">1</a></li><li><a href="#tabset-4-3">2</a></li><li><a href="#tabset-4-4">3</a></li></ul>
+<div class="tab-content">
+<div id="tabset-4-1">
+<p><strong>Loading, setting up</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href=""></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb10-2"><a href=""></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LogisticRegression</span>
-<span id="cb10-3"><a href=""></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> classification_report</span>
-<span id="cb10-4"><a href=""></a></span>
-<span id="cb10-5"><a href=""></a><span class="co"># Load and preprocess the data</span></span>
-<span id="cb10-6"><a href=""></a>starwars <span class="op">=</span> pd.read_csv(<span class="st">'path_to_starwars.csv'</span>)  <span class="co"># Load your data file</span></span>
-<span id="cb10-7"><a href=""></a>starwars[<span class="st">'species_human'</span>] <span class="op">=</span> starwars[<span class="st">'species'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: <span class="st">'Human'</span> <span class="cf">if</span> x <span class="op">==</span> <span class="st">'Human'</span> <span class="cf">else</span> <span class="st">'Not human'</span>)</span>
-<span id="cb10-8"><a href=""></a></span>
-<span id="cb10-9"><a href=""></a><span class="co"># Prepare the features and target</span></span>
-<span id="cb10-10"><a href=""></a>X <span class="op">=</span> starwars[[<span class="st">'height'</span>, <span class="st">'mass'</span>]]</span>
-<span id="cb10-11"><a href=""></a>y <span class="op">=</span> starwars[<span class="st">'species_human'</span>]</span>
-<span id="cb10-12"><a href=""></a></span>
-<span id="cb10-13"><a href=""></a><span class="co"># Specify model and fit</span></span>
-<span id="cb10-14"><a href=""></a>clf <span class="op">=</span> LogisticRegression()</span>
-<span id="cb10-15"><a href=""></a>clf.fit(X, y)</span>
-<span id="cb10-16"><a href=""></a></span>
-<span id="cb10-17"><a href=""></a><span class="co"># Evaluate accuracy on the training data</span></span>
-<span id="cb10-18"><a href=""></a>y_pred <span class="op">=</span> clf.predict(X)</span>
-<span id="cb10-19"><a href=""></a><span class="bu">print</span>(classification_report(y, y_pred))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href=""></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LogisticRegression</span>
+<span id="cb13-2"><a href=""></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> accuracy_score</span>
+<span id="cb13-3"><a href=""></a></span>
+<span id="cb13-4"><a href=""></a>pokemon_df <span class="op">=</span> pokemon_df.dropna()  <span class="co"># sci-kit learn won't work with rows that have nulls </span></span>
+<span id="cb13-5"><a href=""></a></span>
+<span id="cb13-6"><a href=""></a><span class="co">#Todo(Josh): Determine if we want to talk about imputation; e.g., median filling</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-4-2">
+<p><strong>Split data</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href=""></a>dependent_col <span class="op">=</span> <span class="st">'early_gen'</span></span>
+<span id="cb14-2"><a href=""></a>independent_cols <span class="op">=</span> [<span class="st">'height_m'</span>, <span class="st">'weight_kg'</span>, <span class="st">'hp'</span>]</span>
+<span id="cb14-3"><a href=""></a></span>
+<span id="cb14-4"><a href=""></a>X <span class="op">=</span> pokemon_df[independent_cols]</span>
+<span id="cb14-5"><a href=""></a>y <span class="op">=</span> pokemon_df[dependent_col]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-4-3">
+<p><strong>Define and train model</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href=""></a>model <span class="op">=</span> LogisticRegression()</span>
+<span id="cb15-2"><a href=""></a>model.fit(X, y)  <span class="co"># Fit the model on the entire dataset</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-4-4">
+<p><strong>Predict and Evaluate</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href=""></a>y_preds <span class="op">=</span> model.predict(X)  <span class="co"># Then predict on all the data as if you didn't know the dependent variable</span></span>
+<span id="cb16-2"><a href=""></a>accuracy <span class="op">=</span> accuracy_score(y, y_preds)  <span class="co"># Compare your predictions vs the actual y's</span></span>
+<span id="cb16-3"><a href=""></a></span>
+<span id="cb16-4"><a href=""></a><span class="bu">round</span>(accuracy, <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
 </div>
 </section>
 <section id="discussion" class="slide level2">
