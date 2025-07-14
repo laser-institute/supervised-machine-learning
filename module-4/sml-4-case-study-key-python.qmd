@@ -432,7 +432,7 @@ Start by viewing the full output from cross_validate, which is stored in the res
 results
 ```
 
-Then, check the results_mean object to see the average value of each metric across all folds. This provides a quick summary of overall model performance:
+Then, check the `results_mean` object to see the average value of each metric across all folds. This provides a quick summary of overall model performance:
 
 ```{python}
 results_mean
