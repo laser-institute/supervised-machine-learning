@@ -300,9 +300,6 @@ Many students will be familiar with regression, and it's a nice touch point here
 - **Key Idea:**  
   Learning through trial and error to maximize long-term rewards.
 
-- **Why It Matters:**  
-  Provides the basis for adaptive systems in fields like robotics, gaming, and intelligent educational technologies.
-
 
 ## Which technique should I choose?
 
@@ -336,7 +333,7 @@ Do you want to say something about one or several variables' relations with an o
 ## In short
 
 - If you're interested in explaining relations, choose inferential statistics
-- If you're itnerested in making predictions, choose SML
+- If you're interested in making predictions, choose SML
 - If you're interested in exploring patterns in data, choose unsupervised ML
 
 ::: footer
@@ -362,11 +359,12 @@ This is a fairly general point, but a helpful one and one that guides this and t
 ::: panel-tabset
 ## Reflecting
 
--   When might you use SML, in general?
+-   Think back to the use case (outcome) you mentioned earlier. How does (or could) SML be an appropriate technique to use?
 
 ## Applying
 
--   Think back to the use case you mentioned earlier. How does (or could) SML be an appropriate technique to use?
+-  Why is it important to _predict_ the outcome?
+
 :::
 
 ::: notes
