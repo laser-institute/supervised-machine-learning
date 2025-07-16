@@ -46,7 +46,7 @@ Building on the foundations from Module 1, this session delves deeper into the w
 
 ## Digging Deeper
 
-- How might presenting the results of a machine learning model differ from presenting those from a more traditional ("explanatory") model? 
+- Please revisit the "structure" of your machine learning topic of interest - what's the dependent variable, and what are the independent variables? Why do good predictions have value?
 
 :::
 
@@ -292,7 +292,7 @@ ggsave("img/bias-variance-data-6.png")
 
 ## Applying
 
-- What data or context are you interested in for your use of SML?
+- What implications (if any) does this module have on how you are thinking of the structure of your machine learning analysis?
 
 :::
 
