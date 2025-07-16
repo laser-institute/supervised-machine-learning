@@ -93,7 +93,7 @@ pokemon %>%
 #| eval: false
 #| echo: true
 
-m1 <- glm(early_gen ~ height_m + weight_kg + hp,
+m1 <- glm(is_legendary ~ height_m + weight_kg + hp,
           data = pokemon,
           family = "binomial")
 ```
@@ -108,6 +108,31 @@ m1 <- glm(early_gen ~ height_m + weight_kg + hp,
 
 summary(m1) # what do you notice about the coefficients?
 ```
+
+## 3 
+
+**Optionally, convert log-odds coefficients to probabilities**
+
+```{r}
+#| eval: false
+#| echo: true
+
+log_odds <- coef(m1)
+
+odds <- exp(log_odds)
+
+probabilities <- odds / (1 + odds)
+
+results <- tibble(
+  Term = names(log_odds),
+  Log_Odds = log_odds,
+  Odds = odds,
+  Probability = probabilities
+)
+
+results
+```
+
 :::
 
 ## Python Code
@@ -187,9 +212,11 @@ library(tidymodels)
 #| echo: true
 #| eval: false
 
-pokemon_recipe <- recipe(early_gen ~ height_m + weight_kg + hp, 
-                         data = pokemon) %>% 
-    step_mutate(early_gen = as.factor(early_gen))
+pokemon <- pokemon %>% 
+     mutate(early_gen = as.factor(early_gen))
+
+pokemon_recipe <- recipe(is_legendary ~ height_m + weight_kg + hp, 
+                         data = pokemon)
 ```
 
 ## 3
@@ -261,7 +288,7 @@ pokemon_df = pokemon_df.dropna()  # sci-kit learn won't work with rows that have
 #| echo: true
 #| eval: false
 
-dependent_col = 'early_gen'
+dependent_col = 'is_legendary'
 independent_cols = ['height_m', 'weight_kg', 'hp']
 
 X = pokemon_df[independent_cols]

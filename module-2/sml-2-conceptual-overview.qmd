@@ -52,12 +52,13 @@ Building on the foundations from Module 1, this session delves deeper into the w
 
 # Key Concept #1: Our SML framework
 
-### Overview
+
+## Overview
 
 - We want to make predictions about an outcome of interest based on predictor (or independent) variable(s) that we think are related to the outcome (or dependent variable).
 - We'll continue using [IPEDS, the Integrated Postsecondary Education Data System](https://nces.ed.gov/ipeds/) data to predict institutional graduation rates.
 
-### LASER Frame (reminder)
+## LASER Frame (reminder)
 
 1. **Prepare**: Prior to analysis, we'll take a look at the context from which our data came, formulate some questions, and load R packages.
 2. **Wrangle**: In the wrangling section, we will learn some basic techniques for manipulating, cleaning, transforming, and merging data.
@@ -65,7 +66,7 @@ Building on the foundations from Module 1, this session delves deeper into the w
 4. **Model**: In this step, we carry out the analysis - here, supervised machine learning.
 5. **Communicate**: Interpreting and communicating the results of our findings is the last step.
 
-### SML Frame (mostly new!)
+## SML Frame (mostly new!)
 
 1. **Split data** (Prepare)  
 2. **Engineer features and write down the recipe** (Wrangle and Explore)  

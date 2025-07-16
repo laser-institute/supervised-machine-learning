@@ -197,8 +197,6 @@ Here, the key point is that we can do things a bit differently given our differe
 
 ## A Spectrum of Interpretability
 
-The choice of model often involves a trade-off between predictive power and how easily we can understand its inner workings:
-
 -   **Transparent Box:** Models where the relationship between inputs and outputs is clear.
     -   *Example:* Linear Regression (coefficients have direct meaning).
     -   Often preferred for *inference*.
@@ -232,9 +230,6 @@ The focus on prediction opens the door to highly complex models:
 -   **Different Forms:**
     -   *k*-nearest neighbors (instance-based, less of a "model" in the traditional sense)
 
--   **Different Processes:**
-    -   Ensemble models (combining predictions from multiple models)
-
 ::: notes
 This expands on the points on the last slide and includes algorithms that are fundamentally different -- they aren't really "boxes" in the sense the models are - they're rules-based, and while the rules can be interrogated, the process is fairly scrutinizable (but really complex!).
 :::
@@ -253,9 +248,6 @@ There's no single "best" way; the right tools depend on your goals:
 -   **Don't look for a magic answer!** No model perfectly reflects reality. Resist the urge to let the model "tell you the answer" without critical thought.
 
 -   **Understand your tools:** Even if prediction is the goal, knowing *how* your chosen model works (its assumptions, strengths, weaknesses) helps you:
-    -   Troubleshoot problems.
-    -   Interpret results appropriately (even if it's just performance metrics).
-    -   Build *better*, more reliable predictive systems.
 
 ::: notes
 This invites students to really think hard about what they are trying to do.
