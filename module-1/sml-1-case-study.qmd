@@ -9,7 +9,7 @@ format:
     toc-depth: 4
     toc-location: right
 theme:
-  light: simplex
+  light: simplexknit
   dark: cyborg
 editor: visual
 ---

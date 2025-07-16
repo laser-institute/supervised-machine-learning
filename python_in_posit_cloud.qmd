@@ -1,0 +1,122 @@
+---
+
+## title: "Using Python in Posit Cloud" format: html: toc: true number-sections: true
+
+# Short Answer
+
+In each Posit Cloud project, create and activate a project-scoped Python virtual environment, install your needed Python packages there, tell Posit (RStudio) which Python to use (via Project Options → Python, `RETICULATE_PYTHON`, or `reticulate::use_virtualenv()`), and then work in Quarto (.qmd) documents (Knitr + reticulate for mixed R/Python or Jupyter engine for Python-first) or full Jupyter notebooks. Capture dependencies in `requirements.txt` (or `environment.yml`), and publish/share with `quarto publish posit-cloud` (or `rsconnect-python`).
+
+# 1. Project Setup (once per project)
+
+1. **Create a project-local virtual environment**:
+
+   ```bash
+   python3 -m venv env
+   ```
+
+2. **Activate the environment & install packages**:
+
+   ```bash
+   source env/bin/activate
+   pip install jupyter pandas matplotlib # etc.
+   ```
+
+3. **Bind Posit/RStudio to the environment**:
+
+   - **GUI**: Tools → Project Options → Python → select `env/bin/python`
+   - **Env var**: add `RETICULATE_PYTHON=env/bin/python` to `.Renviron`
+   - **R code**:
+     ```r
+     reticulate::use_virtualenv("env", required = TRUE)
+     ```
+
+4. **(Optional) Install from R**:
+
+   ```r
+   reticulate::py_install("dplyr")
+   # or
+   reticulate::virtualenv_install("env", "scikit-learn")
+   ```
+
+5. **Verify interpreter**:
+
+   ```r
+   reticulate::py_config()
+   ```
+
+# 2. Daily Workflows
+
+## A. Quarto documents with Python chunks
+
+Use executable chunks in your .qmd:
+
+```{python}
+#| echo: true
+import pandas as pd
+import numpy as np
+```
+
+Add `jupyter: python3` (or your kernel) in the YAML to run via Jupyter.
+
+## B. Mixed R + Python with reticulate (Knitr engine)
+
+```{python}
+# Python chunk
+array = np.arange(10)
+```
+
+Exchange objects between R and Python seamlessly:
+
+```{r}
+py$array * 2
+```
+
+## C. Python in the Console
+
+- Send lines from a `.py` file (Cmd/Ctrl+Enter)
+- Drop into Python REPL
+- View matplotlib plots in the Plots pane
+
+## D. Full Jupyter Notebooks
+
+- Create a new project with the Jupyter engine
+- Work directly in `.ipynb` notebooks
+
+# 3. Reproducibility & Dependencies
+
+- **Capture packages**:
+  ```bash
+  pip freeze > requirements.txt
+  ```
+- **Conda alternative**:
+  ```bash
+  conda env export > environment.yml
+  ```
+- **R + Python together** with renv:
+  ```r
+  renv::init()
+  renv::use_python()
+  renv::snapshot()
+  ```
+
+# 4. Sharing & Publishing
+
+- **Publish**:
+  ```bash
+  quarto publish posit-cloud
+  ```
+- **Connect Cloud**:
+  - Include `.ipynb` and `requirements.txt`
+
+# 5. Common Gotchas
+
+| Symptom                          | Cause                                     | Fix                                                                   |
+| -------------------------------- | ----------------------------------------- | --------------------------------------------------------------------- |
+| Quarto can’t find Python         | Env not activated; wrong Python in Quarto | Activate venv; set `QUARTO_PYTHON`; run `quarto check jupyter`        |
+| reticulate using system Python   | `RETICULATE_PYTHON` not set               | Set in Project Options or `.Renviron`; restart; confirm `py_config()` |
+| Missing packages when publishing | `requirements.txt` not updated            | `pip freeze > requirements.txt` before publish                        |
+
+# 6. Next Steps
+
+- Are you mixing small Python snippets into R teaching materials, building Python-first notebooks, or setting up a reproducible workshop environment? Let me know which workflow fits your needs best!
+
